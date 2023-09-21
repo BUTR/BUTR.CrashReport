@@ -8,5 +8,6 @@ public record EnhancedStacktraceFrameMethod
     public required string MethodFullName { get; set; }
     public required string Method { get; set; }
     public required ICollection<string> MethodParameters { get; set; }
+    public required string[] NativeInstructions { get; set; }
     public required string[] CilInstructions { get; set; }
 }

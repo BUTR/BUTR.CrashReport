@@ -360,6 +360,7 @@ namespace BUTR.CrashReport.Bannerlord
 
         private static string GetEnhancedStacktraceHtml(CrashReportModel crashReport)
         {
+            var random = new Random();
             var sb = new StringBuilder();
             var sbCil = new StringBuilder();
             sb.AppendLine("<ul>");
@@ -368,26 +369,34 @@ namespace BUTR.CrashReport.Bannerlord
                 sb.Append("<li>")
                     .Append($"Frame: {stacktrace.Name}</br>")
                     .Append($"Approximate IL Offset: {(stacktrace.ILOffset is null ? "UNKNOWN" : $"{stacktrace.ILOffset:X4}")}</br>")
+                    .Append($"Native Offset: {(stacktrace.NativeOffset is null ? "UNKNOWN" : $"{stacktrace.NativeOffset:X4}")}")
                     .Append("<ul>");
 
                 foreach (var method in stacktrace.PatchMethods)
                 {
+                    var id = random.Next();
                     sb.Append("<li>")
                         .Append($"Module: {method.Module}</br>")
                         .Append($"Method: {method.MethodFullName}</br>")
-                        .AppendLine("CIL:").Append("<pre>").AppendJoin(NL, method.CilInstructions).Append("</pre>")
+                        .AppendLine($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id}\")'>+ CIL:</a><div id='{id}' class='headers-container'><pre>")
+                        .AppendJoin(NL, method.CilInstructions).Append("</pre></div></div>")
                         .Append("</li>");
                 }
 
+                var id2 = random.Next();
+                var id3 = random.Next();
                 sb.Append("<li>")
                     .Append($"Module: {stacktrace.OriginalMethod.Module}</br>")
                     .Append($"Method: {stacktrace.OriginalMethod.MethodFullName}</br>")
                     .Append($"Method From Stackframe Issue: {stacktrace.MethodFromStackframeIssue}</br>")
-                    .AppendLine("CIL:").Append("<pre>").AppendJoin(NL, stacktrace.OriginalMethod.CilInstructions).Append("</pre></br>")
-                    .Append("</li>");
+                    .AppendLine($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ CIL:</a><div id='{id2}' class='headers-container'><pre>")
+                    .AppendJoin(NL, stacktrace.OriginalMethod.CilInstructions).Append("</pre></div></div>")
+                    .AppendLine($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id3}\")'>+ Native:</a><div id='{id3}' class='headers-container'><pre>")
+                    .AppendJoin(NL, stacktrace.OriginalMethod.NativeInstructions).Append("</pre></div></div>")
+                    .Append("</br></li>");
 
                 sb.Append("</ul>");
-                sb.AppendLine("</li>");
+                sb.Append("</li>");
                 sbCil.Clear();
             }
             sb.AppendLine("</ul>");
@@ -442,7 +451,6 @@ namespace BUTR.CrashReport.Bannerlord
             var tagsBuilder = new StringBuilder();
             var additionalAssembliesBuilder = new StringBuilder();
             var dependenciesBuilder = new StringBuilder();
-
 
             void AppendDependencies(ModuleModel module)
             {
@@ -609,9 +617,7 @@ namespace BUTR.CrashReport.Bannerlord
 
             sb0.AppendLine("<ul>");
             foreach (var assembly in crashReport.Assemblies)
-            {
                 AppendAssembly(assembly);
-            }
             sb0.AppendLine("</ul>");
 
             return sb0.ToString();
@@ -628,9 +634,6 @@ namespace BUTR.CrashReport.Bannerlord
                 patchBuilder.Clear();
                 foreach (var patch in patches)
                 {
-                    //if (string.Equals(patch.owner, ExceptionHandlerSubSystem.Instance?.Harmony.Id, StringComparison.InvariantCultureIgnoreCase))
-                    //    continue;
-
                     patchBuilder.Append("<li>")
                         .Append("Owner: ").Append(patch.Owner).Append("; ")
                         .Append("Namespace: ").Append(patch.Namespace).Append("; ")

@@ -1,4 +1,6 @@
-﻿using AsmResolver.DotNet;
+﻿extern alias iced;
+
+using AsmResolver.DotNet;
 using AsmResolver.DotNet.Code.Cil;
 using AsmResolver.DotNet.Dynamic;
 
@@ -10,6 +12,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+
+using iced::Iced.Intel;
+using Decoder = iced::Iced.Intel.Decoder;
 
 namespace BUTR.CrashReport;
 
@@ -17,6 +24,7 @@ public record MethodEntry
 {
     public required MethodBase Method { get; set; }
     public required IModuleInfo? ModuleInfo { get; set; }
+    public required string[] NativeInstructions { get; set; }
     public required string[] CilInstructions { get; set; }
 }
 
@@ -26,7 +34,9 @@ public record StacktraceEntry
     public required bool MethodFromStackframeIssue { get; set; }
     public required IModuleInfo? ModuleInfo { get; set; }
     public required int? ILOffset { get; set; }
+    public required int? NativeOffset { get; set; }
     public required string StackFrameDescription { get; set; }
+    public required string[] NativeInstructions { get; set; }
     public required string[] CilInstructions { get; set; }
     public required MethodEntry[] Methods { get; set; }
 }
@@ -43,6 +53,10 @@ public class CrashReportInfo
     private delegate MethodBase GetIdentifiableDelegate(object instance, MethodBase method);
     private static readonly GetIdentifiableDelegate? GetIdentifiable =
         AccessTools2.GetDelegate<GetIdentifiableDelegate>("MonoMod.Core.Platforms.PlatformTriple:GetIdentifiable");
+
+    private delegate IntPtr GetNativeMethodBodyDelegate(object instance, MethodBase method);
+    private static readonly GetNativeMethodBodyDelegate? GetNativeMethodBody =
+        AccessTools2.GetDelegate<GetNativeMethodBodyDelegate>("MonoMod.Core.Platforms.PlatformTriple:GetNativeMethodBody");
 
     public readonly byte Version = 12;
     public Guid Id { get; } = Guid.NewGuid();
@@ -183,7 +197,8 @@ public class CrashReportInfo
                 {
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
-                    CilInstructions = GetInstructionLines(methodBase),
+                    NativeInstructions = Array.Empty<string>(),
+                    CilInstructions = GetILInstructionLines(methodBase),
                 });
             }
 
@@ -193,7 +208,8 @@ public class CrashReportInfo
                 {
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
-                    CilInstructions = GetInstructionLines(methodBase),
+                    NativeInstructions = Array.Empty<string>(),
+                    CilInstructions = GetILInstructionLines(methodBase),
                 });
             }
 
@@ -203,7 +219,8 @@ public class CrashReportInfo
                 {
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
-                    CilInstructions = GetInstructionLines(methodBase),
+                    NativeInstructions = Array.Empty<string>(),
+                    CilInstructions = GetILInstructionLines(methodBase),
                 });
             }
 
@@ -213,13 +230,15 @@ public class CrashReportInfo
                 {
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
-                    CilInstructions = GetInstructionLines(methodBase),
+                    NativeInstructions = Array.Empty<string>(),
+                    CilInstructions = GetILInstructionLines(methodBase),
                 });
             }
 
             var moduleInfo = GetModuleInfoIfMod(identifiableMethod, crashReportHelper);
 
             var ilOffset = frame.GetILOffset();
+            var nativeILOffset = frame.GetNativeOffset();
 
             yield return new()
             {
@@ -227,14 +246,58 @@ public class CrashReportInfo
                 MethodFromStackframeIssue = methodFromStackframeIssue,
                 ModuleInfo = moduleInfo,
                 ILOffset = ilOffset != StackFrame.OFFSET_UNKNOWN ? ilOffset : null,
+                NativeOffset = nativeILOffset != StackFrame.OFFSET_UNKNOWN ? nativeILOffset : null,
                 StackFrameDescription = frame.ToString(),
-                CilInstructions = GetInstructionLines(identifiableMethod),
+                NativeInstructions = GetInstructionLines(identifiableMethod, nativeILOffset),
+                CilInstructions = GetILInstructionLines(identifiableMethod),
                 Methods = methods.ToArray(),
             };
         }
     }
 
-    private static string[] GetInstructionLines(MethodBase? method)
+    private static string[] GetInstructionLines(MethodBase? method, int nativeILOffset)
+    {
+        static IEnumerable<string> GetLines(MethodBase method, int nativeILOffset)
+        {
+            var nativeCodePtr = GetNativeMethodBody!(CurrentPlatformTriple!(), method);
+
+            var length = (uint) nativeILOffset + 16;
+            var bytecode = new byte[length];
+
+            Marshal.Copy(nativeCodePtr, bytecode, 0, bytecode.Length);
+
+            var codeReader = new ByteArrayCodeReader(bytecode);
+            var decoder = Decoder.Create(IntPtr.Size == 4 ? 32 : 64, codeReader);
+
+            var output = new StringOutput();
+            var sb = new StringBuilder();
+
+            var formatter = new NasmFormatter
+            {
+                Options =
+                {
+                    DigitSeparator = "`",
+                    FirstOperandCharIndex = 10
+                }
+            };
+
+            while (decoder.IP < length)
+            {
+                var instr = decoder.Decode();
+                formatter.Format(instr, output); // Don't use instr.ToString(), it allocates more, uses masm syntax and default options
+                sb.Append(instr.IP.ToString("X4")).Append(" ").Append(output.ToStringAndReset());
+                yield return sb.ToString();
+                sb.Clear();
+            }
+        }
+
+        if (method is null) return Array.Empty<string>();
+        if (nativeILOffset == StackFrame.OFFSET_UNKNOWN) return Array.Empty<string>();
+        if (CurrentPlatformTriple is null || GetNativeMethodBody is null) return Array.Empty<string>();
+
+        return GetLines(method, nativeILOffset).ToArray();
+    }
+    private static string[] GetILInstructionLines(MethodBase? method)
     {
         static string[] ToLines(CilInstructionCollection? instructions) => instructions?.Select(x => x.ToString()).ToArray() ?? Array.Empty<string>();
 

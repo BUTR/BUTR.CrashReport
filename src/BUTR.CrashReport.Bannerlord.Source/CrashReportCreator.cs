@@ -175,6 +175,7 @@ namespace BUTR.CrashReport.Bannerlord
                             Method = method.Method.DeclaringType is not null ? $"{method.Method.DeclaringType.FullName}.{method.Method.Name}" : method.Method.Name,
                             MethodFullName = method.Method.FullDescription(),
                             MethodParameters = method.Method.GetParameters().Select(x => x.ParameterType.FullName).ToArray(),
+                            NativeInstructions = method.NativeInstructions,
                             CilInstructions = method.CilInstructions,
                         });
                     }
@@ -189,10 +190,12 @@ namespace BUTR.CrashReport.Bannerlord
                             Method = entry.Method.DeclaringType is not null ? $"{entry.Method.DeclaringType.FullName}.{entry.Method.Name}" : entry.Method.Name,
                             MethodFullName = entry.Method.FullDescription(),
                             MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName).ToArray(),
+                            NativeInstructions = entry.NativeInstructions,
                             CilInstructions = entry.CilInstructions,
                         },
                         PatchMethods = methodsBuilder.ToArray(),
                         ILOffset = entry.ILOffset,
+                        NativeOffset = entry.NativeOffset,
                         MethodFromStackframeIssue = entry.MethodFromStackframeIssue,
                     });
                 }
