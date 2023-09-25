@@ -55,7 +55,7 @@ namespace BUTR.CrashReport.Bannerlord
 
         public string Id => InternalModuleInfo.Id;
 
-        internal IEnumerable<IModuleSubModuleInfo> SubModules => InternalModuleInfo.SubModules.Select(x => new ModuleSubModuleInfo(x));
+        public IEnumerable<IModuleSubModuleInfo> SubModules => InternalModuleInfo.SubModules.Select(x => new ModuleSubModuleInfo(x));
 
         public ModuleInfo(ModuleInfoExtendedWithMetadata internalModuleInfo) => InternalModuleInfo = internalModuleInfo;
     }

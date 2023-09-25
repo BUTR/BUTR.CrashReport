@@ -10,10 +10,10 @@ public record CrashReportModel
     public required string GameVersion { get; set; }
     public required ExceptionModel Exception { get; set; }
     public required CrashReportMetadataModel Metadata { get; set; }
-    public required ICollection<ModuleModel> Modules { get; set; }
-    public required ICollection<InvolvedModuleModel> InvolvedModules { get; set; }
-    public required ICollection<EnhancedStacktraceFrameModel> EnhancedStacktrace { get; set; }
-    public required ICollection<AssemblyModel> Assemblies { get; set; }
-    public required ICollection<HarmonyPatchesModel> HarmonyPatches { get; set; }
+    public required IReadOnlyList<ModuleModel> Modules { get; set; }
+    public required IReadOnlyList<InvolvedModuleModel> InvolvedModules { get; set; }
+    public required IReadOnlyList<EnhancedStacktraceFrameModel> EnhancedStacktrace { get; set; }
+    public required IReadOnlyList<AssemblyModel> Assemblies { get; set; }
+    public required IReadOnlyList<HarmonyPatchesModel> HarmonyPatches { get; set; }
     public required ICollection<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
 }

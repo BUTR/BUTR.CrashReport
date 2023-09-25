@@ -57,16 +57,6 @@ namespace BUTR.CrashReport.Bannerlord
                 return bAssembly.Version;
             return string.Empty;
         }
-        public static string GetBLSEVersion(CrashReportInfo crashReport)
-        {
-            var blseMetadata = crashReport.AvailableAssemblies.FirstOrDefault(x => x.GetName().Name == "Bannerlord.BLSE")?.GetCustomAttributes<AssemblyMetadataAttribute>();
-            return blseMetadata?.FirstOrDefault(x => x.Key == "BLSEVersion")?.Value ?? string.Empty;
-        }
-        public static string GetLauncherExVersion(CrashReportInfo crashReport)
-        {
-            var launcherExMetadata = crashReport.AvailableAssemblies.FirstOrDefault(x => x.GetName().Name == "Bannerlord.LauncherEx")?.GetCustomAttributes<AssemblyMetadataAttribute>();
-            return launcherExMetadata?.FirstOrDefault(x => x.Key == "LauncherExVersion")?.Value ?? string.Empty;
-        }
 
         public static string GetLauncherType(CrashReportModel crashReport)
         {

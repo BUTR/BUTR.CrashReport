@@ -1,29 +1,42 @@
+using System;
+
 namespace BUTR.CrashReport.Models;
 
+[Flags]
 public enum AssemblyModelType
 {
     /// <summary>
     /// Unknown assembly origin
     /// </summary>
-    Unclassified,
+    Unclassified = 0,
 
     /// <summary>
-    /// Game core assembly
+    /// Dynamic assembly origin
     /// </summary>
-    GameCore,
+    Dynamic = 1,
 
     /// <summary>
-    /// Game module assembly
+    /// GAC assembly origin
     /// </summary>
-    GameModule,
+    GAC = 2,
 
     /// <summary>
     /// System assembly
     /// </summary>
-    System,
+    System = 4,
+
+    /// <summary>
+    /// Game core assembly
+    /// </summary>
+    GameCore = 8,
+
+    /// <summary>
+    /// Game module assembly
+    /// </summary>
+    GameModule = 16,
 
     /// <summary>
     /// Custom module assembly
     /// </summary>
-    Module,
+    Module = 32,
 }

@@ -41,10 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NuGetizer" Version="1.1.1" Pack="false" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Ben.Demystifier" Version="0.4.1" Pack="true" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>

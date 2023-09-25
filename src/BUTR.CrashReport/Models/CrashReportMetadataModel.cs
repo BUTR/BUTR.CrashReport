@@ -9,5 +9,5 @@ public record CrashReportMetadataModel
 
     public required string? Runtime { get; set; }
 
-    public required ICollection<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
+    public required IReadOnlyList<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
 }

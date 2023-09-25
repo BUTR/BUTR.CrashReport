@@ -29,6 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Ben.Demystifier" Version="0.4.1" PrivateAssets="all" />
     <PackageReference Include="Iced" Version="1.20.0" Alias="iced" Private="false" PrivateAssets="all" />
     <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="5.4.0" PrivateAssets="all" />
   </ItemGroup>

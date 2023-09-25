@@ -10,5 +10,5 @@ public record ModuleDependencyMetadataModel
     public required bool IsIncompatible { get; set; }
     public required string Version { get; set; }
     public required string VersionRange { get; set; }
-    public required ICollection<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
+    public required IReadOnlyList<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
 }

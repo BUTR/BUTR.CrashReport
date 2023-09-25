@@ -59,6 +59,7 @@ namespace BUTR.CrashReport.Bannerlord
     using global::System.Linq;
     using global::System.Reflection;
     using global::System.Security.Cryptography;
+    using global::System.Threading.Tasks;
 
     internal class CrashReportCreator
     {
@@ -69,7 +70,7 @@ namespace BUTR.CrashReport.Bannerlord
                 Id = crashReport.Id,
                 GameVersion = ApplicationVersionHelper.GameVersionStr(),
                 Version = crashReport.Version,
-                Exception = GetRecursiveException(crashReport.Exception),
+                Exception = GetRecursiveException(crashReport),
                 EnhancedStacktrace = GetEnhancedStacktrace(crashReport),
                 InvolvedModules = GetInvolvedModuleList(crashReport),
                 Modules = GetModuleList(crashReport),
@@ -95,18 +96,18 @@ namespace BUTR.CrashReport.Bannerlord
 
         private static string GetBUTRLoaderVersion(CrashReportInfo crashReport)
         {
-            if (crashReport.AvailableAssemblies.FirstOrDefault(x => x.GetName().Name == "Bannerlord.BUTRLoader") is { } bAssembly)
-                return bAssembly.GetName().Version?.ToString() ?? string.Empty;
+            if (crashReport.AvailableAssemblies.FirstOrDefault(x => x.Key.Name == "Bannerlord.BUTRLoader") is { Key: { } assemblyName } )
+                return assemblyName.Version?.ToString() ?? string.Empty;
             return string.Empty;
         }
         private static string GetBLSEVersion(CrashReportInfo crashReport)
         {
-            var blseMetadata = crashReport.AvailableAssemblies.FirstOrDefault(x => x.GetName().Name == "Bannerlord.BLSE")?.GetCustomAttributes<AssemblyMetadataAttribute>();
+            var blseMetadata = crashReport.AvailableAssemblies.FirstOrDefault(x => x.Key.Name == "Bannerlord.BLSE").Value?.GetCustomAttributes<AssemblyMetadataAttribute>();
             return blseMetadata?.FirstOrDefault(x => x.Key == "BLSEVersion")?.Value ?? string.Empty;
         }
         private static string GetLauncherExVersion(CrashReportInfo crashReport)
         {
-            var launcherExMetadata = crashReport.AvailableAssemblies.FirstOrDefault(x => x.GetName().Name == "Bannerlord.LauncherEx")?.GetCustomAttributes<AssemblyMetadataAttribute>();
+            var launcherExMetadata = crashReport.AvailableAssemblies.FirstOrDefault(x => x.Key.Name == "Bannerlord.LauncherEx").Value?.GetCustomAttributes<AssemblyMetadataAttribute>();
             return launcherExMetadata?.FirstOrDefault(x => x.Key == "LauncherExVersion")?.Value ?? string.Empty;
         }
 
@@ -147,19 +148,23 @@ namespace BUTR.CrashReport.Bannerlord
             return "0";
         }
 
-        private static ExceptionModel GetRecursiveException(Exception ex)
+        private static ExceptionModel GetRecursiveException(CrashReportInfo crashReport)
         {
-            return new()
+            static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, Exception ex)
             {
-                Type = ex.GetType().FullName!,
-                Message = ex.Message,
-                Source = ex.Source,
-                CallStack = ex.StackTrace,
-                InnerException = ex.InnerException is not null ? GetRecursiveException(ex.InnerException) : null,
-            };
+                return new()
+                {
+                    Type = ex.GetType().FullName ?? string.Empty,
+                    Message = ex.Message,
+                    CallStack = ex.StackTrace,
+                    InnerException = ex.InnerException is not null ? GetRecursiveException(crashReport, ex.InnerException) : null,
+                };
+            }
+
+            return GetRecursiveException(crashReport, crashReport.Exception);
         }
 
-        private static ICollection<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport)
+        private static IReadOnlyList<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<EnhancedStacktraceFrameModel>();
             foreach (var stacktrace in crashReport.Stacktrace.GroupBy(x => x.StackFrameDescription))
@@ -203,7 +208,7 @@ namespace BUTR.CrashReport.Bannerlord
             return builder.ToArray();
         }
 
-        private static ICollection<InvolvedModuleModel> GetInvolvedModuleList(CrashReportInfo crashReport)
+        private static IReadOnlyList<InvolvedModuleModel> GetInvolvedModuleList(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<InvolvedModuleModel>();
             foreach (var stacktrace in crashReport.FilteredStacktrace.GroupBy(m => m.ModuleInfo))
@@ -221,7 +226,7 @@ namespace BUTR.CrashReport.Bannerlord
             return builder.ToArray();
         }
 
-        private static ICollection<ModuleModel> GetModuleList(CrashReportInfo crashReport)
+        private static IReadOnlyList<ModuleModel> GetModuleList(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<ModuleModel>();
 
@@ -268,7 +273,7 @@ namespace BUTR.CrashReport.Bannerlord
             return builder.ToArray();
         }
 
-        private static ICollection<AssemblyModel> GetAssemblyList(CrashReportInfo crashReport)
+        private static IReadOnlyList<AssemblyModel> GetAssemblyList(CrashReportInfo crashReport)
         {
             static string CalculateMD5(string filename)
             {
@@ -280,24 +285,30 @@ namespace BUTR.CrashReport.Bannerlord
 
             var builder = ImmutableArray.CreateBuilder<AssemblyModel>();
 
-            foreach (var assembly in crashReport.AvailableAssemblies)
+            foreach (var (assemblyName, assembly) in crashReport.AvailableAssemblies)
             {
-                string? moduleId = null;
+                ModuleInfoExtendedWithMetadata? module = null;
                 foreach (var loadedModule in crashReport.LoadedModules.OfType<ModuleInfo>().Select(x => x.InternalModuleInfo))
                 {
                     if (ModuleInfoHelper.IsModuleAssembly(loadedModule, assembly))
                     {
-                        moduleId = loadedModule.Id;
+                        module = loadedModule;
                         break;
                     }
                 }
 
-                // TODO:
+                var systemAssemblyDirectory = Path.GetDirectoryName(typeof(object).Assembly.Location);
+                var isGAC = assembly.GlobalAssemblyCache;
+                var isSystem = !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location) && Path.GetDirectoryName(assembly.Location).Equals(systemAssemblyDirectory, StringComparison.Ordinal);
                 var isTWCore = !assembly.IsDynamic && assembly.Location.IndexOf(@"Mount & Blade II Bannerlord\bin\", StringComparison.InvariantCultureIgnoreCase) >= 0;
-                var isSystem = !assembly.IsDynamic && assembly.Location.IndexOf(@"Windows\Microsoft.NET\", StringComparison.InvariantCultureIgnoreCase) >= 0;
 
-                var assemblyName = assembly.GetName();
-
+                var type = default(AssemblyModelType);
+                if (assembly.IsDynamic) type |= AssemblyModelType.Dynamic;
+                if (isGAC) type |= AssemblyModelType.GAC;
+                if (isSystem) type |= AssemblyModelType.System;
+                if (isTWCore) type |= AssemblyModelType.GameCore;
+                if (module is not null) type |= AssemblyModelType.Module;
+                if (module is not null && module.IsOfficial) type |= AssemblyModelType.GameModule;
                 builder.Add(new()
                 {
                     Name = assemblyName.Name,
@@ -306,22 +317,17 @@ namespace BUTR.CrashReport.Bannerlord
                     Architecture = assemblyName.ProcessorArchitecture.ToString(),
                     Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? "" : CalculateMD5(assembly.Location),
                     Path = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : assembly.Location,
-                    IsDynamic = assembly.IsDynamic,
-                    Type = moduleId is not null ? AssemblyModelType.Module : isTWCore ? AssemblyModelType.GameCore : isSystem ? AssemblyModelType.System : AssemblyModelType.Unclassified,
-                    ModuleId = moduleId,
+                    Type = type,
+                    ModuleId = module?.Id,
                     SubModuleId = "",
                     AdditionalMetadata = new List<KeyValuePair<string, string>>()
-                    {
-                        new("METADATA:IS_TW", isTWCore.ToString()),
-                        new("METADATA:IS_SYSTEM", isSystem.ToString()),
-                    },
                 });
             }
 
             return builder.ToArray();
         }
 
-        private static ICollection<HarmonyPatchesModel> GetHarmonyPatchesListHtml(CrashReportInfo crashReport)
+        private static IReadOnlyList<HarmonyPatchesModel> GetHarmonyPatchesListHtml(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<HarmonyPatchesModel>();
 

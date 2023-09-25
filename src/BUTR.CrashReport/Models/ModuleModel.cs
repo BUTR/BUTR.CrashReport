@@ -12,7 +12,7 @@ public sealed record ModuleModel
     public required bool IsSingleplayer { get; set; }
     public required bool IsMultiplayer { get; set; }
     public required string Url { get; set; }
-    public required ICollection<ModuleDependencyMetadataModel> DependencyMetadatas { get; set; }
-    public required ICollection<ModuleSubModuleModel> SubModules { get; set; }
-    public required ICollection<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
+    public required IReadOnlyList<ModuleDependencyMetadataModel> DependencyMetadatas { get; set; }
+    public required IReadOnlyList<ModuleSubModuleModel> SubModules { get; set; }
+    public required IReadOnlyList<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
 }

@@ -64,19 +64,19 @@ public class CrashReportInfo
     public ICollection<StacktraceEntry> Stacktrace { get; }
     public ICollection<StacktraceEntry> FilteredStacktrace { get; }
     public ICollection<IModuleInfo> LoadedModules { get; }
-    public ICollection<Assembly> AvailableAssemblies { get; }
+    public Dictionary<AssemblyName, Assembly> AvailableAssemblies { get; }
     public Dictionary<MethodBase, Patches> LoadedHarmonyPatches { get; } = new();
     public Dictionary<string, string> AdditionalMetadata { get; }
 
     public CrashReportInfo(Exception exception, ICrashReportHelper crashReportHelper, Dictionary<string, string> additionalMetadata)
     {
-        Exception = exception;
+        Exception = exception.Demystify();
         AdditionalMetadata = additionalMetadata;
         LoadedModules = crashReportHelper.GetLoadedModules().ToArray();
 
-        AvailableAssemblies = crashReportHelper.Assemblies().ToArray();
+        AvailableAssemblies = crashReportHelper.Assemblies().ToDictionary(x => x.GetName(), x => x);
 
-        Stacktrace = GetAllInvolvedModules(exception, crashReportHelper).ToArray();
+        Stacktrace = GetAllInvolvedModules(Exception, crashReportHelper).ToArray();
         FilteredStacktrace = crashReportHelper.Filter(Stacktrace).ToArray();
 
         foreach (var originalMethod in Harmony.GetAllPatchedMethods())
@@ -161,8 +161,8 @@ public class CrashReportInfo
                 yield return modInfo;
         }
 
-        var trace = crashReportHelper.FromException(ex);
-        foreach (var frame in trace.GetFrames() ?? Array.Empty<StackFrame>())
+        var trace = new EnhancedStackTrace(ex);
+        foreach (var frame in trace.GetFrames())
         {
             if (!frame.HasMethod()) continue;
 
