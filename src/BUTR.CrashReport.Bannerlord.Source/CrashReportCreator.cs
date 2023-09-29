@@ -83,14 +83,12 @@ namespace BUTR.CrashReport.Bannerlord
 
                     Runtime = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
 
-                    AdditionalMetadata = new List<KeyValuePair<string, string>>()
-                    {
-                        new("BUTRLoaderVersion", GetBUTRLoaderVersion(crashReport)),
-                        new("BLSEVersion", GetBLSEVersion(crashReport)),
-                        new("LauncherExVersion", GetLauncherExVersion(crashReport)),
-                    }
+                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(
+                        new MetadataModel { Key = "BUTRLoaderVersion", Value = GetBUTRLoaderVersion(crashReport) },
+                        new MetadataModel { Key = "BLSEVersion", Value = GetBLSEVersion(crashReport) },
+                        new MetadataModel { Key = "LauncherExVersion", Value = GetLauncherExVersion(crashReport) }),
                 },
-                AdditionalMetadata = new List<KeyValuePair<string, string>>(),
+                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
             };
         }
 
@@ -158,13 +156,14 @@ namespace BUTR.CrashReport.Bannerlord
                     Message = ex.Message,
                     CallStack = ex.StackTrace,
                     InnerException = ex.InnerException is not null ? GetRecursiveException(crashReport, ex.InnerException) : null,
+                    AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 };
             }
 
             return GetRecursiveException(crashReport, crashReport.Exception);
         }
 
-        private static IReadOnlyList<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport)
+        private static ImmutableArray<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<EnhancedStacktraceFrameModel>();
             foreach (var stacktrace in crashReport.Stacktrace.GroupBy(x => x.StackFrameDescription))
@@ -179,9 +178,10 @@ namespace BUTR.CrashReport.Bannerlord
                             Module = method.ModuleInfo is null ? "UNKNOWN" : method.ModuleInfo.Id,
                             Method = method.Method.DeclaringType is not null ? $"{method.Method.DeclaringType.FullName}.{method.Method.Name}" : method.Method.Name,
                             MethodFullName = method.Method.FullDescription(),
-                            MethodParameters = method.Method.GetParameters().Select(x => x.ParameterType.FullName).ToArray(),
-                            NativeInstructions = method.NativeInstructions,
-                            CilInstructions = method.CilInstructions,
+                            MethodParameters = method.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
+                            NativeInstructions = method.NativeInstructions.AsImmutableArray(),
+                            CilInstructions = method.CilInstructions.AsImmutableArray(),
+                            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         });
                     }
 
@@ -194,21 +194,23 @@ namespace BUTR.CrashReport.Bannerlord
                             Module = entry.ModuleInfo is null ? "UNKNOWN" : entry.ModuleInfo.Id,
                             Method = entry.Method.DeclaringType is not null ? $"{entry.Method.DeclaringType.FullName}.{entry.Method.Name}" : entry.Method.Name,
                             MethodFullName = entry.Method.FullDescription(),
-                            MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName).ToArray(),
-                            NativeInstructions = entry.NativeInstructions,
-                            CilInstructions = entry.CilInstructions,
+                            MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
+                            NativeInstructions = entry.NativeInstructions.AsImmutableArray(),
+                            CilInstructions = entry.CilInstructions.AsImmutableArray(),
+                            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         },
-                        PatchMethods = methodsBuilder.ToArray(),
+                        PatchMethods = methodsBuilder.ToImmutable(),
                         ILOffset = entry.ILOffset,
                         NativeOffset = entry.NativeOffset,
                         MethodFromStackframeIssue = entry.MethodFromStackframeIssue,
+                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                     });
                 }
             }
-            return builder.ToArray();
+            return builder.ToImmutable();
         }
 
-        private static IReadOnlyList<InvolvedModuleModel> GetInvolvedModuleList(CrashReportInfo crashReport)
+        private static ImmutableArray<InvolvedModuleModel> GetInvolvedModuleList(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<InvolvedModuleModel>();
             foreach (var stacktrace in crashReport.FilteredStacktrace.GroupBy(m => m.ModuleInfo))
@@ -220,13 +222,13 @@ namespace BUTR.CrashReport.Bannerlord
                 {
                     Id = module.Id,
                     Stacktrace = string.Join(Environment.NewLine, stacktrace.Select(x => x.Method.FullDescription())),
-                    AdditionalMetadata = new List<KeyValuePair<string, string>>(),
+                    AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
             }
-            return builder.ToArray();
+            return builder.ToImmutable();
         }
 
-        private static IReadOnlyList<ModuleModel> GetModuleList(CrashReportInfo crashReport)
+        private static ImmutableArray<ModuleModel> GetModuleList(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<ModuleModel>();
 
@@ -243,37 +245,34 @@ namespace BUTR.CrashReport.Bannerlord
                     IsOfficial = module.IsOfficial,
                     IsSingleplayer = module.IsSingleplayerModule,
                     IsMultiplayer = module.IsMultiplayerModule,
-                    Url = module.Url,
+                    Url = !string.IsNullOrEmpty(module.Url) ? module.Url : null,
                     DependencyMetadatas = module.DependenciesAllDistinct().Select(x => new ModuleDependencyMetadataModel
                     {
                         ModuleId = x.Id,
                         Type = (ModuleDependencyMetadataModelType) x.LoadType,
                         IsOptional = x.IsOptional,
                         IsIncompatible = x.IsIncompatible,
-                        Version = x.Version.ToString(),
-                        VersionRange = x.VersionRange.ToString(),
-                        AdditionalMetadata = new List<KeyValuePair<string, string>>(),
-                    }).ToArray(),
+                        Version = !x.Version.Equals(ApplicationVersion.Empty) ? x.Version.ToString() : null,
+                        VersionRange = !x.VersionRange.Equals(ApplicationVersionRange.Empty) ? x.VersionRange.ToString() : null,
+                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                    }).ToImmutableArray(),
                     SubModules = module.SubModules.Where(ModuleInfoHelper.CheckIfSubModuleCanBeLoaded).Select(x => new ModuleSubModuleModel
                     {
                         Name = x.Name,
                         AssemblyName = x.DLLName,
                         Entrypoint = x.SubModuleClassType,
-                        AdditionalMetadata = x.Assemblies.Select(y => new KeyValuePair<string, string>("METADATA:Assembly", y))
-                            .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new KeyValuePair<string, string>(y.Key, z))))
-                            .ToArray(),
-                    }).ToArray(),
-                    AdditionalMetadata = new List<KeyValuePair<string, string>>()
-                    {
-                        new("METADATA:MANAGED_BY_VORTEX", isManagedByVortex.ToString()),
-                    },
+                        AdditionalMetadata = x.Assemblies.Select(y => new MetadataModel { Key = "METADATA:Assembly", Value = y })
+                            .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new MetadataModel { Key = y.Key, Value = z })))
+                            .ToImmutableArray(),
+                    }).ToImmutableArray(),
+                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString()}),
                 });
             }
 
-            return builder.ToArray();
+            return builder.ToImmutable();
         }
 
-        private static IReadOnlyList<AssemblyModel> GetAssemblyList(CrashReportInfo crashReport)
+        private static ImmutableArray<AssemblyModel> GetAssemblyList(CrashReportInfo crashReport)
         {
             static string CalculateMD5(string filename)
             {
@@ -319,15 +318,15 @@ namespace BUTR.CrashReport.Bannerlord
                     Path = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : assembly.Location,
                     Type = type,
                     ModuleId = module?.Id,
-                    SubModuleId = "",
-                    AdditionalMetadata = new List<KeyValuePair<string, string>>()
+                    SubModuleId = null,
+                    AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
             }
 
-            return builder.ToArray();
+            return builder.ToImmutable();
         }
 
-        private static IReadOnlyList<HarmonyPatchesModel> GetHarmonyPatchesListHtml(CrashReportInfo crashReport)
+        private static ImmutableArray<HarmonyPatchesModel> GetHarmonyPatchesListHtml(CrashReportInfo crashReport)
         {
             var builder = ImmutableArray.CreateBuilder<HarmonyPatchesModel>();
 
@@ -341,9 +340,10 @@ namespace BUTR.CrashReport.Bannerlord
                         Namespace = $"{patch.PatchMethod.DeclaringType!.FullName}.{patch.PatchMethod.Name}",
                         Index = patch.index,
                         Priority = patch.priority,
-                        Before = patch.before.ToArray(),
-                        After = patch.after.ToArray(),
+                        Before = patch.before.ToImmutableArray(),
+                        After = patch.after.ToImmutableArray(),
                         Type = type,
+                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                     });
                 }
             }
@@ -366,15 +366,16 @@ namespace BUTR.CrashReport.Bannerlord
                     {
                         OriginalMethod = originalMethod.Name,
                         OriginalMethodFullName = $"{originalMethod.DeclaringType?.FullName}.{originalMethod.Name}",
-                        Prefixes = prefixBuilder.ToArray(),
-                        Postfixes = postfixBuilder.ToArray(),
-                        Finalizers = finalizerBuilder.ToArray(),
-                        Transpilers = transpilerBuilder.ToArray(),
+                        Prefixes = prefixBuilder.ToImmutable(),
+                        Postfixes = postfixBuilder.ToImmutable(),
+                        Finalizers = finalizerBuilder.ToImmutable(),
+                        Transpilers = transpilerBuilder.ToImmutable(),
+                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                     });
                 }
             }
 
-            return builder.ToArray();
+            return builder.ToImmutable();
         }
     }
 }

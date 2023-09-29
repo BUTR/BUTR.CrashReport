@@ -36,7 +36,7 @@
 // SOFTWARE.
 #endregion
 
-#if !BUTRCRASHREPORT_DISABLE
+#if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLEHTMLRENDERER
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
 #pragma warning disable
@@ -44,10 +44,6 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
-    using global::Bannerlord.BUTR.Shared.Extensions;
-    using global::Bannerlord.BUTR.Shared.Helpers;
-    using global::Bannerlord.ModuleManager;
-
     using global::BUTR.CrashReport.Models;
 
     using global::System;
@@ -58,8 +54,6 @@ namespace BUTR.CrashReport.Bannerlord
 
     internal static class CrashReportHtmlRenderer
     {
-        private static readonly string NL = Environment.NewLine;
-
         public static readonly string MiniDumpTag = "<!-- MINI DUMP -->";
         public static readonly string MiniDumpButtonTag = "<!-- MINI DUMP BUTTON -->";
         public static readonly string SaveFileTag = "<!-- SAVE FILE -->";
@@ -68,6 +62,148 @@ namespace BUTR.CrashReport.Bannerlord
         public static readonly string ScreenshotButtonTag = "<!-- SCREENSHOT BUTTON -->";
         public static readonly string DecompressScriptTag = "<!-- DECOMPRESS SCRIPT -->";
         public static readonly string JsonModelDataTag = "<!-- JSON MODEL -->";
+
+#pragma warning disable format // @formatter:off
+        private static readonly string Scripts = """
+<script>
+   function showHideById(element, id) {
+     if (document.getElementById(id).style.display === "block") {
+       document.getElementById(id).style.display = "none";
+       element.innerHTML = element.innerHTML.replace("-", "+");
+     } else {
+       document.getElementById(id).style.display = "block";
+       element.innerHTML = element.innerHTML.replace("+", "-");
+     }
+   }
+   function showHideByClassName(element, className) {
+     var list = document.getElementsByClassName(className);
+     for (var i = 0; i < list.length; i++) {
+       list[i].style.display = element.checked ? "none" : "list-item";
+     }
+   }
+   function setBackgroundColorByClassName(className, color) {
+     var list = document.getElementsByClassName(className);
+     for (var i = 0; i < list.length; i++) {
+       list[i].style.backgroundColor = color;
+     }
+   }
+   function changeFontSize(fontSize) {
+     document.getElementById("exception").style.fontSize = fontSize.value;
+     document.getElementById("involved-modules").style.fontSize = fontSize.value;
+     document.getElementById("installed-modules").style.fontSize = fontSize.value;
+     document.getElementById("assemblies").style.fontSize = fontSize.value;
+     document.getElementById("harmony-patches").style.fontSize = fontSize.value;
+   }
+   function changeBackgroundColor(element) {
+     document.body.style.backgroundColor = !element.checked ? "#ececec" : "white";
+     setBackgroundColorByClassName("headers-container", !element.checked ? "white" : "white");
+     setBackgroundColorByClassName("modules-container", !element.checked ? "#ffffe0" : "white");
+     setBackgroundColorByClassName("submodules-container", !element.checked ? "#f8f8e7" : "white");
+     setBackgroundColorByClassName("modules-official-container", !element.checked ? "#f4fcdc" : "white");
+     setBackgroundColorByClassName("modules-external-container", !element.checked ? "#ede9e0" : "white");
+     setBackgroundColorByClassName("submodules-official-container", !element.checked ? "#f0f4e4" : "white");
+     setBackgroundColorByClassName("modules-invalid-container", !element.checked ? "#ffefd5" : "white");
+     setBackgroundColorByClassName("submodules-invalid-container", !element.checked ? "#f5ecdf" : "white");
+   }
+   function minidump(element) {
+     var base64 = document.getElementById("mini-dump").innerText.trim();
+     //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+     var binData = new Uint8Array(
+       atob(base64)
+         .split("")
+         .map(function (x) {
+           return x.charCodeAt(0);
+         })
+     );
+     var result = window.pako.inflate(binData);
+
+     var a = document.createElement("a");
+     var blob = new Blob([result]);
+     a.href = window.URL.createObjectURL(blob);
+     a.download = "crashdump.dmp";
+     a.click();
+   }
+   function savefile(element) {
+     var base64 = document.getElementById("save-file").innerText.trim();
+     //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+     var binData = new Uint8Array(
+       atob(base64)
+         .split("")
+         .map(function (x) {
+           return x.charCodeAt(0);
+         })
+     );
+     var result = window.pako.inflate(binData);
+
+     var a = document.createElement("a");
+     var blob = new Blob([result]);
+     a.href = window.URL.createObjectURL(blob);
+     a.download = "savefile.sav";
+     a.click();
+   }
+   function screenshot(element) {
+     var base64 = document.getElementById("screenshot-data").innerText.trim();
+     document.getElementById("screenshot").src = "data:image/jpeg;charset=utf-8;base64," + base64;
+     document.getElementById("screenshot").parentElement.style.display = "block";
+   }
+ </script>                                    
+""";
+#pragma warning disable format // @formatter:on
+
+        public static string AddData(string htmlReport, string crashReportJson, string? gZipBase64MiniDump = null, string? gZipBase64SaveFile = null, string? base64Screenshot = null)
+        {
+            var IncludeMiniDump = !string.IsNullOrEmpty(gZipBase64MiniDump);
+            var IncludeSaveFile = !string.IsNullOrEmpty(gZipBase64SaveFile);
+            var IncludeScreenshot = !string.IsNullOrEmpty(base64Screenshot);
+
+            if (IncludeMiniDump)
+            {
+                htmlReport = htmlReport
+                    .Replace(CrashReportHtmlRenderer.MiniDumpTag, gZipBase64MiniDump)
+                    .Replace(CrashReportHtmlRenderer.MiniDumpButtonTag, @"
+<![if !IE]>
+              <br/>
+              <br/>
+              <button onclick='minidump(this)'>Get MiniDump</button>
+<![endif]>");
+            }
+
+            if (IncludeSaveFile)
+            {
+                htmlReport = htmlReport
+                    .Replace(CrashReportHtmlRenderer.SaveFileTag, gZipBase64SaveFile)
+                    .Replace(CrashReportHtmlRenderer.SaveFileButtonTag, @"
+<![if !IE]>
+              <br/>
+              <br/>
+              <button onclick='savefile(this)'>Get Save File</button>
+<![endif]>");
+            }
+
+            if (IncludeScreenshot)
+            {
+                htmlReport = htmlReport
+                    .Replace(CrashReportHtmlRenderer.ScreenshotTag, base64Screenshot)
+                    .Replace(CrashReportHtmlRenderer.ScreenshotButtonTag, @"
+<![if !IE]>
+              <br/>
+              <br/>
+              <button onclick='screenshot(this)'>Show Screenshot</button>
+<![endif]>");
+            }
+
+            if (IncludeMiniDump || IncludeSaveFile)
+            {
+                htmlReport = htmlReport.Replace(CrashReportHtmlRenderer.DecompressScriptTag, @"
+<![if !IE]>
+    <script src=""https://cdn.jsdelivr.net/pako/1.0.3/pako_inflate.min.js""></script>
+<![endif]>");
+            }
+
+            htmlReport = htmlReport.Replace(CrashReportHtmlRenderer.JsonModelDataTag, crashReportJson);
+
+            return htmlReport;
+        }
 
         public static string Build(CrashReportModel crashReportModel, IEnumerable<LogSource> files)
         {
@@ -86,7 +222,7 @@ namespace BUTR.CrashReport.Bannerlord
   <head>
     <title>Bannerlord Crash Report</title>
     <meta charset='utf-8' />
-    <game version='{{ApplicationVersionHelper.GameVersionStr()}}' />
+    <game version='{{crashReportModel.GameVersion}}' />
     <launcher type='{{launcherType}}' version='{{launcherVersion}}' />
     <runtime value='{{runtime}}' />
     {{(!string.IsNullOrEmpty(butrLoaderVersion) ? $"<butrloader version='{butrLoaderVersion}' />" : string.Empty)}}
@@ -274,88 +410,7 @@ namespace BUTR.CrashReport.Bannerlord
       </div>
     </div>
     {{DecompressScriptTag}}
-    <script>
-      function showHideById(element, id) {
-        if (document.getElementById(id).style.display === "block") {
-          document.getElementById(id).style.display = "none";
-          element.innerHTML = element.innerHTML.replace("-", "+");
-        } else {
-          document.getElementById(id).style.display = "block";
-          element.innerHTML = element.innerHTML.replace("+", "-");
-        }
-      }
-      function showHideByClassName(element, className) {
-        var list = document.getElementsByClassName(className);
-        for (var i = 0; i < list.length; i++) {
-          list[i].style.display = element.checked ? "none" : "list-item";
-        }
-      }
-      function setBackgroundColorByClassName(className, color) {
-        var list = document.getElementsByClassName(className);
-        for (var i = 0; i < list.length; i++) {
-          list[i].style.backgroundColor = color;
-        }
-      }
-      function changeFontSize(fontSize) {
-        document.getElementById("exception").style.fontSize = fontSize.value;
-        document.getElementById("involved-modules").style.fontSize = fontSize.value;
-        document.getElementById("installed-modules").style.fontSize = fontSize.value;
-        document.getElementById("assemblies").style.fontSize = fontSize.value;
-        document.getElementById("harmony-patches").style.fontSize = fontSize.value;
-      }
-      function changeBackgroundColor(element) {
-        document.body.style.backgroundColor = !element.checked ? "#ececec" : "white";
-        setBackgroundColorByClassName("headers-container", !element.checked ? "white" : "white");
-        setBackgroundColorByClassName("modules-container", !element.checked ? "#ffffe0" : "white");
-        setBackgroundColorByClassName("submodules-container", !element.checked ? "#f8f8e7" : "white");
-        setBackgroundColorByClassName("modules-official-container", !element.checked ? "#f4fcdc" : "white");
-        setBackgroundColorByClassName("modules-external-container", !element.checked ? "#ede9e0" : "white");
-        setBackgroundColorByClassName("submodules-official-container", !element.checked ? "#f0f4e4" : "white");
-        setBackgroundColorByClassName("modules-invalid-container", !element.checked ? "#ffefd5" : "white");
-        setBackgroundColorByClassName("submodules-invalid-container", !element.checked ? "#f5ecdf" : "white");
-      }
-      function minidump(element) {
-        var base64 = document.getElementById("mini-dump").innerText.trim();
-        //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-        var binData = new Uint8Array(
-          atob(base64)
-            .split("")
-            .map(function (x) {
-              return x.charCodeAt(0);
-            })
-        );
-        var result = window.pako.inflate(binData);
-
-        var a = document.createElement("a");
-        var blob = new Blob([result]);
-        a.href = window.URL.createObjectURL(blob);
-        a.download = "crashdump.dmp";
-        a.click();
-      }
-      function savefile(element) {
-        var base64 = document.getElementById("save-file").innerText.trim();
-        //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-        var binData = new Uint8Array(
-          atob(base64)
-            .split("")
-            .map(function (x) {
-              return x.charCodeAt(0);
-            })
-        );
-        var result = window.pako.inflate(binData);
-
-        var a = document.createElement("a");
-        var blob = new Blob([result]);
-        a.href = window.URL.createObjectURL(blob);
-        a.download = "savefile.sav";
-        a.click();
-      }
-      function screenshot(element) {
-        var base64 = document.getElementById("screenshot-data").innerText.trim();
-        document.getElementById("screenshot").src = "data:image/jpeg;charset=utf-8;base64," + base64;
-        document.getElementById("screenshot").parentElement.style.display = "block";
-      }
-    </script>
+    {{Scripts}}
   </body>
 </html>
 """;
@@ -376,7 +431,7 @@ namespace BUTR.CrashReport.Bannerlord
                 .AppendIf(hasCallStack, "CallStack:").AppendIf(hasCallStack, "<br/>")
                 .AppendIf(hasMessage, "<ol>")
                 .AppendIf(hasMessage, "<li>")
-                .AppendJoinIf(hasMessage, $"</li>{NL}<li>", ex.CallStack.Split(new[] { NL }, StringSplitOptions.RemoveEmptyEntries))
+                .AppendJoinIf(hasMessage, $"</li><li>", ex.CallStack.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
                 .AppendIf(hasMessage, "</li>")
                 .AppendIf(hasMessage, "</ol>")
                 .AppendIf(hasInner, "<br/>")
@@ -406,7 +461,7 @@ namespace BUTR.CrashReport.Bannerlord
                         .Append($"Module: {method.Module}").Append("<br/>")
                         .Append($"Method: {method.MethodFullName}").Append("<br/>")
                         .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id}\")'>+ CIL:</a><div id='{id}' class='headers-container'><pre>")
-                        .AppendJoin(NL, method.CilInstructions).Append("</pre></div></div>")
+                        .AppendJoin('\n', method.CilInstructions).Append("</pre></div></div>")
                         .Append("</li>");
                 }
 
@@ -417,9 +472,9 @@ namespace BUTR.CrashReport.Bannerlord
                     .Append($"Method: ").Append(stacktrace.OriginalMethod.MethodFullName).Append("<br/>")
                     .Append($"Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
                     .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ CIL:</a><div id='{id2}' class='headers-container'><pre>")
-                    .AppendJoin(NL, stacktrace.OriginalMethod.CilInstructions).Append("</pre></div></div>")
+                    .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.CilInstructions).Append("</pre></div></div>")
                     .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id3}\")'>+ Native:</a><div id='{id3}' class='headers-container'><pre>")
-                    .AppendJoin(NL, stacktrace.OriginalMethod.NativeInstructions).Append("</pre></div></div>")
+                    .AppendJoin('\n', stacktrace.OriginalMethod.NativeInstructions).Append("</pre></div></div>")
                     .Append("</br>")
                     .Append("</li>");
 
@@ -486,6 +541,8 @@ namespace BUTR.CrashReport.Bannerlord
                 var tmp = new StringBuilder();
                 foreach (var dependentModule in module.DependencyMetadatas)
                 {
+                    var hasVersion = !string.IsNullOrEmpty(dependentModule.Version);
+                    var hasVersionRange = !string.IsNullOrEmpty(dependentModule.VersionRange);
                     if (dependentModule.IsIncompatible)
                     {
                         deps[dependentModule.ModuleId] = tmp.Clear()
@@ -493,27 +550,33 @@ namespace BUTR.CrashReport.Bannerlord
                             .Append($"<a href='javascript:;' onclick='document.getElementById(\"{dependentModule.ModuleId}\").scrollIntoView(false)'>")
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
-                            .Append(dependentModule.IsOptional ? " (optional)" : string.Empty)
+                            .AppendIf(dependentModule.IsOptional, " (optional)")
+                            .AppendIf(hasVersion, $" >= ").AppendIf(hasVersion, dependentModule.Version)
+                            .AppendIf(hasVersionRange, dependentModule.VersionRange)
                             .ToString();
                     }
                     else if (dependentModule.Type == ModuleDependencyMetadataModelType.LoadAfter)
                     {
                         deps[dependentModule.ModuleId] = tmp.Clear()
-                            .Append("Load ").Append(DependentModuleMetadata.GetLoadType(LoadType.LoadAfterThis))
+                            .Append("Load ").Append("Before ")
                             .Append($"<a href='javascript:;' onclick='document.getElementById(\"{dependentModule.ModuleId}\").scrollIntoView(false)'>")
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
-                            .Append(dependentModule.IsOptional ? " (optional)" : string.Empty)
+                            .AppendIf(dependentModule.IsOptional, " (optional)")
+                            .AppendIf(hasVersion, $" >= ").AppendIf(hasVersion, dependentModule.Version)
+                            .AppendIf(hasVersionRange, dependentModule.VersionRange)
                             .ToString();
                     }
                     else if (dependentModule.Type == ModuleDependencyMetadataModelType.LoadBefore)
                     {
                         deps[dependentModule.ModuleId] = tmp.Clear()
-                            .Append("Load ").Append(DependentModuleMetadata.GetLoadType(LoadType.LoadBeforeThis))
+                            .Append("Load ").Append("After ")
                             .Append($"<a href='javascript:;' onclick='document.getElementById(\"{dependentModule.ModuleId}\").scrollIntoView(false)'>")
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
-                            .Append(dependentModule.IsOptional ? " (optional)" : string.Empty)
+                            .AppendIf(dependentModule.IsOptional, " (optional)")
+                            .AppendIf(hasVersion, $" >= ").AppendIf(hasVersion, dependentModule.Version)
+                            .AppendIf(hasVersionRange, dependentModule.VersionRange)
                             .ToString();
                     }
                 }
@@ -533,15 +596,15 @@ namespace BUTR.CrashReport.Bannerlord
                 foreach (var subModule in module.SubModules)
                 {
                     assembliesBuilder.Clear();
-                    foreach (var (_, assembly) in subModule.AdditionalMetadata.Where(x => x.Key == "METADATA:Assembly"))
+                    foreach (var metadata in subModule.AdditionalMetadata.Where(x => x.Key == "METADATA:Assembly"))
                     {
-                        assembliesBuilder.Append("<li>").Append(assembly).Append("</li>");
+                        assembliesBuilder.Append("<li>").Append(metadata.Value).Append("</li>");
                     }
 
                     tagsBuilder.Clear();
-                    foreach (var (tag, value) in subModule.AdditionalMetadata.Where(x => !x.Key.StartsWith("METADATA:")))
+                    foreach (var metadata in subModule.AdditionalMetadata.Where(x => !x.Key.StartsWith("METADATA:")))
                     {
-                        tagsBuilder.Append("<li>").Append(tag).Append(": ").Append(value).Append("</li>");
+                        tagsBuilder.Append("<li>").Append(metadata.Key).Append(": ").Append(metadata.Value).Append("</li>");
                     }
 
                     var hasTags = tagsBuilder.Length != 0;

@@ -7,5 +7,5 @@ public record ModuleSubModuleModel
     public required string Name { get; set; }
     public required string AssemblyName { get; set; }
     public required string Entrypoint { get; set; }
-    public required IReadOnlyList<KeyValuePair<string, string>> AdditionalMetadata { get; set; }
+    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }
