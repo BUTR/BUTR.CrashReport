@@ -58,7 +58,7 @@ public class CrashReportInfo
     private static readonly GetNativeMethodBodyDelegate? GetNativeMethodBody =
         AccessTools2.GetDelegate<GetNativeMethodBodyDelegate>("MonoMod.Core.Platforms.PlatformTriple:GetNativeMethodBody");
 
-    public readonly byte Version = 12;
+    public readonly byte Version = 13;
     public Guid Id { get; } = Guid.NewGuid();
     public Exception Exception { get; }
     public ICollection<StacktraceEntry> Stacktrace { get; }
