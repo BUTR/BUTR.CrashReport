@@ -36,6 +36,7 @@
 // SOFTWARE.
 #endregion
 
+
 #if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLEHTMLRENDERER
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
@@ -44,6 +45,7 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
+    using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Models;
 
     using global::System;
@@ -212,13 +214,13 @@ namespace BUTR.CrashReport.Bannerlord
             var launcherType = crashReportModel.Metadata.LauncherType;
             var launcherVersion = crashReportModel.Metadata.LauncherVersion;
 
-            var butrLoaderVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "BUTRLoaderVersion").Value is { } butrLoaderVersionVal ? butrLoaderVersionVal : string.Empty;
-            var blseVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "BLSEVersion").Value is { } blseVersionVal ? blseVersionVal : string.Empty;
-            var launcherExVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "LauncherExVersion").Value is { } launcherExVersionVal ? launcherExVersionVal : string.Empty;
+            var butrLoaderVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "BUTRLoaderVersion")?.Value is { } butrLoaderVersionVal ? butrLoaderVersionVal : string.Empty;
+            var blseVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "BLSEVersion")?.Value is { } blseVersionVal ? blseVersionVal : string.Empty;
+            var launcherExVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "LauncherExVersion")?.Value is { } launcherExVersionVal ? launcherExVersionVal : string.Empty;
 
 #pragma warning disable format // @formatter:off
             return $$"""
-<html>
+<html>  
   <head>
     <title>Bannerlord Crash Report</title>
     <meta charset='utf-8' />
@@ -582,12 +584,8 @@ namespace BUTR.CrashReport.Bannerlord
                 }
 
                 dependenciesBuilder.Clear();
-                foreach (var (_, line) in deps)
-                {
-                    dependenciesBuilder.Append("<li>")
-                        .Append(line)
-                        .Append("</li>");
-                }
+                foreach (var dep in deps)
+                    dependenciesBuilder.Append("<li>").Append(dep.Value).Append("</li>");
             }
 
             void AppendSubModules(ModuleModel module)

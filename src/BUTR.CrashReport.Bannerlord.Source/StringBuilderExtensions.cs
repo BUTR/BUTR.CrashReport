@@ -49,15 +49,8 @@ namespace BUTR.CrashReport.Bannerlord
 
     internal static class StringBuilderExtensions
     {
-        public static StringBuilder AppendJoin(this StringBuilder builder, string separator, IReadOnlyList<string> lines)
-        {
-            for (var i = 0; i < lines.Count; i++)
-            {
-                builder.Append(lines[i]);
-                if (lines.Count - 1 != i) builder.Append(separator);
-            }
-            return builder;
-        }
+        public static StringBuilder AppendJoin(this StringBuilder builder, string separator, IReadOnlyList<string> lines) => AppendJoinIf(builder, true, separator, lines);
+        public static StringBuilder AppendJoin(this StringBuilder builder, char separator, IReadOnlyList<string> lines) => AppendJoinIf(builder, true, separator, lines);
         public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, string separator, IReadOnlyList<string> lines)
         {
             if (!condition) return builder;
@@ -69,7 +62,18 @@ namespace BUTR.CrashReport.Bannerlord
             }
             return builder;
         }
-        public static StringBuilder AppendIf(this StringBuilder builder, bool condition, string value) => condition ? builder.Append(value) : builder;
+        public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, char separator, IReadOnlyList<string> lines)
+        {
+            if (!condition) return builder;
+
+            for (var i = 0; i < lines.Count; i++)
+            {
+                builder.Append(lines[i]);
+                if (lines.Count - 1 != i) builder.Append(separator);
+            }
+            return builder;
+        }
+        public static StringBuilder AppendIf(this StringBuilder builder, bool condition, string? value) => condition ? builder.Append(value) : builder;
         public static StringBuilder AppendIf(this StringBuilder builder, bool condition, int value) => condition ? builder.Append(value) : builder;
         public static StringBuilder AppendIf(this StringBuilder builder, bool condition, StringBuilder value) => condition ? builder.Append(value) : builder;
         public static StringBuilder AppendLineIf(this StringBuilder builder, bool condition) => condition ? builder.AppendLine() : builder;
