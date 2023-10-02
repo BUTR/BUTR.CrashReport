@@ -7,7 +7,6 @@ public record ModuleDependencyMetadataModel
     public required string ModuleId { get; set; }
     public required ModuleDependencyMetadataModelType Type { get; set; }
     public required bool IsOptional { get; set; }
-    public required bool IsIncompatible { get; set; }
     public required string? Version { get; set; }
     public required string? VersionRange { get; set; }
     public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();

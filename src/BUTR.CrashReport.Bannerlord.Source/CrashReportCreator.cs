@@ -221,7 +221,7 @@ namespace BUTR.CrashReport.Bannerlord
                 builder.Add(new()
                 {
                     Id = module.Id,
-                    Stacktrace = string.Join(Environment.NewLine, stacktrace.Select(x => x.Method.FullDescription())),
+                    EnhancedStacktraceFrameName = stacktrace.Last().StackFrameDescription,
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
             }
@@ -249,9 +249,8 @@ namespace BUTR.CrashReport.Bannerlord
                     DependencyMetadatas = module.DependenciesAllDistinct().Select(x => new ModuleDependencyMetadataModel
                     {
                         ModuleId = x.Id,
-                        Type = (ModuleDependencyMetadataModelType) x.LoadType,
+                        Type = x.IsIncompatible ? ModuleDependencyMetadataModelType.Incompatible : (ModuleDependencyMetadataModelType) x.LoadType,
                         IsOptional = x.IsOptional,
-                        IsIncompatible = x.IsIncompatible,
                         Version = !x.Version.Equals(ApplicationVersion.Empty) ? x.Version.ToString() : null,
                         VersionRange = !x.VersionRange.Equals(ApplicationVersionRange.Empty) ? x.VersionRange.ToString() : null,
                         AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
@@ -265,7 +264,14 @@ namespace BUTR.CrashReport.Bannerlord
                             .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new MetadataModel { Key = y.Key, Value = z })))
                             .ToImmutableArray(),
                     }).ToImmutableArray(),
-                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString()}),
+                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString()}).AddRange(crashReport.AvailableAssemblies.Select(x =>
+                    {
+                        if (ModuleInfoHelper.IsModuleAssembly(module, x.Value))
+                        {
+                            return new MetadataModel { Key = "METADATA:AdditionalAssembly", Value = $"{Path.GetFileName(x.Value.CodeBase)} ({x.Key.ToString()})", };
+                        }
+                        return null;
+                    }).OfType<MetadataModel>()),
                 });
             }
 
@@ -314,11 +320,9 @@ namespace BUTR.CrashReport.Bannerlord
                     FullName = assembly.ToString(),
                     Version = assemblyName.Version.ToString(),
                     Architecture = assemblyName.ProcessorArchitecture.ToString(),
-                    Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? "" : CalculateMD5(assembly.Location),
+                    Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CalculateMD5(assembly.Location),
                     Path = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : assembly.Location,
                     Type = type,
-                    ModuleId = module?.Id,
-                    SubModuleId = null,
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
             }

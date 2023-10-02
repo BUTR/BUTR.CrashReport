@@ -56,14 +56,14 @@ namespace BUTR.CrashReport.Bannerlord
 
     internal static class CrashReportHtmlRenderer
     {
-        public static readonly string MiniDumpTag = "<!-- MINI DUMP -->";
-        public static readonly string MiniDumpButtonTag = "<!-- MINI DUMP BUTTON -->";
-        public static readonly string SaveFileTag = "<!-- SAVE FILE -->";
-        public static readonly string SaveFileButtonTag = "<!-- SAVE FILE BUTTON -->";
-        public static readonly string ScreenshotTag = "<!-- SCREENSHOT -->";
-        public static readonly string ScreenshotButtonTag = "<!-- SCREENSHOT BUTTON -->";
-        public static readonly string DecompressScriptTag = "<!-- DECOMPRESS SCRIPT -->";
-        public static readonly string JsonModelDataTag = "<!-- JSON MODEL -->";
+        private static readonly string MiniDumpTag = "<!-- MINI DUMP -->";
+        private static readonly string MiniDumpButtonTag = "<!-- MINI DUMP BUTTON -->";
+        private static readonly string SaveFileTag = "<!-- SAVE FILE -->";
+        private static readonly string SaveFileButtonTag = "<!-- SAVE FILE BUTTON -->";
+        private static readonly string ScreenshotTag = "<!-- SCREENSHOT -->";
+        private static readonly string ScreenshotButtonTag = "<!-- SCREENSHOT BUTTON -->";
+        private static readonly string DecompressScriptTag = "<!-- DECOMPRESS SCRIPT -->";
+        private static readonly string JsonModelDataTag = "<!-- JSON MODEL -->";
 
 #pragma warning disable format // @formatter:off
         private static readonly string Scripts = """
@@ -492,35 +492,39 @@ namespace BUTR.CrashReport.Bannerlord
         {
             var sb = new StringBuilder();
             sb.Append("<ul>");
-            foreach (var stacktrace in crashReport.EnhancedStacktrace)
+            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.OriginalMethod.Module))
             {
-                var moduleId = stacktrace.OriginalMethod.Module;
+                var moduleId = grouping.Key;
                 if (moduleId == "UNKNOWN") continue;
 
                 sb.Append("<li>")
-                    .Append($"<a href='javascript:;' onclick='document.getElementById(\"{moduleId}\").scrollIntoView(false)'>").Append(moduleId).Append("</a>").Append("<br/>")
-                    .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullName).Append("<br/>")
-                    .Append("Frame: ").Append(stacktrace.FrameDescription).Append("<br/>")
-                    .Append("Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
-                    .Append("</li>");
+                    .Append($"<a href='javascript:;' onclick='document.getElementById(\"{moduleId}\").scrollIntoView(false)'>").Append(moduleId).Append("</a>").Append("<br/>");
 
-                if (stacktrace.PatchMethods.Count > 0)
+                foreach (var stacktrace in grouping)
                 {
-                    sb.Append("Patches:").Append("<br/>")
-                        .Append("<ul>");
-                    foreach (var method in stacktrace.PatchMethods)
-                    {
-                        // Ignore blank transpilers used to force the jitter to skip inlining
-                        if (method.Method == "BlankTranspiler") continue;
-                        sb.Append("<li>")
-                            .Append($"Module: ").Append(method.Module ?? "UNKNOWN").Append("<br/>")
-                            .Append($"Method: ").Append(method.MethodFullName).Append("<br/>")
-                            .Append("</li>");
-                    }
-                    sb.Append("</ul>");
-                }
+                    sb.Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullName).Append("<br/>")
+                        .Append("Frame: ").Append(stacktrace.FrameDescription).Append("<br/>");
 
-                sb.Append("</br>");
+                    if (stacktrace.PatchMethods.Count > 0)
+                    {
+                        sb.Append("Patches:").Append("<br/>")
+                            .Append("<ul>");
+                        foreach (var method in stacktrace.PatchMethods)
+                        {
+                            // Ignore blank transpilers used to force the jitter to skip inlining
+                            if (method.Method == "BlankTranspiler") continue;
+                            sb.Append("<li>")
+                                .Append($"Module: ").Append(method.Module ?? "UNKNOWN").Append("<br/>")
+                                .Append($"Method: ").Append(method.MethodFullName).Append("<br/>")
+                                .Append("</li>");
+                        }
+                        sb.Append("</ul>");
+                    }
+
+                    sb.Append("</br>");
+
+                    sb.Append("</li>");
+                }
 
                 sb.Append("</li>");
             }
@@ -545,7 +549,7 @@ namespace BUTR.CrashReport.Bannerlord
                 {
                     var hasVersion = !string.IsNullOrEmpty(dependentModule.Version);
                     var hasVersionRange = !string.IsNullOrEmpty(dependentModule.VersionRange);
-                    if (dependentModule.IsIncompatible)
+                    if (dependentModule.Type == ModuleDependencyMetadataModelType.Incompatible)
                     {
                         deps[dependentModule.ModuleId] = tmp.Clear()
                             .Append("Incompatible ")
@@ -629,12 +633,12 @@ namespace BUTR.CrashReport.Bannerlord
             void AppendAdditionalAssemblies(ModuleModel module)
             {
                 additionalAssembliesBuilder.Clear();
-                foreach (var externalLoadedAssembly in crashReport.Assemblies)
+                foreach (var kv in module.AdditionalMetadata.Where(x => x.Key.Equals("METADATA:AdditionalAssembly")))
                 {
-                    if (externalLoadedAssembly.ModuleId == module.Id)
-                    {
-                        additionalAssembliesBuilder.Append("<li>").Append(Path.GetFileName(externalLoadedAssembly.Path)).Append(" (").Append(externalLoadedAssembly.FullName).Append(")").Append("</li>");
-                    }
+                    var splt = kv.Value.Split(" (");
+                    var fullName = splt[1].TrimEnd(')');
+                    var assembly = crashReport.Assemblies.FirstOrDefault(x => fullName.StartsWith(x.FullName));
+                    additionalAssembliesBuilder.Append("<li>").Append(assembly.Name).Append(" (").Append(assembly.FullName).Append(")").Append("</li>");
                 }
             }
 
@@ -697,8 +701,6 @@ namespace BUTR.CrashReport.Bannerlord
 
             void AppendAssembly(AssemblyModel assembly)
             {
-                var isModule = assembly.ModuleId is not null;
-
                 var @class = string.Join(" ", assembly.Type.GetFlags().Select(x => x switch
                 {
                     AssemblyModelType.Dynamic => "dynamic_assembly",
@@ -798,7 +800,7 @@ namespace BUTR.CrashReport.Bannerlord
                 {
                     var toAppend = (longestType - logEntry.Type.Length) + 1;
                     var style = logEntry.Level == "ERR" ? "color:red" : logEntry.Level == "WRN" ? "color:orange" : "";
-                    sb.Append(logEntry.Date.ToString("u")).Append(" [").Append(logEntry.Type).Append(']').Append(' ', toAppend).Append('[').Append("<span style ='").Append(style).Append("'>").Append(logEntry.Level).Append("</span>").Append("]: ").Append(logEntry.Message);
+                    sb.Append(logEntry.Date.ToString("u")).Append(" [").Append(logEntry.Type).Append(']').Append(' ', toAppend).Append('[').Append("<span style ='").Append(style).Append("'>").Append(logEntry.Level).Append("</span>").Append("]: ").Append(logEntry.Message).AppendLine();
                 }
                 sb.Append("</pre>").Append("</ul></li>");
             }

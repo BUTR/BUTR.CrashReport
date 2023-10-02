@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ILRepackTargetConfigurations>Debug;Release</ILRepackTargetConfigurations>
+    <ILRepackAllowDuplicateResources>false</ILRepackAllowDuplicateResources>
+    <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
+    <ILRepackPerformInternalize>true</ILRepackPerformInternalize>
+    <ILRepackCopyAttributes>false</ILRepackCopyAttributes>
+    <ILRepackBuildToolingPath>$(PkgBUTR_ILRepack)\tools\net461\ILRepack.exe</ILRepackBuildToolingPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ILRepack" Version="2.0.18" PrivateAssets="all" IncludeAssets="none" />
+    <PackageReference Include="BUTR.ILRepack" Version="2.1.9-beta7" GeneratePathProperty="true" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="ILRepack.FullAuto" Version="1.2.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.Bannerlord.Parser</PackageId>
+    <Title>BUTR.CrashReport.Bannerlord.Parser</Title>
+    <Description>Contains the models for parsing the crash report</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
+    <PackageTags>butr crash report bannerlord</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.53" />
+    <PackageReference Include="Polyfill" Version="1.28.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" />
+  </ItemGroup>
+
+  <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepare">
+    <PropertyGroup>
+      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.dll;</ILRepackExcludeAssemblies>
+    </PropertyGroup>
+  </Target>
+
+
+</Project>

@@ -11,7 +11,5 @@ public record AssemblyModel
     public required string Hash { get; set; }
     public required string Path { get; set; }
     public required AssemblyModelType Type { get; set; }
-    public required string? ModuleId { get; set; }
-    public required string? SubModuleId { get; set; }
     public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }
