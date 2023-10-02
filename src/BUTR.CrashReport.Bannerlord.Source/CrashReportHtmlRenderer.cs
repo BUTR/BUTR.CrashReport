@@ -793,6 +793,8 @@ namespace BUTR.CrashReport.Bannerlord
             sb.Append("<ul>");
             foreach (var logSource in files)
             {
+                if (logSource.Logs.Count == 0) continue;
+
                 sb.Append("<li>").Append("<a>").Append(logSource.Name).Append("</a>").Append("<pre>");
                 var sbSource = new StringBuilder();
                 var longestType = logSource.Logs.Max(x => x.Type.Length);

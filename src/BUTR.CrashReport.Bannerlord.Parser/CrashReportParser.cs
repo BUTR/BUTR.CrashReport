@@ -33,14 +33,19 @@ public static class CrashReportParser
 
     private static IReadOnlyList<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(ReadOnlySpan<char> rawContent, int version, HtmlNode node)
     {
-        const string enhancedStacktraceStartDelimiter = "<div id='enhanced-stacktrace' class='headers-container'>";
+        const string enhancedStacktraceStartDelimiter1 = "<div id='enhanced-stacktrace' class='headers-container'>";
+        const string enhancedStacktraceStartDelimiter2 = "<div id=\"enhanced-stacktrace\" class=\"headers-container\">";
         const string enhancedStacktraceEndDelimiter = "</div>";
 
-        if (version < 1000 && rawContent.IndexOf(enhancedStacktraceStartDelimiter.AsSpan()) is var enhancedStacktraceStartIdx and not -1)
+        var idx = 0;
+        if (rawContent.IndexOf(enhancedStacktraceStartDelimiter1.AsSpan()) is var enhancedStacktraceStartIdx1 and not -1) idx = enhancedStacktraceStartIdx1;
+        if (rawContent.IndexOf(enhancedStacktraceStartDelimiter2.AsSpan()) is var enhancedStacktraceStartIdx2 and not -1) idx = enhancedStacktraceStartIdx2;
+
+        if (version < 1000 && idx != -1)
         {
-            var enhancedStacktraceEndIdx = rawContent.Slice(enhancedStacktraceStartIdx).IndexOf(enhancedStacktraceEndDelimiter.AsSpan()) - enhancedStacktraceEndDelimiter.Length;
-            var enhancedStacktraceRaw = rawContent.Slice(enhancedStacktraceStartIdx, enhancedStacktraceEndIdx).ToString();
-            var toEscape = GetAllOpenTags(enhancedStacktraceRaw.AsSpan(), span => !span.SequenceEqual(enhancedStacktraceStartDelimiter.AsSpan()) && span is not "<ul>" and not "<li>" and not "<br>");
+            var enhancedStacktraceEndIdx = rawContent.Slice(idx).IndexOf(enhancedStacktraceEndDelimiter.AsSpan()) - enhancedStacktraceEndDelimiter.Length;
+            var enhancedStacktraceRaw = rawContent.Slice(idx, enhancedStacktraceEndIdx).ToString();
+            var toEscape = GetAllOpenTags(enhancedStacktraceRaw.AsSpan(), span => !span.SequenceEqual(enhancedStacktraceStartDelimiter1.AsSpan()) && !span.SequenceEqual(enhancedStacktraceStartDelimiter2.AsSpan()) && span is not "<ul>" and not "<li>" and not "<br>");
             enhancedStacktraceRaw = toEscape.Aggregate(enhancedStacktraceRaw, (current, s) => current.Replace(s, s.Replace("<", "&lt;").Replace(">", "&gt;")));
             //var openTags = GetAllOpenTags(enhancedStacktraceRaw, span => !span.SequenceEqual("<ul>")  && !span.SequenceEqual("<li>") && !span.SequenceEqual("<br>")).ToArray();
             var enhancedStacktraceDoc = new HtmlDocument();
@@ -147,7 +152,7 @@ public static class CrashReportParser
         foreach (var source in node.SelectNodes("ul/li"))
         {
             var name = source.ChildNodes.First().InnerText;
-            var entries = source.SelectNodes("ul/ul/li").Select(ParseLogEntry);
+            var entries = source.SelectNodes("ul/ul/li")?.Select(ParseLogEntry) ?? Array.Empty<LogEntry>();
             yield return new()
             {
                 Name = name,
