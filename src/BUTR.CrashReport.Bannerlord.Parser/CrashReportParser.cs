@@ -58,10 +58,17 @@ public static class CrashReportParser
         return node.SelectSingleNode("descendant::div[@id=\"enhanced-stacktrace\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(ParseEnhancedStacktrace).ToArray() ?? Array.Empty<EnhancedStacktraceFrameModel>();
     }
 
+    private static HtmlDocument Create(ref string content)
+    {
+        content = content.Replace("<filename unknown>", "NULL");
+        var document = new HtmlDocument();
+        document.LoadHtml(content);
+        return document;
+    }
+
     public static string? ParseHtmlJson(string content)
     {
-        var document = new HtmlDocument();
-        document.LoadHtml(content.Replace("<filename unknown>", "NULL"));
+        var document = Create(ref content);
         return document.DocumentNode.SelectSingleNode("descendant::div[@id=\"json-model-data\"]")?.InnerText;
     }
 
@@ -69,8 +76,7 @@ public static class CrashReportParser
     {
         try
         {
-            var document = new HtmlDocument();
-            document.LoadHtml(content.Replace("<filename unknown>", "NULL"));
+            var document = Create(ref content);
 
             var versionStr = document.DocumentNode.SelectSingleNode("descendant::report")?.Attributes?["version"]?.Value;
             version = byte.TryParse(versionStr, out var v) ? v : (byte) 1;
@@ -84,7 +90,7 @@ public static class CrashReportParser
                 }
                 default:
                 {
-                    crashReportModel = ParseLegacyHtml(version, document, content);
+                    crashReportModel = ParseLegacyHtmlInternal(version, document, content);
                     crashReportJson = null;
                     return true;
                 }
@@ -101,11 +107,9 @@ public static class CrashReportParser
 
     public static IEnumerable<LogSource> ParseLegacyHtmlLogs(string content)
     {
-        var html = new HtmlDocument();
-        html.LoadHtml(content.Replace("<filename unknown>", "NULL"));
-        var document = html.DocumentNode;
+        var document = Create(ref content);
 
-        var versionStr = document.SelectSingleNode("descendant::report")?.Attributes?["version"]?.Value;
+        var versionStr = document.DocumentNode.SelectSingleNode("descendant::report")?.Attributes?["version"]?.Value;
         var version = byte.TryParse(versionStr, out var v) ? v : (byte) 1;
         switch (version)
         {
@@ -115,7 +119,7 @@ public static class CrashReportParser
             }
             default:
             {
-                var exceptionNode = document.SelectSingleNode("descendant::div[@id=\"log-files\"]");
+                var exceptionNode = document.DocumentNode.SelectSingleNode("descendant::div[@id=\"log-files\"]");
                 return ParseLogsInternal(exceptionNode);
             }
         }
@@ -150,7 +154,6 @@ public static class CrashReportParser
             };
         }
 
-
         foreach (var source in node.SelectNodes("ul/li"))
         {
             var name = source.ChildNodes.First().InnerText;
@@ -164,7 +167,13 @@ public static class CrashReportParser
         }
     }
 
-    public static CrashReportModel ParseLegacyHtml(byte version, HtmlDocument document, string content)
+    public static CrashReportModel ParseLegacyHtml(byte version, string content)
+    {
+        var document = Create(ref content);
+        return ParseLegacyHtmlInternal(version, document, content);
+    }
+
+    private static CrashReportModel ParseLegacyHtmlInternal(byte version, HtmlDocument document, string content)
     {
         var node = document.DocumentNode;
         var id = node.SelectSingleNode("descendant::report")?.Attributes?["id"]?.Value ?? string.Empty;
