@@ -45,8 +45,10 @@ public static class CrashReportParser
         {
             var enhancedStacktraceEndIdx = rawContent.Slice(idx).IndexOf(enhancedStacktraceEndDelimiter.AsSpan(), StringComparison.Ordinal) - enhancedStacktraceEndDelimiter.Length;
             var enhancedStacktraceRaw = rawContent.Slice(idx, enhancedStacktraceEndIdx).ToString();
-            var toEscape = GetAllOpenTags(enhancedStacktraceRaw.AsSpan(), span => !span.SequenceEqual(enhancedStacktraceStartDelimiter1.AsSpan()) && !span.SequenceEqual(enhancedStacktraceStartDelimiter2.AsSpan()) && span is not "<ul>" and not "<li>" and not "<br>");
-            enhancedStacktraceRaw = toEscape.Aggregate(enhancedStacktraceRaw, (current, s) => current.Replace(s, s.Replace("<", "&lt;").Replace(">", "&gt;")));
+            while (GetAllOpenTags(enhancedStacktraceRaw.AsSpan(), span => !span.SequenceEqual(enhancedStacktraceStartDelimiter1.AsSpan()) && !span.SequenceEqual(enhancedStacktraceStartDelimiter2.AsSpan()) && span is not "<ul>" and not "<li>" and not "<br>" and not "<pre>") is { Count: > 0} toEscape)
+            {
+                enhancedStacktraceRaw = toEscape.Aggregate(enhancedStacktraceRaw, (current, s) => current.Replace(s, s.Replace("<", "&lt;").Replace(">", "&gt;")));
+            }
             //var openTags = GetAllOpenTags(enhancedStacktraceRaw, span => !span.SequenceEqual("<ul>")  && !span.SequenceEqual("<li>") && !span.SequenceEqual("<br>")).ToArray();
             var enhancedStacktraceDoc = new HtmlDocument();
             enhancedStacktraceDoc.LoadHtml(enhancedStacktraceRaw);
