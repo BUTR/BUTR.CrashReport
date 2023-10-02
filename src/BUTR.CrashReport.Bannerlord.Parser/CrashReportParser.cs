@@ -38,12 +38,12 @@ public static class CrashReportParser
         const string enhancedStacktraceEndDelimiter = "</div>";
 
         var idx = 0;
-        if (rawContent.IndexOf(enhancedStacktraceStartDelimiter1.AsSpan()) is var enhancedStacktraceStartIdx1 and not -1) idx = enhancedStacktraceStartIdx1;
-        if (rawContent.IndexOf(enhancedStacktraceStartDelimiter2.AsSpan()) is var enhancedStacktraceStartIdx2 and not -1) idx = enhancedStacktraceStartIdx2;
+        if (rawContent.IndexOf(enhancedStacktraceStartDelimiter1.AsSpan(), StringComparison.Ordinal) is var enhancedStacktraceStartIdx1 and not -1) idx = enhancedStacktraceStartIdx1;
+        if (rawContent.IndexOf(enhancedStacktraceStartDelimiter2.AsSpan(), StringComparison.Ordinal) is var enhancedStacktraceStartIdx2 and not -1) idx = enhancedStacktraceStartIdx2;
 
         if (version < 1000 && idx != -1)
         {
-            var enhancedStacktraceEndIdx = rawContent.Slice(idx).IndexOf(enhancedStacktraceEndDelimiter.AsSpan()) - enhancedStacktraceEndDelimiter.Length;
+            var enhancedStacktraceEndIdx = rawContent.Slice(idx).IndexOf(enhancedStacktraceEndDelimiter.AsSpan(), StringComparison.Ordinal) - enhancedStacktraceEndDelimiter.Length;
             var enhancedStacktraceRaw = rawContent.Slice(idx, enhancedStacktraceEndIdx).ToString();
             var toEscape = GetAllOpenTags(enhancedStacktraceRaw.AsSpan(), span => !span.SequenceEqual(enhancedStacktraceStartDelimiter1.AsSpan()) && !span.SequenceEqual(enhancedStacktraceStartDelimiter2.AsSpan()) && span is not "<ul>" and not "<li>" and not "<br>");
             enhancedStacktraceRaw = toEscape.Aggregate(enhancedStacktraceRaw, (current, s) => current.Replace(s, s.Replace("<", "&lt;").Replace(">", "&gt;")));
