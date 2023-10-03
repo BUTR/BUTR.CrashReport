@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <DefineConstants>$(DefineConstants);BUTRCRASHREPORT_DISABLE;BUTRCRASHREPORT_ENABLE_HTML_RENDERER;</DefineConstants>
+
+    <GITHUB_RUN_NUMBER Condition="$(GITHUB_RUN_NUMBER) == ''">0</GITHUB_RUN_NUMBER>
+    <Version>1.0.0.$(GITHUB_RUN_NUMBER) </Version>
+
+    <ToolCommandName>bannerlord_crashreport</ToolCommandName>
+    <IsTool>true</IsTool>
+    <PackAsTool>true</PackAsTool>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.Bannerlord.Tool</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Title>BUTR.CrashReport.Bannerlord.Tool</Title>
+    <Authors>Aragas</Authors>
+    <Company>BUTR</Company>
+    <Description>Provides various commands</Description>
+    <Copyright>Copyright © 2023 Bannerlord's Unofficial Tools &amp; Resources</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>bannerlord butr html zip</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" />
+    <Compile Include="..\BUTR.CrashReport.Bannerlord.Source\*.cs" />
+  </ItemGroup>
+
+</Project>
