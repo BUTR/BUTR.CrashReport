@@ -27,7 +27,9 @@
     <Copyright>Copyright © 2023 Bannerlord's Unofficial Tools &amp; Resources</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>bannerlord butr html zip</PackageTags>
+    <!--
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    -->
   </PropertyGroup>
   
   <ItemGroup>
@@ -35,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" Targets="DisableILRepack;Build" />
     <Compile Include="..\BUTR.CrashReport.Bannerlord.Source\*.cs" />
   </ItemGroup>
 

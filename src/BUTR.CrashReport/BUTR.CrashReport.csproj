@@ -66,5 +66,11 @@
       <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)0Harmony.dll;</ILRepackExcludeAssemblies>
     </PropertyGroup>
   </Target>
+
+  <Target Name="DisableILRepack" BeforeTargets="ILRepackPrepare">
+    <PropertyGroup>
+      <ILRepackBuildEnable>false</ILRepackBuildEnable>
+    </PropertyGroup>
+  </Target>
   
 </Project>
