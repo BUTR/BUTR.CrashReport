@@ -7,7 +7,7 @@
 //   Consider migrating to PackageReferences instead:
 //   https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference
 //   Migrating brings the following benefits:
-//   * The "BUTR.CrashReport.Bannerlord.Source" folder and the "StringBuilderExtensions.cs" file don't appear in your project.
+//   * The "BUTR.CrashReport.Bannerlord.Source" folder and the "CrashReportArchiveRenderer.cs" file don't appear in your project.
 //   * The added file is immutable and can therefore not be modified by coincidence.
 //   * Updating/Uninstalling the package will work flawlessly.
 // </auto-generated>
@@ -36,7 +36,8 @@
 // SOFTWARE.
 #endregion
 
-#if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLE_HTML_RENDERER
+
+#if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLE_ARCHIVE_RENDERER
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
 #pragma warning disable
@@ -44,40 +45,60 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
+    using global::BUTR.CrashReport.Models;
+
     using global::System.Collections.Generic;
-    using global::System.Text;
+    using global::System.IO;
+    using global::System.IO.Compression;
+    using global::System.Linq;
 
-    internal static class StringBuilderExtensions
+    internal static class CrashReportArchiveRenderer
     {
-        public static StringBuilder AppendJoin(this StringBuilder builder, string separator, IReadOnlyList<string> lines) => AppendJoinIf(builder, true, separator, lines);
-        public static StringBuilder AppendJoin(this StringBuilder builder, char separator, IReadOnlyList<string> lines) => AppendJoinIf(builder, true, separator, lines);
-        public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, string separator, IReadOnlyList<string> lines)
+        public static Stream Build(CrashReportModel crashReport, IEnumerable<LogSource> files, Stream crashReportJson, Stream miniDump, Stream saveFile, Stream screenshot)
         {
-            if (!condition) return builder;
+            var ms = new MemoryStream();
 
-            for (var i = 0; i < lines.Count; i++)
+            using (var archive = new ZipArchive(ms, ZipArchiveMode.Create, true))
             {
-                builder.Append(lines[i]);
-                if (lines.Count - 1 != i) builder.Append(separator);
-            }
-            return builder;
-        }
-        public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, char separator, IReadOnlyList<string> lines)
-        {
-            if (!condition) return builder;
+                crashReportJson.Seek(0, SeekOrigin.Begin);
+                var crashReportFile = archive.CreateEntry("crashreport.json");
+                using (var crashReportStream = crashReportFile.Open())
+                {
+                    crashReportJson.CopyTo(crashReportStream);
+                }
 
-            for (var i = 0; i < lines.Count; i++)
-            {
-                builder.Append(lines[i]);
-                if (lines.Count - 1 != i) builder.Append(separator);
+                if (miniDump != Stream.Null)
+                {
+                    var miniDumpFile = archive.CreateEntry("minidump.dmp");
+                    using (var miniDumpStream = miniDumpFile.Open())
+                    {
+                        miniDump.Seek(0, SeekOrigin.Begin);
+                        miniDump.CopyTo(miniDumpStream);
+                    }
+                }
+
+                if (saveFile != Stream.Null)
+                {
+                    var saveFileFile = archive.CreateEntry("save.sav");
+                    using (var saveFileStream = saveFileFile.Open())
+                    {
+                        saveFile.Seek(0, SeekOrigin.Begin);
+                        saveFile.CopyTo(saveFileStream);
+                    }
+                }
+
+                if (screenshot != Stream.Null)
+                {
+                    var screenshotFile = archive.CreateEntry("screenshot.bmp");
+                    using (var screenshotStream = screenshotFile.Open())
+                    {
+                        screenshot.CopyTo(screenshotStream);
+                    }
+                }
             }
-            return builder;
+
+            return ms;
         }
-        public static StringBuilder AppendIf(this StringBuilder builder, bool condition, string? value) => condition ? builder.Append(value) : builder;
-        public static StringBuilder AppendIf(this StringBuilder builder, bool condition, int value) => condition ? builder.Append(value) : builder;
-        public static StringBuilder AppendIf(this StringBuilder builder, bool condition, StringBuilder value) => condition ? builder.Append(value) : builder;
-        public static StringBuilder AppendLineIf(this StringBuilder builder, bool condition) => condition ? builder.AppendLine() : builder;
-        public static StringBuilder AppendLineIf(this StringBuilder builder, bool condition, string value) => condition ? builder.AppendLine(value) : builder;
     }
 }
 
