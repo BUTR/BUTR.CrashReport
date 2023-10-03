@@ -68,6 +68,18 @@ namespace BUTR.CrashReport.Bannerlord
 #pragma warning disable format // @formatter:off
         private static readonly string Scripts = """
 <script>
+    function scrollToElement(className) {
+      var element = document.getElementById(className);
+      
+	  var iterElement = element;
+	  iterElement.style.display = "block";
+      while (iterElement.parentNode && iterElement.parentNode.style){
+	    iterElement.parentNode.style.display = "block";
+        iterElement = iterElement.parentNode;
+      }
+      
+      element.scrollIntoView(false);
+   }
    function showHideById(element, id) {
      if (document.getElementById(id).style.display === "block") {
        document.getElementById(id).style.display = "none";
@@ -504,7 +516,7 @@ namespace BUTR.CrashReport.Bannerlord
                 if (moduleId == "UNKNOWN") continue;
 
                 sb.Append("<li>")
-                    .Append($"<a href='javascript:;' onclick='document.getElementById(\"{moduleId}\").scrollIntoView(false)'>").Append(moduleId).Append("</a>").Append("<br/>");
+                    .Append($"<a href='javascript:;' onclick='scrollToElement(\"{moduleId}\")'>").Append(moduleId).Append("</a>").Append("<br/>");
 
                 foreach (var stacktrace in grouping)
                 {
@@ -559,7 +571,7 @@ namespace BUTR.CrashReport.Bannerlord
                     {
                         deps[dependentModule.ModuleId] = tmp.Clear()
                             .Append("Incompatible ")
-                            .Append($"<a href='javascript:;' onclick='document.getElementById(\"{dependentModule.ModuleId}\").scrollIntoView(false)'>")
+                            .Append($"<a href='javascript:;' onclick='scrollToElement(\"{dependentModule.ModuleId}\")'>")
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
@@ -571,7 +583,7 @@ namespace BUTR.CrashReport.Bannerlord
                     {
                         deps[dependentModule.ModuleId] = tmp.Clear()
                             .Append("Load ").Append("Before ")
-                            .Append($"<a href='javascript:;' onclick='document.getElementById(\"{dependentModule.ModuleId}\").scrollIntoView(false)'>")
+                            .Append($"<a href='javascript:;' onclick='scrollToElement(\"{dependentModule.ModuleId}\")'>")
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
@@ -583,7 +595,7 @@ namespace BUTR.CrashReport.Bannerlord
                     {
                         deps[dependentModule.ModuleId] = tmp.Clear()
                             .Append("Load ").Append("After ")
-                            .Append($"<a href='javascript:;' onclick='document.getElementById(\"{dependentModule.ModuleId}\").scrollIntoView(false)'>")
+                            .Append($"<a href='javascript:;' onclick='scrollToElement(\"{dependentModule.ModuleId}\")'>")
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
