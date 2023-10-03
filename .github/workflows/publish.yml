@@ -26,6 +26,12 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.x.x
+        dotnet-quality: preview
+
     - name: Run _build
       run: >-
         dotnet pack src/BUTR.CrashReport/BUTR.CrashReport.csproj --configuration Release -o "./packages";
