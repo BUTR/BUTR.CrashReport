@@ -162,36 +162,42 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 htmlReport = htmlReport
                     .Replace(CrashReportHtmlRenderer.MiniDumpTag, gZipBase64MiniDump)
-                    .Replace(CrashReportHtmlRenderer.MiniDumpButtonTag, @"
+                    .Replace(CrashReportHtmlRenderer.MiniDumpButtonTag, """
+
 <![if !IE]>
               <br/>
               <br/>
               <button onclick='minidump(this)'>Get MiniDump</button>
-<![endif]>");
+<![endif]>
+""");
             }
 
             if (IncludeSaveFile)
             {
                 htmlReport = htmlReport
                     .Replace(CrashReportHtmlRenderer.SaveFileTag, gZipBase64SaveFile)
-                    .Replace(CrashReportHtmlRenderer.SaveFileButtonTag, @"
+                    .Replace(CrashReportHtmlRenderer.SaveFileButtonTag, """
+
 <![if !IE]>
               <br/>
               <br/>
               <button onclick='savefile(this)'>Get Save File</button>
-<![endif]>");
+<![endif]>
+""");
             }
 
             if (IncludeScreenshot)
             {
                 htmlReport = htmlReport
                     .Replace(CrashReportHtmlRenderer.ScreenshotTag, base64Screenshot)
-                    .Replace(CrashReportHtmlRenderer.ScreenshotButtonTag, @"
+                    .Replace(CrashReportHtmlRenderer.ScreenshotButtonTag, """
+
 <![if !IE]>
-              <br/>
-              <br/>
-              <button onclick='screenshot(this)'>Show Screenshot</button>
-<![endif]>");
+            <br/>
+            <br/>
+            <button onclick='screenshot(this)'>Show Screenshot</button>
+<![endif]>
+""");
             }
 
             if (IncludeMiniDump || IncludeSaveFile)

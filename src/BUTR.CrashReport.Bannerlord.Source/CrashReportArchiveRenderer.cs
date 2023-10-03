@@ -54,7 +54,7 @@ namespace BUTR.CrashReport.Bannerlord
 
     internal static class CrashReportArchiveRenderer
     {
-        public static Stream Build(CrashReportModel crashReport, IEnumerable<LogSource> files, Stream crashReportJson, Stream miniDump, Stream saveFile, Stream screenshot)
+        public static Stream Build(CrashReportModel crashReport, IEnumerable<LogSource> files, Stream crashReportJson, Stream logs, Stream miniDump, Stream saveFile, Stream screenshot)
         {
             var ms = new MemoryStream();
 
@@ -65,6 +65,16 @@ namespace BUTR.CrashReport.Bannerlord
                 using (var crashReportStream = crashReportFile.Open())
                 {
                     crashReportJson.CopyTo(crashReportStream);
+                }
+
+                if (logs != Stream.Null)
+                {
+                    var logsFile = archive.CreateEntry("logs.log");
+                    using (var logsStream = logsFile.Open())
+                    {
+                        logs.Seek(0, SeekOrigin.Begin);
+                        logs.CopyTo(logsStream);
+                    }
                 }
 
                 if (miniDump != Stream.Null)
@@ -92,6 +102,7 @@ namespace BUTR.CrashReport.Bannerlord
                     var screenshotFile = archive.CreateEntry("screenshot.bmp");
                     using (var screenshotStream = screenshotFile.Open())
                     {
+                        screenshot.Seek(0, SeekOrigin.Begin);
                         screenshot.CopyTo(screenshotStream);
                     }
                 }
