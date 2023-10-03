@@ -2,51 +2,61 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using BUTR.CrashReport.Models;
 using CommandLine;
 
 namespace BUTR.CrashReport.Bannerlord.Tool;
 
-public class Program
+public static class Program
 {
-	public static int Main(string[] args)
+	public static async Task<int> Main(string[] args)
 	{
 		HtmlOptions? parsedOptions = null;
 
 		try
 		{
-			var parseResult = Parser.Default.ParseArguments<HtmlOptions>(args)
-				.WithParsed<HtmlOptions>(options =>
+			var parser = Parser.Default
+				.ParseArguments<HtmlOptions>(args);
+
+			parser = await parser
+				.WithParsedAsync<HtmlOptions>(async options =>
 				{
 					parsedOptions = options;
 
-					using var fs = File.OpenRead(options.ArchiveFile);
-					var archive = new ZipArchive(fs, ZipArchiveMode.Read);
+					var stream = Stream.Null;
+					if (new Uri(options.ArchiveFile).IsFile)
+						stream = File.OpenRead(options.ArchiveFile);
+					else
+						stream = await new HttpClient().GetStreamAsync(options.ArchiveFile);
 
-					using var jsonStream = archive.GetEntry("crashreport.json")?.Open();
-					using var logsStream = archive.GetEntry("logs.json")?.Open();
+					using var archive = new ZipArchive(stream, ZipArchiveMode.Read, false);
+
+					await using var jsonStream = archive.GetEntry("crashreport.json")?.Open();
+					await using var logsStream = archive.GetEntry("logs.json")?.Open();
 					if (jsonStream is null) return;
 
 					using var minidumpMemoryStream = new MemoryStream();
-					using var minidumpZipStream = new GZipStream(minidumpMemoryStream, CompressionMode.Compress, true);
-					using var minidumpStream = archive.GetEntry("minidump.dmp")?.Open();
-					minidumpStream?.CopyTo(minidumpZipStream);
+					await using var minidumpZipStream = new GZipStream(minidumpMemoryStream, CompressionMode.Compress, true);
+					await using var minidumpStream = archive.GetEntry("minidump.dmp")?.Open();
+					if (minidumpStream is not null) await minidumpStream.CopyToAsync(minidumpZipStream);
 					var minidump = Convert.ToBase64String(minidumpMemoryStream.ToArray());
 
 					using var saveFileMemoryStream = new MemoryStream();
-					using var saveFileZipStream = new GZipStream(saveFileMemoryStream, CompressionMode.Compress, true);
-					using var saveFileStream = archive.GetEntry("save.sav")?.Open();
-					saveFileStream?.CopyTo(saveFileZipStream);
+					await using var saveFileZipStream = new GZipStream(saveFileMemoryStream, CompressionMode.Compress, true);
+					await using var saveFileStream = archive.GetEntry("save.sav")?.Open();
+					if (saveFileStream is not null) await saveFileStream.CopyToAsync(saveFileZipStream);
 					var saveFile = Convert.ToBase64String(saveFileMemoryStream.ToArray());
 
 					using var screenshotMemoryStream = new MemoryStream();
-					using var screenshotStream = archive.GetEntry("screenshot.bmp")?.Open();
-					screenshotStream?.CopyTo(screenshotMemoryStream);
+					await using var screenshotStream = archive.GetEntry("screenshot.bmp")?.Open();
+					if (screenshotStream is not null) await screenshotStream.CopyToAsync(screenshotMemoryStream);
 					var screenshot = Convert.ToBase64String(screenshotMemoryStream.ToArray());
 
-					var crashReportJson = new StreamReader(jsonStream).ReadToEnd();
+					var crashReportJson = await new StreamReader(jsonStream).ReadToEndAsync();
 					var crashReport = JsonSerializer.Deserialize<CrashReportModel>(crashReportJson, new JsonSerializerOptions()
 					{
 						Converters = { new JsonStringEnumConverter() }
@@ -56,10 +66,13 @@ public class Program
 					var html = CrashReportHtmlRenderer.AddData(CrashReportHtmlRenderer.Build(crashReport, logs), crashReportJson, minidump, saveFile, screenshot);
 
 					var output = options.OutputFile ?? Path.Combine(Path.GetDirectoryName(options.ArchiveFile)!, $"{Path.GetFileNameWithoutExtension(options.ArchiveFile)}.html");
-					File.WriteAllText(output, html);
+					await File.WriteAllTextAsync(output, html);
 				});
 
-			if (parseResult.Errors.Any()) return 1;
+			parser = parser
+				.WithNotParsed(e => { Console.Write("INVALID COMMAND"); });
+
+			if (parser.Errors.Any()) return 1;
 
 			return 0;
 		}
