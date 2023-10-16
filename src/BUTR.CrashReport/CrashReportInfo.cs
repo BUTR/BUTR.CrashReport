@@ -20,6 +20,11 @@ using Decoder = iced::Iced.Intel.Decoder;
 
 namespace BUTR.CrashReport;
 
+public record AssemblyTypeReference
+{
+    public required string FullName { get; set; }
+}
+
 public record MethodEntry
 {
     public required MethodBase Method { get; set; }
@@ -65,6 +70,7 @@ public class CrashReportInfo
     public ICollection<StacktraceEntry> FilteredStacktrace { get; }
     public ICollection<IModuleInfo> LoadedModules { get; }
     public Dictionary<AssemblyName, Assembly> AvailableAssemblies { get; }
+    public Dictionary<AssemblyName, AssemblyTypeReference[]> ImportedTypeReferences { get; }
     public Dictionary<MethodBase, Patches> LoadedHarmonyPatches { get; } = new();
     public Dictionary<string, string> AdditionalMetadata { get; }
 
@@ -75,6 +81,23 @@ public class CrashReportInfo
         LoadedModules = crashReportHelper.GetLoadedModules().ToArray();
 
         AvailableAssemblies = crashReportHelper.Assemblies().ToDictionary(x => x.GetName(), x => x);
+        ImportedTypeReferences = AvailableAssemblies.ToDictionary(x => x.Key, x =>
+        {
+            foreach (var assemblyModule in x.Value.Modules)
+            {
+                try
+                {
+                    var module = ModuleDefinition.FromModule(assemblyModule);
+                    return module.GetImportedTypeReferences().Select(y => new AssemblyTypeReference()
+                    {
+                        FullName = y.FullName,
+                    }).ToArray();
+                }
+                catch (Exception) { /* ignore */ }
+
+            }
+            return Array.Empty<AssemblyTypeReference>();
+        });
 
         Stacktrace = GetAllInvolvedModules(Exception, crashReportHelper).ToArray();
         FilteredStacktrace = crashReportHelper.Filter(Stacktrace).ToArray();
@@ -131,7 +154,7 @@ public class CrashReportInfo
             if (method.DeclaringType is null && method.Name.Contains('.'))
             {
                 var methodName = method.Name.Split('(')[0];
-                var patchPostfix = methodName.Split(new[] {"_Patch"}, StringSplitOptions.None);
+                var patchPostfix = methodName.Split(new[] { "_Patch" }, StringSplitOptions.None);
 
                 if (!patchPostfix.Last().All(char.IsDigit))
                     return null;

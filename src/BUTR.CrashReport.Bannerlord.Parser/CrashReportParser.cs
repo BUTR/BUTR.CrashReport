@@ -306,6 +306,7 @@ public static class CrashReportParser
             IsSingleplayer = GetField(lines, "Singleplayer").Equals("true", StringComparison.OrdinalIgnoreCase),
             IsMultiplayer = GetField(lines, "Multiplayer").Equals("true", StringComparison.OrdinalIgnoreCase),
             Url = GetField(lines, "Url"),
+            UpdateInfo = null,
             DependencyMetadatas = GetModuleDependencyMetadatas(GetRange(lines, version == 1 ? "Dependency Metadatas" : "Dependencies", new[] { "SubModules", "Additional Assemblies", "Url" })),
             SubModules = GetModuleSubModules(GetRange(lines, "SubModules", new[] { "Additional Assemblies" })),
             AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isVortex.ToString()}).AddRange(lines.SkipWhile(l => !l.StartsWith("Additional Assemblies:")).Skip(1).Select(l =>
@@ -406,6 +407,9 @@ public static class CrashReportParser
                 : outerHtml.Contains("tw_module_assembly") ? AssemblyModelType.GameModule
                 : outerHtml.Contains("module_assembly") ? AssemblyModelType.Module
                 : AssemblyModelType.Unclassified) | (isDynamic ? AssemblyModelType.Dynamic : AssemblyModelType.Unclassified),
+
+            ImportedTypeReferences = ImmutableArray<AssemblyImportedTypeReferenceModel>.Empty,
+            ImportedAssemblyReferences = ImmutableArray<AssemblyImportedReferenceModel>.Empty,
 
             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
         };

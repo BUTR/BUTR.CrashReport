@@ -47,9 +47,11 @@ namespace BUTR.CrashReport.Bannerlord
 {
     using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Models;
+    using global::BUTR.CrashReport.Utils;
 
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.Collections.Immutable;
     using global::System.IO;
     using global::System.Linq;
     using global::System.Text;
@@ -447,8 +449,8 @@ namespace BUTR.CrashReport.Bannerlord
             return new StringBuilder()
                 .Append("Exception information").Append("<br/>")
                 .Append("Type: ").Append(ex.Type).Append("<br/>")
-                .AppendIf(hasMessage, "Message: ").AppendIf(hasMessage, ex.Message).AppendIf(hasMessage, "<br/>")
-                .AppendIf(hasCallStack, "CallStack:").AppendIf(hasCallStack, "<br/>")
+                .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message).Append("<br/>"))
+                .AppendIf(hasCallStack, sb => sb.Append("CallStack:").Append("<br/>"))
                 .AppendIf(hasMessage, "<ol>")
                 .AppendIf(hasMessage, "<li>")
                 .AppendJoinIf(hasMessage, $"</li><li>", ex.CallStack.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
@@ -456,7 +458,7 @@ namespace BUTR.CrashReport.Bannerlord
                 .AppendIf(hasMessage, "</ol>")
                 .AppendIf(hasInner, "<br/>")
                 .AppendIf(hasInner, "<br/>")
-                .AppendIf(hasInner, "Inner ").AppendIf(hasInner, GetRecursiveExceptionHtml(ex.InnerException!))
+                .AppendIf(hasInner, sb => sb.Append("Inner ").Append(GetRecursiveExceptionHtml(ex.InnerException!)))
                 .ToString();
         }
 
@@ -575,7 +577,7 @@ namespace BUTR.CrashReport.Bannerlord
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
-                            .AppendIf(hasVersion, $" >= ").AppendIf(hasVersion, dependentModule.Version)
+                            .AppendIf(hasVersion, sb => sb.Append($" >= ").Append(dependentModule.Version))
                             .AppendIf(hasVersionRange, dependentModule.VersionRange)
                             .ToString();
                     }
@@ -587,7 +589,7 @@ namespace BUTR.CrashReport.Bannerlord
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
-                            .AppendIf(hasVersion, $" >= ").AppendIf(hasVersion, dependentModule.Version)
+                            .AppendIf(hasVersion, sb => sb.Append($" >= ").Append(dependentModule.Version))
                             .AppendIf(hasVersionRange, dependentModule.VersionRange)
                             .ToString();
                     }
@@ -599,7 +601,7 @@ namespace BUTR.CrashReport.Bannerlord
                             .Append(dependentModule.ModuleId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
-                            .AppendIf(hasVersion, $" >= ").AppendIf(hasVersion, dependentModule.Version)
+                            .AppendIf(hasVersion, sb => sb.Append($" >= ").Append(dependentModule.Version))
                             .AppendIf(hasVersionRange, dependentModule.VersionRange)
                             .ToString();
                     }
@@ -635,11 +637,11 @@ namespace BUTR.CrashReport.Bannerlord
                         .Append("Name: ").Append(subModule.Name).Append("</br>")
                         .Append("DLLName: ").Append(subModule.AssemblyName).Append("</br>")
                         .Append("SubModuleClassType: ").Append(subModule.Entrypoint).Append("</br>")
-                        .AppendIf(hasTags, "Tags:").AppendIf(hasTags, "</br>")
+                        .AppendIf(hasTags, sb => sb.Append("Tags:").Append("</br>"))
                         .AppendIf(hasTags, "<ul>")
                         .AppendIf(hasTags, tagsBuilder)
                         .AppendIf(hasTags, "</ul>")
-                        .AppendIf(hasAssemblies, "Assemblies:").AppendIf(hasAssemblies, "</br>")
+                        .AppendIf(hasAssemblies, sb => sb.Append("Assemblies:").Append("</br>"))
                         .AppendIf(hasAssemblies, "<ul>")
                         .AppendIf(hasAssemblies, assembliesBuilder)
                         .AppendIf(hasAssemblies, "</ul>")
@@ -651,13 +653,8 @@ namespace BUTR.CrashReport.Bannerlord
             void AppendAdditionalAssemblies(ModuleModel module)
             {
                 additionalAssembliesBuilder.Clear();
-                foreach (var kv in module.AdditionalMetadata.Where(x => x.Key.Equals("METADATA:AdditionalAssembly")))
-                {
-                    var splt = kv.Value.Split(" (");
-                    var fullName = splt[1].TrimEnd(')');
-                    var assembly = crashReport.Assemblies.FirstOrDefault(x => fullName.StartsWith(x.FullName));
+                foreach (var assembly in module.GetAllAssemblies(crashReport))
                     additionalAssembliesBuilder.Append("<li>").Append(assembly.Name).Append(" (").Append(assembly.FullName).Append(")").Append("</li>");
-                }
             }
 
             moduleBuilder.Append("<ul>");
@@ -669,6 +666,8 @@ namespace BUTR.CrashReport.Bannerlord
 
                 var isVortexManaged = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:MANAGED_BY_VORTEX").Value is { } str && bool.TryParse(str, out var val) && val;
 
+                var capabilities = new HashSet<ModuleCapabilities>(CrashReportShared.GetModuleCapabilities(crashReport, module));
+
                 var container = module switch
                 {
                     { IsOfficial: true } => "modules-official-container",
@@ -677,8 +676,10 @@ namespace BUTR.CrashReport.Bannerlord
                 };
                 var hasDependencies = dependenciesBuilder.Length != 0;
                 var hasUrl = !string.IsNullOrWhiteSpace(module.Url);
+                var hasUpdateInfo = !string.IsNullOrWhiteSpace(module.UpdateInfo);
                 var hasSubModules = subModulesBuilder.Length != 0;
                 var hasAssemblies = additionalAssembliesBuilder.Length != 0;
+                var hasCapabilities = capabilities.Count > 0;
                 moduleBuilder.Append("<li>")
                     .Append("<div class='").Append(container).Append("'>")
                     .Append("<b><a href='javascript:;' onclick='showHideById(this, \"").Append(module.Id).Append("\")'>").Append("+ ").Append(module.Name).Append(" (").Append(module.Id).Append(", ").Append(module.Version).Append(")").Append("</a></b>")
@@ -691,16 +692,34 @@ namespace BUTR.CrashReport.Bannerlord
                     .Append("Official: ").Append(module.IsOfficial).Append("</br>")
                     .Append("Singleplayer: ").Append(module.IsSingleplayer).Append("</br>")
                     .Append("Multiplayer: ").Append(module.IsMultiplayer).Append("</br>")
-                    .AppendIf(hasDependencies, "Dependencies:").AppendIf(hasDependencies, "</br>")
+                    .AppendIf(hasDependencies, sb => sb.Append("Dependencies:").Append("</br>"))
                     .AppendIf(hasDependencies, "<ul>")
                     .AppendIf(hasDependencies, dependenciesBuilder)
                     .AppendIf(hasDependencies, "</ul>")
-                    .AppendIf(hasUrl, "Url: <a href='").AppendIf(hasUrl, module.Url).AppendIf(hasUrl, "'>").AppendIf(hasUrl, module.Url).AppendIf(hasUrl, "</a>").AppendIf(hasUrl, "</br>")
-                    .AppendIf(hasSubModules, "SubModules:").AppendIf(hasSubModules, "</br>")
+                    .Append("Capabilities:").Append("</br>")
+                    .AppendIf(hasCapabilities, "<ul>")
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.OSFileSystem), sb => sb.Append("<li>").Append("OS File System").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.GameFileSystem), sb => sb.Append("<li>").Append("Game File System").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Shell), sb => sb.Append("<li>").Append("Shell").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.SaveSystem), sb => sb.Append("<li>").Append("Save System").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.GameEntities), sb => sb.Append("<li>").Append("Game Entities").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.InputSystem), sb => sb.Append("<li>").Append("Input System").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Localization), sb => sb.Append("<li>").Append("Localization System").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.UserInterface), sb => sb.Append("<li>").Append("User Interface").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Http), sb => sb.Append("<li>").Append("Http").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Achievements), sb => sb.Append("<li>").Append("Achievements").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Campaign), sb => sb.Append("<li>").Append("Campaign").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Skills), sb => sb.Append("<li>").Append("Skills").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Items), sb => sb.Append("<li>").Append("Items").Append("</li>").Append("</br>"))
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.Cultures), sb => sb.Append("<li>").Append("Cultures").Append("</li>").Append("</br>"))
+                    .AppendIf(hasCapabilities, "</ul>")
+                    .AppendIf(hasUrl, sb => sb.Append("Url: <a href='").Append(module.Url).Append("'>").Append(module.Url).Append("</a>").Append("</br>"))
+                    .AppendIf(hasUpdateInfo, sb => sb.Append("Update Info: ").Append(module.UpdateInfo).Append("</br>"))
+                    .AppendIf(hasSubModules, sb => sb.Append("SubModules:").Append("</br>"))
                     .AppendIf(hasSubModules, "<ul>")
                     .AppendIf(hasSubModules, subModulesBuilder)
                     .AppendIf(hasSubModules, "</ul>")
-                    .AppendIf(hasAssemblies, "Assemblies Present:").AppendIf(hasAssemblies, "</br>")
+                    .AppendIf(hasAssemblies, sb => sb.Append("Assemblies Present:").Append("</br>"))
                     .AppendIf(hasAssemblies, "<ul>")
                     .AppendIf(hasAssemblies, additionalAssembliesBuilder)
                     .AppendIf(hasAssemblies, "</ul>")
@@ -730,15 +749,15 @@ namespace BUTR.CrashReport.Bannerlord
                     _ => string.Empty,
                 }));
                 var isDynamic = assembly.Type.HasFlag(AssemblyModelType.Dynamic);
-                var hasPath = !string.IsNullOrWhiteSpace(assembly.Path);
+                var hasPath = assembly.Path != "EMPTY" && !string.IsNullOrWhiteSpace(assembly.Path);
                 sb0.Append($"<li class='{@class}'>")
                     .Append(assembly.Name).Append(", ")
                     .Append(assembly.Version).Append(", ")
                     .Append(assembly.Architecture).Append(", ")
-                    .AppendIf(!isDynamic, assembly.Hash).AppendIf(!isDynamic, ", ")
+                    .AppendIf(!isDynamic, sb => sb.Append(assembly.Hash).Append(", "))
                     .AppendIf(isDynamic && !hasPath, "DYNAMIC")
                     .AppendIf(!isDynamic && !hasPath, "EMPTY")
-                    .AppendIf(!isDynamic && hasPath, "<a href='").AppendIf(!isDynamic && hasPath, assembly.Path).AppendIf(!isDynamic && hasPath, "'>").AppendIf(!isDynamic && hasPath, assembly.Path).AppendIf(!isDynamic && hasPath, "</a>")
+                    .AppendIf(!isDynamic && hasPath, sb => sb.Append("<a href='javascript:;'>...").Append(Path.DirectorySeparatorChar).Append(assembly.Path).Append("</a>"))
                     .Append("</li>");
             }
 
@@ -768,10 +787,10 @@ namespace BUTR.CrashReport.Bannerlord
                     patchBuilder.Append("<li>")
                         .Append("Owner: ").Append(patch.Owner).Append("; ")
                         .Append("Namespace: ").Append(patch.Namespace).Append("; ")
-                        .AppendIf(hasIndex, "Index: ").AppendIf(hasIndex, patch.Index).AppendIf(hasIndex, "; ")
-                        .AppendIf(hasPriority, "Priority: ").AppendIf(hasPriority, patch.Priority).AppendIf(hasPriority, "; ")
-                        .AppendIf(hasBefore, "Before: ").AppendJoinIf(hasBefore, ", ", patch.Before).AppendIf(hasBefore, "; ")
-                        .AppendIf(hasAfter, "After: ").AppendJoinIf(hasAfter, ", ", patch.After).AppendIf(hasAfter, ";")
+                        .AppendIf(hasIndex, sb => sb.Append("Index: ").Append(patch.Index).Append("; "))
+                        .AppendIf(hasPriority, sb => sb.Append("Priority: ").Append(patch.Priority).Append("; "))
+                        .AppendIf(hasBefore, sb => sb.Append("Before: ").AppendJoin(", ", patch.Before).Append("; "))
+                        .AppendIf(hasAfter, sb => sb.Append("After: ").AppendJoin(", ", patch.After).Append(";"))
                         .Append("</li>");
                 }
 

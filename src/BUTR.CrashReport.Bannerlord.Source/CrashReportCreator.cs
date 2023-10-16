@@ -246,6 +246,7 @@ namespace BUTR.CrashReport.Bannerlord
                     IsSingleplayer = module.IsSingleplayerModule,
                     IsMultiplayer = module.IsMultiplayerModule,
                     Url = !string.IsNullOrEmpty(module.Url) ? module.Url : null,
+                    UpdateInfo = !string.IsNullOrEmpty(module.UpdateInfo) ? module.UpdateInfo : null,
                     DependencyMetadatas = module.DependenciesAllDistinct().Select(x => new ModuleDependencyMetadataModel
                     {
                         ModuleId = x.Id,
@@ -288,6 +289,20 @@ namespace BUTR.CrashReport.Bannerlord
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
 
+            static string AnonymizePath(string path)
+            {
+                if (path.IndexOf("steamapps", StringComparison.OrdinalIgnoreCase) is var idxSteam and not -1)
+                    return path.Substring(idxSteam);
+
+                if (path.IndexOf("Mount & Blade II Bannerlord", StringComparison.OrdinalIgnoreCase) is var idxRoot and not -1)
+                    return path.Substring(idxRoot);
+
+                if (path.IndexOf("Windows", StringComparison.OrdinalIgnoreCase) is var idxWindows and not -1)
+                    return path.Substring(idxWindows);
+
+                return path;
+            }
+
             var builder = ImmutableArray.CreateBuilder<AssemblyModel>();
 
             foreach (var (assemblyName, assembly) in crashReport.AvailableAssemblies)
@@ -321,8 +336,18 @@ namespace BUTR.CrashReport.Bannerlord
                     Version = assemblyName.Version.ToString(),
                     Architecture = assemblyName.ProcessorArchitecture.ToString(),
                     Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CalculateMD5(assembly.Location),
-                    Path = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : assembly.Location,
+                    Path = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : AnonymizePath(assembly.Location),
                     Type = type,
+                    ImportedTypeReferences = crashReport.ImportedTypeReferences.TryGetValue(assemblyName, out var values) ? values.Select(x => new AssemblyImportedTypeReferenceModel()
+                    {
+                        FullName = x.FullName,
+                    }).ToImmutableArray() : ImmutableArray<AssemblyImportedTypeReferenceModel>.Empty,
+                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => new AssemblyImportedReferenceModel
+                    {
+                        Name = x.Name,
+                        FullName = x.FullName,
+                        Version = x.Version.ToString(),
+                    }).ToImmutableArray(),
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
             }

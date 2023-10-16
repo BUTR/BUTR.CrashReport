@@ -36,7 +36,7 @@
 // SOFTWARE.
 #endregion
 
-#if !BUTRCRASHREPORT_DISABLE
+#if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLE_HTML_RENDERER
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
 #pragma warning disable
@@ -46,11 +46,147 @@ namespace BUTR.CrashReport.Bannerlord
 {
     using global::BUTR.CrashReport.Models;
 
+    using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Reflection;
 
-    internal class CrashReportShared
+    internal static class CrashReportShared
     {
+        // Inspired by SMAPI's detection
+        // Still Work In Progress for more complex capabilities
+        public static readonly string[] OSFileSystemTypeReferences = new[]
+        {
+            typeof(System.IO.File).FullName!,
+            typeof(System.IO.FileStream).FullName!,
+            typeof(System.IO.FileInfo).FullName!,
+            typeof(System.IO.Directory).FullName!,
+            typeof(System.IO.DirectoryInfo).FullName!,
+            typeof(System.IO.DriveInfo).FullName!,
+            typeof(System.IO.FileSystemWatcher).FullName!,
+        };
+        public static readonly string[] GameFileSystemTypeReferences = new[]
+        {
+            "TaleWorlds.Library.*File*",
+            "TaleWorlds.Library.*Directory*",
+            "TaleWorlds.SaveSystem.*File*",
+        };
+        public static readonly string[] ShellTypeReferences = new[]
+        {
+            typeof(System.Diagnostics.Process).FullName!,
+        };
+        public static readonly string[] SaveSystemTypeReferences = new[]
+        {
+            "TaleWorlds.Library.*Save*",
+            "TaleWorlds.Core.MBSaveLoad",
+        };
+        public static readonly string[] SaveSystemAssemblyReferences = new[]
+        {
+            "TaleWorlds.SaveSystem",
+        };
+        public static readonly string[] GameEntitiesTypeReferences = new[]
+        {
+            "TaleWorlds.Core.EntitySystem*",
+        };
+        public static readonly string[] GameEntitiesAssemblyReferences = new[]
+        {
+            "TaleWorlds.ObjectSystem",
+        };
+        public static readonly string[] InputSystemAssemblyReferences = new[]
+        {
+            "TaleWorlds.InputSystem",
+        };
+        public static readonly string[] LocalizationSystemAssemblyReferences = new[]
+        {
+            "TaleWorlds.Localization",
+        };
+        public static readonly string[] UITypeReferences = new[]
+        {
+            "TaleWorlds.Library.IViewModel",
+            "TaleWorlds.Library.ViewModel",
+        };
+        public static readonly string[] UIAssemblyReferences = new[]
+        {
+            "*GauntletUI*",
+        };
+        public static readonly string[] HttpTypeReferences = new[]
+        {
+            "TaleWorlds.Library.*Http*",
+            "System.Net*Http.*",
+        };
+        public static readonly string[] AchievementSystemTypeReferences = new[]
+        {
+            "TaleWorlds.*Achievement*",
+        };
+        public static readonly string[] CampaignSystemTypeReferences = new[]
+        {
+            "TaleWorlds.*CampaignSystem*",
+        };
+        public static readonly string[] SkillSystemTypeReferences = new[]
+        {
+            "TaleWorlds.Core.CharacterSkills",
+            "TaleWorlds.Core.DefaultSkills",
+            "TaleWorlds.Core.SkillObject",
+        };
+        public static readonly string[] ItemSystemTypeReferences = new[]
+        {
+            "TaleWorlds.Core.ItemObject",
+        };
+        public static readonly string[] CultureSystemTypeReferences = new[]
+        {
+            "TaleWorlds.*Culture*",
+        };
+
+        public static IEnumerable<ModuleCapabilities> GetModuleCapabilities(CrashReportModel crashReport, ModuleModel module)
+        {
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.OSFileSystemTypeReferences))
+                yield return ModuleCapabilities.OSFileSystem;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.GameFileSystemTypeReferences))
+                yield return ModuleCapabilities.GameFileSystem;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.ShellTypeReferences))
+                yield return ModuleCapabilities.Shell;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.SaveSystemTypeReferences))
+                yield return ModuleCapabilities.SaveSystem;
+            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.SaveSystemAssemblyReferences))
+                yield return ModuleCapabilities.SaveSystem;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.GameEntitiesTypeReferences))
+                yield return ModuleCapabilities.GameEntities;
+            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.GameEntitiesAssemblyReferences))
+                yield return ModuleCapabilities.GameEntities;
+
+            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.InputSystemAssemblyReferences))
+                yield return ModuleCapabilities.InputSystem;
+
+            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.LocalizationSystemAssemblyReferences))
+                yield return ModuleCapabilities.Localization;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.UITypeReferences))
+                yield return ModuleCapabilities.UserInterface;
+            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.UIAssemblyReferences))
+                yield return ModuleCapabilities.UserInterface;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.HttpTypeReferences))
+                yield return ModuleCapabilities.Http;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.AchievementSystemTypeReferences))
+                yield return ModuleCapabilities.Achievements;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.CampaignSystemTypeReferences))
+                yield return ModuleCapabilities.Campaign;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.SkillSystemTypeReferences))
+                yield return ModuleCapabilities.Skills;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.ItemSystemTypeReferences))
+                yield return ModuleCapabilities.Items;
+
+            if (module.ContainsTypeReferences(crashReport, CrashReportShared.CultureSystemTypeReferences))
+                yield return ModuleCapabilities.Cultures;
+        }
+
         public static string GetBUTRLoaderVersion(CrashReportModel crashReport)
         {
             if (crashReport.Assemblies.FirstOrDefault(x => x.Name == "Bannerlord.BUTRLoader") is { } bAssembly)

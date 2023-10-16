@@ -52,8 +52,8 @@
 
   <ItemGroup>
     <PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="1.0.0.*-*" Pack="false" PrivateAssets="all" />
-    <PackageReference Include="Bannerlord.ModuleManager.Source" Version="5.0.209" Pack="true" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="Bannerlord.BUTR.Shared" Version="3.0.0.137" Pack="true" />
+    <PackageReference Include="Bannerlord.ModuleManager.Source" Version="5.0.214" Pack="true" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Bannerlord.BUTR.Shared" Version="3.0.0.138" Pack="true" />
   </ItemGroup>
 
   <ItemGroup>

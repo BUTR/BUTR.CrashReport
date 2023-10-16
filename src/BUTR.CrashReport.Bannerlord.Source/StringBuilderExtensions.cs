@@ -44,6 +44,7 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Text;
 
@@ -74,10 +75,14 @@ namespace BUTR.CrashReport.Bannerlord
             return builder;
         }
         public static StringBuilder AppendIf(this StringBuilder builder, bool condition, string? value) => condition ? builder.Append(value) : builder;
+        public static StringBuilder AppendIf(this StringBuilder builder, bool condition, char value) => condition ? builder.Append(value) : builder;
         public static StringBuilder AppendIf(this StringBuilder builder, bool condition, int value) => condition ? builder.Append(value) : builder;
         public static StringBuilder AppendIf(this StringBuilder builder, bool condition, StringBuilder value) => condition ? builder.Append(value) : builder;
         public static StringBuilder AppendLineIf(this StringBuilder builder, bool condition) => condition ? builder.AppendLine() : builder;
         public static StringBuilder AppendLineIf(this StringBuilder builder, bool condition, string value) => condition ? builder.AppendLine(value) : builder;
+
+        public static StringBuilder AppendIf(this StringBuilder builder, bool condition, Func<StringBuilder, StringBuilder> lambda) => condition ? lambda(builder) : builder;
+
     }
 }
 
