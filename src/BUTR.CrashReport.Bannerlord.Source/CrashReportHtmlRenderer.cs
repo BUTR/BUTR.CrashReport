@@ -446,13 +446,19 @@ namespace BUTR.CrashReport.Bannerlord
             var callStackLines = ex.CallStack.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
             var firstCallStackLine = callStackLines[0].Trim();
             var stacktrace = crashReport.EnhancedStacktrace.FirstOrDefault(x => firstCallStackLine == $"at {x.Name}");
+
+            var moduleId = stacktrace?.OriginalMethod.ModuleId ?? "UNKNOWN";
+            var sourceModuleId = ex.SourceModuleId;
+
             var hasMessage = !string.IsNullOrWhiteSpace(ex.Message);
             var hasCallStack = !string.IsNullOrWhiteSpace(ex.CallStack);
             var hasInner = ex.InnerException is not null;
             return new StringBuilder()
-                .Append("Exception information").Append("<br/>")
-                .Append("Module Id: ").Append(stacktrace?.OriginalMethod.ModuleId ?? "UNKNOWN").Append("<br/>")
-                .Append("Source Module Id: ").Append(ex.SourceModuleId).Append("<br/>")
+                .Append("Exception Information:").Append("<br/>")
+                .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Potential Module Id: ").Append(moduleId).Append("<br/>"))
+                .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Potential Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
+                .AppendIf(sourceModuleId == "UNKNOWN", sb =>  sb.Append("Potential Source Module Id: ").Append(sourceModuleId).Append("<br/>"))
+                .AppendIf(sourceModuleId != "UNKNOWN", sb =>  sb.Append("Potential Source Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourceModuleId).Append("\")'>").Append(sourceModuleId).Append("</a></b>").Append("<br/>"))
                 .Append("Type: ").Append(ex.Type).Append("<br/>")
                 .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message).Append("<br/>"))
                 .AppendIf(hasCallStack, sb => sb.Append("CallStack:").Append("<br/>"))
@@ -484,8 +490,10 @@ namespace BUTR.CrashReport.Bannerlord
                 foreach (var method in stacktrace.PatchMethods)
                 {
                     var id = random.Next();
+                    var moduleId = method.ModuleId;
                     sb.Append("<li>")
-                        .Append($"Module Id: {method.ModuleId}").Append("<br/>")
+                        .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("<br/>"))
+                        .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
                         .Append($"Method: {method.MethodFullName}").Append("<br/>")
                         .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id}\")'>+ CIL:</a><div id='{id}' class='headers-container'><pre>")
                         .AppendJoin('\n', method.CilInstructions).Append("</pre></div></div>")
@@ -494,8 +502,10 @@ namespace BUTR.CrashReport.Bannerlord
 
                 var id2 = random.Next();
                 var id3 = random.Next();
+                var moduleId2 = stacktrace.OriginalMethod.ModuleId;
                 sb.Append("<li>")
-                    .Append($"Module Id: ").Append(stacktrace.OriginalMethod.ModuleId).Append("<br/>")
+                    .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
+                    .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
                     .Append($"Method: ").Append(stacktrace.OriginalMethod.MethodFullName).Append("<br/>")
                     .Append($"Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
                     .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ CIL:</a><div id='{id2}' class='headers-container'><pre>")
@@ -538,8 +548,10 @@ namespace BUTR.CrashReport.Bannerlord
                         {
                             // Ignore blank transpilers used to force the jitter to skip inlining
                             if (method.Method == "BlankTranspiler") continue;
+                            var moduleId2 = method.ModuleId;
                             sb.Append("<li>")
-                                .Append($"Module Id: ").Append(method.ModuleId ?? "UNKNOWN").Append("<br/>")
+                                .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
+                                .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
                                 .Append($"Method: ").Append(method.MethodFullName).Append("<br/>")
                                 .Append("</li>");
                         }
@@ -672,6 +684,7 @@ namespace BUTR.CrashReport.Bannerlord
                 var isVortexManaged = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:MANAGED_BY_VORTEX").Value is { } str && bool.TryParse(str, out var val) && val;
 
                 var capabilities = new HashSet<ModuleCapabilities>(CrashReportShared.GetModuleCapabilities(crashReport, module));
+                if (capabilities.Count == 0) capabilities.Add(ModuleCapabilities.None);
 
                 var container = module switch
                 {
@@ -684,7 +697,6 @@ namespace BUTR.CrashReport.Bannerlord
                 var hasUpdateInfo = !string.IsNullOrWhiteSpace(module.UpdateInfo);
                 var hasSubModules = subModulesBuilder.Length != 0;
                 var hasAssemblies = additionalAssembliesBuilder.Length != 0;
-                var hasCapabilities = capabilities.Count > 0;
                 moduleBuilder.Append("<li>")
                     .Append("<div class='").Append(container).Append("'>")
                     .Append("<b><a href='javascript:;' onclick='showHideById(this, \"").Append(module.Id).Append("\")'>").Append("+ ").Append(module.Name).Append(" (").Append(module.Id).Append(", ").Append(module.Version).Append(")").Append("</a></b>")
@@ -702,7 +714,8 @@ namespace BUTR.CrashReport.Bannerlord
                     .AppendIf(hasDependencies, dependenciesBuilder)
                     .AppendIf(hasDependencies, "</ul>")
                     .Append("Capabilities:").Append("</br>")
-                    .AppendIf(hasCapabilities, "<ul>")
+                    .Append("<ul>")
+                    .AppendIf(capabilities.Contains(ModuleCapabilities.None), sb => sb.Append("<li>").Append("None").Append("</li>").Append("</br>"))
                     .AppendIf(capabilities.Contains(ModuleCapabilities.OSFileSystem), sb => sb.Append("<li>").Append("OS File System").Append("</li>").Append("</br>"))
                     .AppendIf(capabilities.Contains(ModuleCapabilities.GameFileSystem), sb => sb.Append("<li>").Append("Game File System").Append("</li>").Append("</br>"))
                     .AppendIf(capabilities.Contains(ModuleCapabilities.Shell), sb => sb.Append("<li>").Append("Shell").Append("</li>").Append("</br>"))
@@ -717,7 +730,7 @@ namespace BUTR.CrashReport.Bannerlord
                     .AppendIf(capabilities.Contains(ModuleCapabilities.Skills), sb => sb.Append("<li>").Append("Skills").Append("</li>").Append("</br>"))
                     .AppendIf(capabilities.Contains(ModuleCapabilities.Items), sb => sb.Append("<li>").Append("Items").Append("</li>").Append("</br>"))
                     .AppendIf(capabilities.Contains(ModuleCapabilities.Cultures), sb => sb.Append("<li>").Append("Cultures").Append("</li>").Append("</br>"))
-                    .AppendIf(hasCapabilities, "</ul>")
+                    .Append("</ul>")
                     .AppendIf(hasUrl, sb => sb.Append("Url: <a href='").Append(module.Url).Append("'>").Append(module.Url).Append("</a>").Append("</br>"))
                     .AppendIf(hasUpdateInfo, sb => sb.Append("Update Info: ").Append(module.UpdateInfo).Append("</br>"))
                     .AppendIf(hasSubModules, sb => sb.Append("SubModules:").Append("</br>"))
@@ -785,11 +798,14 @@ namespace BUTR.CrashReport.Bannerlord
                 patchBuilder.Clear();
                 foreach (var patch in patches)
                 {
+                    var moduleId = crashReport.Modules.FirstOrDefault(x => x.GetAllAssemblies(crashReport.Assemblies).Any(y => y.Name == patch.AssemblyName))?.Id ?? "UNKNOWN";
                     var hasIndex = patch.Index != 0;
                     var hasPriority = patch.Priority != 400;
                     var hasBefore = patch.Before.Count > 0;
                     var hasAfter = patch.After.Count > 0;
                     patchBuilder.Append("<li>")
+                        .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("; "))
+                        .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("; "))
                         .Append("Owner: ").Append(patch.Owner).Append("; ")
                         .Append("Namespace: ").Append(patch.Namespace).Append("; ")
                         .AppendIf(hasIndex, sb => sb.Append("Index: ").Append(patch.Index).Append("; "))

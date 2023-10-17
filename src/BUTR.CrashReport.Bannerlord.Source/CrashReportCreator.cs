@@ -366,15 +366,17 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 foreach (var patch in patches)
                 {
+                    var moduleAssembly = patch.PatchMethod.DeclaringType?.Assembly;
                     builder.Add(new()
                     {
+                        Type = type,
+                        AssemblyName = patch.PatchMethod.DeclaringType?.Assembly.GetName().Name,
                         Owner = patch.owner,
                         Namespace = $"{patch.PatchMethod.DeclaringType!.FullName}.{patch.PatchMethod.Name}",
                         Index = patch.index,
                         Priority = patch.priority,
                         Before = patch.before.ToImmutableArray(),
                         After = patch.after.ToImmutableArray(),
-                        Type = type,
                         AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                     });
                 }

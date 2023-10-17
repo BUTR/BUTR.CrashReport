@@ -46,6 +46,7 @@ namespace BUTR.CrashReport.Bannerlord
 {
     internal enum ModuleCapabilities
     {
+        None,
         OSFileSystem,
         GameFileSystem,
         Shell,

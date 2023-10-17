@@ -5,6 +5,7 @@ namespace BUTR.CrashReport.Models;
 public sealed record HarmonyPatchModel
 {
     public required HarmonyPatchModelType Type { get; set; }
+    public required string? AssemblyName { get; set; }
     public required string Owner { get; set; }
     public required string Namespace { get; set; }
     public required int Index { get; set; }
