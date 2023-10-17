@@ -356,7 +356,7 @@ namespace BUTR.CrashReport.Bannerlord
     <div class='root-container'>
       <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "exception")'>+ Exception</a></h2>
       <div id='exception' class='headers-container'>
-        {{GetRecursiveExceptionHtml(crashReportModel.Exception)}}
+        {{GetRecursiveExceptionHtml(crashReportModel, crashReportModel.Exception)}}
       </div>
     </div>
     <div class='root-container'>
@@ -439,27 +439,31 @@ namespace BUTR.CrashReport.Bannerlord
 #pragma warning disable format // @formatter:on
         }
 
-        private static string GetRecursiveExceptionHtml(ExceptionModel? ex)
+        private static string GetRecursiveExceptionHtml(CrashReportModel crashReport, ExceptionModel? ex)
         {
             if (ex is null) return string.Empty;
 
+            var callStackLines = ex.CallStack.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            var firstCallStackLine = callStackLines[0].Trim();
+            var stacktrace = crashReport.EnhancedStacktrace.FirstOrDefault(x => firstCallStackLine == $"at {x.Name}");
             var hasMessage = !string.IsNullOrWhiteSpace(ex.Message);
             var hasCallStack = !string.IsNullOrWhiteSpace(ex.CallStack);
             var hasInner = ex.InnerException is not null;
             return new StringBuilder()
                 .Append("Exception information").Append("<br/>")
-                .Append("Module Id: ").Append(ex.ModuleId).Append("<br/>")
+                .Append("Module Id: ").Append(stacktrace?.OriginalMethod.ModuleId ?? "UNKNOWN").Append("<br/>")
+                .Append("Source Module Id: ").Append(ex.SourceModuleId).Append("<br/>")
                 .Append("Type: ").Append(ex.Type).Append("<br/>")
                 .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message).Append("<br/>"))
                 .AppendIf(hasCallStack, sb => sb.Append("CallStack:").Append("<br/>"))
-                .AppendIf(hasMessage, "<ol>")
-                .AppendIf(hasMessage, "<li>")
-                .AppendJoinIf(hasMessage, $"</li><li>", ex.CallStack.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
-                .AppendIf(hasMessage, "</li>")
-                .AppendIf(hasMessage, "</ol>")
+                .AppendIf(hasCallStack, "<ol>")
+                .AppendIf(hasCallStack, "<li>")
+                .AppendJoinIf(hasCallStack, $"</li><li>", callStackLines)
+                .AppendIf(hasCallStack, "</li>")
+                .AppendIf(hasCallStack, "</ol>")
                 .AppendIf(hasInner, "<br/>")
                 .AppendIf(hasInner, "<br/>")
-                .AppendIf(hasInner, sb => sb.Append("Inner ").Append(GetRecursiveExceptionHtml(ex.InnerException!)))
+                .AppendIf(hasInner, sb => sb.Append("Inner ").Append(GetRecursiveExceptionHtml(crashReport, ex.InnerException!)))
                 .ToString();
         }
 

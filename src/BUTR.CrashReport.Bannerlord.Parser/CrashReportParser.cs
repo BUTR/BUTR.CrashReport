@@ -233,7 +233,7 @@ public static class CrashReportParser
             var callstack = string.Join(Environment.NewLine, exceptionLines.Skip(callstackIdx + 1));
             exceptions.Add(new ExceptionModel
             {
-                ModuleId = modules.Any(x => x.Id == source) ? source : "UNKNOWN",
+                SourceModuleId = modules.Any(x => x.Id == source) ? source : "UNKNOWN",
                 Type = type,
                 Message = message,
                 CallStack = callstack,

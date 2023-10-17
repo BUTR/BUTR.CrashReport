@@ -154,7 +154,7 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 return new()
                 {
-                    ModuleId = modules.FirstOrDefault(x => x.GetAllAssemblies(assemblies).Any(x => x.Name == ex.Source))?.Id ?? "UNKNOWN",
+                    SourceModuleId = modules.FirstOrDefault(x => x.GetAllAssemblies(assemblies).Any(x => x.Name == ex.Source))?.Id ?? "UNKNOWN",
                     Type = ex.GetType().FullName ?? string.Empty,
                     Message = ex.Message,
                     CallStack = ex.StackTrace,
