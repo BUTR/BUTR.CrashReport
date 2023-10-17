@@ -425,6 +425,7 @@ public static class CrashReportParser
             return new HarmonyPatchModel
             {
                 Type = type,
+                AssemblyName = null,
                 Owner = split.FirstOrDefault(x => x.StartsWith("Owner: "))?.Split(':')[1] ?? string.Empty,
                 Namespace = split.FirstOrDefault(x => x.StartsWith("Namespace: "))?.Split(':')[1] ?? string.Empty,
                 Index = split.FirstOrDefault(x => x.StartsWith("Index: "))?.Split(':')[1] is { } strIndex && int.TryParse(strIndex, out var index) ? index : 0,
