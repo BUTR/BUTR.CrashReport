@@ -178,8 +178,8 @@ public static class CrashReportParser
         var node = document.DocumentNode;
         var id = node.SelectSingleNode("descendant::report")?.Attributes?["id"]?.Value ?? string.Empty;
         var gameVersion = node.SelectSingleNode("descendant::game")?.Attributes?["version"]?.Value ?? string.Empty;
-        var exception = ParseExceptions(node.SelectSingleNode("descendant::div[@id=\"exception\"]"));
         var installedModules = node.SelectSingleNode("descendant::div[@id=\"installed-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseModule(version, x)).DistinctBy(x => x.Id).ToArray() ?? Array.Empty<ModuleModel>();
+        var exception = ParseExceptions(node.SelectSingleNode("descendant::div[@id=\"exception\"]"), installedModules);
         var involvedModules = node.SelectSingleNode("descendant::div[@id=\"involved-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").SelectMany(ParseInvolvedModule).ToArray() ?? Array.Empty<InvolvedModuleModel>();
         var enhancedStacktrace = GetEnhancedStacktrace(content.AsSpan(), version, node);
 
@@ -219,7 +219,7 @@ public static class CrashReportParser
         };
     }
 
-    private static ExceptionModel ParseExceptions(HtmlNode node)
+    private static ExceptionModel ParseExceptions(HtmlNode node, ModuleModel[] modules)
     {
         var exceptions = new List<ExceptionModel>();
 
@@ -228,11 +228,12 @@ public static class CrashReportParser
             var exceptionLines = exception.Split('\n', StringSplitOptions.RemoveEmptyEntries).Where(x => x.Trim().Length != 0).ToList();
             var type = exceptionLines.First(x => x.StartsWith("Type: ")).Substring(6);
             var message = exceptionLines.First(x => x.StartsWith("Message: ")).Substring(9);
-            //var source = exceptionLines.First(x => x.StartsWith("Source: ")).Substring(8);
+            var source = exceptionLines.First(x => x.StartsWith("Source: ")).Substring(8);
             var callstackIdx = exceptionLines.FindIndex(x => x.StartsWith("CallStack:"));
             var callstack = string.Join(Environment.NewLine, exceptionLines.Skip(callstackIdx + 1));
             exceptions.Add(new ExceptionModel
             {
+                ModuleId = modules.Any(x => x.Id == source) ? source : "UNKNOWN",
                 Type = type,
                 Message = message,
                 CallStack = callstack,
@@ -359,7 +360,7 @@ public static class CrashReportParser
                 : ImmutableArray<string>.Empty;
             methods.Add(new EnhancedStacktraceFrameMethod
             {
-                Module = module,
+                ModuleId = module,
                 MethodFullName = methodFullName,
                 Method = methodSplit[0].Replace("::", "."),
                 MethodParameters = parameters,

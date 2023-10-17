@@ -138,52 +138,53 @@ namespace BUTR.CrashReport.Bannerlord
 
         public static IEnumerable<ModuleCapabilities> GetModuleCapabilities(CrashReportModel crashReport, ModuleModel module)
         {
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.OSFileSystemTypeReferences))
+            var assemblies = crashReport.Assemblies;
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.OSFileSystemTypeReferences))
                 yield return ModuleCapabilities.OSFileSystem;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.GameFileSystemTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.GameFileSystemTypeReferences))
                 yield return ModuleCapabilities.GameFileSystem;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.ShellTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.ShellTypeReferences))
                 yield return ModuleCapabilities.Shell;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.SaveSystemTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.SaveSystemTypeReferences))
                 yield return ModuleCapabilities.SaveSystem;
-            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.SaveSystemAssemblyReferences))
+            if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.SaveSystemAssemblyReferences))
                 yield return ModuleCapabilities.SaveSystem;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.GameEntitiesTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.GameEntitiesTypeReferences))
                 yield return ModuleCapabilities.GameEntities;
-            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.GameEntitiesAssemblyReferences))
+            if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.GameEntitiesAssemblyReferences))
                 yield return ModuleCapabilities.GameEntities;
 
-            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.InputSystemAssemblyReferences))
+            if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.InputSystemAssemblyReferences))
                 yield return ModuleCapabilities.InputSystem;
 
-            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.LocalizationSystemAssemblyReferences))
+            if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.LocalizationSystemAssemblyReferences))
                 yield return ModuleCapabilities.Localization;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.UITypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.UITypeReferences))
                 yield return ModuleCapabilities.UserInterface;
-            if (module.ContainsAssemblyReferences(crashReport, CrashReportShared.UIAssemblyReferences))
+            if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.UIAssemblyReferences))
                 yield return ModuleCapabilities.UserInterface;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.HttpTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.HttpTypeReferences))
                 yield return ModuleCapabilities.Http;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.AchievementSystemTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.AchievementSystemTypeReferences))
                 yield return ModuleCapabilities.Achievements;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.CampaignSystemTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.CampaignSystemTypeReferences))
                 yield return ModuleCapabilities.Campaign;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.SkillSystemTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.SkillSystemTypeReferences))
                 yield return ModuleCapabilities.Skills;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.ItemSystemTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.ItemSystemTypeReferences))
                 yield return ModuleCapabilities.Items;
 
-            if (module.ContainsTypeReferences(crashReport, CrashReportShared.CultureSystemTypeReferences))
+            if (module.ContainsTypeReferences(assemblies, CrashReportShared.CultureSystemTypeReferences))
                 yield return ModuleCapabilities.Cultures;
         }
 

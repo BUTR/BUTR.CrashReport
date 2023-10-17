@@ -21,21 +21,21 @@ public sealed record ModuleModel
     public required IReadOnlyList<ModuleSubModuleModel> SubModules { get; set; } = new List<ModuleSubModuleModel>();
     public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 
-    public IEnumerable<AssemblyModel> GetAllAssemblies(CrashReportModel crashReport)
+    public IEnumerable<AssemblyModel> GetAllAssemblies(IReadOnlyList<AssemblyModel> assemblies)
     {
         foreach (var kv in AdditionalMetadata.Where(x => x.Key.Equals("METADATA:AdditionalAssembly")))
         {
             var splt = kv.Value.Split(" (");
             var fullName = splt[1].TrimEnd(')');
-            if (crashReport.Assemblies.FirstOrDefault(x => fullName.StartsWith(x.FullName)) is { } assemblyModel) yield return assemblyModel;
+            if (assemblies.FirstOrDefault(x => fullName.StartsWith(x.FullName)) is { } assemblyModel) yield return assemblyModel;
         }
     }
 
-    public bool ContainsAssemblyReferences(CrashReportModel crashReportModel, string[] assemblyReferences) => GetAllAssemblies(crashReportModel)
+    public bool ContainsAssemblyReferences(IReadOnlyList<AssemblyModel> assemblies, string[] assemblyReferences) => GetAllAssemblies(assemblies)
         .SelectMany(x => x.ImportedAssemblyReferences)
         .Any(x => assemblyReferences.Any(y => FileSystemName.MatchesSimpleExpression(y.AsSpan(), x.Name.AsSpan())));
 
-    public bool ContainsTypeReferences(CrashReportModel crashReportModel, string[] typeReferences) => GetAllAssemblies(crashReportModel)
+    public bool ContainsTypeReferences(IReadOnlyList<AssemblyModel> assemblies, string[] typeReferences) => GetAllAssemblies(assemblies)
         .SelectMany(x => x.ImportedTypeReferences)
         .Any(x => typeReferences.Any(y => FileSystemName.MatchesSimpleExpression(y.AsSpan(), x.FullName.AsSpan())));
 }

@@ -65,15 +65,17 @@ namespace BUTR.CrashReport.Bannerlord
     {
         public static CrashReportModel Create(CrashReportInfo crashReport)
         {
+            var modules = GetModuleList(crashReport);
+            var assemblies = GetAssemblyList(crashReport);
             return new CrashReportModel
             {
                 Id = crashReport.Id,
                 GameVersion = ApplicationVersionHelper.GameVersionStr(),
                 Version = crashReport.Version,
-                Exception = GetRecursiveException(crashReport),
+                Exception = GetRecursiveException(crashReport, modules, assemblies),
                 EnhancedStacktrace = GetEnhancedStacktrace(crashReport),
                 InvolvedModules = GetInvolvedModuleList(crashReport),
-                Modules = GetModuleList(crashReport),
+                Modules = modules,
                 Assemblies = GetAssemblyList(crashReport),
                 HarmonyPatches = GetHarmonyPatchesListHtml(crashReport),
                 Metadata = new()
@@ -146,21 +148,22 @@ namespace BUTR.CrashReport.Bannerlord
             return "0";
         }
 
-        private static ExceptionModel GetRecursiveException(CrashReportInfo crashReport)
+        private static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies)
         {
-            static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, Exception ex)
+            static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies, Exception ex)
             {
                 return new()
                 {
+                    ModuleId = modules.FirstOrDefault(x => x.GetAllAssemblies(assemblies).Any(x => x.Name == ex.Source))?.Id ?? "UNKNOWN",
                     Type = ex.GetType().FullName ?? string.Empty,
                     Message = ex.Message,
                     CallStack = ex.StackTrace,
-                    InnerException = ex.InnerException is not null ? GetRecursiveException(crashReport, ex.InnerException) : null,
+                    InnerException = ex.InnerException is not null ? GetRecursiveException(crashReport, modules, assemblies, ex.InnerException) : null,
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 };
             }
 
-            return GetRecursiveException(crashReport, crashReport.Exception);
+            return GetRecursiveException(crashReport, modules, assemblies, crashReport.Exception);
         }
 
         private static ImmutableArray<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport)
@@ -175,7 +178,7 @@ namespace BUTR.CrashReport.Bannerlord
                     {
                         methodsBuilder.Add(new()
                         {
-                            Module = method.ModuleInfo is null ? "UNKNOWN" : method.ModuleInfo.Id,
+                            ModuleId = method.ModuleInfo is null ? "UNKNOWN" : method.ModuleInfo.Id,
                             Method = method.Method.DeclaringType is not null ? $"{method.Method.DeclaringType.FullName}.{method.Method.Name}" : method.Method.Name,
                             MethodFullName = method.Method.FullDescription(),
                             MethodParameters = method.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
@@ -191,7 +194,7 @@ namespace BUTR.CrashReport.Bannerlord
                         FrameDescription = entry.StackFrameDescription,
                         OriginalMethod = new()
                         {
-                            Module = entry.ModuleInfo is null ? "UNKNOWN" : entry.ModuleInfo.Id,
+                            ModuleId = entry.ModuleInfo is null ? "UNKNOWN" : entry.ModuleInfo.Id,
                             Method = entry.Method.DeclaringType is not null ? $"{entry.Method.DeclaringType.FullName}.{entry.Method.Name}" : entry.Method.Name,
                             MethodFullName = entry.Method.FullDescription(),
                             MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),

@@ -4,7 +4,7 @@ namespace BUTR.CrashReport.Models;
 
 public record EnhancedStacktraceFrameMethod
 {
-    public required string Module { get; set; }
+    public required string ModuleId { get; set; }
     public required string MethodFullName { get; set; }
     public required string Method { get; set; }
     public required IReadOnlyList<string> MethodParameters { get; set; } = new List<string>();

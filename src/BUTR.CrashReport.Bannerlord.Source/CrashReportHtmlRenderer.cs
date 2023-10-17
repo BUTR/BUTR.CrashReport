@@ -448,6 +448,7 @@ namespace BUTR.CrashReport.Bannerlord
             var hasInner = ex.InnerException is not null;
             return new StringBuilder()
                 .Append("Exception information").Append("<br/>")
+                .Append("Module Id: ").Append(ex.ModuleId).Append("<br/>")
                 .Append("Type: ").Append(ex.Type).Append("<br/>")
                 .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message).Append("<br/>"))
                 .AppendIf(hasCallStack, sb => sb.Append("CallStack:").Append("<br/>"))
@@ -480,7 +481,7 @@ namespace BUTR.CrashReport.Bannerlord
                 {
                     var id = random.Next();
                     sb.Append("<li>")
-                        .Append($"Module: {method.Module}").Append("<br/>")
+                        .Append($"Module Id: {method.ModuleId}").Append("<br/>")
                         .Append($"Method: {method.MethodFullName}").Append("<br/>")
                         .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id}\")'>+ CIL:</a><div id='{id}' class='headers-container'><pre>")
                         .AppendJoin('\n', method.CilInstructions).Append("</pre></div></div>")
@@ -490,7 +491,7 @@ namespace BUTR.CrashReport.Bannerlord
                 var id2 = random.Next();
                 var id3 = random.Next();
                 sb.Append("<li>")
-                    .Append($"Module: ").Append(stacktrace.OriginalMethod.Module).Append("<br/>")
+                    .Append($"Module Id: ").Append(stacktrace.OriginalMethod.ModuleId).Append("<br/>")
                     .Append($"Method: ").Append(stacktrace.OriginalMethod.MethodFullName).Append("<br/>")
                     .Append($"Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
                     .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ CIL:</a><div id='{id2}' class='headers-container'><pre>")
@@ -512,7 +513,7 @@ namespace BUTR.CrashReport.Bannerlord
         {
             var sb = new StringBuilder();
             sb.Append("<ul>");
-            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.OriginalMethod.Module))
+            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.OriginalMethod.ModuleId))
             {
                 var moduleId = grouping.Key;
                 if (moduleId == "UNKNOWN") continue;
@@ -534,7 +535,7 @@ namespace BUTR.CrashReport.Bannerlord
                             // Ignore blank transpilers used to force the jitter to skip inlining
                             if (method.Method == "BlankTranspiler") continue;
                             sb.Append("<li>")
-                                .Append($"Module: ").Append(method.Module ?? "UNKNOWN").Append("<br/>")
+                                .Append($"Module Id: ").Append(method.ModuleId ?? "UNKNOWN").Append("<br/>")
                                 .Append($"Method: ").Append(method.MethodFullName).Append("<br/>")
                                 .Append("</li>");
                         }
@@ -653,7 +654,7 @@ namespace BUTR.CrashReport.Bannerlord
             void AppendAdditionalAssemblies(ModuleModel module)
             {
                 additionalAssembliesBuilder.Clear();
-                foreach (var assembly in module.GetAllAssemblies(crashReport))
+                foreach (var assembly in module.GetAllAssemblies(crashReport.Assemblies))
                     additionalAssembliesBuilder.Append("<li>").Append(assembly.Name).Append(" (").Append(assembly.FullName).Append(")").Append("</li>");
             }
 
