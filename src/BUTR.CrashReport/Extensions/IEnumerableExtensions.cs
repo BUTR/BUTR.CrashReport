@@ -6,8 +6,5 @@ namespace BUTR.CrashReport.Extensions;
 
 public static class IEnumerableExtensions
 {
-    public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> items, Func<T, TKey> property)
-    {
-        return items.GroupBy(property).Select(x => x.First());
-    }
+    public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> items, Func<T, TKey> property) => items.GroupBy(property).Select(x => x.First());
 }

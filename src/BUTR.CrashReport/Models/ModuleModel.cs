@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BUTR.CrashReport.Extensions;
 using BUTR.CrashReport.Utils;
 
 namespace BUTR.CrashReport.Models;
@@ -21,15 +20,7 @@ public sealed record ModuleModel
     public required IReadOnlyList<ModuleSubModuleModel> SubModules { get; set; } = new List<ModuleSubModuleModel>();
     public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 
-    public IEnumerable<AssemblyModel> GetAllAssemblies(IReadOnlyList<AssemblyModel> assemblies)
-    {
-        foreach (var kv in AdditionalMetadata.Where(x => x.Key.Equals("METADATA:AdditionalAssembly")))
-        {
-            var splt = kv.Value.Split(" (");
-            var fullName = splt[1].TrimEnd(')');
-            if (assemblies.FirstOrDefault(x => fullName.StartsWith(x.FullName)) is { } assemblyModel) yield return assemblyModel;
-        }
-    }
+    public IEnumerable<AssemblyModel> GetAllAssemblies(IReadOnlyList<AssemblyModel> assemblies) => assemblies.Where(x => x.ModuleId == Id);
 
     public bool ContainsAssemblyReferences(IReadOnlyList<AssemblyModel> assemblies, string[] assemblyReferences) => GetAllAssemblies(assemblies)
         .SelectMany(x => x.ImportedAssemblyReferences)

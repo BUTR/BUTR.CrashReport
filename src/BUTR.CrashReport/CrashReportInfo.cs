@@ -22,6 +22,8 @@ namespace BUTR.CrashReport;
 
 public record AssemblyTypeReference
 {
+    public required string Name { get; set; }
+    public required string Namespace { get; set; }
     public required string FullName { get; set; }
 }
 
@@ -88,8 +90,10 @@ public class CrashReportInfo
                 try
                 {
                     var module = ModuleDefinition.FromModule(assemblyModule);
-                    return module.GetImportedTypeReferences().Select(y => new AssemblyTypeReference()
+                    return module.GetImportedTypeReferences().Select(y => new AssemblyTypeReference
                     {
+                        Name = y.Name ?? string.Empty,
+                        Namespace = y.Namespace ?? string.Empty,
                         FullName = y.FullName,
                     }).ToArray();
                 }

@@ -448,7 +448,7 @@ namespace BUTR.CrashReport.Bannerlord
             var stacktrace = crashReport.EnhancedStacktrace.FirstOrDefault(x => firstCallStackLine == $"at {x.Name}");
 
             var moduleId = stacktrace?.OriginalMethod.ModuleId ?? "UNKNOWN";
-            var sourceModuleId = ex.SourceModuleId;
+            var sourceModuleId = ex.SourceModuleId ?? "UNKNOWN";
 
             var hasMessage = !string.IsNullOrWhiteSpace(ex.Message);
             var hasCallStack = !string.IsNullOrWhiteSpace(ex.CallStack);
@@ -490,7 +490,7 @@ namespace BUTR.CrashReport.Bannerlord
                 foreach (var method in stacktrace.PatchMethods)
                 {
                     var id = random.Next();
-                    var moduleId = method.ModuleId;
+                    var moduleId = method.ModuleId ?? "UNKNOWN";
                     sb.Append("<li>")
                         .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("<br/>"))
                         .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
@@ -502,7 +502,7 @@ namespace BUTR.CrashReport.Bannerlord
 
                 var id2 = random.Next();
                 var id3 = random.Next();
-                var moduleId2 = stacktrace.OriginalMethod.ModuleId;
+                var moduleId2 = stacktrace.OriginalMethod.ModuleId ?? "UNKNOWN";
                 sb.Append("<li>")
                     .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
                     .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
@@ -527,7 +527,7 @@ namespace BUTR.CrashReport.Bannerlord
         {
             var sb = new StringBuilder();
             sb.Append("<ul>");
-            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.OriginalMethod.ModuleId))
+            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.OriginalMethod.ModuleId ?? "UNKNOWN"))
             {
                 var moduleId = grouping.Key;
                 if (moduleId == "UNKNOWN") continue;
@@ -548,7 +548,7 @@ namespace BUTR.CrashReport.Bannerlord
                         {
                             // Ignore blank transpilers used to force the jitter to skip inlining
                             if (method.Method == "BlankTranspiler") continue;
-                            var moduleId2 = method.ModuleId;
+                            var moduleId2 = method.ModuleId ?? "UNKNOWN";
                             sb.Append("<li>")
                                 .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
                                 .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))

@@ -49,12 +49,14 @@ namespace BUTR.CrashReport.Bannerlord
     using global::Bannerlord.ModuleManager;
 
     using global::BUTR.CrashReport.Models;
+    using global::BUTR.CrashReport.Utils;
 
     using global::HarmonyLib;
 
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Collections.Immutable;
+    using global::System.Globalization;
     using global::System.IO;
     using global::System.Linq;
     using global::System.Reflection;
@@ -150,18 +152,15 @@ namespace BUTR.CrashReport.Bannerlord
 
         private static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies)
         {
-            static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies, Exception ex)
+            static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies, Exception ex) => new()
             {
-                return new()
-                {
-                    SourceModuleId = modules.FirstOrDefault(x => x.GetAllAssemblies(assemblies).Any(x => x.Name == ex.Source))?.Id ?? "UNKNOWN",
-                    Type = ex.GetType().FullName ?? string.Empty,
-                    Message = ex.Message,
-                    CallStack = ex.StackTrace,
-                    InnerException = ex.InnerException is not null ? GetRecursiveException(crashReport, modules, assemblies, ex.InnerException) : null,
-                    AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
-                };
-            }
+                SourceModuleId = modules.FirstOrDefault(x => x.GetAllAssemblies(assemblies).Any(x => x.Name == ex.Source))?.Id,
+                Type = ex.GetType().FullName ?? string.Empty,
+                Message = ex.Message,
+                CallStack = ex.StackTrace,
+                InnerException = ex.InnerException is not null ? GetRecursiveException(crashReport, modules, assemblies, ex.InnerException) : null,
+                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+            };
 
             return GetRecursiveException(crashReport, modules, assemblies, crashReport.Exception);
         }
@@ -178,9 +177,10 @@ namespace BUTR.CrashReport.Bannerlord
                     {
                         methodsBuilder.Add(new()
                         {
-                            ModuleId = method.ModuleInfo is null ? "UNKNOWN" : method.ModuleInfo.Id,
-                            Method = method.Method.DeclaringType is not null ? $"{method.Method.DeclaringType.FullName}.{method.Method.Name}" : method.Method.Name,
-                            MethodFullName = method.Method.FullDescription(),
+                            ModuleId = method.ModuleInfo?.Id,
+                            MethodDeclaredTypeName = method.Method.DeclaringType?.FullName,
+                            MethodName = method.Method.Name,
+                            MethodFullDescription = method.Method.FullDescription(),
                             MethodParameters = method.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
                             NativeInstructions = method.NativeInstructions.AsImmutableArray(),
                             CilInstructions = method.CilInstructions.AsImmutableArray(),
@@ -194,9 +194,10 @@ namespace BUTR.CrashReport.Bannerlord
                         FrameDescription = entry.StackFrameDescription,
                         OriginalMethod = new()
                         {
-                            ModuleId = entry.ModuleInfo is null ? "UNKNOWN" : entry.ModuleInfo.Id,
-                            Method = entry.Method.DeclaringType is not null ? $"{entry.Method.DeclaringType.FullName}.{entry.Method.Name}" : entry.Method.Name,
-                            MethodFullName = entry.Method.FullDescription(),
+                            ModuleId = entry.ModuleInfo?.Id,
+                            MethodDeclaredTypeName = entry.Method.DeclaringType?.FullName,
+                            MethodName = entry.Method.Name,
+                            MethodFullDescription = entry.Method.FullDescription(),
                             MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
                             NativeInstructions = entry.NativeInstructions.AsImmutableArray(),
                             CilInstructions = entry.CilInstructions.AsImmutableArray(),
@@ -223,7 +224,7 @@ namespace BUTR.CrashReport.Bannerlord
 
                 builder.Add(new()
                 {
-                    Id = module.Id,
+                    ModuleId = module.Id,
                     EnhancedStacktraceFrameName = stacktrace.Last().StackFrameDescription,
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
@@ -239,7 +240,7 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 var isManagedByVortex = File.Exists(Path.Combine(module.Path, "__folder_managed_by_vortex"));
 
-                builder.Add(new ModuleModel
+                builder.Add(new()
                 {
                     Id = module.Id,
                     Name = module.Name,
@@ -268,14 +269,7 @@ namespace BUTR.CrashReport.Bannerlord
                             .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new MetadataModel { Key = y.Key, Value = z })))
                             .ToImmutableArray(),
                     }).ToImmutableArray(),
-                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString()}).AddRange(crashReport.AvailableAssemblies.Select(x =>
-                    {
-                        if (ModuleInfoHelper.IsModuleAssembly(module, x.Value))
-                        {
-                            return new MetadataModel { Key = "METADATA:AdditionalAssembly", Value = $"{Path.GetFileName(x.Value.CodeBase)} ({x.Key.ToString()})", };
-                        }
-                        return null;
-                    }).OfType<MetadataModel>()),
+                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString()}),
                 });
             }
 
@@ -290,20 +284,6 @@ namespace BUTR.CrashReport.Bannerlord
                 using var stream = File.OpenRead(filename);
                 var hash = md5.ComputeHash(stream);
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-            }
-
-            static string AnonymizePath(string path)
-            {
-                if (path.IndexOf("steamapps", StringComparison.OrdinalIgnoreCase) is var idxSteam and not -1)
-                    return path.Substring(idxSteam);
-
-                if (path.IndexOf("Mount & Blade II Bannerlord", StringComparison.OrdinalIgnoreCase) is var idxRoot and not -1)
-                    return path.Substring(idxRoot);
-
-                if (path.IndexOf("Windows", StringComparison.OrdinalIgnoreCase) is var idxWindows and not -1)
-                    return path.Substring(idxWindows);
-
-                return path;
             }
 
             var builder = ImmutableArray.CreateBuilder<AssemblyModel>();
@@ -325,7 +305,7 @@ namespace BUTR.CrashReport.Bannerlord
                 var isSystem = !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location) && Path.GetDirectoryName(assembly.Location).Equals(systemAssemblyDirectory, StringComparison.Ordinal);
                 var isTWCore = !assembly.IsDynamic && assembly.Location.IndexOf(@"Mount & Blade II Bannerlord\bin\", StringComparison.InvariantCultureIgnoreCase) >= 0;
 
-                var type = default(AssemblyModelType);
+                var type = AssemblyModelType.Unclassified;
                 if (assembly.IsDynamic) type |= AssemblyModelType.Dynamic;
                 if (isGAC) type |= AssemblyModelType.GAC;
                 if (isSystem) type |= AssemblyModelType.System;
@@ -334,22 +314,27 @@ namespace BUTR.CrashReport.Bannerlord
                 if (module is not null && module.IsOfficial) type |= AssemblyModelType.GameModule;
                 builder.Add(new()
                 {
+                    ModuleId = module?.Id,
                     Name = assemblyName.Name,
-                    FullName = assembly.ToString(),
+                    Culture = assemblyName.CultureName,
+                    PublicKeyToken = string.Join(string.Empty, Array.ConvertAll(assemblyName.GetPublicKeyToken(), x => x.ToString("x2", CultureInfo.InvariantCulture))),
                     Version = assemblyName.Version.ToString(),
                     Architecture = assemblyName.ProcessorArchitecture.ToString(),
                     Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CalculateMD5(assembly.Location),
-                    Path = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : AnonymizePath(assembly.Location),
+                    AnonymizedPath = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : Anonymizer.AnonymizePath(assembly.Location),
                     Type = type,
                     ImportedTypeReferences = crashReport.ImportedTypeReferences.TryGetValue(assemblyName, out var values) ? values.Select(x => new AssemblyImportedTypeReferenceModel()
                     {
+                        Namespace = x.Namespace,
+                        Name = x.Name,
                         FullName = x.FullName,
                     }).ToImmutableArray() : ImmutableArray<AssemblyImportedTypeReferenceModel>.Empty,
                     ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => new AssemblyImportedReferenceModel
                     {
                         Name = x.Name,
-                        FullName = x.FullName,
-                        Version = x.Version.ToString(),
+                        Version = AssemblyNameFormatter.GetVersion(x.Version),
+                        Culture = x.CultureName,
+                        PublicKeyToken = string.Join(string.Empty, Array.ConvertAll(x.GetPublicKeyToken(), x => x.ToString("x2", CultureInfo.InvariantCulture))),
                     }).ToImmutableArray(),
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
@@ -384,26 +369,20 @@ namespace BUTR.CrashReport.Bannerlord
 
             foreach (var (originalMethod, patches) in crashReport.LoadedHarmonyPatches)
             {
-                var prefixBuilder = ImmutableArray.CreateBuilder<HarmonyPatchModel>();
-                var postfixBuilder = ImmutableArray.CreateBuilder<HarmonyPatchModel>();
-                var finalizerBuilder = ImmutableArray.CreateBuilder<HarmonyPatchModel>();
-                var transpilerBuilder = ImmutableArray.CreateBuilder<HarmonyPatchModel>();
+                var patchBuilder = ImmutableArray.CreateBuilder<HarmonyPatchModel>();
 
-                AppendPatches(prefixBuilder, HarmonyPatchModelType.Prefix, patches.Prefixes);
-                AppendPatches(postfixBuilder, HarmonyPatchModelType.Postfix, patches.Postfixes);
-                AppendPatches(finalizerBuilder, HarmonyPatchModelType.Finalizer, patches.Finalizers);
-                AppendPatches(transpilerBuilder, HarmonyPatchModelType.Transpiler, patches.Transpilers);
+                AppendPatches(patchBuilder, HarmonyPatchModelType.Prefix, patches.Prefixes);
+                AppendPatches(patchBuilder, HarmonyPatchModelType.Postfix, patches.Postfixes);
+                AppendPatches(patchBuilder, HarmonyPatchModelType.Finalizer, patches.Finalizers);
+                AppendPatches(patchBuilder, HarmonyPatchModelType.Transpiler, patches.Transpilers);
 
-                if (prefixBuilder.Count > 0 || postfixBuilder.Count > 0 || finalizerBuilder.Count > 0 || transpilerBuilder.Count > 0)
+                if (patchBuilder.Count > 0)
                 {
                     builder.Add(new()
                     {
-                        OriginalMethod = originalMethod.Name,
-                        OriginalMethodFullName = $"{originalMethod.DeclaringType?.FullName}.{originalMethod.Name}",
-                        Prefixes = prefixBuilder.ToImmutable(),
-                        Postfixes = postfixBuilder.ToImmutable(),
-                        Finalizers = finalizerBuilder.ToImmutable(),
-                        Transpilers = transpilerBuilder.ToImmutable(),
+                        OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
+                        OriginalMethodName = originalMethod.Name,
+                        Patches = patchBuilder.ToImmutable(),
                         AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                     });
                 }

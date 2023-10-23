@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
+using BUTR.CrashReport.Utils;
 
 namespace BUTR.CrashReport.Bannerlord.Parser;
 
@@ -183,7 +184,7 @@ public static class CrashReportParser
         var involvedModules = node.SelectSingleNode("descendant::div[@id=\"involved-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").SelectMany(ParseInvolvedModule).ToArray() ?? Array.Empty<InvolvedModuleModel>();
         var enhancedStacktrace = GetEnhancedStacktrace(content.AsSpan(), version, node);
 
-        var assemblies = node.SelectSingleNode("descendant::div[@id=\"assemblies\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(ParseAssembly).ToArray() ?? Array.Empty<AssemblyModel>();
+        var assemblies = node.SelectSingleNode("descendant::div[@id=\"assemblies\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseAssembly(x, installedModules)).ToArray() ?? Array.Empty<AssemblyModel>();
         var harmonyPatches = node.SelectSingleNode("descendant::div[@id=\"harmony-patches\"]/ul").ChildNodes.Where(cn => cn.Name == "li").Select(ParseHarmonyPatch).ToArray();
         var launcherType = node.SelectSingleNode("descendant::launcher")?.Attributes?["type"]?.Value ?? string.Empty;
         var launcherVersion = node.SelectSingleNode("descendant::launcher")?.Attributes?["version"]?.Value ?? string.Empty;
@@ -223,17 +224,17 @@ public static class CrashReportParser
     {
         var exceptions = new List<ExceptionModel>();
 
-        foreach (var exception in node.InnerText.Split("Inner Exception information"))
+        foreach (var exception in node.InnerHtml.Split("Inner Exception information"))
         {
-            var exceptionLines = exception.Split('\n', StringSplitOptions.RemoveEmptyEntries).Where(x => x.Trim().Length != 0).ToList();
+            var exceptionLines = exception.Split(new string[] { "<br>", "</br>" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim().Trim('\n')).Where(x => x.Length != 0).ToList();
             var type = exceptionLines.First(x => x.StartsWith("Type: ")).Substring(6);
             var message = exceptionLines.First(x => x.StartsWith("Message: ")).Substring(9);
             var source = exceptionLines.First(x => x.StartsWith("Source: ")).Substring(8);
             var callstackIdx = exceptionLines.FindIndex(x => x.StartsWith("CallStack:"));
-            var callstack = string.Join(Environment.NewLine, exceptionLines.Skip(callstackIdx + 1));
+            var callstack = string.Join(Environment.NewLine, exceptionLines.Skip(callstackIdx + 1)).Replace("<ol>\n", "").Replace("<li>", "").Replace("</li>\n", Environment.NewLine).Replace("</ol>", "");
             exceptions.Add(new ExceptionModel
             {
-                SourceModuleId = modules.Any(x => x.Id == source) ? source : "UNKNOWN",
+                SourceModuleId = modules.Any(x => x.Id == source) ? source : null,
                 Type = type,
                 Message = message,
                 CallStack = callstack,
@@ -327,7 +328,7 @@ public static class CrashReportParser
             var frame = lines.FirstOrDefault(y => y.StartsWith("Frame: "))?.Replace("::", ".").Substring(7) ?? string.Empty;
             return new InvolvedModuleModel
             {
-                Id = id,
+                ModuleId = id,
                 EnhancedStacktraceFrameName = frame,
                 AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
             };
@@ -346,11 +347,11 @@ public static class CrashReportParser
         foreach (var childNode in node.ChildNodes.FirstOrDefault(x => x.Name == "ul")?.ChildNodes ?? Enumerable.Empty<HtmlNode>())
         {
             var lines = childNode.InnerHtml.Replace("&lt;", "<").Replace("&gt;", ">").Trim().Split("<br>", StringSplitOptions.RemoveEmptyEntries);
-            var module = lines?.Length > 0 ? lines[0].Substring(8) : "UNKNOWN";
-            var methodFullName = lines?.Length > 1 ? lines[1].Substring(8).Replace("::", ".") : string.Empty;
-            var idx1 = methodFullName.IndexOf("(", StringComparison.Ordinal);
-            var idx2 = idx1 != -1 ? methodFullName.Substring(0, idx1).LastIndexOf(" ", StringComparison.Ordinal) : -1;
-            var method = idx2 != -1 ? methodFullName.Substring(idx2 + 1) : string.Empty;
+            var module = lines?.Length > 0 ? lines[0].Substring(8) : null;
+            var methodFullDescription = lines?.Length > 1 ? lines[1].Substring(8).Replace("::", ".") : string.Empty;
+            var idx1 = methodFullDescription.IndexOf("(", StringComparison.Ordinal);
+            var idx2 = idx1 != -1 ? methodFullDescription.Substring(0, idx1).LastIndexOf(" ", StringComparison.Ordinal) : -1;
+            var method = idx2 != -1 ? methodFullDescription.Substring(idx2 + 1) : string.Empty;
             var methodSplit = method.Split("(");
             var parameters = methodSplit.Length > 1
                 ? methodSplit[1].Trim(')').Split(" ", StringSplitOptions.RemoveEmptyEntries)
@@ -358,11 +359,14 @@ public static class CrashReportParser
                     .Select(x => x.Trim(','))
                     .ToImmutableArray()
                 : ImmutableArray<string>.Empty;
+            var methodFullName = methodSplit[0].Replace("::", ".");
+            var split = methodFullName.Split('.');
             methods.Add(new EnhancedStacktraceFrameMethod
             {
                 ModuleId = module,
-                MethodFullName = methodFullName,
-                Method = methodSplit[0].Replace("::", "."),
+                MethodDeclaredTypeName = split.Length == 1 ? null : string.Join(".", split.Take(split.Length - 1)),
+                MethodName = split.Last(),
+                MethodFullDescription = methodFullDescription,
                 MethodParameters = parameters,
                 NativeInstructions = ImmutableArray<string>.Empty,
                 CilInstructions = ImmutableArray<string>.Empty,
@@ -384,7 +388,7 @@ public static class CrashReportParser
         };
     }
 
-    private static AssemblyModel ParseAssembly(HtmlNode node)
+    private static AssemblyModel ParseAssembly(HtmlNode node, ModuleModel[] modules)
     {
         var splt = node.InnerText.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
         var outerHtml = node.OuterHtml;
@@ -392,15 +396,22 @@ public static class CrashReportParser
         var isDynamic = splt[3].Equals("DYNAMIC");
         var isEmpty = splt[3].Equals("EMPTY");
 
+        var module = modules.FirstOrDefault(x => x.AdditionalMetadata.Where(y => y.Key == "METADATA:AdditionalAssembly").Any(kv =>
+        {
+            var splt2 = kv.Value.Split(" (");
+            var fullName = splt2[1].TrimEnd(')');
+            return fullName.StartsWith(splt[0]);
+        }));
         var assemblyModel = new AssemblyModel
         {
+            ModuleId = module?.Id,
             Name = splt[0],
             Version = splt[1],
+            Culture = null,
+            PublicKeyToken = null,
             Architecture = splt[2],
             Hash = isDynamic || isEmpty ? string.Empty : splt[3],
-            Path = isDynamic ? "DYNAMIC" : isEmpty ? "EMPTY" : splt[4],
-
-            FullName = $"{splt[0]}, Version={splt[1]}",
+            AnonymizedPath = isDynamic ? "DYNAMIC" : isEmpty ? "EMPTY" : Anonymizer.AnonymizePath(splt[4]),
 
             Type = (outerHtml.Contains("dynamic_assembly") ? AssemblyModelType.Dynamic
                 : outerHtml.Contains("gac_assembly") ? AssemblyModelType.GAC
@@ -437,18 +448,15 @@ public static class CrashReportParser
         }
 
         var originalMethodFullName = node.ChildNodes.Skip(0).First().InnerText.Trim('\n');
-        var prefixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Prefixes") == true);
-        var postfixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Postfixes") == true);
-        var transpilers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Transpilers") == true);
-        var finalizers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Finalizers") == true);
+        var prefixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Prefixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Prefix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var postfixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Postfixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Postfix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var transpilers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Transpilers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Transpiler)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var finalizers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Finalizers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Finalizer)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
         var harmonyPatchModel = new HarmonyPatchesModel
         {
-            OriginalMethod = originalMethodFullName.Split('.').Last(),
-            OriginalMethodFullName = originalMethodFullName,
-            Prefixes = prefixes?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Prefix)).ToArray() ?? Array.Empty<HarmonyPatchModel>(),
-            Postfixes = postfixes?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Postfix)).ToArray() ?? Array.Empty<HarmonyPatchModel>(),
-            Transpilers = transpilers?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Transpiler)).ToArray() ?? Array.Empty<HarmonyPatchModel>(),
-            Finalizers = finalizers?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Finalizer)).ToArray() ?? Array.Empty<HarmonyPatchModel>(),
+            OriginalMethodName = originalMethodFullName.Split('.').Last(),
+            OriginalMethodDeclaredTypeName = originalMethodFullName,
+            Patches = prefixes.Concat(postfixes).Concat(transpilers).Concat(finalizers).ToArray(),
             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
         };
         return harmonyPatchModel;
