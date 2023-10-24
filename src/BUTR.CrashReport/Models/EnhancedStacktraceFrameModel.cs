@@ -8,11 +8,6 @@ namespace BUTR.CrashReport.Models;
 public record EnhancedStacktraceFrameModel
 {
     /// <summary>
-    /// TODO: Is for some reason the same as the FrameDescription
-    /// </summary>
-    public required string Name { get; set; }
-
-    /// <summary>
     /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.StackFrameDescription"/>
     /// </summary>
     /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.StackFrameDescription"/></returns>
@@ -40,13 +35,15 @@ public record EnhancedStacktraceFrameModel
     /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.Method"/>
     /// </summary>
     /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.Method"/></returns>
-    public required EnhancedStacktraceFrameMethod OriginalMethod { get; set; }
+    public required MethodExecuting ExecutingMethod { get; set; }
+
+    public required MethodSimple? OriginalMethod { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.PatchMethods"/>
     /// </summary>
     /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.PatchMethods"/></returns>
-    public required IReadOnlyList<EnhancedStacktraceFrameMethod> PatchMethods { get; set; } = new List<EnhancedStacktraceFrameMethod>();
+    public required IReadOnlyList<MethodSimple> PatchMethods { get; set; } = new List<MethodSimple>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>

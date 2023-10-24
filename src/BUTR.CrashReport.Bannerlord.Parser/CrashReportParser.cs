@@ -343,7 +343,7 @@ public static class CrashReportParser
         name = ilOffsetIdx != -1 ? name.Substring(0, ilOffsetIdx) : name;
         var ilOffset = int.TryParse(frameLine.Split("(IL Offset: ").Skip(1).FirstOrDefault()?.Replace(")", string.Empty).Trim(), out var ilOffsetVal) ? ilOffsetVal : -1;
 
-        var methods = new List<EnhancedStacktraceFrameMethod>();
+        var methods = new List<MethodSimple>();
         foreach (var childNode in node.ChildNodes.FirstOrDefault(x => x.Name == "ul")?.ChildNodes ?? Enumerable.Empty<HtmlNode>())
         {
             var lines = childNode.InnerHtml.Replace("&lt;", "<").Replace("&gt;", ">").Trim().Split("<br>", StringSplitOptions.RemoveEmptyEntries);
@@ -361,28 +361,37 @@ public static class CrashReportParser
                 : ImmutableArray<string>.Empty;
             var methodFullName = methodSplit[0].Replace("::", ".");
             var split = methodFullName.Split('.');
-            methods.Add(new EnhancedStacktraceFrameMethod
+            methods.Add(new MethodSimple
             {
                 ModuleId = module,
                 MethodDeclaredTypeName = split.Length == 1 ? null : string.Join(".", split.Take(split.Length - 1)),
                 MethodName = split.Last(),
                 MethodFullDescription = methodFullDescription,
                 MethodParameters = parameters,
-                NativeInstructions = ImmutableArray<string>.Empty,
                 CilInstructions = ImmutableArray<string>.Empty,
                 AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
             });
         }
 
-        var originalMethod = methods.Last();
-        return new EnhancedStacktraceFrameModel
+        var executingMethod = methods.Last();
+        return new()
         {
-            Name = name,
             ILOffset = ilOffset,
             NativeOffset = null,
             FrameDescription = name,
-            OriginalMethod = originalMethod,
-            PatchMethods = methods.Count == 1 ? ImmutableArray<EnhancedStacktraceFrameMethod>.Empty : methods.Take(methods.Count - 1).ToImmutableArray(),
+            ExecutingMethod = new()
+            {
+                ModuleId = executingMethod.ModuleId,
+                MethodDeclaredTypeName = executingMethod.MethodDeclaredTypeName,
+                MethodName = executingMethod.MethodName,
+                MethodFullDescription = executingMethod.MethodFullDescription,
+                MethodParameters = executingMethod.MethodParameters,
+                NativeInstructions = Array.Empty<string>(),
+                CilInstructions = executingMethod.CilInstructions,
+                AdditionalMetadata = executingMethod.AdditionalMetadata,
+            },
+            OriginalMethod = null,
+            PatchMethods = methods.Count == 1 ? ImmutableArray<MethodSimple>.Empty : methods.Take(methods.Count - 1).ToImmutableArray(),
             MethodFromStackframeIssue = false,
             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
         };

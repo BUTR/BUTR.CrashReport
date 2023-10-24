@@ -172,7 +172,7 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 foreach (var entry in stacktrace)
                 {
-                    var methodsBuilder = ImmutableArray.CreateBuilder<EnhancedStacktraceFrameMethod>();
+                    var methodsBuilder = ImmutableArray.CreateBuilder<MethodSimple>();
                     foreach (var patchMethod in entry.PatchMethods)
                     {
                         methodsBuilder.Add(new()
@@ -182,7 +182,6 @@ namespace BUTR.CrashReport.Bannerlord
                             MethodName = patchMethod.Method.Name,
                             MethodFullDescription = patchMethod.Method.FullDescription(),
                             MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
-                            NativeInstructions = ImmutableArray<string>.Empty,
                             CilInstructions = patchMethod.CilInstructions.AsImmutableArray(),
                             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         });
@@ -190,9 +189,8 @@ namespace BUTR.CrashReport.Bannerlord
 
                     builder.Add(new()
                     {
-                        Name = stacktrace.Key,
                         FrameDescription = entry.StackFrameDescription,
-                        OriginalMethod = new()
+                        ExecutingMethod = new()
                         {
                             ModuleId = entry.ModuleInfo?.Id,
                             MethodDeclaredTypeName = entry.Method.DeclaringType?.FullName,
@@ -203,6 +201,16 @@ namespace BUTR.CrashReport.Bannerlord
                             CilInstructions = entry.CilInstructions.AsImmutableArray(),
                             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         },
+                        OriginalMethod = entry.OriginalMethod is not null ? new()
+                        {
+                            ModuleId = entry.OriginalMethod.ModuleInfo?.Id,
+                            MethodDeclaredTypeName = entry.OriginalMethod.Method.DeclaringType?.FullName,
+                            MethodName = entry.OriginalMethod.Method.Name,
+                            MethodFullDescription = entry.OriginalMethod.Method.FullDescription(),
+                            MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
+                            CilInstructions = entry.OriginalMethod.CilInstructions,
+                            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty
+                        } : null,
                         PatchMethods = methodsBuilder.ToImmutable(),
                         ILOffset = entry.ILOffset,
                         NativeOffset = entry.NativeOffset,

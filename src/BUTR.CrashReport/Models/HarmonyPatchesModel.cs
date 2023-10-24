@@ -8,12 +8,12 @@ namespace BUTR.CrashReport.Models;
 public sealed record HarmonyPatchesModel
 {
     /// <summary>
-    /// The original <see cref="EnhancedStacktraceFrameMethod.MethodDeclaredTypeName"/>.
+    /// The original <see cref="EnhanExecutingMethodEntryodDeclaredTypeName"/>.
     /// </summary>
     public required string? OriginalMethodDeclaredTypeName { get; set; }
 
     /// <summary>
-    /// The original  <see cref="EnhancedStacktraceFrameMethod.MethodName"/>.
+    /// The original  <see cref="EnhanExecutingMethodEntryodName"/>.
     /// </summary>
     public required string? OriginalMethodName { get; set; }
 

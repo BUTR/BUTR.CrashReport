@@ -3,9 +3,9 @@
 namespace BUTR.CrashReport.Models;
 
 /// <summary>
-/// Represents a method of a stack trace frame. Can the the original method or a patch.
+/// Represents a method.
 /// </summary>
-public record EnhancedStacktraceFrameMethod
+public record MethodSimple
 {
     /// <summary>
     /// <inheritdoc cref="ModuleModel.Id"/>
@@ -35,12 +35,6 @@ public record EnhancedStacktraceFrameMethod
     /// The list of types that are part of the method signature.
     /// </summary>
     public required IReadOnlyList<string> MethodParameters { get; set; } = new List<string>();
-
-    /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.NativeInstructions"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.NativeInstructions"/></returns>
-    public required IReadOnlyList<string> NativeInstructions { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.CilInstructions"/>

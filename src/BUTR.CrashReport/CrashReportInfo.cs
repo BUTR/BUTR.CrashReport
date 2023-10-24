@@ -48,7 +48,7 @@ public record AssemblyTypeReference
 /// <summary>
 /// Represents a Harmony patch.
 /// </summary>
-public record PatchMethodEntry
+public record MethodEntry
 {
     /// <summary>
     /// The Harmony patch method.
@@ -74,9 +74,14 @@ public record PatchMethodEntry
 public record StacktraceEntry
 {
     /// <summary>
-    /// The method from the stacktrace frame.
+    /// The method from the stacktrace frame that is being executed.
     /// </summary>
     public required MethodBase Method { get; set; }
+
+    /// <summary>
+    /// The original method that might be patched.
+    /// </summary>
+    public required MethodEntry? OriginalMethod { get; set; }
 
     /// <summary>
     /// Whether there was an issue with getting the data from the stackframe.
@@ -119,7 +124,7 @@ public record StacktraceEntry
     /// <summary>
     /// The list of Harmony patch methods that are applied to the method.
     /// </summary>
-    public required PatchMethodEntry[] PatchMethods { get; set; }
+    public required MethodEntry[] PatchMethods { get; set; }
 }
 
 /// <summary>
@@ -324,7 +329,7 @@ public class CrashReportInfo
                 method = frame.GetMethod()!;
             }
 
-            var methods = new List<PatchMethodEntry>();
+            var methods = new List<MethodEntry>();
             var identifiableMethod = method is MethodInfo mi ? CurrentPlatformTriple?.Invoke() is { } cpt && GetIdentifiable?.Invoke(cpt, mi) is MethodInfo v ? v : mi : null;
             var original = identifiableMethod is not null ? Harmony.GetOriginalMethod(identifiableMethod) : null;
             var patches = original is not null ? Harmony.GetPatchInfo(original) : null;
@@ -339,16 +344,19 @@ public class CrashReportInfo
                 });
             }
 
-            var moduleInfo = GetModuleInfoIfMod(identifiableMethod, crashReportHelper);
-
             var ilOffset = frame.GetILOffset();
             var nativeILOffset = frame.GetNativeOffset();
-
             yield return new()
             {
                 Method = identifiableMethod!,
+                OriginalMethod = original is not null ? new()
+                {
+                    Method = original!,
+                    ModuleInfo = GetModuleInfoIfMod(original, crashReportHelper),
+                    CilInstructions = GetILInstructionLines(original),
+                } : null,
                 MethodFromStackframeIssue = methodFromStackframeIssue,
-                ModuleInfo = moduleInfo,
+                ModuleInfo = GetModuleInfoIfMod(identifiableMethod, crashReportHelper),
                 ILOffset = ilOffset != StackFrame.OFFSET_UNKNOWN ? ilOffset : null,
                 NativeOffset = nativeILOffset != StackFrame.OFFSET_UNKNOWN ? nativeILOffset : null,
                 StackFrameDescription = frame.ToString(),

@@ -104,6 +104,7 @@ namespace BUTR.CrashReport.Bannerlord
    }
    function changeFontSize(fontSize) {
      document.getElementById("exception").style.fontSize = fontSize.value;
+     document.getElementById("enhanced-stacktrace").style.fontSize = fontSize.value;
      document.getElementById("involved-modules").style.fontSize = fontSize.value;
      document.getElementById("installed-modules").style.fontSize = fontSize.value;
      document.getElementById("assemblies").style.fontSize = fontSize.value;
@@ -444,9 +445,9 @@ namespace BUTR.CrashReport.Bannerlord
 
             var callStackLines = ex.CallStack.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.EscapeGenerics()).ToArray();
             var firstCallStackLine = callStackLines[0].Trim();
-            var stacktrace = crashReport.EnhancedStacktrace.FirstOrDefault(x => firstCallStackLine == $"at {x.Name}");
+            var stacktrace = crashReport.EnhancedStacktrace.FirstOrDefault(x => firstCallStackLine == $"at {x.FrameDescription}");
 
-            var moduleId = stacktrace?.OriginalMethod.ModuleId ?? "UNKNOWN";
+            var moduleId = stacktrace?.ExecutingMethod.ModuleId ?? "UNKNOWN";
             var sourceModuleId = ex.SourceModuleId ?? "UNKNOWN";
 
             var hasMessage = !string.IsNullOrWhiteSpace(ex.Message);
@@ -460,7 +461,7 @@ namespace BUTR.CrashReport.Bannerlord
                 .AppendIf(sourceModuleId != "UNKNOWN", sb =>  sb.Append("Potential Source Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourceModuleId).Append("\")'>").Append(sourceModuleId).Append("</a></b>").Append("<br/>"))
                 .Append("Type: ").Append(ex.Type.EscapeGenerics()).Append("<br/>")
                 .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message.EscapeGenerics()).Append("<br/>"))
-                .AppendIf(hasCallStack, sb => sb.Append("CallStack:").Append("<br/>"))
+                .AppendIf(hasCallStack, sb => sb.Append("Stacktrace:").Append("<br/>"))
                 .AppendIf(hasCallStack, "<ol>")
                 .AppendIf(hasCallStack, "<li>")
                 .AppendJoinIf(hasCallStack, "</li><li>", callStackLines)
@@ -480,41 +481,62 @@ namespace BUTR.CrashReport.Bannerlord
             sb.Append("<ul>");
             foreach (var stacktrace in crashReport.EnhancedStacktrace)
             {
-                sb.Append("<li>")
-                    .Append("Frame: ").Append(stacktrace.Name.EscapeGenerics()).Append("<br/>")
-                    .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
-                    .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN")
-                    .Append("<ul>");
-
-                foreach (var method in stacktrace.PatchMethods)
-                {
-                    var id = random.Next();
-                    var moduleId = method.ModuleId ?? "UNKNOWN";
-                    sb.Append("<li>")
-                        .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("<br/>"))
-                        .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
-                        .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id}\")'>+ CIL:</a><div id='{id}' class='headers-container'><pre>")
-                        .AppendJoin(Environment.NewLine, method.CilInstructions.Select(x => x.EscapeGenerics())).Append("</pre></div></div>")
-                        .Append("</li>");
-                }
-
+                var id1 = random.Next();
                 var id2 = random.Next();
-                var id3 = random.Next();
-                var moduleId2 = stacktrace.OriginalMethod.ModuleId ?? "UNKNOWN";
+                var moduleId2 = stacktrace.ExecutingMethod.ModuleId ?? "UNKNOWN";
                 sb.Append("<li>")
+                    .Append("Frame: ").Append(stacktrace.FrameDescription.EscapeGenerics()).Append("<br/>")
+                    .Append("Executing Method:")
+                    .Append("<ul>")
+                    .Append("<li>")
                     .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
                     .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
-                    .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
+                    .Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                     .Append("Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
-                    .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ CIL:</a><div id='{id2}' class='headers-container'><pre>")
-                    .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.CilInstructions.Select(x => x.EscapeGenerics())).Append("</pre></div></div>")
-                    .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id3}\")'>+ Native:</a><div id='{id3}' class='headers-container'><pre>")
-                    .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.NativeInstructions.Select(x => x.EscapeGenerics())).Append("</pre></div></div>")
-                    .Append("</br>")
-                    .Append("</li>");
+                    .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
+                    .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN")
+                    .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id1}\")'>+ CIL:</a><div id='{id1}' class='headers-container'><pre>")
+                    .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.CilInstructions.Select(x => x.EscapeGenerics())).Append("</pre></div></div>")
+                    .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ Native:</a><div id='{id2}' class='headers-container'><pre>")
+                    .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics())).Append("</pre></div></div>")
+                    .Append("</li>")
+                    .Append("</ul>");
 
-                sb.Append("</ul>");
+                if (stacktrace.PatchMethods.Count > 0)
+                {
+                    sb.Append("Patch Methods:")
+                        .Append("<ul>");
+                    foreach (var method in stacktrace.PatchMethods)
+                    {
+                        var id = random.Next();
+                        var moduleId = method.ModuleId ?? "UNKNOWN";
+                        sb.Append("<li>")
+                            .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("<br/>"))
+                            .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
+                            .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
+                            .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id}\")'>+ CIL:</a><div id='{id}' class='headers-container'><pre>")
+                            .AppendJoin(Environment.NewLine, method.CilInstructions.Select(x => x.EscapeGenerics())).Append("</pre></div></div>")
+                            .Append("</li>");
+                    }
+                    sb.Append("</ul>");
+                }
+
+                if (stacktrace.OriginalMethod is not null)
+                {
+                    var id = random.Next();
+                    sb.Append("Original Method:")
+                        .Append("<ul>")
+                        .Append("<li>")
+                        .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
+                        .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
+                        .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
+                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id}\")'>+ CIL:</a><div id='{id}' class='headers-container'><pre>")
+                        .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.CilInstructions.Select(x => x.EscapeGenerics())).Append("</pre></div></div>")
+                        .Append("</li>")
+                        .Append("</ul>");
+                }
+
+                sb.Append("</br>");
                 sb.Append("</li>");
                 sbCil.Clear();
             }
@@ -525,8 +547,9 @@ namespace BUTR.CrashReport.Bannerlord
         private static string GetInvolvedModuleListHtml(CrashReportModel crashReport)
         {
             var sb = new StringBuilder();
-            sb.Append("<ul>");
-            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.OriginalMethod.ModuleId ?? "UNKNOWN"))
+            sb.Append("Based on Stacktrace:")
+                .Append("<ul>");
+            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.ExecutingMethod.ModuleId ?? "UNKNOWN"))
             {
                 var moduleId = grouping.Key;
                 if (moduleId == "UNKNOWN") continue;
@@ -536,7 +559,7 @@ namespace BUTR.CrashReport.Bannerlord
 
                 foreach (var stacktrace in grouping)
                 {
-                    sb.Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
+                    sb.Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                         .Append("Frame: ").Append(stacktrace.FrameDescription.EscapeGenerics()).Append("<br/>");
 
                     if (stacktrace.PatchMethods.Count > 0)
