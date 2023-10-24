@@ -1,7 +1,10 @@
-using System;
+﻿using System;
 
 namespace BUTR.CrashReport.Models;
 
+/// <summary>
+/// Represents attributes for a .NET assembly.
+/// </summary>
 [Flags]
 public enum AssemblyModelType
 {

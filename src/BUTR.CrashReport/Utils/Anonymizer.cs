@@ -2,8 +2,16 @@
 
 namespace BUTR.CrashReport.Utils;
 
+/// <summary>
+/// Provides various anonymization methods.
+/// </summary>
 public static class Anonymizer
 {
+    /// <summary>
+    /// Anonymizes the path.
+    /// </summary>
+    /// <param name="path">Path to be anonymized.</param>
+    /// <returns>The anonymized path.</returns>
     public static string AnonymizePath(string path)
     {
         if (path.IndexOf("steamapps", StringComparison.OrdinalIgnoreCase) is var idxSteam and not -1)

@@ -1,11 +1,15 @@
-using System;
+﻿using System;
 
 namespace BUTR.CrashReport.Utils;
 
-/// <summary>Provides methods for matching file system names.</summary>
+/// <summary>
+/// Provides methods for matching file system names.
+/// </summary>
 internal static class FileSystemName
 {
-    /// <summary>Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'. The backslash character '\\' escapes.</summary>
+    /// <summary>
+    /// Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'. The backslash character '\\' escapes.
+    /// </summary>
     /// <param name="expression">The expression to match with.</param>
     /// <param name="name">The name to check against the expression.</param>
     /// <param name="ignoreCase"><see langword="true" /> to ignore case (default); <see langword="false" /> if the match should be case-sensitive.</param>
@@ -299,16 +303,16 @@ internal static class FileSystemName
                         }
                     }
 
-                    MatchZeroOrMore:
+                MatchZeroOrMore:
                     currentMatches[currentMatch++] = currentState;
-                    MatchZero:
+                MatchZero:
                     currentMatches[currentMatch++] = currentState + 1;
-                    NextExpressionCharacter:
+                NextExpressionCharacter:
                     if (++expressionOffset == expression.Length)
                         currentMatches[currentMatch++] = maxState;
                 } // while (expressionOffset < expression.Length)
 
-                ExpressionFinished:
+            ExpressionFinished:
 
                 // Prevent duplication in the destination array.
                 //

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BUTR.CrashReport.Extensions;
+namespace BUTR.CrashReport.Bannerlord.Parser.Extensions;
 
-public static class IEnumerableExtensions
+internal static class IEnumerableExtensions
 {
     public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> items, Func<T, TKey> property) => items.GroupBy(property).Select(x => x.First());
 }

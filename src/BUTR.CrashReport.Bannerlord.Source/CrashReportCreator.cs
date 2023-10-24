@@ -154,7 +154,7 @@ namespace BUTR.CrashReport.Bannerlord
         {
             static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies, Exception ex) => new()
             {
-                SourceModuleId = modules.FirstOrDefault(x => x.GetAllAssemblies(assemblies).Any(x => x.Name == ex.Source))?.Id,
+                SourceModuleId = modules.FirstOrDefault(x => assemblies.Where(y => y.ModuleId == x.Id).Any(x => x.Name == ex.Source))?.Id,
                 Type = ex.GetType().FullName ?? string.Empty,
                 Message = ex.Message,
                 CallStack = ex.StackTrace,
@@ -173,17 +173,17 @@ namespace BUTR.CrashReport.Bannerlord
                 foreach (var entry in stacktrace)
                 {
                     var methodsBuilder = ImmutableArray.CreateBuilder<EnhancedStacktraceFrameMethod>();
-                    foreach (var method in entry.Methods)
+                    foreach (var patchMethod in entry.PatchMethods)
                     {
                         methodsBuilder.Add(new()
                         {
-                            ModuleId = method.ModuleInfo?.Id,
-                            MethodDeclaredTypeName = method.Method.DeclaringType?.FullName,
-                            MethodName = method.Method.Name,
-                            MethodFullDescription = method.Method.FullDescription(),
-                            MethodParameters = method.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
-                            NativeInstructions = method.NativeInstructions.AsImmutableArray(),
-                            CilInstructions = method.CilInstructions.AsImmutableArray(),
+                            ModuleId = patchMethod.ModuleInfo?.Id,
+                            MethodDeclaredTypeName = patchMethod.Method.DeclaringType?.FullName,
+                            MethodName = patchMethod.Method.Name,
+                            MethodFullDescription = patchMethod.Method.FullDescription(),
+                            MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
+                            NativeInstructions = ImmutableArray<string>.Empty,
+                            CilInstructions = patchMethod.CilInstructions.AsImmutableArray(),
                             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         });
                     }
@@ -329,13 +329,7 @@ namespace BUTR.CrashReport.Bannerlord
                         Name = x.Name,
                         FullName = x.FullName,
                     }).ToImmutableArray() : ImmutableArray<AssemblyImportedTypeReferenceModel>.Empty,
-                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => new AssemblyImportedReferenceModel
-                    {
-                        Name = x.Name,
-                        Version = AssemblyNameFormatter.GetVersion(x.Version),
-                        Culture = x.CultureName,
-                        PublicKeyToken = string.Join(string.Empty, Array.ConvertAll(x.GetPublicKeyToken(), x => x.ToString("x2", CultureInfo.InvariantCulture))),
-                    }).ToImmutableArray(),
+                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => new AssemblyImportedReferenceModel(x)).ToImmutableArray(),
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
             }

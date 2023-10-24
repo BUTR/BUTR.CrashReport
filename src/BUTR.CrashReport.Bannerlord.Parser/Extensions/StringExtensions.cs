@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace BUTR.CrashReport.Extensions;
+namespace BUTR.CrashReport.Bannerlord.Parser.Extensions;
 
-public static class StringExtensions
+internal static class StringExtensions
 {
     public static string[] Split(this string str, string separator) => str.Split(new[] { separator }, StringSplitOptions.None);
 

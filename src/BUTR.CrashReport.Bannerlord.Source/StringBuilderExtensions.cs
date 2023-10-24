@@ -46,12 +46,15 @@ namespace BUTR.CrashReport.Bannerlord
 {
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.Linq;
     using global::System.Text;
 
     internal static class StringBuilderExtensions
     {
-        public static StringBuilder AppendJoin(this StringBuilder builder, string separator, IReadOnlyList<string> lines) => AppendJoinIf(builder, true, separator, lines);
-        public static StringBuilder AppendJoin(this StringBuilder builder, char separator, IReadOnlyList<string> lines) => AppendJoinIf(builder, true, separator, lines);
+        public static string EscapeGenerics(this string str) => str.Replace("<", "&lt;").Replace(">", "&gt;");
+
+        public static StringBuilder AppendJoin(this StringBuilder builder, string separator, IEnumerable<string> lines) => AppendJoinIf(builder, true, separator, lines.ToArray());
+        public static StringBuilder AppendJoin(this StringBuilder builder, char separator, IEnumerable<string> lines) => AppendJoinIf(builder, true, separator, lines.ToArray());
         public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, string separator, IReadOnlyList<string> lines)
         {
             if (!condition) return builder;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BUTR.CrashReport.Utils;
 
-public static class AssemblyNameFormatter
+internal static class AssemblyNameFormatter
 {
     public static string ComputeDisplayName(string? name, string? version, string? cultureName, string? publicKeyToken)
     {
@@ -63,9 +63,9 @@ public static class AssemblyNameFormatter
             foreach (KeyValuePair<char, string> kv in EscapeSequences)
             {
                 string escapeReplacement = kv.Value;
-                if (!(s[i] == escapeReplacement[0]))
+                if (s[i] != escapeReplacement[0])
                     continue;
-                if ((s.Length - i) < escapeReplacement.Length)
+                if (s.Length - i < escapeReplacement.Length)
                     continue;
                 if (s.AsSpan(i, escapeReplacement.Length).SequenceEqual(escapeReplacement))
                 {

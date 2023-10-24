@@ -7,6 +7,8 @@ using AsmResolver.DotNet.Dynamic;
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
+using iced::Iced.Intel;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,37 +17,109 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using iced::Iced.Intel;
 using Decoder = iced::Iced.Intel.Decoder;
 
 namespace BUTR.CrashReport;
 
+/// <summary>
+/// Represents an imported type reference.
+/// </summary>
 public record AssemblyTypeReference
 {
+    /// <summary>
+    /// <inheritdoc cref="AsmResolver.DotNet.TypeReference.Name"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="AsmResolver.DotNet.TypeReference.Name"/></returns>
     public required string Name { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="AsmResolver.DotNet.TypeReference.Namespace"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="AsmResolver.DotNet.TypeReference.Namespace"/></returns>
     public required string Namespace { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="AsmResolver.DotNet.TypeReference.FullName"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="AsmResolver.DotNet.TypeReference.FullName"/></returns>
     public required string FullName { get; set; }
 }
 
-public record MethodEntry
+/// <summary>
+/// Represents a Harmony patch.
+/// </summary>
+public record PatchMethodEntry
 {
+    /// <summary>
+    /// The Harmony patch method.
+    /// </summary>
     public required MethodBase Method { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="StacktraceEntry.ModuleInfo"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="StacktraceEntry.ModuleInfo"/></returns>
     public required IModuleInfo? ModuleInfo { get; set; }
-    public required string[] NativeInstructions { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="StacktraceEntry.CilInstructions"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="StacktraceEntry.CilInstructions"/></returns>
     public required string[] CilInstructions { get; set; }
 }
 
+/// <summary>
+/// Represents a method from stack trace.
+/// </summary>
 public record StacktraceEntry
 {
+    /// <summary>
+    /// The method from the stacktrace frame.
+    /// </summary>
     public required MethodBase Method { get; set; }
+
+    /// <summary>
+    /// Whether there was an issue with getting the data from the stackframe.
+    /// </summary>
     public required bool MethodFromStackframeIssue { get; set; }
+
+    /// <summary>
+    /// The module that holds the method. Can be null.
+    /// </summary>
     public required IModuleInfo? ModuleInfo { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/></returns>
     public required int? ILOffset { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="System.Diagnostics.StackFrame.GetNativeOffset"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.GetNativeOffset"/></returns>
     public required int? NativeOffset { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="System.Diagnostics.StackFrame.ToString"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.ToString"/></returns>
     public required string StackFrameDescription { get; set; }
+
+    /// <summary>
+    /// The native code of the method that was compiled by the JIT.
+    /// </summary>
     public required string[] NativeInstructions { get; set; }
+
+    /// <summary>
+    /// The Common Intermediate Language (CIL) code of the method.
+    /// </summary>
     public required string[] CilInstructions { get; set; }
-    public required MethodEntry[] Methods { get; set; }
+
+    /// <summary>
+    /// The list of Harmony patch methods that are applied to the method.
+    /// </summary>
+    public required PatchMethodEntry[] PatchMethods { get; set; }
 }
 
 /// <summary>
@@ -65,17 +139,62 @@ public class CrashReportInfo
     private static readonly GetNativeMethodBodyDelegate? GetNativeMethodBody =
         AccessTools2.GetDelegate<GetNativeMethodBodyDelegate>("MonoMod.Core.Platforms.PlatformTriple:GetNativeMethodBody");
 
+    /// <summary>
+    /// The version of the crash report.
+    /// </summary>
     public readonly byte Version = 13;
+
+    /// <summary>
+    /// The id of the crash report.
+    /// </summary>
     public Guid Id { get; } = Guid.NewGuid();
+
+    /// <summary>
+    /// The exception that caused the crash.
+    /// </summary>
     public Exception Exception { get; }
+
+    /// <summary>
+    /// Raw stacktrace.
+    /// </summary>
     public ICollection<StacktraceEntry> Stacktrace { get; }
+
+    /// <summary>
+    /// Filtered stacktrace.
+    /// </summary>
     public ICollection<StacktraceEntry> FilteredStacktrace { get; }
+
+    /// <summary>
+    /// The list of modules that are loaded in the process.
+    /// </summary>
     public ICollection<IModuleInfo> LoadedModules { get; }
+
+    /// <summary>
+    /// Lookup dictionary for available assemblies.
+    /// </summary>
     public Dictionary<AssemblyName, Assembly> AvailableAssemblies { get; }
+
+    /// <summary>
+    /// Imported type references for assemblies.
+    /// </summary>
     public Dictionary<AssemblyName, AssemblyTypeReference[]> ImportedTypeReferences { get; }
+
+    /// <summary>
+    /// Loaded harmony patches for methods.
+    /// </summary>
     public Dictionary<MethodBase, Patches> LoadedHarmonyPatches { get; } = new();
+
+    /// <summary>
+    /// Additional metadata about the crash.
+    /// </summary>
     public Dictionary<string, string> AdditionalMetadata { get; }
 
+    /// <summary>
+    /// Creates the CrashReportInfo based on initial crash report data.
+    /// </summary>
+    /// <param name="exception">The exception that caused the crash.</param>
+    /// <param name="crashReportHelper">The interface implementation of the needed basic functions.</param>
+    /// <param name="additionalMetadata">Any additional metadata to be passed to the CrashReportInfo.</param>
     public CrashReportInfo(Exception exception, ICrashReportHelper crashReportHelper, Dictionary<string, string> additionalMetadata)
     {
         Exception = exception.Demystify();
@@ -116,25 +235,17 @@ public class CrashReportInfo
 
     private static IEnumerable<StacktraceEntry> GetAllInvolvedModules(Exception ex, ICrashReportHelper crashReportHelper)
     {
-        static IEnumerable<(MethodBase, IModuleInfo)> GetPrefixes(Patches? info, ICrashReportHelper moduleHelper) => info is null
-            ? Enumerable.Empty<(MethodBase, IModuleInfo)>()
-            : AddMetadata(info.Prefixes.OrderBy(t => t.priority).Select(t => t.PatchMethod), moduleHelper);
-
-        static IEnumerable<(MethodBase, IModuleInfo)> GetPostfixes(Patches? info, ICrashReportHelper moduleHelper) => info is null
-            ? Enumerable.Empty<(MethodBase, IModuleInfo)>()
-            : AddMetadata(info.Postfixes.OrderBy(t => t.priority).Select(t => t.PatchMethod), moduleHelper);
-
-        static IEnumerable<(MethodBase, IModuleInfo)> GetTranspilers(Patches? info, ICrashReportHelper moduleHelper) => info is null
-            ? Enumerable.Empty<(MethodBase, IModuleInfo)>()
-            : AddMetadata(info.Transpilers.OrderBy(t => t.priority).Select(t => t.PatchMethod), moduleHelper);
-
-        static IEnumerable<(MethodBase, IModuleInfo)> GetFinalizers(Patches? info, ICrashReportHelper moduleHelper) => info is null
-            ? Enumerable.Empty<(MethodBase, IModuleInfo)>()
-            : AddMetadata(info.Finalizers.OrderBy(t => t.priority).Select(t => t.PatchMethod), moduleHelper);
-
-        static IEnumerable<(MethodBase, IModuleInfo)> AddMetadata(IEnumerable<MethodInfo> methods, ICrashReportHelper moduleHelper)
+        static IEnumerable<(MethodBase, IModuleInfo)> GetPatches(Patches? info, ICrashReportHelper moduleHelper)
         {
-            foreach (var method in methods)
+            if (info is null)
+                yield break;
+
+            var patchMethods = info.Prefixes.OrderBy(t => t.priority).Select(t => t.PatchMethod)
+                .Concat(info.Postfixes.OrderBy(t => t.priority).Select(t => t.PatchMethod))
+                .Concat(info.Transpilers.OrderBy(t => t.priority).Select(t => t.PatchMethod))
+                .Concat(info.Finalizers.OrderBy(t => t.priority).Select(t => t.PatchMethod));
+
+            foreach (var method in patchMethods)
             {
                 if (method.DeclaringType is { } declaringType && moduleHelper.GetModuleByType(declaringType) is { } moduleInfo)
                     yield return (method, moduleInfo);
@@ -213,51 +324,17 @@ public class CrashReportInfo
                 method = frame.GetMethod()!;
             }
 
-            var methods = new List<MethodEntry>();
+            var methods = new List<PatchMethodEntry>();
             var identifiableMethod = method is MethodInfo mi ? CurrentPlatformTriple?.Invoke() is { } cpt && GetIdentifiable?.Invoke(cpt, mi) is MethodInfo v ? v : mi : null;
             var original = identifiableMethod is not null ? Harmony.GetOriginalMethod(identifiableMethod) : null;
             var patches = original is not null ? Harmony.GetPatchInfo(original) : null;
 
-            foreach (var (methodBase, extendedModuleInfo) in GetFinalizers(patches, crashReportHelper))
+            foreach (var (methodBase, extendedModuleInfo) in GetPatches(patches, crashReportHelper))
             {
                 methods.Add(new()
                 {
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
-                    NativeInstructions = Array.Empty<string>(),
-                    CilInstructions = GetILInstructionLines(methodBase),
-                });
-            }
-
-            foreach (var (methodBase, extendedModuleInfo) in GetPostfixes(patches, crashReportHelper))
-            {
-                methods.Add(new()
-                {
-                    Method = methodBase,
-                    ModuleInfo = extendedModuleInfo,
-                    NativeInstructions = Array.Empty<string>(),
-                    CilInstructions = GetILInstructionLines(methodBase),
-                });
-            }
-
-            foreach (var (methodBase, extendedModuleInfo) in GetPrefixes(patches, crashReportHelper))
-            {
-                methods.Add(new()
-                {
-                    Method = methodBase,
-                    ModuleInfo = extendedModuleInfo,
-                    NativeInstructions = Array.Empty<string>(),
-                    CilInstructions = GetILInstructionLines(methodBase),
-                });
-            }
-
-            foreach (var (methodBase, extendedModuleInfo) in GetTranspilers(patches, crashReportHelper))
-            {
-                methods.Add(new()
-                {
-                    Method = methodBase,
-                    ModuleInfo = extendedModuleInfo,
-                    NativeInstructions = Array.Empty<string>(),
                     CilInstructions = GetILInstructionLines(methodBase),
                 });
             }
@@ -277,7 +354,7 @@ public class CrashReportInfo
                 StackFrameDescription = frame.ToString(),
                 NativeInstructions = GetInstructionLines(identifiableMethod, nativeILOffset),
                 CilInstructions = GetILInstructionLines(identifiableMethod),
-                Methods = methods.ToArray(),
+                PatchMethods = methods.ToArray(),
             };
         }
     }

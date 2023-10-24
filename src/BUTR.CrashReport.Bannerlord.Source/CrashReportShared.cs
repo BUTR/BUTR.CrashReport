@@ -54,7 +54,7 @@ namespace BUTR.CrashReport.Bannerlord
     {
         // Inspired by SMAPI's detection
         // Still Work In Progress for more complex capabilities
-        public static readonly string[] OSFileSystemTypeReferences = new[]
+        private static readonly string[] OSFileSystemTypeReferences = new[]
         {
             typeof(System.IO.File).FullName!,
             typeof(System.IO.FileStream).FullName!,
@@ -64,74 +64,74 @@ namespace BUTR.CrashReport.Bannerlord
             typeof(System.IO.DriveInfo).FullName!,
             typeof(System.IO.FileSystemWatcher).FullName!,
         };
-        public static readonly string[] GameFileSystemTypeReferences = new[]
+        private static readonly string[] GameFileSystemTypeReferences = new[]
         {
             "TaleWorlds.Library.*File*",
             "TaleWorlds.Library.*Directory*",
             "TaleWorlds.SaveSystem.*File*",
         };
-        public static readonly string[] ShellTypeReferences = new[]
+        private static readonly string[] ShellTypeReferences = new[]
         {
             typeof(System.Diagnostics.Process).FullName!,
         };
-        public static readonly string[] SaveSystemTypeReferences = new[]
+        private static readonly string[] SaveSystemTypeReferences = new[]
         {
             "TaleWorlds.Library.*Save*",
             "TaleWorlds.Core.MBSaveLoad",
         };
-        public static readonly string[] SaveSystemAssemblyReferences = new[]
+        private static readonly string[] SaveSystemAssemblyReferences = new[]
         {
             "TaleWorlds.SaveSystem",
         };
-        public static readonly string[] GameEntitiesTypeReferences = new[]
+        private static readonly string[] GameEntitiesTypeReferences = new[]
         {
             "TaleWorlds.Core.EntitySystem*",
         };
-        public static readonly string[] GameEntitiesAssemblyReferences = new[]
+        private static readonly string[] GameEntitiesAssemblyReferences = new[]
         {
             "TaleWorlds.ObjectSystem",
         };
-        public static readonly string[] InputSystemAssemblyReferences = new[]
+        private static readonly string[] InputSystemAssemblyReferences = new[]
         {
             "TaleWorlds.InputSystem",
         };
-        public static readonly string[] LocalizationSystemAssemblyReferences = new[]
+        private static readonly string[] LocalizationSystemAssemblyReferences = new[]
         {
             "TaleWorlds.Localization",
         };
-        public static readonly string[] UITypeReferences = new[]
+        private static readonly string[] UITypeReferences = new[]
         {
             "TaleWorlds.Library.IViewModel",
             "TaleWorlds.Library.ViewModel",
         };
-        public static readonly string[] UIAssemblyReferences = new[]
+        private static readonly string[] UIAssemblyReferences = new[]
         {
             "*GauntletUI*",
         };
-        public static readonly string[] HttpTypeReferences = new[]
+        private static readonly string[] HttpTypeReferences = new[]
         {
             "TaleWorlds.Library.*Http*",
             "System.Net*Http.*",
         };
-        public static readonly string[] AchievementSystemTypeReferences = new[]
+        private static readonly string[] AchievementSystemTypeReferences = new[]
         {
             "TaleWorlds.*Achievement*",
         };
-        public static readonly string[] CampaignSystemTypeReferences = new[]
+        private static readonly string[] CampaignSystemTypeReferences = new[]
         {
             "TaleWorlds.*CampaignSystem*",
         };
-        public static readonly string[] SkillSystemTypeReferences = new[]
+        private static readonly string[] SkillSystemTypeReferences = new[]
         {
             "TaleWorlds.Core.CharacterSkills",
             "TaleWorlds.Core.DefaultSkills",
             "TaleWorlds.Core.SkillObject",
         };
-        public static readonly string[] ItemSystemTypeReferences = new[]
+        private static readonly string[] ItemSystemTypeReferences = new[]
         {
             "TaleWorlds.Core.ItemObject",
         };
-        public static readonly string[] CultureSystemTypeReferences = new[]
+        private static readonly string[] CultureSystemTypeReferences = new[]
         {
             "TaleWorlds.*Culture*",
         };

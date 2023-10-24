@@ -1,5 +1,6 @@
-﻿using BUTR.CrashReport.Extensions;
+﻿using BUTR.CrashReport.Bannerlord.Parser.Extensions;
 using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Utils;
 
 using HtmlAgilityPack;
 
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
-using BUTR.CrashReport.Utils;
 
 namespace BUTR.CrashReport.Bannerlord.Parser;
 
@@ -46,7 +46,7 @@ public static class CrashReportParser
         {
             var enhancedStacktraceEndIdx = rawContent.Slice(idx).IndexOf(enhancedStacktraceEndDelimiter.AsSpan(), StringComparison.Ordinal) - enhancedStacktraceEndDelimiter.Length;
             var enhancedStacktraceRaw = rawContent.Slice(idx, enhancedStacktraceEndIdx).ToString();
-            while (GetAllOpenTags(enhancedStacktraceRaw.AsSpan(), span => !span.SequenceEqual(enhancedStacktraceStartDelimiter1.AsSpan()) && !span.SequenceEqual(enhancedStacktraceStartDelimiter2.AsSpan()) && span is not "<ul>" and not "<li>" and not "<br>" and not "<pre>") is { Count: > 0} toEscape)
+            while (GetAllOpenTags(enhancedStacktraceRaw.AsSpan(), span => !span.SequenceEqual(enhancedStacktraceStartDelimiter1.AsSpan()) && !span.SequenceEqual(enhancedStacktraceStartDelimiter2.AsSpan()) && span is not "<ul>" and not "<li>" and not "<br>" and not "<pre>") is { Count: > 0 } toEscape)
             {
                 enhancedStacktraceRaw = toEscape.Aggregate(enhancedStacktraceRaw, (current, s) => current.Replace(s, s.Replace("<", "&lt;").Replace(">", "&gt;")));
             }
@@ -311,7 +311,7 @@ public static class CrashReportParser
             UpdateInfo = null,
             DependencyMetadatas = GetModuleDependencyMetadatas(GetRange(lines, version == 1 ? "Dependency Metadatas" : "Dependencies", new[] { "SubModules", "Additional Assemblies", "Url" })),
             SubModules = GetModuleSubModules(GetRange(lines, "SubModules", new[] { "Additional Assemblies" })),
-            AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isVortex.ToString()}).AddRange(lines.SkipWhile(l => !l.StartsWith("Additional Assemblies:")).Skip(1).Select(l =>
+            AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isVortex.ToString() }).AddRange(lines.SkipWhile(l => !l.StartsWith("Additional Assemblies:")).Skip(1).Select(l =>
             {
                 return new MetadataModel { Key = "METADATA:AdditionalAssembly", Value = l, };
             })),
