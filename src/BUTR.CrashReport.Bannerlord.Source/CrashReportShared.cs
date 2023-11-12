@@ -44,6 +44,7 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
+    using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Models;
 
     using global::System.Collections.Generic;

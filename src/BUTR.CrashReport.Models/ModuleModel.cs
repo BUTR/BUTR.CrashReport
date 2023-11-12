@@ -1,8 +1,4 @@
-﻿using BUTR.CrashReport.Utils;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace BUTR.CrashReport.Models;
 
@@ -71,22 +67,4 @@ public sealed record ModuleModel
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
-
-    /// <summary>
-    /// Gets whether the module contains an assembly reference.
-    /// </summary>
-    /// <param name="assemblies">The list of available assemblies</param>
-    /// <param name="assemblyReferences">The assembly references to search for. Supports wildcard</param>
-    public bool ContainsAssemblyReferences(IEnumerable<AssemblyModel> assemblies, string[] assemblyReferences) => assemblies.Where(x => x.ModuleId == Id)
-        .SelectMany(x => x.ImportedAssemblyReferences)
-        .Any(x => assemblyReferences.Any(y => FileSystemName.MatchesSimpleExpression(y.AsSpan(), x.Name.AsSpan())));
-
-    /// <summary>
-    /// Gets whether the module contains an type reference.
-    /// </summary>
-    /// <param name="assemblies">The list of available assemblies</param>
-    /// <param name="typeReferences">The type references to search for. Supports wildcard</param>
-    public bool ContainsTypeReferences(IEnumerable<AssemblyModel> assemblies, string[] typeReferences) => assemblies.Where(x => x.ModuleId == Id)
-        .SelectMany(x => x.ImportedTypeReferences)
-        .Any(x => typeReferences.Any(y => FileSystemName.MatchesSimpleExpression(y.AsSpan(), x.FullName.AsSpan())));
 }

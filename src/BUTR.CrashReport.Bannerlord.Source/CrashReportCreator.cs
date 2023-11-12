@@ -48,6 +48,7 @@ namespace BUTR.CrashReport.Bannerlord
     using global::Bannerlord.BUTR.Shared.Helpers;
     using global::Bannerlord.ModuleManager;
 
+    using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Models;
     using global::BUTR.CrashReport.Utils;
 
@@ -337,7 +338,7 @@ namespace BUTR.CrashReport.Bannerlord
                         Name = x.Name,
                         FullName = x.FullName,
                     }).ToImmutableArray() : ImmutableArray<AssemblyImportedTypeReferenceModel>.Empty,
-                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => new AssemblyImportedReferenceModel(x)).ToImmutableArray(),
+                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => AssemblyImportedReferenceModelExtensions.Create(x)).ToImmutableArray(),
                     AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                 });
             }

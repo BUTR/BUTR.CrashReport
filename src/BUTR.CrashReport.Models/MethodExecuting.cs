@@ -5,7 +5,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents the actual executing method of a stack trace frame. Can the the original method or a patched method.
 /// </summary>
-public record MethodExecuting: MethodSimple
+public record MethodExecuting : MethodSimple
 {
     /// <summary>
     /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.NativeInstructions"/>

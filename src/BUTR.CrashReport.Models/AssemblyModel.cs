@@ -1,6 +1,4 @@
-﻿using BUTR.CrashReport.Utils;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BUTR.CrashReport.Models;
 
@@ -75,10 +73,4 @@ public record AssemblyModel
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
-
-    /// <summary>
-    /// <inheritdoc cref="System.Reflection.AssemblyName.FullName"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="System.Reflection.AssemblyName.FullName"/></returns>
-    public string GetFullName() => AssemblyNameFormatter.ComputeDisplayName(Name, Version, Culture, PublicKeyToken);
 }

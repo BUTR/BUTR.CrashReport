@@ -1,6 +1,4 @@
-﻿using BUTR.CrashReport.Utils;
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
@@ -37,26 +35,7 @@ public record AssemblyImportedReferenceModel
     public required string? PublicKeyToken { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="System.Reflection.AssemblyName.FullName"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="System.Reflection.AssemblyName.FullName"/></returns>
-    public string GetFullName() => AssemblyNameFormatter.ComputeDisplayName(Name, Version, Culture, PublicKeyToken);
-
-    /// <summary>
     /// The empty default constructor.
     /// </summary>
     public AssemblyImportedReferenceModel() { }
-
-    /// <summary>
-    /// The constructor that we recommend to use.
-    /// </summary>
-    /// <param name="assemblyName"></param>
-    [SetsRequiredMembers]
-    public AssemblyImportedReferenceModel(AssemblyName assemblyName)
-    {
-        Name = assemblyName.Name;
-        Version = AssemblyNameFormatter.GetVersion(assemblyName.Version);
-        Culture = assemblyName.CultureName;
-        PublicKeyToken = string.Join(string.Empty, Array.ConvertAll(assemblyName.GetPublicKeyToken(), x => x.ToString("x2", CultureInfo.InvariantCulture)));
-    }
 }

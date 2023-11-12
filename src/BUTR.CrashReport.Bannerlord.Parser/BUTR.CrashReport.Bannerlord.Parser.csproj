@@ -38,7 +38,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\BUTR.CrashReport\Utils\Anonymizer.cs">
+      <Link>Utils\Anonymizer.cs</Link>
+    </Compile>
   </ItemGroup>
 
   <!--

@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Bannerlord
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Bannerlord.Tool", "BUTR.CrashReport.Bannerlord.Tool\BUTR.CrashReport.Bannerlord.Tool.csproj", "{36A642D2-9075-470D-B5B4-40EA20E0C16C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Models", "BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj", "{03DE899E-3EE2-4EA4-8D5D-188C1AB83365}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{36A642D2-9075-470D-B5B4-40EA20E0C16C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36A642D2-9075-470D-B5B4-40EA20E0C16C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36A642D2-9075-470D-B5B4-40EA20E0C16C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03DE899E-3EE2-4EA4-8D5D-188C1AB83365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03DE899E-3EE2-4EA4-8D5D-188C1AB83365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03DE899E-3EE2-4EA4-8D5D-188C1AB83365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03DE899E-3EE2-4EA4-8D5D-188C1AB83365}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,6 @@ Global
 		{80698068-7B95-487A-9DD8-E02DE27127AC} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 		{51A4BB52-A8E0-4BC3-8476-23E272413954} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 		{36A642D2-9075-470D-B5B4-40EA20E0C16C} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
+		{03DE899E-3EE2-4EA4-8D5D-188C1AB83365} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 	EndGlobalSection
 EndGlobal

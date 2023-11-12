@@ -36,7 +36,6 @@
 // SOFTWARE.
 #endregion
 
-
 #if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLE_HTML_RENDERER
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
@@ -45,6 +44,7 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
+    using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Models;
     using global::BUTR.CrashReport.Utils;
 
@@ -703,7 +703,7 @@ namespace BUTR.CrashReport.Bannerlord
                 AppendSubModules(module);
                 AppendAdditionalAssemblies(module);
 
-                var isVortexManaged = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:MANAGED_BY_VORTEX").Value is { } str && bool.TryParse(str, out var val) && val;
+                var isVortexManaged = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:MANAGED_BY_VORTEX")?.Value is { } str && bool.TryParse(str, out var val) && val;
 
                 var capabilities = new HashSet<ModuleCapabilities>(CrashReportShared.GetModuleCapabilities(crashReport, module));
                 if (capabilities.Count == 0) capabilities.Add(ModuleCapabilities.None);

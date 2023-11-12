@@ -45,6 +45,10 @@
     <PackageReference Include="Polyfill" Version="1.29.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
+  </ItemGroup>
+
   <Target Name="AddPackageAliases" BeforeTargets="ResolveReferences" Outputs="%(PackageReference.Identity)">
     <PropertyGroup>
       <AliasPackageReference>@(PackageReference->'%(Identity)')</AliasPackageReference>
@@ -64,6 +68,8 @@
     <PropertyGroup>
       <!-- We merge everything except 0Harmony, since we support 2.2 and 2.3 -->
       <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)0Harmony.dll;</ILRepackExcludeAssemblies>
+      <!-- Exclude the Model -->
+      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models.dll;</ILRepackExcludeAssemblies>
     </PropertyGroup>
   </Target>
 
