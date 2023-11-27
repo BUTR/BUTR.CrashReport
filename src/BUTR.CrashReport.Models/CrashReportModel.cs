@@ -63,6 +63,11 @@ public record CrashReportModel
     public required IReadOnlyList<HarmonyPatchesModel> HarmonyPatches { get; set; } = new List<HarmonyPatchesModel>();
 
     /// <summary>
+    /// The list of MonoMod detours that are present.
+    /// </summary>
+    public required IReadOnlyList<MonoModDetoursModel> MonoModDetours { get; set; } = new List<MonoModDetoursModel>();
+
+    /// <summary>
     /// Additional metadata associated with the model.
     /// </summary>
     /// <returns>A key:value list of metadatas.</returns>

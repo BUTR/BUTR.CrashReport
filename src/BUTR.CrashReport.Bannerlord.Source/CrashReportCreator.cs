@@ -81,6 +81,7 @@ namespace BUTR.CrashReport.Bannerlord
                 Modules = modules,
                 Assemblies = GetAssemblyList(crashReport),
                 HarmonyPatches = GetHarmonyPatchesListHtml(crashReport),
+                MonoModDetours = ImmutableArray<MonoModDetoursModel>.Empty,
                 Metadata = new()
                 {
                     LauncherType = GetLauncherType(crashReport),

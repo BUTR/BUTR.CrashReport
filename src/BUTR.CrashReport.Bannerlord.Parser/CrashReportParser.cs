@@ -216,6 +216,7 @@ public static class CrashReportParser
             EnhancedStacktrace = enhancedStacktrace,
             Assemblies = assemblies,
             HarmonyPatches = harmonyPatches,
+            MonoModDetours = ImmutableArray<MonoModDetoursModel>.Empty,
             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
         };
     }

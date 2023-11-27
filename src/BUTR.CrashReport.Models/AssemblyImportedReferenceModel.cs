@@ -1,9 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Reflection;
-
-namespace BUTR.CrashReport.Models;
+﻿namespace BUTR.CrashReport.Models;
 
 /// <summary>
 /// Represents an imported assembly reference.

@@ -351,7 +351,7 @@ public class CrashReportInfo
                 Method = identifiableMethod!,
                 OriginalMethod = original is not null ? new()
                 {
-                    Method = original!,
+                    Method = original,
                     ModuleInfo = GetModuleInfoIfMod(original, crashReportHelper),
                     CilInstructions = GetILInstructionLines(original),
                 } : null,

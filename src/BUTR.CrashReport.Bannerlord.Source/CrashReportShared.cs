@@ -198,7 +198,7 @@ namespace BUTR.CrashReport.Bannerlord
 
         public static string GetLauncherType(CrashReportModel crashReport)
         {
-            if (crashReport.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:Parent_Process_Name").Value is { } parentProcessName)
+            if (crashReport.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:Parent_Process_Name")?.Value is { } parentProcessName)
             {
                 return parentProcessName switch
                 {
@@ -224,7 +224,7 @@ namespace BUTR.CrashReport.Bannerlord
 
         public static string GetLauncherVersion(CrashReportModel crashReport)
         {
-            if (crashReport.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:Parent_Process_File_Version").Value is { } parentProcessFileVersion)
+            if (crashReport.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:Parent_Process_File_Version")?.Value is { } parentProcessFileVersion)
                 return parentProcessFileVersion;
 
             if (GetBUTRLoaderVersion(crashReport) is { } bVersion && !string.IsNullOrEmpty(bVersion))
