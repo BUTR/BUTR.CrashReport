@@ -6,7 +6,6 @@ using HtmlAgilityPack;
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 
@@ -162,8 +161,8 @@ public static class CrashReportParser
             yield return new()
             {
                 Name = name,
-                Logs = entries.OfType<LogEntry>().ToImmutableArray(),
-                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                Logs = entries.OfType<LogEntry>().ToList(),
+                AdditionalMetadata = Array.Empty<MetadataModel>(),
             };
         }
     }
@@ -216,8 +215,8 @@ public static class CrashReportParser
             EnhancedStacktrace = enhancedStacktrace,
             Assemblies = assemblies,
             HarmonyPatches = harmonyPatches,
-            MonoModDetours = ImmutableArray<MonoModDetoursModel>.Empty,
-            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+            MonoModDetours = Array.Empty<MonoModDetoursModel>(),
+            AdditionalMetadata = Array.Empty<MetadataModel>(),
         };
     }
 
@@ -227,7 +226,7 @@ public static class CrashReportParser
 
         foreach (var exception in node.InnerHtml.Split("Inner Exception information"))
         {
-            var exceptionLines = exception.Split(new string[] { "<br>", "</br>" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim().Trim('\n')).Where(x => x.Length != 0).ToList();
+            var exceptionLines = exception.Split(new[] { "<br>", "</br>" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim().Trim('\n')).Where(x => x.Length != 0).ToList();
             var type = exceptionLines.First(x => x.StartsWith("Type: ")).Substring(6);
             var message = exceptionLines.First(x => x.StartsWith("Message: ")).Substring(9);
             var source = exceptionLines.First(x => x.StartsWith("Source: ")).Substring(8);
@@ -240,7 +239,7 @@ public static class CrashReportParser
                 Message = message,
                 CallStack = callstack,
                 InnerException = null,
-                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                AdditionalMetadata = Array.Empty<MetadataModel>(),
             });
         }
 
@@ -274,7 +273,7 @@ public static class CrashReportParser
             IsOptional = sml.Contains("(optional)"),
             Version = null, // Was not available pre 13
             VersionRange = null, // Was not available pre 13
-            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+            AdditionalMetadata = Array.Empty<MetadataModel>(),
         }).ToArray();
 
         static IReadOnlyList<ModuleSubModuleModel> GetModuleSubModules(IReadOnlyList<string> lines) => lines
@@ -312,10 +311,10 @@ public static class CrashReportParser
             UpdateInfo = null,
             DependencyMetadatas = GetModuleDependencyMetadatas(GetRange(lines, version == 1 ? "Dependency Metadatas" : "Dependencies", new[] { "SubModules", "Additional Assemblies", "Url" })),
             SubModules = GetModuleSubModules(GetRange(lines, "SubModules", new[] { "Additional Assemblies" })),
-            AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isVortex.ToString() }).AddRange(lines.SkipWhile(l => !l.StartsWith("Additional Assemblies:")).Skip(1).Select(l =>
+            AdditionalMetadata = new List<MetadataModel> { new() { Key = "METADATA:MANAGED_BY_VORTEX", Value = isVortex.ToString() } }.Concat(lines.SkipWhile(l => !l.StartsWith("Additional Assemblies:")).Skip(1).Select(l =>
             {
                 return new MetadataModel { Key = "METADATA:AdditionalAssembly", Value = l, };
-            })),
+            })).ToList(),
         };
         return moduleModel;
     }
@@ -331,7 +330,7 @@ public static class CrashReportParser
             {
                 ModuleId = id,
                 EnhancedStacktraceFrameName = frame,
-                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                AdditionalMetadata = Array.Empty<MetadataModel>(),
             };
         }) ?? Array.Empty<InvolvedModuleModel>();
     }
@@ -348,8 +347,8 @@ public static class CrashReportParser
         foreach (var childNode in node.ChildNodes.FirstOrDefault(x => x.Name == "ul")?.ChildNodes ?? Enumerable.Empty<HtmlNode>())
         {
             var lines = childNode.InnerHtml.Replace("&lt;", "<").Replace("&gt;", ">").Trim().Split("<br>", StringSplitOptions.RemoveEmptyEntries);
-            var module = lines?.Length > 0 ? lines[0].Substring(8) : null;
-            var methodFullDescription = lines?.Length > 1 ? lines[1].Substring(8).Replace("::", ".") : string.Empty;
+            var module = lines.Length > 0 ? lines[0].Substring(8) : null;
+            var methodFullDescription = lines.Length > 1 ? lines[1].Substring(8).Replace("::", ".") : string.Empty;
             var idx1 = methodFullDescription.IndexOf("(", StringComparison.Ordinal);
             var idx2 = idx1 != -1 ? methodFullDescription.Substring(0, idx1).LastIndexOf(" ", StringComparison.Ordinal) : -1;
             var method = idx2 != -1 ? methodFullDescription.Substring(idx2 + 1) : string.Empty;
@@ -358,8 +357,8 @@ public static class CrashReportParser
                 ? methodSplit[1].Trim(')').Split(" ", StringSplitOptions.RemoveEmptyEntries)
                     .Where((_, i) => i % 2 == 0)
                     .Select(x => x.Trim(','))
-                    .ToImmutableArray()
-                : ImmutableArray<string>.Empty;
+                    .ToList()
+                : new();
             var methodFullName = methodSplit[0].Replace("::", ".");
             var split = methodFullName.Split('.');
             methods.Add(new MethodSimple
@@ -369,8 +368,8 @@ public static class CrashReportParser
                 MethodName = split.Last(),
                 MethodFullDescription = methodFullDescription,
                 MethodParameters = parameters,
-                CilInstructions = ImmutableArray<string>.Empty,
-                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                CilInstructions = Array.Empty<string>(),
+                AdditionalMetadata = Array.Empty<MetadataModel>(),
             });
         }
 
@@ -392,9 +391,9 @@ public static class CrashReportParser
                 AdditionalMetadata = executingMethod.AdditionalMetadata,
             },
             OriginalMethod = null,
-            PatchMethods = methods.Count == 1 ? ImmutableArray<MethodSimple>.Empty : methods.Take(methods.Count - 1).ToImmutableArray(),
+            PatchMethods = methods.Count == 1 ? Array.Empty<MethodSimple>() : methods.Take(methods.Count - 1).ToArray(),
             MethodFromStackframeIssue = false,
-            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+            AdditionalMetadata = Array.Empty<MetadataModel>(),
         };
     }
 
@@ -430,10 +429,10 @@ public static class CrashReportParser
                 : outerHtml.Contains("module_assembly") ? AssemblyModelType.Module
                 : AssemblyModelType.Unclassified) | (isDynamic ? AssemblyModelType.Dynamic : AssemblyModelType.Unclassified),
 
-            ImportedTypeReferences = ImmutableArray<AssemblyImportedTypeReferenceModel>.Empty,
-            ImportedAssemblyReferences = ImmutableArray<AssemblyImportedReferenceModel>.Empty,
+            ImportedTypeReferences = Array.Empty<AssemblyImportedTypeReferenceModel>(),
+            ImportedAssemblyReferences = Array.Empty<AssemblyImportedReferenceModel>(),
 
-            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+            AdditionalMetadata = Array.Empty<MetadataModel>(),
         };
         return assemblyModel;
     }
@@ -453,7 +452,7 @@ public static class CrashReportParser
                 Priority = split.FirstOrDefault(x => x.StartsWith("Priority: "))?.Split(':')[1] is { } strPriority && int.TryParse(strPriority, out var piority) ? piority : 400,
                 Before = split.FirstOrDefault(x => x.StartsWith("Before: "))?.Split(':')[1].Split(',') ?? Array.Empty<string>(),
                 After = split.FirstOrDefault(x => x.StartsWith("After: "))?.Split(':')[1].Split(',') ?? Array.Empty<string>(),
-                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                AdditionalMetadata = Array.Empty<MetadataModel>(),
             };
         }
 
@@ -467,7 +466,7 @@ public static class CrashReportParser
             OriginalMethodName = originalMethodFullName.Split('.').Last(),
             OriginalMethodDeclaredTypeName = originalMethodFullName,
             Patches = prefixes.Concat(postfixes).Concat(transpilers).Concat(finalizers).ToArray(),
-            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+            AdditionalMetadata = Array.Empty<MetadataModel>(),
         };
         return harmonyPatchModel;
     }

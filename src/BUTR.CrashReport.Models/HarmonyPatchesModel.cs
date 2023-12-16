@@ -8,12 +8,12 @@ namespace BUTR.CrashReport.Models;
 public sealed record HarmonyPatchesModel
 {
     /// <summary>
-    /// The original <see cref="EnhanExecutingMethodEntryodDeclaredTypeName"/>.
+    /// The original method type name.
     /// </summary>
     public required string? OriginalMethodDeclaredTypeName { get; set; }
 
     /// <summary>
-    /// The original  <see cref="EnhanExecutingMethodEntryodName"/>.
+    /// The original method name.
     /// </summary>
     public required string? OriginalMethodName { get; set; }
 

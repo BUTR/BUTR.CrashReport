@@ -30,7 +30,6 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.x.x
-        dotnet-quality: preview
 
     - name: Run _build
       run: >-

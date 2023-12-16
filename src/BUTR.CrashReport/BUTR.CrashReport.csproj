@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
@@ -33,7 +34,7 @@
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.4.1" PrivateAssets="all" />
     <PackageReference Include="Iced" Version="1.20.0" Alias="iced" Private="false" PrivateAssets="all" />
-    <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="5.4.0" PrivateAssets="all" />
+    <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="5.5.0" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>
@@ -42,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Polyfill" Version="1.29.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Polyfill" Version="1.34.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,10 +74,4 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="DisableILRepack">
-    <PropertyGroup>
-      <ILRepackBuildEnable>false</ILRepackBuildEnable>
-    </PropertyGroup>
-  </Target>
-  
 </Project>
