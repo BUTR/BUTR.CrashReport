@@ -50,7 +50,7 @@
 
   <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepare">
     <PropertyGroup>
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models;</ILRepackExcludeAssemblies>
+      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models.dll;</ILRepackExcludeAssemblies>
     </PropertyGroup>
   </Target>
 
