@@ -74,4 +74,10 @@
     </PropertyGroup>
   </Target>
 
+  <Target Name="DisableILRepack">
+    <PropertyGroup>
+      <ILRepackBuildEnable>false</ILRepackBuildEnable>
+    </PropertyGroup>
+  </Target>
+  
 </Project>
