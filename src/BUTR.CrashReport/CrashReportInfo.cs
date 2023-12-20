@@ -329,8 +329,8 @@ public class CrashReportInfo
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
                     CilInstructions = DecompileILCode(methodBase),
-                    CsharpWithCilInstructions = DecompileILWithCSharpCode(identifiableMethod),
-                    CsharpInstructions = DecompileCSharpCode(identifiableMethod),
+                    CsharpWithCilInstructions = DecompileILWithCSharpCode(methodBase),
+                    CsharpInstructions = DecompileCSharpCode(methodBase),
                 });
             }
 
@@ -344,8 +344,8 @@ public class CrashReportInfo
                     Method = original,
                     ModuleInfo = GetModuleInfoIfMod(original, crashReportHelper),
                     CilInstructions = DecompileILCode(original),
-                    CsharpWithCilInstructions = DecompileILWithCSharpCode(identifiableMethod),
-                    CsharpInstructions = DecompileCSharpCode(identifiableMethod),
+                    CsharpWithCilInstructions = DecompileILWithCSharpCode(original),
+                    CsharpInstructions = DecompileCSharpCode(original),
                 } : null,
                 MethodFromStackframeIssue = methodFromStackframeIssue,
                 ModuleInfo = GetModuleInfoIfMod(identifiableMethod, crashReportHelper),

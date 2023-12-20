@@ -185,8 +185,8 @@ namespace BUTR.CrashReport.Bannerlord
                             MethodFullDescription = patchMethod.Method.FullDescription(),
                             MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
                             CilInstructions = patchMethod.CilInstructions.AsImmutableArray(),
-                            CsharpWithCilInstructions = entry.CsharpWithCilInstructions.AsImmutableArray(),
-                            CsharpInstructions = entry.CsharpInstructions.AsImmutableArray(),
+                            CsharpWithCilInstructions = patchMethod.CsharpWithCilInstructions.AsImmutableArray(),
+                            CsharpInstructions = patchMethod.CsharpInstructions.AsImmutableArray(),
                             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         });
                     }
