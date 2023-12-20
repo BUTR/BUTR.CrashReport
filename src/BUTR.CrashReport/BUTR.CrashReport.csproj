@@ -6,7 +6,6 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
-    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -46,15 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BUTR.CrashReport.Decompilers\BUTR.CrashReport.Decompilers.csproj" Pack="true" PrivateAssets="all" />
+    <ProjectReference Include="..\BUTR.CrashReport.Decompilers\BUTR.CrashReport.Decompilers.csproj" />
     <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
   </ItemGroup>
-
-  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
-    <ItemGroup>
-      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')->WithMetadataValue('Pack', 'true'))" />
-    </ItemGroup>
-  </Target>
 
   <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepare">
     <PropertyGroup>
