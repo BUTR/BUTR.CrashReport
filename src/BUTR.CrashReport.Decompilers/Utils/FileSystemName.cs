@@ -5,8 +5,10 @@ namespace BUTR.CrashReport.Utils;
 /// <summary>
 /// Provides methods for matching file system names.
 /// </summary>
-internal static class FileSystemName
+public static class FileSystemName
 {
+    public static bool MatchesSimpleExpression(string expression, string name, bool ignoreCase = true) => MatchesSimpleExpression(expression.AsSpan(), name.AsSpan(), ignoreCase);
+
     /// <summary>
     /// Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'. The backslash character '\\' escapes.
     /// </summary>

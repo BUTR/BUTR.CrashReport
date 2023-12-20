@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>BUTR.CrashReport</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ILRepackTargetConfigurations>Debug;Release</ILRepackTargetConfigurations>
+    <ILRepackAllowDuplicateResources>false</ILRepackAllowDuplicateResources>
+    <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
+    <ILRepackPerformInternalize>true</ILRepackPerformInternalize>
+    <ILRepackCopyAttributes>false</ILRepackCopyAttributes>
+    <ILRepackBuildToolingPath>$(PkgBUTR_ILRepack)\tools\net461\ILRepack.exe</ILRepackBuildToolingPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ILRepack" Version="2.0.18" PrivateAssets="all" IncludeAssets="none" />
+    <PackageReference Include="BUTR.ILRepack" Version="2.1.9-beta7" GeneratePathProperty="true" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="ILRepack.FullAuto" Version="1.2.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Iced" Version="1.20.0" Alias="iced" Private="false" PrivateAssets="all" />
+    <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="5.5.0" PrivateAssets="all" />
+    <PackageReference Include="ICSharpCode.Decompiler" Version="8.2.0.7535" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Harmony.Extensions" Version="3.2.0.77" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Polyfill" Version="1.34.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+  </ItemGroup>
+
+  <Target Name="AddPackageAliases" BeforeTargets="ResolveReferences" Outputs="%(PackageReference.Identity)">
+    <PropertyGroup>
+      <AliasPackageReference>@(PackageReference->'%(Identity)')</AliasPackageReference>
+      <AliasName>@(PackageReference->'%(Alias)')</AliasName>
+      <Private>@(PackageReference->'%(Private)')</Private>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)'=='$(AliasPackageReference)'">
+        <Aliases>$(AliasName)</Aliases>
+        <Private>$(Private)</Private>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+
+  <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepare">
+    <PropertyGroup>
+      <!-- We merge everything except 0Harmony, since we support 2.2 and 2.3 -->
+      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)0Harmony.dll;</ILRepackExcludeAssemblies>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DisableILRepack">
+    <PropertyGroup>
+      <ILRepackBuildEnable>false</ILRepackBuildEnable>
+    </PropertyGroup>
+  </Target>
+
+</Project>

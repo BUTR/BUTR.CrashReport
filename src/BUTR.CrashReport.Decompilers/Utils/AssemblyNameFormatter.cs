@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BUTR.CrashReport.Utils;
 
-internal static class AssemblyNameFormatter
+public static class AssemblyNameFormatter
 {
     public static string ComputeDisplayName(string? name, string? version, string? cultureName, string? publicKeyToken)
     {
@@ -51,7 +51,7 @@ internal static class AssemblyNameFormatter
 
         //@todo: App-compat: You can use double or single quotes to quote a name, and Fusion (or rather the IdentityAuthority) picks one
         // by some algorithm. Rather than guess at it, I'll just use double-quote consistently.
-        if (s != s.Trim() || s.Contains('\"') || s.Contains('\''))
+        if (s != s.Trim() || s.Contains("\"") || s.Contains("\'"))
             needsQuoting = true;
 
         if (needsQuoting)
@@ -67,7 +67,7 @@ internal static class AssemblyNameFormatter
                     continue;
                 if (s.Length - i < escapeReplacement.Length)
                     continue;
-                if (s.AsSpan(i, escapeReplacement.Length).SequenceEqual(escapeReplacement))
+                if (s.AsSpan(i, escapeReplacement.Length).SequenceEqual(escapeReplacement.AsSpan()))
                 {
                     sb.Append('\\');
                     sb.Append(kv.Key);

@@ -41,6 +41,10 @@ public record MethodSimple
     /// </summary>
     /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.CilInstructions"/></returns>
     public required IReadOnlyList<string> CilInstructions { get; set; } = new List<string>();
+    
+    public required IReadOnlyList<string> CsharpWithCilInstructions { get; set; } = new List<string>();
+    
+    public required IReadOnlyList<string> CsharpInstructions { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>

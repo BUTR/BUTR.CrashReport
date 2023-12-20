@@ -1,23 +1,14 @@
-﻿extern alias iced;
-
-using AsmResolver.DotNet;
-using AsmResolver.DotNet.Code.Cil;
-using AsmResolver.DotNet.Dynamic;
-
-using HarmonyLib;
-using HarmonyLib.BUTR.Extensions;
-
-using iced::Iced.Intel;
+﻿using HarmonyLib;
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 
-using Decoder = iced::Iced.Intel.Decoder;
+using static BUTR.CrashReport.Utils.MethodDecompiler;
+using static BUTR.CrashReport.Utils.MonoModUtils;
+using static BUTR.CrashReport.Utils.ReferenceImporter;
 
 namespace BUTR.CrashReport;
 
@@ -66,6 +57,18 @@ public record MethodEntry
     /// </summary>
     /// <returns><inheritdoc cref="StacktraceEntry.CilInstructions"/></returns>
     public required string[] CilInstructions { get; set; }
+    
+    /// <summary>
+    /// <inheritdoc cref="StacktraceEntry.CsharpWithCilInstructions"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="StacktraceEntry.CsharpWithCilInstructions"/></returns>
+    public required string[] CsharpWithCilInstructions { get; set; }
+    
+    /// <summary>
+    /// <inheritdoc cref="StacktraceEntry.CsharpInstructions"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="StacktraceEntry.CsharpInstructions"/></returns>
+    public required string[] CsharpInstructions { get; set; }
 }
 
 /// <summary>
@@ -120,6 +123,16 @@ public record StacktraceEntry
     /// The Common Intermediate Language (CIL) code of the method.
     /// </summary>
     public required string[] CilInstructions { get; set; }
+    
+    /// <summary>
+    /// The C# code of the method.
+    /// </summary>
+    public required string[] CsharpWithCilInstructions { get; set; }
+    
+    /// <summary>
+    /// The C# and Common Intermediate Language (CIL) code of the method.
+    /// </summary>
+    public required string[] CsharpInstructions { get; set; }
 
     /// <summary>
     /// The list of Harmony patch methods that are applied to the method.
@@ -132,18 +145,6 @@ public record StacktraceEntry
 /// </summary>
 public class CrashReportInfo
 {
-    private delegate object GetCurrentPlatformTripleDelegate();
-    private static readonly GetCurrentPlatformTripleDelegate? CurrentPlatformTriple =
-        AccessTools2.GetPropertyGetterDelegate<GetCurrentPlatformTripleDelegate>("MonoMod.Core.Platforms.PlatformTriple:Current");
-
-    private delegate MethodBase GetIdentifiableDelegate(object instance, MethodBase method);
-    private static readonly GetIdentifiableDelegate? GetIdentifiable =
-        AccessTools2.GetDelegate<GetIdentifiableDelegate>("MonoMod.Core.Platforms.PlatformTriple:GetIdentifiable");
-
-    private delegate IntPtr GetNativeMethodBodyDelegate(object instance, MethodBase method);
-    private static readonly GetNativeMethodBodyDelegate? GetNativeMethodBody =
-        AccessTools2.GetDelegate<GetNativeMethodBodyDelegate>("MonoMod.Core.Platforms.PlatformTriple:GetNativeMethodBody");
-
     /// <summary>
     /// The version of the crash report.
     /// </summary>
@@ -207,25 +208,12 @@ public class CrashReportInfo
         LoadedModules = crashReportHelper.GetLoadedModules().ToArray();
 
         AvailableAssemblies = crashReportHelper.Assemblies().ToDictionary(x => x.GetName(), x => x);
-        ImportedTypeReferences = AvailableAssemblies.ToDictionary(x => x.Key, x =>
+        ImportedTypeReferences = GetImportedTypeReferences(AvailableAssemblies).ToDictionary(x => x.Key, x => x.Value.Select(y => new AssemblyTypeReference
         {
-            foreach (var assemblyModule in x.Value.Modules)
-            {
-                try
-                {
-                    var module = ModuleDefinition.FromModule(assemblyModule);
-                    return module.GetImportedTypeReferences().Select(y => new AssemblyTypeReference
-                    {
-                        Name = y.Name ?? string.Empty,
-                        Namespace = y.Namespace ?? string.Empty,
-                        FullName = y.FullName,
-                    }).ToArray();
-                }
-                catch (Exception) { /* ignore */ }
-
-            }
-            return Array.Empty<AssemblyTypeReference>();
-        });
+            Name = y.Name,
+            Namespace = y.Namespace,
+            FullName = y.FullName
+        }).ToArray());
 
         Stacktrace = GetAllInvolvedModules(Exception, crashReportHelper).ToArray();
         FilteredStacktrace = crashReportHelper.Filter(Stacktrace).ToArray();
@@ -340,7 +328,9 @@ public class CrashReportInfo
                 {
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
-                    CilInstructions = GetILInstructionLines(methodBase),
+                    CilInstructions = DecompileILCode(methodBase),
+                    CsharpWithCilInstructions = DecompileILWithCSharpCode(identifiableMethod),
+                    CsharpInstructions = DecompileCSharpCode(identifiableMethod),
                 });
             }
 
@@ -353,88 +343,21 @@ public class CrashReportInfo
                 {
                     Method = original,
                     ModuleInfo = GetModuleInfoIfMod(original, crashReportHelper),
-                    CilInstructions = GetILInstructionLines(original),
+                    CilInstructions = DecompileILCode(original),
+                    CsharpWithCilInstructions = DecompileILWithCSharpCode(identifiableMethod),
+                    CsharpInstructions = DecompileCSharpCode(identifiableMethod),
                 } : null,
                 MethodFromStackframeIssue = methodFromStackframeIssue,
                 ModuleInfo = GetModuleInfoIfMod(identifiableMethod, crashReportHelper),
                 ILOffset = ilOffset != StackFrame.OFFSET_UNKNOWN ? ilOffset : null,
                 NativeOffset = nativeILOffset != StackFrame.OFFSET_UNKNOWN ? nativeILOffset : null,
                 StackFrameDescription = frame.ToString(),
-                NativeInstructions = GetInstructionLines(identifiableMethod, nativeILOffset),
-                CilInstructions = GetILInstructionLines(identifiableMethod),
+                NativeInstructions = DecompileNativeCode(identifiableMethod, nativeILOffset),
+                CilInstructions = DecompileILCode(identifiableMethod),
+                CsharpWithCilInstructions = DecompileILWithCSharpCode(identifiableMethod),
+                CsharpInstructions = DecompileCSharpCode(identifiableMethod),
                 PatchMethods = methods.ToArray(),
             };
         }
-    }
-
-    private static string[] GetInstructionLines(MethodBase? method, int nativeILOffset)
-    {
-        static IEnumerable<string> GetLines(MethodBase method, int nativeILOffset)
-        {
-            var nativeCodePtr = GetNativeMethodBody!(CurrentPlatformTriple!(), method);
-
-            var length = (uint) nativeILOffset + 16;
-            var bytecode = new byte[length];
-
-            Marshal.Copy(nativeCodePtr, bytecode, 0, bytecode.Length);
-
-            var codeReader = new ByteArrayCodeReader(bytecode);
-            var decoder = Decoder.Create(IntPtr.Size == 4 ? 32 : 64, codeReader);
-
-            var output = new StringOutput();
-            var sb = new StringBuilder();
-
-            var formatter = new NasmFormatter
-            {
-                Options =
-                {
-                    DigitSeparator = "`",
-                    FirstOperandCharIndex = 10
-                }
-            };
-
-            while (decoder.IP < length)
-            {
-                var instr = decoder.Decode();
-                formatter.Format(instr, output); // Don't use instr.ToString(), it allocates more, uses masm syntax and default options
-                sb.Append(instr.IP.ToString("X4")).Append(" ").Append(output.ToStringAndReset());
-                yield return sb.ToString();
-                sb.Clear();
-            }
-        }
-
-        if (method is null) return Array.Empty<string>();
-        if (nativeILOffset == StackFrame.OFFSET_UNKNOWN) return Array.Empty<string>();
-        if (CurrentPlatformTriple is null || GetNativeMethodBody is null) return Array.Empty<string>();
-
-        return GetLines(method, nativeILOffset).ToArray();
-    }
-    private static string[] GetILInstructionLines(MethodBase? method)
-    {
-        static string[] ToLines(CilInstructionCollection? instructions) => instructions?.Select(x => x.ToString()).ToArray() ?? Array.Empty<string>();
-
-        if (method is null) return Array.Empty<string>();
-
-        try
-        {
-            try
-            {
-                var module = ModuleDefinition.FromModule(typeof(CrashReportInfo).Module);
-                var dynamicMethodDefinition = new DynamicMethodDefinition(module, method);
-                return ToLines(dynamicMethodDefinition.CilMethodBody?.Instructions);
-            }
-            catch (Exception) { /* ignore */ }
-
-            try
-            {
-                var module = ModuleDefinition.FromModule(method.Module);
-                var cilMethodBody = module.LookupMember(method.MetadataToken) is MethodDefinition methodDefinition ? methodDefinition.CilMethodBody : null;
-                return ToLines(cilMethodBody?.Instructions);
-            }
-            catch (Exception) { /* ignore */ }
-        }
-        catch (Exception) { /* ignore */ }
-
-        return Array.Empty<string>();
     }
 }

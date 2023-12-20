@@ -369,6 +369,8 @@ public static class CrashReportParser
                 MethodFullDescription = methodFullDescription,
                 MethodParameters = parameters,
                 CilInstructions = Array.Empty<string>(),
+                CsharpWithCilInstructions = Array.Empty<string>(),
+                CsharpInstructions = Array.Empty<string>(),
                 AdditionalMetadata = Array.Empty<MetadataModel>(),
             });
         }
@@ -388,6 +390,8 @@ public static class CrashReportParser
                 MethodParameters = executingMethod.MethodParameters,
                 NativeInstructions = Array.Empty<string>(),
                 CilInstructions = executingMethod.CilInstructions,
+                CsharpWithCilInstructions = Array.Empty<string>(),
+                CsharpInstructions = Array.Empty<string>(),
                 AdditionalMetadata = executingMethod.AdditionalMetadata,
             },
             OriginalMethod = null,

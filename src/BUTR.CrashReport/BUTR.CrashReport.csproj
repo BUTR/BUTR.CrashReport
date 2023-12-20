@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,8 +34,10 @@
 
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.4.1" PrivateAssets="all" />
-    <PackageReference Include="Iced" Version="1.20.0" Alias="iced" Private="false" PrivateAssets="all" />
-    <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="5.5.0" PrivateAssets="all" />
+    <PackageReference Include="Required" Version="1.0.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Include="System.Memory" Version="4.5.5" PrivateAssets="all" />
+    <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>
@@ -43,33 +46,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Polyfill" Version="1.34.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Decompilers\BUTR.CrashReport.Decompilers.csproj" Pack="true" PrivateAssets="all" />
     <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
   </ItemGroup>
 
-  <Target Name="AddPackageAliases" BeforeTargets="ResolveReferences" Outputs="%(PackageReference.Identity)">
-    <PropertyGroup>
-      <AliasPackageReference>@(PackageReference->'%(Identity)')</AliasPackageReference>
-      <AliasName>@(PackageReference->'%(Alias)')</AliasName>
-      <Private>@(PackageReference->'%(Private)')</Private>
-    </PropertyGroup>
-
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
     <ItemGroup>
-      <ReferencePath Condition="'%(FileName)'=='$(AliasPackageReference)'">
-        <Aliases>$(AliasName)</Aliases>
-        <Private>$(Private)</Private>
-      </ReferencePath>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')->WithMetadataValue('Pack', 'true'))" />
     </ItemGroup>
   </Target>
-  
+
   <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepare">
     <PropertyGroup>
       <!-- We merge everything except 0Harmony, since we support 2.2 and 2.3 -->
       <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)0Harmony.dll;</ILRepackExcludeAssemblies>
+
       <!-- Exclude the Model -->
+      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Decompilers.dll;</ILRepackExcludeAssemblies>
       <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models.dll;</ILRepackExcludeAssemblies>
     </PropertyGroup>
   </Target>
