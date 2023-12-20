@@ -34,8 +34,8 @@ jobs:
     - name: Run _build
       run: >-
         dotnet pack src/BUTR.CrashReport.Models/BUTR.CrashReport.Models.csproj --configuration Release -o "./packages";
-        dotnet pack src/BUTR.CrashReport/BUTR.CrashReport.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Decompilers/BUTR.CrashReport.Decompilers.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport/BUTR.CrashReport.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Bannerlord.Source/BUTR.CrashReport.Bannerlord.Source.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Bannerlord.Parser/BUTR.CrashReport.Bannerlord.Parser.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Bannerlord.Tool/BUTR.CrashReport.Bannerlord.Tool.csproj --configuration Release -o "./packages";
