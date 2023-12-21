@@ -7,7 +7,10 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
 
 namespace BUTR.CrashReport.Bannerlord.Parser;
 
@@ -74,7 +77,20 @@ public static class CrashReportParser
     public static string? ParseHtmlJson(string content)
     {
         var document = Create(ref content);
-        return document.DocumentNode.SelectSingleNode("descendant::div[@id=\"json-model-data\"]")?.InnerText;
+        var gzipBase64Json = document.DocumentNode.SelectSingleNode("descendant::div[@id=\"json-model-data\"]")?.InnerText;
+        if (string.IsNullOrEmpty(gzipBase64Json))
+            return null;
+
+        return DecompressJson(gzipBase64Json!);
+    }
+
+    private static string DecompressJson(string gzipBase64Json)
+    {
+        var compressedStream = new MemoryStream(Convert.FromBase64String(gzipBase64Json));
+        using var decompressorStream = new DeflateStream(compressedStream, CompressionMode.Decompress);
+        using var decompressedStream = new MemoryStream();
+        decompressorStream.CopyTo(decompressedStream);
+        return Encoding.UTF8.GetString(decompressedStream.ToArray());
     }
 
     /// <summary>
@@ -93,7 +109,8 @@ public static class CrashReportParser
                 case >= 13:
                 {
                     crashReportModel = null;
-                    crashReportJson = document.DocumentNode.SelectSingleNode("descendant::div[@id=\"json-model-data\"]")?.InnerText;
+                    var gzipBase64Json = document.DocumentNode.SelectSingleNode("descendant::div[@id=\"json-model-data\"]")?.InnerText;
+                    crashReportJson = DecompressJson(gzipBase64Json!);
                     return true;
                 }
                 default:

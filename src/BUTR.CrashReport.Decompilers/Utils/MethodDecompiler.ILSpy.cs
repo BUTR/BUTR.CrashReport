@@ -67,7 +67,10 @@ partial class MethodDecompiler
 
             var output = new PlainTextOutput2();
             var language = new CSharpLanguage();
-            language.DecompileMethod(method2, output, new DecompilerSettings(LanguageVersion.Preview));
+            language.DecompileMethod(method2, output, new DecompilerSettings(LanguageVersion.Preview)
+            {
+                AggressiveInlining = true,
+            });
 
             return output.ToString()!.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
         }

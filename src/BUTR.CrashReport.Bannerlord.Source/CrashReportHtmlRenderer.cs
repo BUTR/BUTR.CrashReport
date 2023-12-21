@@ -36,6 +36,8 @@
 // SOFTWARE.
 #endregion
 
+using System.IO.Compression;
+
 #if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLE_HTML_RENDERER
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
@@ -63,8 +65,8 @@ namespace BUTR.CrashReport.Bannerlord
         private static readonly string SaveFileButtonTag = "<!-- SAVE FILE BUTTON -->";
         private static readonly string ScreenshotTag = "<!-- SCREENSHOT -->";
         private static readonly string ScreenshotButtonTag = "<!-- SCREENSHOT BUTTON -->";
-        private static readonly string DecompressScriptTag = "<!-- DECOMPRESS SCRIPT -->";
-        private static readonly string JsonModelDataTag = "<!-- JSON MODEL -->";
+        private static readonly string JsonModelTag = "<!-- JSON MODEL -->";
+        private static readonly string JsonModelButtonTag = "<!-- JSON MODEL BUTTON -->";
 
 #pragma warning disable format // @formatter:off
         private static readonly string Scripts = """
@@ -162,11 +164,29 @@ namespace BUTR.CrashReport.Bannerlord
      document.getElementById("screenshot").src = "data:image/jpeg;charset=utf-8;base64," + base64;
      document.getElementById("screenshot").parentElement.style.display = "block";
    }
+   function jsonmodel(element) {
+     var base64 = document.getElementById("json-model-data").innerText.trim();
+     //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+     var binData = new Uint8Array(
+       atob(base64)
+         .split("")
+         .map(function (x) {
+           return x.charCodeAt(0);
+         })
+     );
+     var result = window.pako.inflate(binData);
+
+     var a = document.createElement("a");
+     var blob = new Blob([result]);
+     a.href = window.URL.createObjectURL(blob);
+     a.download = "crashreport.json";
+     a.click();
+   }
  </script>                                    
 """;
 #pragma warning disable format // @formatter:on
 
-        public static string AddData(string htmlReport, string crashReportJson, string? gZipBase64MiniDump = null, string? gZipBase64SaveFile = null, string? base64Screenshot = null)
+        public static string AddData(string htmlReport, string gzipBase64CrashReportJson, string? gZipBase64MiniDump = null, string? gZipBase64SaveFile = null, string? base64Screenshot = null)
         {
             var IncludeMiniDump = !string.IsNullOrEmpty(gZipBase64MiniDump);
             var IncludeSaveFile = !string.IsNullOrEmpty(gZipBase64SaveFile);
@@ -213,16 +233,17 @@ namespace BUTR.CrashReport.Bannerlord
 <![endif]>
 """);
             }
+            
+            htmlReport = htmlReport
+                .Replace(CrashReportHtmlRenderer.JsonModelTag, gzipBase64CrashReportJson)
+                .Replace(CrashReportHtmlRenderer.JsonModelButtonTag, """
 
-            if (IncludeMiniDump || IncludeSaveFile)
-            {
-                htmlReport = htmlReport.Replace(CrashReportHtmlRenderer.DecompressScriptTag, @"
 <![if !IE]>
-    <script src=""https://cdn.jsdelivr.net/pako/1.0.3/pako_inflate.min.js""></script>
-<![endif]>");
-            }
-
-            htmlReport = htmlReport.Replace(CrashReportHtmlRenderer.JsonModelDataTag, crashReportJson);
+              <br/>
+              <br/>
+              <button onclick='jsonmodel(this)'>Get Json</button>
+<![endif]>
+""");
 
             return htmlReport;
         }
@@ -347,7 +368,7 @@ namespace BUTR.CrashReport.Bannerlord
                 <option value='0.9em'>Medium</option>
                 <option value='0.8em'>Small</option>
               </select>
-              {{MiniDumpButtonTag}} {{SaveFileButtonTag}} {{ScreenshotButtonTag}}
+              {{JsonModelButtonTag}} {{MiniDumpButtonTag}} {{SaveFileButtonTag}} {{ScreenshotButtonTag}}
             </div>
           </td>
         </tr>
@@ -428,10 +449,12 @@ namespace BUTR.CrashReport.Bannerlord
     <div class='root-container' style='display: none;'>
       <h2><a href='javascript:;' class="headers" onclick='showHideById(this, "json-model-data")'>+ Json Model Data</a></h2>
       <div id='json-model-data' class='headers-container'>
-        {{JsonModelDataTag}}
+        {{JsonModelTag}}
       </div>
     </div>
-    {{DecompressScriptTag}}
+<![if !IE]>
+    <script src="https://cdn.jsdelivr.net/pako/1.0.3/pako_inflate.min.js"></script>
+<![endif]>
     {{Scripts}}
   </body>
 </html>

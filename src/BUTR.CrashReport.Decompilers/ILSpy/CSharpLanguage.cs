@@ -23,7 +23,6 @@ internal class CSharpLanguage : Language
     {
         var resolver = new UniversalAssemblyResolver(null, false, module.DetectTargetFrameworkId(), module.DetectRuntimePack());
         var decompiler = new CSharpDecompiler(module, resolver, settings) { CancellationToken = ct };
-        
 		while (decompiler.AstTransforms.Count >= _transformCount)
 			decompiler.AstTransforms.RemoveAt(decompiler.AstTransforms.Count - 1);
         decompiler.AstTransforms.Add(new EscapeInvalidIdentifiers());
