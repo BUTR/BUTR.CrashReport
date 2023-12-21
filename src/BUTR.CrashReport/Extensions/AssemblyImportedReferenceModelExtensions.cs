@@ -7,6 +7,9 @@ using System.Reflection;
 
 namespace BUTR.CrashReport.Extensions;
 
+/// <summary>
+/// Extensions for <inheritdoc cref="BUTR.CrashReport.Models.AssemblyImportedReferenceModel"/>
+/// </summary>
 public static class AssemblyImportedReferenceModelExtensions
 {
     /// <summary>
@@ -16,6 +19,9 @@ public static class AssemblyImportedReferenceModelExtensions
     public static string GetFullName(this AssemblyImportedReferenceModel model) =>
         AssemblyNameFormatter.ComputeDisplayName(model.Name, model.Version, model.Culture, model.PublicKeyToken);
 
+    /// <summary>
+    /// Creates the model for an assembly name.
+    /// </summary>
     public static AssemblyImportedReferenceModel Create(AssemblyName assemblyName) => new()
     {
         Name = assemblyName.Name,

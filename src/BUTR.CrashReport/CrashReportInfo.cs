@@ -13,26 +13,26 @@ using static BUTR.CrashReport.Utils.ReferenceImporter;
 namespace BUTR.CrashReport;
 
 /// <summary>
-/// Represents an imported type reference.
+/// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal"/>
 /// </summary>
 public record AssemblyTypeReference
 {
     /// <summary>
-    /// <inheritdoc cref="AsmResolver.DotNet.TypeReference.Name"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Name"/>
     /// </summary>
-    /// <returns><inheritdoc cref="AsmResolver.DotNet.TypeReference.Name"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Name"/></returns>
     public required string Name { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="AsmResolver.DotNet.TypeReference.Namespace"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Namespace"/>
     /// </summary>
-    /// <returns><inheritdoc cref="AsmResolver.DotNet.TypeReference.Namespace"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Namespace"/></returns>
     public required string Namespace { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="AsmResolver.DotNet.TypeReference.FullName"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.FullName"/>
     /// </summary>
-    /// <returns><inheritdoc cref="AsmResolver.DotNet.TypeReference.FullName"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.FullName"/></returns>
     public required string FullName { get; set; }
 }
 
@@ -53,42 +53,45 @@ public record MethodEntry
     public required IModuleInfo? ModuleInfo { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="StacktraceEntry.CilInstructions"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="StacktraceEntry.CilInstructions"/></returns>
-    public required string[] CilInstructions { get; set; }
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/></returns>
+    public required string[] ILInstructions { get; set; }
     
     /// <summary>
-    /// <inheritdoc cref="StacktraceEntry.CsharpWithCilInstructions"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="StacktraceEntry.CsharpWithCilInstructions"/></returns>
-    public required string[] CsharpWithCilInstructions { get; set; }
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/></returns>
+    public required string[] CSharpILMixedInstructions { get; set; }
     
     /// <summary>
-    /// <inheritdoc cref="StacktraceEntry.CsharpInstructions"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="StacktraceEntry.CsharpInstructions"/></returns>
-    public required string[] CsharpInstructions { get; set; }
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/></returns>
+    public required string[] CSharpInstructions { get; set; }
 }
 
 /// <summary>
-/// Represents a method from stack trace.
+/// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel"/>
 /// </summary>
 public record StacktraceEntry
 {
     /// <summary>
-    /// The method from the stacktrace frame that is being executed.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.ExecutingMethod"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.ExecutingMethod"/></returns>
     public required MethodBase Method { get; set; }
 
     /// <summary>
-    /// The original method that might be patched.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.OriginalMethod"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.OriginalMethod"/></returns>
     public required MethodEntry? OriginalMethod { get; set; }
 
     /// <summary>
-    /// Whether there was an issue with getting the data from the stackframe.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.MethodFromStackframeIssue"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.MethodFromStackframeIssue"/></returns>
     public required bool MethodFromStackframeIssue { get; set; }
 
     /// <summary>
@@ -97,46 +100,51 @@ public record StacktraceEntry
     public required IModuleInfo? ModuleInfo { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.ILOffset"/>
     /// </summary>
-    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.ILOffset"/></returns>
     public required int? ILOffset { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="System.Diagnostics.StackFrame.GetNativeOffset"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.NativeOffset"/>
     /// </summary>
-    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.GetNativeOffset"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.NativeOffset"/></returns>
     public required int? NativeOffset { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="System.Diagnostics.StackFrame.ToString"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.FrameDescription"/>
     /// </summary>
-    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.ToString"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.FrameDescription"/></returns>
     public required string StackFrameDescription { get; set; }
 
     /// <summary>
-    /// The native code of the method that was compiled by the JIT.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodExecuting.NativeInstructions"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodExecuting.NativeInstructions"/></returns>
     public required string[] NativeInstructions { get; set; }
 
     /// <summary>
-    /// The Common Intermediate Language (CIL) code of the method.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/>
     /// </summary>
-    public required string[] CilInstructions { get; set; }
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/></returns>
+    public required string[] ILInstructions { get; set; }
     
     /// <summary>
-    /// The C# code of the method.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/>
     /// </summary>
-    public required string[] CsharpWithCilInstructions { get; set; }
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/></returns>
+    public required string[] CSharpILMixedInstructions { get; set; }
     
     /// <summary>
-    /// The C# and Common Intermediate Language (CIL) code of the method.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/>
     /// </summary>
-    public required string[] CsharpInstructions { get; set; }
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/></returns>
+    public required string[] CSharpInstructions { get; set; }
 
     /// <summary>
-    /// The list of Harmony patch methods that are applied to the method.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.PatchMethods"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.PatchMethods"/></returns>
     public required MethodEntry[] PatchMethods { get; set; }
 }
 
@@ -146,18 +154,21 @@ public record StacktraceEntry
 public class CrashReportInfo
 {
     /// <summary>
-    /// The version of the crash report.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Version"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Version"/></returns>
     public readonly byte Version = 13;
 
     /// <summary>
-    /// The id of the crash report.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Id"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Id"/></returns>
     public Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
-    /// The exception that caused the crash.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Exception"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Exception"/></returns>
     public Exception Exception { get; }
 
     /// <summary>
@@ -171,8 +182,9 @@ public class CrashReportInfo
     public ICollection<StacktraceEntry> FilteredStacktrace { get; }
 
     /// <summary>
-    /// The list of modules that are loaded in the process.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Modules"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Modules"/></returns>
     public ICollection<IModuleInfo> LoadedModules { get; }
 
     /// <summary>
@@ -186,8 +198,9 @@ public class CrashReportInfo
     public Dictionary<AssemblyName, AssemblyTypeReference[]> ImportedTypeReferences { get; }
 
     /// <summary>
-    /// Loaded harmony patches for methods.
+    /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.HarmonyPatches"/>
     /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.HarmonyPatches"/></returns>
     public Dictionary<MethodBase, Patches> LoadedHarmonyPatches { get; } = new();
 
     /// <summary>
@@ -328,9 +341,9 @@ public class CrashReportInfo
                 {
                     Method = methodBase,
                     ModuleInfo = extendedModuleInfo,
-                    CilInstructions = DecompileILCode(methodBase),
-                    CsharpWithCilInstructions = DecompileILWithCSharpCode(methodBase),
-                    CsharpInstructions = DecompileCSharpCode(methodBase),
+                    ILInstructions = DecompileILCode(methodBase),
+                    CSharpILMixedInstructions = DecompileILWithCSharpCode(methodBase),
+                    CSharpInstructions = DecompileCSharpCode(methodBase),
                 });
             }
 
@@ -343,9 +356,9 @@ public class CrashReportInfo
                 {
                     Method = original,
                     ModuleInfo = GetModuleInfoIfMod(original, crashReportHelper),
-                    CilInstructions = DecompileILCode(original),
-                    CsharpWithCilInstructions = DecompileILWithCSharpCode(original),
-                    CsharpInstructions = DecompileCSharpCode(original),
+                    ILInstructions = DecompileILCode(original),
+                    CSharpILMixedInstructions = DecompileILWithCSharpCode(original),
+                    CSharpInstructions = DecompileCSharpCode(original),
                 } : null,
                 MethodFromStackframeIssue = methodFromStackframeIssue,
                 ModuleInfo = GetModuleInfoIfMod(identifiableMethod, crashReportHelper),
@@ -353,9 +366,9 @@ public class CrashReportInfo
                 NativeOffset = nativeILOffset != StackFrame.OFFSET_UNKNOWN ? nativeILOffset : null,
                 StackFrameDescription = frame.ToString(),
                 NativeInstructions = DecompileNativeCode(identifiableMethod, nativeILOffset),
-                CilInstructions = DecompileILCode(identifiableMethod),
-                CsharpWithCilInstructions = DecompileILWithCSharpCode(identifiableMethod),
-                CsharpInstructions = DecompileCSharpCode(identifiableMethod),
+                ILInstructions = DecompileILCode(identifiableMethod),
+                CSharpILMixedInstructions = DecompileILWithCSharpCode(identifiableMethod),
+                CSharpInstructions = DecompileCSharpCode(identifiableMethod),
                 PatchMethods = methods.ToArray(),
             };
         }

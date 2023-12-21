@@ -15,8 +15,11 @@ using Decoder = iced::Iced.Intel.Decoder;
 
 namespace BUTR.CrashReport.Utils;
 
-public static partial class MethodDecompiler
+partial class MethodDecompiler
 {
+    /// <summary>
+    /// Gets the Native representation of the methods
+    /// </summary>
     public static string[] DecompileNativeCode(MethodBase? method, int nativeILOffset)
     {
         static IEnumerable<string> GetLines(MethodBase method, int nativeILOffset)

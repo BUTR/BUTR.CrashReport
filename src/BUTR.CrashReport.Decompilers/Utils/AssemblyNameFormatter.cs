@@ -5,8 +5,20 @@ using System.Text;
 
 namespace BUTR.CrashReport.Utils;
 
+/// <summary>
+/// 
+/// </summary>
 public static class AssemblyNameFormatter
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="version"></param>
+    /// <param name="cultureName"></param>
+    /// <param name="publicKeyToken"></param>
+    /// <returns></returns>
+    /// <exception cref="FileLoadException"></exception>
     public static string ComputeDisplayName(string? name, string? version, string? cultureName, string? publicKeyToken)
     {
         if (name == string.Empty)
@@ -83,6 +95,11 @@ public static class AssemblyNameFormatter
             sb.Append(quoteChar);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="version"></param>
+    /// <returns></returns>
     public static string GetVersion(Version version)
     {
         var sb = new StringBuilder();

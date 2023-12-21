@@ -7,6 +7,13 @@ namespace BUTR.CrashReport.Utils;
 /// </summary>
 public static class FileSystemName
 {
+    /// <summary>
+    /// Verifies whether the given expression matches the given name. Supports the following wildcards: '*' and '?'. The backslash character '\\' escapes.
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <param name="name"></param>
+    /// <param name="ignoreCase"></param>
+    /// <returns></returns>
     public static bool MatchesSimpleExpression(string expression, string name, bool ignoreCase = true) => MatchesSimpleExpression(expression.AsSpan(), name.AsSpan(), ignoreCase);
 
     /// <summary>

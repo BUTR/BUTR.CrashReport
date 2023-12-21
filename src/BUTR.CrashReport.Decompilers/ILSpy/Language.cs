@@ -11,7 +11,8 @@ internal abstract class Language
 {
 	public virtual void DecompileMethod(IMethod method, ITextOutput output, DecompilerSettings settings)
 	{
-		WriteCommentLine(output, TypeToString(method.DeclaringTypeDefinition, includeNamespace: true) + "." + method.Name);
+        if (method.DeclaringTypeDefinition is not null)
+		    WriteCommentLine(output, $"{TypeToString(method.DeclaringTypeDefinition, includeNamespace: true)}.{method.Name}");
 	}
 
 	public virtual void WriteCommentLine(ITextOutput output, string comment)
@@ -43,7 +44,7 @@ internal abstract class Language
 		public TypeToStringVisitor(bool includeNamespace)
 		{
 			this.includeNamespace = includeNamespace;
-			this.builder = new StringBuilder();
+			builder = new StringBuilder();
 		}
 
 		public override IType VisitArrayType(ArrayType type)

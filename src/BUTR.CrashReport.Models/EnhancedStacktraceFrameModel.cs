@@ -3,46 +3,46 @@
 namespace BUTR.CrashReport.Models;
 
 /// <summary>
-/// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry"/>
+/// Represents a method from stack trace.
 /// </summary>
 public record EnhancedStacktraceFrameModel
 {
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.StackFrameDescription"/>
+    /// <inheritdoc cref="System.Diagnostics.StackFrame.ToString"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.StackFrameDescription"/></returns>
+    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.ToString"/></returns>
     public required string FrameDescription { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.MethodFromStackframeIssue"/>
+    /// Whether there was an issue with getting the data from the stackframe.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.MethodFromStackframeIssue"/></returns>
     public required bool MethodFromStackframeIssue { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.ILOffset"/>
+    /// <inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.ILOffset"/></returns>
+    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/></returns>
     public required int? ILOffset { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.NativeOffset"/>
+    /// <inheritdoc cref="System.Diagnostics.StackFrame.GetNativeOffset"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.NativeOffset"/></returns>
+    /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.GetNativeOffset"/></returns>
     public required int? NativeOffset { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.Method"/>
+    /// The method from the stacktrace frame that is being executed.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.Method"/></returns>
     public required MethodExecuting ExecutingMethod { get; set; }
 
+    /// <summary>
+    /// The original method that might be patched.
+    /// </summary>
     public required MethodSimple? OriginalMethod { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.PatchMethods"/>
+    /// The list of Harmony patch methods that are applied to the method.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.PatchMethods"/></returns>
     public required IReadOnlyList<MethodSimple> PatchMethods { get; set; } = new List<MethodSimple>();
 
     /// <summary>

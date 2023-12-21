@@ -66,12 +66,20 @@ public static class CrashReportParser
         return document;
     }
 
+    /// <summary>
+    /// Parses a HTML string that contains the json data
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
     public static string? ParseHtmlJson(string content)
     {
         var document = Create(ref content);
         return document.DocumentNode.SelectSingleNode("descendant::div[@id=\"json-model-data\"]")?.InnerText;
     }
 
+    /// <summary>
+    /// Attempts to parse HTML content and will use the Json model if present or use the HTML code
+    /// </summary>
     public static bool TryParse(string content, out byte version, out CrashReportModel? crashReportModel, out string? crashReportJson)
     {
         try
@@ -105,6 +113,11 @@ public static class CrashReportParser
         }
     }
 
+    /// <summary>
+    /// Parses the log files from the old HTML report
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
     public static IEnumerable<LogSource> ParseLegacyHtmlLogs(string content)
     {
         var document = Create(ref content);
@@ -167,6 +180,9 @@ public static class CrashReportParser
         }
     }
 
+    /// <summary>
+    /// Parses the HTML file with a specific version provided
+    /// </summary>
     public static CrashReportModel ParseLegacyHtml(byte version, string content)
     {
         var document = Create(ref content);
@@ -368,9 +384,9 @@ public static class CrashReportParser
                 MethodName = split.Last(),
                 MethodFullDescription = methodFullDescription,
                 MethodParameters = parameters,
-                CilInstructions = Array.Empty<string>(),
-                CsharpWithCilInstructions = Array.Empty<string>(),
-                CsharpInstructions = Array.Empty<string>(),
+                ILInstructions = Array.Empty<string>(),
+                CSharpILMixedInstructions = Array.Empty<string>(),
+                CSharpInstructions = Array.Empty<string>(),
                 AdditionalMetadata = Array.Empty<MetadataModel>(),
             });
         }
@@ -389,9 +405,9 @@ public static class CrashReportParser
                 MethodFullDescription = executingMethod.MethodFullDescription,
                 MethodParameters = executingMethod.MethodParameters,
                 NativeInstructions = Array.Empty<string>(),
-                CilInstructions = executingMethod.CilInstructions,
-                CsharpWithCilInstructions = Array.Empty<string>(),
-                CsharpInstructions = Array.Empty<string>(),
+                ILInstructions = executingMethod.ILInstructions,
+                CSharpILMixedInstructions = Array.Empty<string>(),
+                CSharpInstructions = Array.Empty<string>(),
                 AdditionalMetadata = executingMethod.AdditionalMetadata,
             },
             OriginalMethod = null,

@@ -41,5 +41,9 @@ public sealed record MonoModDetourModel
     /// <returns><inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.After"/></returns>
     public required IReadOnlyList<string> After { get; set; } = new List<string>();
 
+    /// <summary>
+    /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

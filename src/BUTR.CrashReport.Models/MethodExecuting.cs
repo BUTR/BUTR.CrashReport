@@ -8,8 +8,7 @@ namespace BUTR.CrashReport.Models;
 public record MethodExecuting : MethodSimple
 {
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.NativeInstructions"/>
+    /// The native code of the method that was compiled by the JIT.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.NativeInstructions"/></returns>
     public required IReadOnlyList<string> NativeInstructions { get; set; } = new List<string>();
 }

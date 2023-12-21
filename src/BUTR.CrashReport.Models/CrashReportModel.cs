@@ -9,15 +9,13 @@ namespace BUTR.CrashReport.Models;
 public record CrashReportModel
 {
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.CrashReportInfo.Id"/>
+    /// The id of the crash report.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.CrashReportInfo.Id"/></returns>
     public required Guid Id { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.CrashReportInfo.Version"/>
+    /// The version of the crash report.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.CrashReportInfo.Version"/></returns>
     public required byte Version { get; set; }
 
     /// <summary>
@@ -26,9 +24,8 @@ public record CrashReportModel
     public required string GameVersion { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.CrashReportInfo.Exception"/>
+    /// The exception that caused the crash.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.CrashReportInfo.Exception"/></returns>
     public required ExceptionModel Exception { get; set; }
 
     /// <summary>
@@ -37,9 +34,8 @@ public record CrashReportModel
     public required CrashReportMetadataModel Metadata { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.CrashReportInfo.LoadedModules"/>
+    /// The list of modules that are loaded in the process.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.CrashReportInfo.LoadedModules"/></returns>
     public required IReadOnlyList<ModuleModel> Modules { get; set; } = new List<ModuleModel>();
 
     /// <summary>

@@ -37,14 +37,19 @@ public record MethodSimple
     public required IReadOnlyList<string> MethodParameters { get; set; } = new List<string>();
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.StacktraceEntry.CilInstructions"/>
+    /// The Common Intermediate Language (CIL/IL) representation of the method.
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.StacktraceEntry.CilInstructions"/></returns>
-    public required IReadOnlyList<string> CilInstructions { get; set; } = new List<string>();
+    public required IReadOnlyList<string> ILInstructions { get; set; } = new List<string>();
     
-    public required IReadOnlyList<string> CsharpWithCilInstructions { get; set; } = new List<string>();
+    /// <summary>
+    /// The C# and Common Intermediate Language (CIL/IL) representation of the method.
+    /// </summary>
+    public required IReadOnlyList<string> CSharpILMixedInstructions { get; set; } = new List<string>();
     
-    public required IReadOnlyList<string> CsharpInstructions { get; set; } = new List<string>();
+    /// <summary>
+    /// The C# representation the method.
+    /// </summary>
+    public required IReadOnlyList<string> CSharpInstructions { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>

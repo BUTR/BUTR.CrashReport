@@ -184,9 +184,9 @@ namespace BUTR.CrashReport.Bannerlord
                             MethodName = patchMethod.Method.Name,
                             MethodFullDescription = patchMethod.Method.FullDescription(),
                             MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
-                            CilInstructions = patchMethod.CilInstructions.AsImmutableArray(),
-                            CsharpWithCilInstructions = patchMethod.CsharpWithCilInstructions.AsImmutableArray(),
-                            CsharpInstructions = patchMethod.CsharpInstructions.AsImmutableArray(),
+                            ILInstructions = patchMethod.ILInstructions.AsImmutableArray(),
+                            CSharpILMixedInstructions = patchMethod.CSharpILMixedInstructions.AsImmutableArray(),
+                            CSharpInstructions = patchMethod.CSharpInstructions.AsImmutableArray(),
                             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         });
                     }
@@ -202,9 +202,9 @@ namespace BUTR.CrashReport.Bannerlord
                             MethodFullDescription = entry.Method.FullDescription(),
                             MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
                             NativeInstructions = entry.NativeInstructions.AsImmutableArray(),
-                            CilInstructions = entry.CilInstructions.AsImmutableArray(),
-                            CsharpWithCilInstructions = entry.CsharpWithCilInstructions.AsImmutableArray(),
-                            CsharpInstructions = entry.CsharpInstructions.AsImmutableArray(),
+                            ILInstructions = entry.ILInstructions.AsImmutableArray(),
+                            CSharpILMixedInstructions = entry.CSharpILMixedInstructions.AsImmutableArray(),
+                            CSharpInstructions = entry.CSharpInstructions.AsImmutableArray(),
                             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
                         },
                         OriginalMethod = entry.OriginalMethod is not null ? new()
@@ -214,9 +214,9 @@ namespace BUTR.CrashReport.Bannerlord
                             MethodName = entry.OriginalMethod.Method.Name,
                             MethodFullDescription = entry.OriginalMethod.Method.FullDescription(),
                             MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
-                            CilInstructions = entry.OriginalMethod.CilInstructions.AsImmutableArray(),
-                            CsharpWithCilInstructions = entry.OriginalMethod.CsharpWithCilInstructions.AsImmutableArray(),
-                            CsharpInstructions = entry.OriginalMethod.CsharpInstructions.AsImmutableArray(),
+                            ILInstructions = entry.OriginalMethod.ILInstructions.AsImmutableArray(),
+                            CSharpILMixedInstructions = entry.OriginalMethod.CSharpILMixedInstructions.AsImmutableArray(),
+                            CSharpInstructions = entry.OriginalMethod.CSharpInstructions.AsImmutableArray(),
                             AdditionalMetadata = ImmutableArray<MetadataModel>.Empty
                         } : null,
                         PatchMethods = methodsBuilder.ToImmutable(),

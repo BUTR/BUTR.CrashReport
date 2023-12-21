@@ -3,6 +3,9 @@ using BUTR.CrashReport.Utils;
 
 namespace BUTR.CrashReport.Extensions;
 
+/// <summary>
+/// Extensions for <inheritdoc cref="BUTR.CrashReport.Models.AssemblyModel"/>
+/// </summary>
 public static class AssemblyModelExtensions
 {
     /// <summary>

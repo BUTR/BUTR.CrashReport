@@ -14,9 +14,9 @@ public record InvolvedModuleModel
     public required string ModuleId { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="EnhancedStacktraceFrameModel.Name"/>
+    /// <inheritdoc cref="EnhancedStacktraceFrameModel.FrameDescription"/>
     /// </summary>
-    /// <returns><inheritdoc cref="EnhancedStacktraceFrameModel.Name"/></returns>
+    /// <returns><inheritdoc cref="EnhancedStacktraceFrameModel.FrameDescription"/></returns>
     public required string EnhancedStacktraceFrameName { get; set; }
 
     /// <summary>
