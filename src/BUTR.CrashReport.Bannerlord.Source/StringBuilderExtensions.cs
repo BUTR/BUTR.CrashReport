@@ -53,6 +53,8 @@ namespace BUTR.CrashReport.Bannerlord
     {
         public static string EscapeGenerics(this string str) => str.Replace("<", "&lt;").Replace(">", "&gt;");
 
+        public static StringBuilder AppendIf(this StringBuilder builder, Func<StringBuilder, StringBuilder> lambda) => lambda(builder);
+        
         public static StringBuilder AppendJoin(this StringBuilder builder, string separator, IEnumerable<string> lines) => AppendJoinIf(builder, true, separator, lines.ToArray());
         public static StringBuilder AppendJoin(this StringBuilder builder, char separator, IEnumerable<string> lines) => AppendJoinIf(builder, true, separator, lines.ToArray());
         public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, string separator, IReadOnlyList<string> lines)

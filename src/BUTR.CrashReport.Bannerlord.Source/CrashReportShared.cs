@@ -49,7 +49,6 @@ namespace BUTR.CrashReport.Bannerlord
 
     using global::System.Collections.Generic;
     using global::System.Linq;
-    using global::System.Reflection;
 
     internal static class CrashReportShared
     {

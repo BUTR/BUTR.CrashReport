@@ -50,7 +50,6 @@ namespace BUTR.CrashReport.Bannerlord
     using global::System.Collections.Generic;
     using global::System.IO;
     using global::System.IO.Compression;
-    using global::System.Linq;
 
     internal static class CrashReportArchiveRenderer
     {

@@ -48,11 +48,9 @@ namespace BUTR.CrashReport.Bannerlord
 {
     using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Models;
-    using global::BUTR.CrashReport.Utils;
 
     using global::System;
     using global::System.Collections.Generic;
-    using global::System.Collections.Immutable;
     using global::System.IO;
     using global::System.Linq;
     using global::System.Text;
@@ -519,15 +517,23 @@ namespace BUTR.CrashReport.Bannerlord
                     .Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                     .Append("Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
                     .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
-                    .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN")
-                    .AppendIf(stacktrace.ExecutingMethod.ILInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id1}\")'>+ IL:</a><div id='{id1}' class='headers-container'><pre>")
-                    .AppendJoinIf(stacktrace.ExecutingMethod.ILInstructions.Count > 0, Environment.NewLine, stacktrace.ExecutingMethod.ILInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
-                    .AppendIf(stacktrace.ExecutingMethod.CSharpILMixedInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ IL with C#:</a><div id='{id2}' class='headers-container'><pre>")
-                    .AppendJoinIf(stacktrace.ExecutingMethod.CSharpILMixedInstructions.Count > 0, Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
-                    .AppendIf(stacktrace.ExecutingMethod.CSharpInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id3}\")'>+ C#:</a><div id='{id3}' class='headers-container'><pre>")
-                    .AppendJoinIf(stacktrace.ExecutingMethod.CSharpInstructions.Count > 0, Environment.NewLine, stacktrace.ExecutingMethod.CSharpInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
-                    .AppendIf(stacktrace.ExecutingMethod.NativeInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id4}\")'>+ Native:</a><div id='{id4}' class='headers-container'><pre>")
-                    .AppendJoinIf(stacktrace.ExecutingMethod.NativeInstructions.Count > 0, Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
+                    .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN").Append("<br/>")
+                    .AppendIf(stacktrace.ExecutingMethod.ILInstructions.Count > 0, sp => sp
+                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id1}\")'>+ IL:</a><div id='{id1}' class='headers-container'><pre>")
+                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.ILInstructions.Select(x => x.EscapeGenerics()))
+                        .Append("</pre></div></div>"))
+                    .AppendIf(stacktrace.ExecutingMethod.CSharpILMixedInstructions.Count > 0, sp => sp
+                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ IL with C#:</a><div id='{id2}' class='headers-container'><pre>")
+                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()))
+                        .Append("</pre></div></div>"))
+                    .AppendIf(stacktrace.ExecutingMethod.CSharpInstructions.Count > 0, sp => sp
+                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id3}\")'>+ C#:</a><div id='{id3}' class='headers-container'><pre>")
+                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.CSharpInstructions.Select(x => x.EscapeGenerics()))
+                        .Append("</pre></div></div>"))
+                    .AppendIf(stacktrace.ExecutingMethod.NativeInstructions.Count > 0, sp => sp
+                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id4}\")'>+ Native:</a><div id='{id4}' class='headers-container'><pre>")
+                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics()))
+                        .Append("</pre></div></div>"))
                     .Append("</li>")
                     .Append("</ul>");
 
@@ -545,12 +551,18 @@ namespace BUTR.CrashReport.Bannerlord
                             .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("<br/>"))
                             .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
                             .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                            .AppendIf(method.ILInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id01}\")'>+ IL:</a><div id='{id01}' class='headers-container'><pre>")
-                            .AppendJoinIf(method.ILInstructions.Count > 0, Environment.NewLine, method.ILInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
-                            .AppendIf(method.CSharpILMixedInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id02}\")'>+ IL with C#:</a><div id='{id02}' class='headers-container'><pre>")
-                            .AppendJoinIf(method.CSharpILMixedInstructions.Count > 0, Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
-                            .AppendIf(method.CSharpInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id03}\")'>+ C#:</a><div id='{id03}' class='headers-container'><pre>")
-                            .AppendJoinIf(method.CSharpInstructions.Count > 0, Environment.NewLine, method.CSharpInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
+                            .AppendIf(method.ILInstructions.Count > 0, sp => sp
+                                .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id01}\")'>+ IL:</a><div id='{id01}' class='headers-container'><pre>")
+                                .AppendJoin(Environment.NewLine, method.ILInstructions.Select(x => x.EscapeGenerics()))
+                                .Append("</pre></div></div>"))
+                            .AppendIf(method.CSharpILMixedInstructions.Count > 0, sp => sp
+                                .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id02}\")'>+ IL with C#:</a><div id='{id02}' class='headers-container'><pre>")
+                                .AppendJoin(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()))
+                                .Append("</pre></div></div>"))
+                            .AppendIf(method.CSharpInstructions.Count > 0, sp => sp
+                                .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id03}\")'>+ C#:</a><div id='{id03}' class='headers-container'><pre>")
+                                .AppendJoin(Environment.NewLine, method.CSharpInstructions.Select(x => x.EscapeGenerics()))
+                                .Append("</pre></div></div>"))
                             .Append("</li>");
                     }
                     sb.Append("</ul>");
@@ -567,12 +579,18 @@ namespace BUTR.CrashReport.Bannerlord
                         .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
                         .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
                         .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                        .AppendIf(stacktrace.OriginalMethod.ILInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id01}\")'>+ IL:</a><div id='{id01}' class='headers-container'><pre>")
-                        .AppendJoinIf(stacktrace.OriginalMethod.ILInstructions.Count > 0, Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
-                        .AppendIf(stacktrace.OriginalMethod.CSharpILMixedInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id02}\")'>+ IL with C#:</a><div id='{id02}' class='headers-container'><pre>")
-                        .AppendJoinIf(stacktrace.OriginalMethod.CSharpILMixedInstructions.Count > 0, Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
-                        .AppendIf(stacktrace.OriginalMethod.CSharpInstructions.Count > 0, $"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id03}\")'>+ C#:</a><div id='{id03}' class='headers-container'><pre>")
-                        .AppendJoinIf(stacktrace.OriginalMethod.CSharpInstructions.Count > 0, Environment.NewLine, stacktrace.OriginalMethod.CSharpInstructions.Select(x => x.EscapeGenerics()).ToArray()).Append("</pre></div></div>")
+                        .AppendIf(stacktrace.OriginalMethod.ILInstructions.Count > 0, sb => sb
+                            .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id01}\")'>+ IL:</a><div id='{id01}' class='headers-container'><pre>")
+                            .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics()))
+                            .Append("</pre></div></div>"))
+                        .AppendIf(stacktrace.OriginalMethod.CSharpILMixedInstructions.Count > 0, sb => sb
+                            .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id02}\")'>+ IL with C#:</a><div id='{id02}' class='headers-container'><pre>")
+                            .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()))
+                            .Append("</pre></div></div>"))
+                        .AppendIf(stacktrace.OriginalMethod.CSharpInstructions.Count > 0, sb => sb
+                            .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id03}\")'>+ C#:</a><div id='{id03}' class='headers-container'><pre>")
+                            .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.CSharpInstructions.Select(x => x.EscapeGenerics()))
+                            .Append("</pre></div></div>"))
                         .Append("</li>")
                         .Append("</ul>");
                 }

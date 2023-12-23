@@ -56,13 +56,11 @@ namespace BUTR.CrashReport.Bannerlord
 
     using global::System;
     using global::System.Collections.Generic;
-    using global::System.Collections.Immutable;
     using global::System.Globalization;
     using global::System.IO;
     using global::System.Linq;
     using global::System.Reflection;
     using global::System.Security.Cryptography;
-    using global::System.Threading.Tasks;
 
     internal class CrashReportCreator
     {
@@ -81,7 +79,7 @@ namespace BUTR.CrashReport.Bannerlord
                 Modules = modules,
                 Assemblies = GetAssemblyList(crashReport),
                 HarmonyPatches = GetHarmonyPatchesListHtml(crashReport),
-                MonoModDetours = ImmutableArray<MonoModDetoursModel>.Empty,
+                MonoModDetours = Array.Empty<MonoModDetoursModel>(),
                 Metadata = new()
                 {
                     LauncherType = GetLauncherType(crashReport),
@@ -89,12 +87,14 @@ namespace BUTR.CrashReport.Bannerlord
 
                     Runtime = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
 
-                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(
+                    AdditionalMetadata = new MetadataModel[]
+                    {
                         new MetadataModel { Key = "BUTRLoaderVersion", Value = GetBUTRLoaderVersion(crashReport) },
                         new MetadataModel { Key = "BLSEVersion", Value = GetBLSEVersion(crashReport) },
-                        new MetadataModel { Key = "LauncherExVersion", Value = GetLauncherExVersion(crashReport) }),
+                        new MetadataModel { Key = "LauncherExVersion", Value = GetLauncherExVersion(crashReport) },
+                    },
                 },
-                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                AdditionalMetadata = Array.Empty<MetadataModel>(),
             };
         }
 
@@ -152,46 +152,46 @@ namespace BUTR.CrashReport.Bannerlord
             return "0";
         }
 
-        private static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies)
+        private static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, List<ModuleModel> modules, List<AssemblyModel> assemblies)
         {
-            static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, ImmutableArray<ModuleModel> modules, ImmutableArray<AssemblyModel> assemblies, Exception ex) => new()
+            static ExceptionModel GetRecursiveException(CrashReportInfo crashReport, List<ModuleModel> modules, List<AssemblyModel> assemblies, Exception ex) => new()
             {
                 SourceModuleId = modules.FirstOrDefault(x => assemblies.Where(y => y.ModuleId == x.Id).Any(x => x.Name == ex.Source))?.Id,
                 Type = ex.GetType().FullName ?? string.Empty,
                 Message = ex.Message,
-                CallStack = ex.StackTrace,
+                CallStack = ex.StackTrace ?? string.Empty,
                 InnerException = ex.InnerException is not null ? GetRecursiveException(crashReport, modules, assemblies, ex.InnerException) : null,
-                AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                AdditionalMetadata = Array.Empty<MetadataModel>(),
             };
 
             return GetRecursiveException(crashReport, modules, assemblies, crashReport.Exception);
         }
 
-        private static ImmutableArray<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport)
+        private static List<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport)
         {
-            var builder = ImmutableArray.CreateBuilder<EnhancedStacktraceFrameModel>();
+            var enhancedStacktraceFrameModels = new List<EnhancedStacktraceFrameModel>();
             foreach (var stacktrace in crashReport.Stacktrace.GroupBy(x => x.StackFrameDescription))
             {
                 foreach (var entry in stacktrace)
                 {
-                    var methodsBuilder = ImmutableArray.CreateBuilder<MethodSimple>();
+                    var methods = new List<MethodSimple>(entry.PatchMethods.Length);
                     foreach (var patchMethod in entry.PatchMethods)
                     {
-                        methodsBuilder.Add(new()
+                        methods.Add(new()
                         {
                             ModuleId = patchMethod.ModuleInfo?.Id,
                             MethodDeclaredTypeName = patchMethod.Method.DeclaringType?.FullName,
                             MethodName = patchMethod.Method.Name,
                             MethodFullDescription = patchMethod.Method.FullDescription(),
-                            MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
-                            ILInstructions = patchMethod.ILInstructions.AsImmutableArray(),
-                            CSharpILMixedInstructions = patchMethod.CSharpILMixedInstructions.AsImmutableArray(),
-                            CSharpInstructions = patchMethod.CSharpInstructions.AsImmutableArray(),
-                            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                            MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
+                            ILInstructions = patchMethod.ILInstructions,
+                            CSharpILMixedInstructions = patchMethod.CSharpILMixedInstructions,
+                            CSharpInstructions = patchMethod.CSharpInstructions,
+                            AdditionalMetadata = Array.Empty<MetadataModel>(),
                         });
                     }
 
-                    builder.Add(new()
+                    enhancedStacktraceFrameModels.Add(new()
                     {
                         FrameDescription = entry.StackFrameDescription,
                         ExecutingMethod = new()
@@ -200,12 +200,12 @@ namespace BUTR.CrashReport.Bannerlord
                             MethodDeclaredTypeName = entry.Method.DeclaringType?.FullName,
                             MethodName = entry.Method.Name,
                             MethodFullDescription = entry.Method.FullDescription(),
-                            MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
-                            NativeInstructions = entry.NativeInstructions.AsImmutableArray(),
-                            ILInstructions = entry.ILInstructions.AsImmutableArray(),
-                            CSharpILMixedInstructions = entry.CSharpILMixedInstructions.AsImmutableArray(),
-                            CSharpInstructions = entry.CSharpInstructions.AsImmutableArray(),
-                            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                            MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
+                            NativeInstructions = entry.NativeInstructions,
+                            ILInstructions = entry.ILInstructions,
+                            CSharpILMixedInstructions = entry.CSharpILMixedInstructions,
+                            CSharpInstructions = entry.CSharpInstructions,
+                            AdditionalMetadata = Array.Empty<MetadataModel>(),
                         },
                         OriginalMethod = entry.OriginalMethod is not null ? new()
                         {
@@ -213,50 +213,49 @@ namespace BUTR.CrashReport.Bannerlord
                             MethodDeclaredTypeName = entry.OriginalMethod.Method.DeclaringType?.FullName,
                             MethodName = entry.OriginalMethod.Method.Name,
                             MethodFullDescription = entry.OriginalMethod.Method.FullDescription(),
-                            MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullName).ToImmutableArray(),
-                            ILInstructions = entry.OriginalMethod.ILInstructions.AsImmutableArray(),
-                            CSharpILMixedInstructions = entry.OriginalMethod.CSharpILMixedInstructions.AsImmutableArray(),
-                            CSharpInstructions = entry.OriginalMethod.CSharpInstructions.AsImmutableArray(),
-                            AdditionalMetadata = ImmutableArray<MetadataModel>.Empty
+                            MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
+                            ILInstructions = entry.OriginalMethod.ILInstructions,
+                            CSharpILMixedInstructions = entry.OriginalMethod.CSharpILMixedInstructions,
+                            CSharpInstructions = entry.OriginalMethod.CSharpInstructions,
+                            AdditionalMetadata = Array.Empty<MetadataModel>()
                         } : null,
-                        PatchMethods = methodsBuilder.ToImmutable(),
+                        PatchMethods = methods,
                         ILOffset = entry.ILOffset,
                         NativeOffset = entry.NativeOffset,
                         MethodFromStackframeIssue = entry.MethodFromStackframeIssue,
-                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                        AdditionalMetadata = Array.Empty<MetadataModel>(),
                     });
                 }
             }
-            return builder.ToImmutable();
+            return enhancedStacktraceFrameModels;
         }
 
-        private static ImmutableArray<InvolvedModuleModel> GetInvolvedModuleList(CrashReportInfo crashReport)
+        private static List<InvolvedModuleModel> GetInvolvedModuleList(CrashReportInfo crashReport)
         {
-            var builder = ImmutableArray.CreateBuilder<InvolvedModuleModel>();
+            var involvedModuleModels = new List<InvolvedModuleModel>();
             foreach (var stacktrace in crashReport.FilteredStacktrace.GroupBy(m => m.ModuleInfo))
             {
                 var module = stacktrace.Key;
                 if (module is null) continue;
 
-                builder.Add(new()
+                involvedModuleModels.Add(new()
                 {
                     ModuleId = module.Id,
                     EnhancedStacktraceFrameName = stacktrace.Last().StackFrameDescription,
-                    AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
                 });
             }
-            return builder.ToImmutable();
+            return involvedModuleModels;
         }
 
-        private static ImmutableArray<ModuleModel> GetModuleList(CrashReportInfo crashReport)
+        private static List<ModuleModel> GetModuleList(CrashReportInfo crashReport)
         {
-            var builder = ImmutableArray.CreateBuilder<ModuleModel>();
-
+            var moduleModels = new List<ModuleModel>(crashReport.LoadedModules.Count);
             foreach (var module in crashReport.LoadedModules.OfType<ModuleInfo>().Select(x => x.InternalModuleInfo))
             {
                 var isManagedByVortex = File.Exists(Path.Combine(module.Path, "__folder_managed_by_vortex"));
 
-                builder.Add(new()
+                moduleModels.Add(new()
                 {
                     Id = module.Id,
                     Name = module.Name,
@@ -274,8 +273,8 @@ namespace BUTR.CrashReport.Bannerlord
                         IsOptional = x.IsOptional,
                         Version = !x.Version.Equals(ApplicationVersion.Empty) ? x.Version.ToString() : null,
                         VersionRange = !x.VersionRange.Equals(ApplicationVersionRange.Empty) ? x.VersionRange.ToString() : null,
-                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
-                    }).ToImmutableArray(),
+                        AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    }).ToArray(),
                     SubModules = module.SubModules.Where(ModuleInfoHelper.CheckIfSubModuleCanBeLoaded).Select(x => new ModuleSubModuleModel
                     {
                         Name = x.Name,
@@ -283,17 +282,40 @@ namespace BUTR.CrashReport.Bannerlord
                         Entrypoint = x.SubModuleClassType,
                         AdditionalMetadata = x.Assemblies.Select(y => new MetadataModel { Key = "METADATA:Assembly", Value = y })
                             .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new MetadataModel { Key = y.Key, Value = z })))
-                            .ToImmutableArray(),
-                    }).ToImmutableArray(),
-                    AdditionalMetadata = ImmutableArray.Create<MetadataModel>(new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString()}),
+                            .ToArray(),
+                    }).ToArray(),
+                    AdditionalMetadata = new MetadataModel[]
+                    {
+                        new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString() },
+                    },
                 });
             }
-
-            return builder.ToImmutable();
+            return moduleModels;
         }
 
-        private static ImmutableArray<AssemblyModel> GetAssemblyList(CrashReportInfo crashReport)
+        private static List<AssemblyModel> GetAssemblyList(CrashReportInfo crashReport)
         {
+            static bool IsGAC(Assembly assembly)
+            {
+                try
+                {
+#pragma warning disable SYSLIB0005
+                    return assembly.GlobalAssemblyCache;
+#pragma warning restore SYSLIB0005
+                }
+                catch (Exception) { return false; }
+            }
+            static ProcessorArchitecture GetProcessorArchitecture(AssemblyName assemblyName)
+            {
+                try
+                {
+#pragma warning disable SYSLIB0037
+                    return assemblyName.ProcessorArchitecture;
+#pragma warning restore SYSLIB0037
+                }
+                catch (Exception) { return ProcessorArchitecture.None; }
+            }
+            
             static string CalculateMD5(string filename)
             {
                 using var md5 = MD5.Create();
@@ -302,7 +324,7 @@ namespace BUTR.CrashReport.Bannerlord
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
 
-            var builder = ImmutableArray.CreateBuilder<AssemblyModel>();
+            var assemblyModels = new List<AssemblyModel>(crashReport.AvailableAssemblies.Count);
 
             foreach (var (assemblyName, assembly) in crashReport.AvailableAssemblies)
             {
@@ -317,8 +339,8 @@ namespace BUTR.CrashReport.Bannerlord
                 }
 
                 var systemAssemblyDirectory = Path.GetDirectoryName(typeof(object).Assembly.Location);
-                var isGAC = assembly.GlobalAssemblyCache;
-                var isSystem = !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location) && Path.GetDirectoryName(assembly.Location).Equals(systemAssemblyDirectory, StringComparison.Ordinal);
+                var isGAC = IsGAC(assembly);
+                var isSystem = !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location) && Path.GetDirectoryName(assembly.Location)?.Equals(systemAssemblyDirectory, StringComparison.Ordinal) == true;
                 var isTWCore = !assembly.IsDynamic && assembly.Location.IndexOf(@"Mount & Blade II Bannerlord\bin\", StringComparison.InvariantCultureIgnoreCase) >= 0;
 
                 var type = AssemblyModelType.Unclassified;
@@ -328,14 +350,14 @@ namespace BUTR.CrashReport.Bannerlord
                 if (isTWCore) type |= AssemblyModelType.GameCore;
                 if (module is not null) type |= AssemblyModelType.Module;
                 if (module is not null && module.IsOfficial) type |= AssemblyModelType.GameModule;
-                builder.Add(new()
+                assemblyModels.Add(new()
                 {
                     ModuleId = module?.Id,
-                    Name = assemblyName.Name,
+                    Name = assemblyName.Name ?? string.Empty,
                     Culture = assemblyName.CultureName,
-                    PublicKeyToken = string.Join(string.Empty, Array.ConvertAll(assemblyName.GetPublicKeyToken(), x => x.ToString("x2", CultureInfo.InvariantCulture))),
-                    Version = assemblyName.Version.ToString(),
-                    Architecture = assemblyName.ProcessorArchitecture.ToString(),
+                    PublicKeyToken = string.Join(string.Empty, Array.ConvertAll(assemblyName.GetPublicKeyToken() ?? Array.Empty<byte>(), x => x.ToString("x2", CultureInfo.InvariantCulture))),
+                    Version = assemblyName.Version?.ToString() ?? string.Empty,
+                    Architecture = GetProcessorArchitecture(assemblyName).ToString(),
                     Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CalculateMD5(assembly.Location),
                     AnonymizedPath = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : Anonymizer.AnonymizePath(assembly.Location),
                     Type = type,
@@ -344,20 +366,20 @@ namespace BUTR.CrashReport.Bannerlord
                         Namespace = x.Namespace,
                         Name = x.Name,
                         FullName = x.FullName,
-                    }).ToImmutableArray() : ImmutableArray<AssemblyImportedTypeReferenceModel>.Empty,
-                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => AssemblyImportedReferenceModelExtensions.Create(x)).ToImmutableArray(),
-                    AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                    }).ToArray() : Array.Empty<AssemblyImportedTypeReferenceModel>(),
+                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => AssemblyImportedReferenceModelExtensions.Create(x)).ToArray(),
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
                 });
             }
 
-            return builder.ToImmutable();
+            return assemblyModels;
         }
 
-        private static ImmutableArray<HarmonyPatchesModel> GetHarmonyPatchesListHtml(CrashReportInfo crashReport)
+        private static List<HarmonyPatchesModel> GetHarmonyPatchesListHtml(CrashReportInfo crashReport)
         {
-            var builder = ImmutableArray.CreateBuilder<HarmonyPatchesModel>();
+            var builder = new List<HarmonyPatchesModel>(crashReport.LoadedHarmonyPatches.Count);
 
-            static void AppendPatches(ImmutableArray<HarmonyPatchModel>.Builder builder, HarmonyPatchModelType type, IEnumerable<Patch> patches)
+            static void AppendPatches(List<HarmonyPatchModel> builder, HarmonyPatchModelType type, IEnumerable<Patch> patches)
             {
                 foreach (var patch in patches)
                 {
@@ -370,16 +392,16 @@ namespace BUTR.CrashReport.Bannerlord
                         Namespace = $"{patch.PatchMethod.DeclaringType!.FullName}.{patch.PatchMethod.Name}",
                         Index = patch.index,
                         Priority = patch.priority,
-                        Before = patch.before.ToImmutableArray(),
-                        After = patch.after.ToImmutableArray(),
-                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                        Before = patch.before,
+                        After = patch.after,
+                        AdditionalMetadata = Array.Empty<MetadataModel>(),
                     });
                 }
             }
 
             foreach (var (originalMethod, patches) in crashReport.LoadedHarmonyPatches)
             {
-                var patchBuilder = ImmutableArray.CreateBuilder<HarmonyPatchModel>();
+                var patchBuilder = new List<HarmonyPatchModel>(patches.Prefixes.Count + patches.Postfixes.Count + patches.Finalizers.Count + patches.Transpilers.Count);
 
                 AppendPatches(patchBuilder, HarmonyPatchModelType.Prefix, patches.Prefixes);
                 AppendPatches(patchBuilder, HarmonyPatchModelType.Postfix, patches.Postfixes);
@@ -392,13 +414,13 @@ namespace BUTR.CrashReport.Bannerlord
                     {
                         OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
                         OriginalMethodName = originalMethod.Name,
-                        Patches = patchBuilder.ToImmutable(),
-                        AdditionalMetadata = ImmutableArray<MetadataModel>.Empty,
+                        Patches = patchBuilder,
+                        AdditionalMetadata = Array.Empty<MetadataModel>(),
                     });
                 }
             }
 
-            return builder.ToImmutable();
+            return builder;
         }
     }
 }
