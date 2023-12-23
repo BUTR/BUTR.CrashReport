@@ -239,7 +239,7 @@ namespace BUTR.CrashReport.Bannerlord
 <![if !IE]>
               <br/>
               <br/>
-              <button onclick='jsonmodel(this)'>Get Json</button>
+              <button onclick='jsonmodel(this)'>Get as Json</button>
 <![endif]>
 """);
 

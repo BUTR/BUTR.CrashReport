@@ -340,7 +340,10 @@ namespace BUTR.CrashReport.Bannerlord
 
                 var systemAssemblyDirectory = Path.GetDirectoryName(typeof(object).Assembly.Location);
                 var isGAC = IsGAC(assembly);
-                var isSystem = !assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location) && Path.GetDirectoryName(assembly.Location)?.Equals(systemAssemblyDirectory, StringComparison.Ordinal) == true;
+                var isSystem =
+                    (!assembly.IsDynamic && !string.IsNullOrWhiteSpace(assembly.Location) && Path.GetDirectoryName(assembly.Location)?.Equals(systemAssemblyDirectory, StringComparison.Ordinal) == true) ||
+                    (assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product == "Microsoft® .NET Framework") ||
+                    (assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product == "Microsoft® .NET");
                 var isTWCore = !assembly.IsDynamic && assembly.Location.IndexOf(@"Mount & Blade II Bannerlord\bin\", StringComparison.InvariantCultureIgnoreCase) >= 0;
 
                 var type = AssemblyModelType.Unclassified;
@@ -361,13 +364,17 @@ namespace BUTR.CrashReport.Bannerlord
                     Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CalculateMD5(assembly.Location),
                     AnonymizedPath = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : Anonymizer.AnonymizePath(assembly.Location),
                     Type = type,
-                    ImportedTypeReferences = crashReport.ImportedTypeReferences.TryGetValue(assemblyName, out var values) ? values.Select(x => new AssemblyImportedTypeReferenceModel()
-                    {
-                        Namespace = x.Namespace,
-                        Name = x.Name,
-                        FullName = x.FullName,
-                    }).ToArray() : Array.Empty<AssemblyImportedTypeReferenceModel>(),
-                    ImportedAssemblyReferences = assembly.GetReferencedAssemblies().Select(x => AssemblyImportedReferenceModelExtensions.Create(x)).ToArray(),
+                    ImportedTypeReferences = !isSystem
+                        ? crashReport.ImportedTypeReferences.TryGetValue(assemblyName, out var values) ? values.Select(x => new AssemblyImportedTypeReferenceModel()
+                        {
+                            Namespace = x.Namespace,
+                            Name = x.Name,
+                            FullName = x.FullName,
+                        }).ToArray() : Array.Empty<AssemblyImportedTypeReferenceModel>()
+                        : Array.Empty<AssemblyImportedTypeReferenceModel>(),
+                    ImportedAssemblyReferences = !isSystem
+                        ? assembly.GetReferencedAssemblies().Select(x => AssemblyImportedReferenceModelExtensions.Create(x)).ToArray()
+                        : Array.Empty<AssemblyImportedReferenceModel>(),
                     AdditionalMetadata = Array.Empty<MetadataModel>(),
                 });
             }
