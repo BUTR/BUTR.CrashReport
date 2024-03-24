@@ -36,8 +36,6 @@
 // SOFTWARE.
 #endregion
 
-using System.IO.Compression;
-
 #if !BUTRCRASHREPORT_DISABLE || BUTRCRASHREPORT_ENABLE_HTML_RENDERER
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
@@ -54,8 +52,8 @@ namespace BUTR.CrashReport.Bannerlord
     using global::System.IO;
     using global::System.Linq;
     using global::System.Text;
-
-    internal static class CrashReportHtmlRenderer
+    
+    internal static partial class CrashReportHtmlRenderer
     {
         private static readonly string MiniDumpTag = "<!-- MINI DUMP -->";
         private static readonly string MiniDumpButtonTag = "<!-- MINI DUMP BUTTON -->";
@@ -65,124 +63,6 @@ namespace BUTR.CrashReport.Bannerlord
         private static readonly string ScreenshotButtonTag = "<!-- SCREENSHOT BUTTON -->";
         private static readonly string JsonModelTag = "<!-- JSON MODEL -->";
         private static readonly string JsonModelButtonTag = "<!-- JSON MODEL BUTTON -->";
-
-#pragma warning disable format // @formatter:off
-        private static readonly string Scripts = """
-<script>
-    function scrollToElement(className) {
-      var element = document.getElementById(className);
-      
-	  var iterElement = element;
-	  iterElement.style.display = "block";
-      while (iterElement.parentNode && iterElement.parentNode.style){
-	    iterElement.parentNode.style.display = "block";
-        iterElement = iterElement.parentNode;
-      }
-      
-      element.scrollIntoView(false);
-   }
-   function showHideById(element, id) {
-     if (document.getElementById(id).style.display === "block") {
-       document.getElementById(id).style.display = "none";
-       element.innerHTML = element.innerHTML.replace("-", "+");
-     } else {
-       document.getElementById(id).style.display = "block";
-       element.innerHTML = element.innerHTML.replace("+", "-");
-     }
-   }
-   function showHideByClassName(element, className) {
-     var list = document.getElementsByClassName(className);
-     for (var i = 0; i < list.length; i++) {
-       list[i].style.display = element.checked ? "none" : "list-item";
-     }
-   }
-   function setBackgroundColorByClassName(className, color) {
-     var list = document.getElementsByClassName(className);
-     for (var i = 0; i < list.length; i++) {
-       list[i].style.backgroundColor = color;
-     }
-   }
-   function changeFontSize(fontSize) {
-     document.getElementById("exception").style.fontSize = fontSize.value;
-     document.getElementById("enhanced-stacktrace").style.fontSize = fontSize.value;
-     document.getElementById("involved-modules").style.fontSize = fontSize.value;
-     document.getElementById("installed-modules").style.fontSize = fontSize.value;
-     document.getElementById("assemblies").style.fontSize = fontSize.value;
-     document.getElementById("harmony-patches").style.fontSize = fontSize.value;
-   }
-   function changeBackgroundColor(element) {
-     document.body.style.backgroundColor = !element.checked ? "#ececec" : "white";
-     setBackgroundColorByClassName("headers-container", !element.checked ? "white" : "white");
-     setBackgroundColorByClassName("modules-container", !element.checked ? "#ffffe0" : "white");
-     setBackgroundColorByClassName("submodules-container", !element.checked ? "#f8f8e7" : "white");
-     setBackgroundColorByClassName("modules-official-container", !element.checked ? "#f4fcdc" : "white");
-     setBackgroundColorByClassName("modules-external-container", !element.checked ? "#ede9e0" : "white");
-     setBackgroundColorByClassName("submodules-official-container", !element.checked ? "#f0f4e4" : "white");
-     setBackgroundColorByClassName("modules-invalid-container", !element.checked ? "#ffefd5" : "white");
-     setBackgroundColorByClassName("submodules-invalid-container", !element.checked ? "#f5ecdf" : "white");
-   }
-   function minidump(element) {
-     var base64 = document.getElementById("mini-dump").innerText.trim();
-     //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-     var binData = new Uint8Array(
-       atob(base64)
-         .split("")
-         .map(function (x) {
-           return x.charCodeAt(0);
-         })
-     );
-     var result = window.pako.inflate(binData);
-
-     var a = document.createElement("a");
-     var blob = new Blob([result]);
-     a.href = window.URL.createObjectURL(blob);
-     a.download = "crashdump.dmp";
-     a.click();
-   }
-   function savefile(element) {
-     var base64 = document.getElementById("save-file").innerText.trim();
-     //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-     var binData = new Uint8Array(
-       atob(base64)
-         .split("")
-         .map(function (x) {
-           return x.charCodeAt(0);
-         })
-     );
-     var result = window.pako.inflate(binData);
-
-     var a = document.createElement("a");
-     var blob = new Blob([result]);
-     a.href = window.URL.createObjectURL(blob);
-     a.download = "savefile.sav";
-     a.click();
-   }
-   function screenshot(element) {
-     var base64 = document.getElementById("screenshot-data").innerText.trim();
-     document.getElementById("screenshot").src = "data:image/jpeg;charset=utf-8;base64," + base64;
-     document.getElementById("screenshot").parentElement.style.display = "block";
-   }
-   function jsonmodel(element) {
-     var base64 = document.getElementById("json-model-data").innerText.trim();
-     //var binData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-     var binData = new Uint8Array(
-       atob(base64)
-         .split("")
-         .map(function (x) {
-           return x.charCodeAt(0);
-         })
-     );
-     var result = window.pako.inflate(binData);
-
-     var a = document.createElement("a");
-     var blob = new Blob([result]);
-     a.href = window.URL.createObjectURL(blob);
-     a.download = "crashreport.json";
-     a.click();
-   }
- </script>                                    
-""";
-#pragma warning disable format // @formatter:on
 
         public static string AddData(string htmlReport, string gzipBase64CrashReportJson, string? gZipBase64MiniDump = null, string? gZipBase64SaveFile = null, string? base64Screenshot = null)
         {
@@ -194,7 +74,7 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 htmlReport = htmlReport
                     .Replace(CrashReportHtmlRenderer.MiniDumpTag, gZipBase64MiniDump)
-                    .Replace(CrashReportHtmlRenderer.MiniDumpButtonTag, """
+                    .Replace(CrashReportHtmlRenderer.MiniDumpButtonTag, $$"""
 
 <![if !IE]>
               <br/>
@@ -208,7 +88,7 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 htmlReport = htmlReport
                     .Replace(CrashReportHtmlRenderer.SaveFileTag, gZipBase64SaveFile)
-                    .Replace(CrashReportHtmlRenderer.SaveFileButtonTag, """
+                    .Replace(CrashReportHtmlRenderer.SaveFileButtonTag, $$"""
 
 <![if !IE]>
               <br/>
@@ -222,7 +102,7 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 htmlReport = htmlReport
                     .Replace(CrashReportHtmlRenderer.ScreenshotTag, base64Screenshot)
-                    .Replace(CrashReportHtmlRenderer.ScreenshotButtonTag, """
+                    .Replace(CrashReportHtmlRenderer.ScreenshotButtonTag, $$"""
 
 <![if !IE]>
             <br/>
@@ -234,7 +114,7 @@ namespace BUTR.CrashReport.Bannerlord
             
             htmlReport = htmlReport
                 .Replace(CrashReportHtmlRenderer.JsonModelTag, gzipBase64CrashReportJson)
-                .Replace(CrashReportHtmlRenderer.JsonModelButtonTag, """
+                .Replace(CrashReportHtmlRenderer.JsonModelButtonTag, $$"""
 
 <![if !IE]>
               <br/>
@@ -245,220 +125,8 @@ namespace BUTR.CrashReport.Bannerlord
 
             return htmlReport;
         }
-
-        public static string Build(CrashReportModel crashReportModel, IEnumerable<LogSource> files)
-        {
-            var runtime = crashReportModel.Metadata.Runtime;
-
-            var launcherType = crashReportModel.Metadata.LauncherType;
-            var launcherVersion = crashReportModel.Metadata.LauncherVersion;
-
-            var butrLoaderVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "BUTRLoaderVersion")?.Value is { } butrLoaderVersionVal ? butrLoaderVersionVal : string.Empty;
-            var blseVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "BLSEVersion")?.Value is { } blseVersionVal ? blseVersionVal : string.Empty;
-            var launcherExVersion = crashReportModel.Metadata.AdditionalMetadata.FirstOrDefault(x => x.Key == "LauncherExVersion")?.Value is { } launcherExVersionVal ? launcherExVersionVal : string.Empty;
-
-#pragma warning disable format // @formatter:off
-            return $$"""
-<html>  
-  <head>
-    <title>Bannerlord Crash Report</title>
-    <meta charset='utf-8' />
-    <game version='{{crashReportModel.GameVersion}}' />
-    <launcher type='{{launcherType}}' version='{{launcherVersion}}' />
-    <runtime value='{{runtime}}' />
-    {{(!string.IsNullOrEmpty(butrLoaderVersion) ? $"<butrloader version='{butrLoaderVersion}' />" : string.Empty)}}
-    {{(!string.IsNullOrEmpty(blseVersion) ? $"<blse version='{blseVersion}' />" : string.Empty)}}
-    {{(!string.IsNullOrEmpty(launcherExVersion) ? $"<launcherex version='{launcherExVersion}' />" : string.Empty)}}
-    <report id='{{crashReportModel.Id}}' version='{{crashReportModel.Version}}' />
-    <style>
-      .headers {
-        font-family: 'Consolas', monospace;
-      }
-      .root-container {
-        font-family: 'Consolas', monospace;
-        font-size: small;
-
-        margin: 5px;
-        background-color: white;
-        border: 1px solid grey;
-        padding: 5px;
-      }
-      .headers-container {
-        display: none;
-      }
-      .modules-container {
-        margin: 5px;
-        background-color: #ffffe0;
-        border: 1px solid grey;
-        padding: 5px;
-      }
-      .submodules-container {
-        margin: 5px;
-        border: 1px solid grey;
-        background-color: #f8f8e7;
-        padding: 5px;
-      }
-      .modules-official-container {
-        margin: 5px;
-        background-color: #f4fcdc;
-        border: 1px solid grey;
-        padding: 5px;
-      }
-      .modules-external-container {
-        margin: 5px;
-        background-color: #ede9e0;
-        border: 1px solid grey;
-        padding: 5px;
-      }
-      .submodules-official-container {
-        margin: 5px;
-        border: 1px solid grey;
-        background-color: #f0f4e4;
-        padding: 5px;
-      }
-      .modules-invalid-container {
-        margin: 5px;
-        background-color: #ffefd5;
-        border: 1px solid grey;
-        padding: 5px;
-      }
-      .submodules-invalid-container {
-        margin: 5px;
-        border: 1px solid grey;
-        background-color: #f5ecdf;
-        padding: 5px;
-      }
-    </style>
-  </head>
-  <body style='background-color: #ececec;'>
-    <table style='width: 100%;'>
-      <tbody>
-        <tr>
-          <td style='width: 80%;'>
-            <div>
-              <b>Bannerlord has encountered a problem and will close itself.</b>
-              <br />
-              This is a community Crash Report. Please save it and use it for reporting the error. Do not provide screenshots, provide the report!
-              <br />
-              Most likely this error was caused by a custom installed module.
-              <br />
-              <br />
-              If you were in the middle of something, the progress might be lost.
-              <br />
-              <br />
-              Launcher: {{launcherType}} ({{launcherVersion}})
-              <br />
-              Runtime: {{runtime}}
-              {{(!string.IsNullOrEmpty(blseVersion) ? $"<br />BLSE Version: {blseVersion}" : string.Empty)}}
-              {{(!string.IsNullOrEmpty(launcherExVersion) ? $"<br />LauncherEx Version: {launcherExVersion}" : string.Empty)}}
-              <br />
-            </div>
-          </td>
-          <td>
-            <div style='float: right; margin-left: 10px;'>
-              <label>Without Color:</label>
-              <input type='checkbox' onclick='changeBackgroundColor(this)' />
-              <br />
-              <br />
-              <label>Font Size:</label>
-              <select class='input' onchange='changeFontSize(this);'>
-                <option value='1.0em' selected='selected'>Standard</option>
-                <option value='0.9em'>Medium</option>
-                <option value='0.8em'>Small</option>
-              </select>
-              {{JsonModelButtonTag}} {{MiniDumpButtonTag}} {{SaveFileButtonTag}} {{ScreenshotButtonTag}}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <div class='root-container'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "exception")'>+ Exception</a></h2>
-      <div id='exception' class='headers-container'>
-        {{GetRecursiveExceptionHtml(crashReportModel, crashReportModel.Exception)}}
-      </div>
-    </div>
-    <div class='root-container'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "enhanced-stacktrace")'>+ Enhanced Stacktrace</a></h2>
-      <div id='enhanced-stacktrace' class='headers-container'>
-        {{GetEnhancedStacktraceHtml(crashReportModel)}}
-      </div>
-    </div>
-    <div class='root-container'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "involved-modules")'>+ Involved Modules</a></h2>
-      <div id='involved-modules' class='headers-container'>
-        {{GetInvolvedModuleListHtml(crashReportModel)}}
-      </div>
-    </div>
-    <div class='root-container'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "installed-modules")'>+ Installed Modules</a></h2>
-      <div id='installed-modules' class='headers-container'>
-        {{GetModuleListHtml(crashReportModel)}}
-      </div>
-    </div>
-    <div class='root-container'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "assemblies")'>+ Assemblies</a></h2>
-      <div id='assemblies' class='headers-container'>
-        <label>Hide: </label>
-        <label><input type='checkbox' onclick='showHideByClassName(this, "sys_assembly")' /> System</label>
-        <label><input type='checkbox' onclick='showHideByClassName(this, "gac_assembly")' /> GAC</label>
-        <label><input type='checkbox' onclick='showHideByClassName(this, "tw_assembly")' /> Game</label>
-        <label><input type='checkbox' onclick='showHideByClassName(this, "tw_module_assembly")' /> Game Modules</label>
-        <label><input type='checkbox' onclick='showHideByClassName(this, "module_assembly")' /> Modules</label>
-        <label><input type='checkbox' onclick='showHideByClassName(this, "dynamic_assembly")' /> Dynamic</label>
-        <label><input type='checkbox' onclick='showHideByClassName(this, "unclas_assembly")' /> Unclassified</label>
-        {{GetAssemblyListHtml(crashReportModel)}}
-      </div>
-    </div>
-    <div class='root-container'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "harmony-patches")'>+ Harmony Patches</a></h2>
-      <div id='harmony-patches' class='headers-container'>
-        {{GetHarmonyPatchesListHtml(crashReportModel)}}
-      </div>
-    </div>
-    <div class='root-container'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "log-files")'>+ Log Files</a></h2>
-      <div id='log-files' class='headers-container'>
-        {{GetLogFilesListHtml(files)}}
-      </div>
-    </div>
-    <div class='root-container' style='display: none;'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "mini-dump")'>+ Mini Dump</a></h2>
-      <div id='mini-dump' class='headers-container'>
-        {{MiniDumpTag}}
-      </div>
-    </div>
-    <div class='root-container' style='display: none;'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "save-file")'>+ Save File</a></h2>
-      <div id='save-file' class='headers-container'>
-        {{SaveFileTag}}
-      </div>
-    </div>
-    <div class='root-container' style='display: none;'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "screenshot")'>+ Screenshot</a></h2>
-      <img id='screenshot' alt='Screenshot' />
-    </div>
-    <div class='root-container' style='display: none;'>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "screenshot-data")'>+ Screenshot Data</a></h2>
-      <div id='screenshot-data' class='headers-container'>
-        {{ScreenshotTag}}
-      </div>
-    </div>
-    <div class='root-container' style='display: none;'>
-      <h2><a href='javascript:;' class="headers" onclick='showHideById(this, "json-model-data")'>+ Json Model Data</a></h2>
-      <div id='json-model-data' class='headers-container'>
-        {{JsonModelTag}}
-      </div>
-    </div>
-<![if !IE]>
-    <script src="https://cdn.jsdelivr.net/pako/1.0.3/pako_inflate.min.js"></script>
-<![endif]>
-    {{Scripts}}
-  </body>
-</html>
-""";
-#pragma warning disable format // @formatter:on
-        }
+     
+        public static string Build(CrashReportModel crashReportModel, IEnumerable<LogSource> files) => GetBase(crashReportModel, files);
 
         private static string GetRecursiveExceptionHtml(CrashReportModel crashReport, ExceptionModel? ex)
         {
@@ -470,16 +138,19 @@ namespace BUTR.CrashReport.Bannerlord
 
             var moduleId = stacktrace?.ExecutingMethod.ModuleId ?? "UNKNOWN";
             var sourceModuleId = ex.SourceModuleId ?? "UNKNOWN";
+            
+            var pluginId = stacktrace?.ExecutingMethod.LoaderPluginId ?? "UNKNOWN";
+            var sourcePluginId = ex.SourceLoaderPluginId ?? "UNKNOWN";
 
             var hasMessage = !string.IsNullOrWhiteSpace(ex.Message);
             var hasCallStack = !string.IsNullOrWhiteSpace(ex.CallStack);
             var hasInner = ex.InnerException is not null;
             return new StringBuilder()
                 .Append("Exception Information:").Append("<br/>")
-                .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Potential Module Id: ").Append(moduleId).Append("<br/>"))
                 .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Potential Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
-                .AppendIf(sourceModuleId == "UNKNOWN", sb =>  sb.Append("Potential Source Module Id: ").Append(sourceModuleId).Append("<br/>"))
                 .AppendIf(sourceModuleId != "UNKNOWN", sb =>  sb.Append("Potential Source Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourceModuleId).Append("\")'>").Append(sourceModuleId).Append("</a></b>").Append("<br/>"))
+                .AppendIf(pluginId != "UNKNOWN", sb =>  sb.Append("Potential Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
+                .AppendIf(sourcePluginId != "UNKNOWN", sb =>  sb.Append("Potential Source Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourcePluginId).Append("\")'>").Append(sourcePluginId).Append("</a></b>").Append("<br/>"))
                 .Append("Type: ").Append(ex.Type.EscapeGenerics()).Append("<br/>")
                 .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message.EscapeGenerics()).Append("<br/>"))
                 .AppendIf(hasCallStack, sb => sb.Append("Stacktrace:").Append("<br/>"))
@@ -507,33 +178,26 @@ namespace BUTR.CrashReport.Bannerlord
                 var id3 = random.Next();
                 var id4 = random.Next();
                 var moduleId2 = stacktrace.ExecutingMethod.ModuleId ?? "UNKNOWN";
+                var pluginId2 = stacktrace.ExecutingMethod.LoaderPluginId ?? "UNKNOWN";
                 sb.Append("<li>")
                     .Append("Frame: ").Append(stacktrace.FrameDescription.EscapeGenerics()).Append("<br/>")
                     .Append("Executing Method:")
                     .Append("<ul>")
                     .Append("<li>")
-                    .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
                     .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
+                    .AppendIf(pluginId2 != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
                     .Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                     .Append("Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
                     .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
                     .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN").Append("<br/>")
                     .AppendIf(stacktrace.ExecutingMethod.ILInstructions.Count > 0, sp => sp
-                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id1}\")'>+ IL:</a><div id='{id1}' class='headers-container'><pre>")
-                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.ILInstructions.Select(x => x.EscapeGenerics()))
-                        .Append("</pre></div></div>"))
+                        .Append(ContainerCode($"{id1}", "IL:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.ILInstructions.Select(x => x.EscapeGenerics())))))
                     .AppendIf(stacktrace.ExecutingMethod.CSharpILMixedInstructions.Count > 0, sp => sp
-                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id2}\")'>+ IL with C#:</a><div id='{id2}' class='headers-container'><pre>")
-                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()))
-                        .Append("</pre></div></div>"))
+                        .Append(ContainerCode($"{id2}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                     .AppendIf(stacktrace.ExecutingMethod.CSharpInstructions.Count > 0, sp => sp
-                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id3}\")'>+ C#:</a><div id='{id3}' class='headers-container'><pre>")
-                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.CSharpInstructions.Select(x => x.EscapeGenerics()))
-                        .Append("</pre></div></div>"))
+                        .Append(ContainerCode($"{id3}", "C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                     .AppendIf(stacktrace.ExecutingMethod.NativeInstructions.Count > 0, sp => sp
-                        .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id4}\")'>+ Native:</a><div id='{id4}' class='headers-container'><pre>")
-                        .AppendJoin(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics()))
-                        .Append("</pre></div></div>"))
+                        .Append(ContainerCode($"{id4}", "Native:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics())))))
                     .Append("</li>")
                     .Append("</ul>");
 
@@ -547,22 +211,20 @@ namespace BUTR.CrashReport.Bannerlord
                         var id02 = random.Next();
                         var id03 = random.Next();
                         var moduleId = method.ModuleId ?? "UNKNOWN";
+                        var pluginId = method.LoaderPluginId ?? "UNKNOWN";
+                        var harmonyPatch = method as MethodHarmonyPatch;
                         sb.Append("<li>")
-                            .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("<br/>"))
-                            .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
+                            .Append("Type: ").Append(harmonyPatch is not null ? "Harmony" : "UNKNOWN").Append("<br/>")
+                            .AppendIf(harmonyPatch is not null, sb => sb.Append("Patch Type: ").Append(harmonyPatch!.PatchType.ToString()).Append("<br/>"))
+                            .AppendIf(moduleId != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
+                            .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
                             .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                             .AppendIf(method.ILInstructions.Count > 0, sp => sp
-                                .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id01}\")'>+ IL:</a><div id='{id01}' class='headers-container'><pre>")
-                                .AppendJoin(Environment.NewLine, method.ILInstructions.Select(x => x.EscapeGenerics()))
-                                .Append("</pre></div></div>"))
+                                .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, method.ILInstructions.Select(x => x.EscapeGenerics())))))
                             .AppendIf(method.CSharpILMixedInstructions.Count > 0, sp => sp
-                                .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id02}\")'>+ IL with C#:</a><div id='{id02}' class='headers-container'><pre>")
-                                .AppendJoin(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()))
-                                .Append("</pre></div></div>"))
+                                .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                             .AppendIf(method.CSharpInstructions.Count > 0, sp => sp
-                                .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id03}\")'>+ C#:</a><div id='{id03}' class='headers-container'><pre>")
-                                .AppendJoin(Environment.NewLine, method.CSharpInstructions.Select(x => x.EscapeGenerics()))
-                                .Append("</pre></div></div>"))
+                                .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                             .Append("</li>");
                     }
                     sb.Append("</ul>");
@@ -570,27 +232,24 @@ namespace BUTR.CrashReport.Bannerlord
 
                 if (stacktrace.OriginalMethod is not null)
                 {
+                    var moduleId3 = stacktrace.OriginalMethod.ModuleId ?? "UNKNOWN";
+                    var pluginId3 = stacktrace.OriginalMethod.LoaderPluginId ?? "UNKNOWN";
+                    
                     var id01 = random.Next();
                     var id02 = random.Next();
                     var id03 = random.Next();
                     sb.Append("Original Method:")
                         .Append("<ul>")
                         .Append("<li>")
-                        .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
-                        .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
+                        .AppendIf(moduleId3 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId3).Append("\")'>").Append(moduleId3).Append("</a></b>").Append("<br/>"))
+                        .AppendIf(pluginId3 != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId3).Append("\")'>").Append(pluginId3).Append("</a></b>").Append("<br/>"))
                         .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                         .AppendIf(stacktrace.OriginalMethod.ILInstructions.Count > 0, sb => sb
-                            .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id01}\")'>+ IL:</a><div id='{id01}' class='headers-container'><pre>")
-                            .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics()))
-                            .Append("</pre></div></div>"))
+                            .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics())))))
                         .AppendIf(stacktrace.OriginalMethod.CSharpILMixedInstructions.Count > 0, sb => sb
-                            .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id02}\")'>+ IL with C#:</a><div id='{id02}' class='headers-container'><pre>")
-                            .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics()))
-                            .Append("</pre></div></div>"))
+                            .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                         .AppendIf(stacktrace.OriginalMethod.CSharpInstructions.Count > 0, sb => sb
-                            .Append($"<div><a href='javascript:;' class='headers' onclick='showHideById(this, \"{id03}\")'>+ C#:</a><div id='{id03}' class='headers-container'><pre>")
-                            .AppendJoin(Environment.NewLine, stacktrace.OriginalMethod.CSharpInstructions.Select(x => x.EscapeGenerics()))
-                            .Append("</pre></div></div>"))
+                            .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                         .Append("</li>")
                         .Append("</ul>");
                 }
@@ -603,18 +262,15 @@ namespace BUTR.CrashReport.Bannerlord
             return sb.ToString();
         }
 
-        private static string GetInvolvedModuleListHtml(CrashReportModel crashReport)
+        private static void AddInvolvedModules(CrashReportModel crashReport, StringBuilder sb)
         {
-            var sb = new StringBuilder();
-            sb.Append("Based on Stacktrace:")
-                .Append("<ul>");
             foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.ExecutingMethod.ModuleId ?? "UNKNOWN"))
             {
                 var moduleId = grouping.Key;
                 if (moduleId == "UNKNOWN") continue;
 
                 sb.Append("<li>")
-                    .Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a>").Append("<br/>");
+                    .Append("Module Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a>").Append("<br/>");
 
                 foreach (var stacktrace in grouping)
                 {
@@ -627,6 +283,8 @@ namespace BUTR.CrashReport.Bannerlord
                             .Append("<ul>");
                         foreach (var method in stacktrace.PatchMethods)
                         {
+                            var harmonyPatch = method as MethodHarmonyPatch;
+                            
                             // Ignore blank transpilers used to force the jitter to skip inlining
                             if (method.MethodName == "BlankTranspiler") continue;
                             var moduleId2 = method.ModuleId ?? "UNKNOWN";
@@ -634,6 +292,7 @@ namespace BUTR.CrashReport.Bannerlord
                                 .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
                                 .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
                                 .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
+                                .AppendIf(harmonyPatch is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatch!.PatchType).Append("<br/>"))
                                 .Append("</li>");
                         }
                         sb.Append("</ul>");
@@ -646,11 +305,63 @@ namespace BUTR.CrashReport.Bannerlord
 
                 sb.Append("</li>");
             }
+        }
+        private static void AddInvolvedPlugins(CrashReportModel crashReport, StringBuilder sb)
+        {
+            foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.ExecutingMethod.LoaderPluginId ?? "UNKNOWN"))
+            {
+                var pluginId = grouping.Key;
+                if (pluginId == "UNKNOWN") continue;
+
+                sb.Append("<li>")
+                    .Append("Plugin Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a>").Append("<br/>");
+
+                foreach (var stacktrace in grouping)
+                {
+                    sb.Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
+                        .Append("Frame: ").Append(stacktrace.FrameDescription.EscapeGenerics()).Append("<br/>");
+
+                    if (stacktrace.PatchMethods.Count > 0)
+                    {
+                        sb.Append("Patches:").Append("<br/>")
+                            .Append("<ul>");
+                        foreach (var method in stacktrace.PatchMethods)
+                        {
+                            var harmonyPatch = method as MethodHarmonyPatch;
+                            
+                            // Ignore blank transpilers used to force the jitter to skip inlining
+                            if (method.MethodName == "BlankTranspiler") continue;
+                            var pluginId2 = method.LoaderPluginId ?? "UNKNOWN";
+                            sb.Append("<li>")
+                                .AppendIf(pluginId2 == "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append(pluginId2).Append("<br/>"))
+                                .AppendIf(pluginId2 != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
+                                .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
+                                .AppendIf(harmonyPatch is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatch!.PatchType).Append("<br/>"))
+                                .Append("</li>");
+                        }
+                        sb.Append("</ul>");
+                    }
+
+                    sb.Append("</br>");
+
+                    sb.Append("</li>");
+                }
+
+                sb.Append("</li>");
+            }
+        }
+        private static string GetInvolvedHtml(CrashReportModel crashReport)
+        {
+            var sb = new StringBuilder();
+            sb.Append("Based on Stacktrace:")
+                .Append("<ul>");
+            AddInvolvedModules(crashReport, sb);
+            AddInvolvedPlugins(crashReport, sb);
             sb.Append("</ul>");
             return sb.ToString();
         }
 
-        private static string GetModuleListHtml(CrashReportModel crashReport)
+        private static string GetInstalledModulesHtml(CrashReportModel crashReport)
         {
             var moduleBuilder = new StringBuilder();
             var subModulesBuilder = new StringBuilder();
@@ -667,36 +378,36 @@ namespace BUTR.CrashReport.Bannerlord
                 {
                     var hasVersion = !string.IsNullOrEmpty(dependentModule.Version);
                     var hasVersionRange = !string.IsNullOrEmpty(dependentModule.VersionRange);
-                    if (dependentModule.Type == ModuleDependencyMetadataModelType.Incompatible)
+                    if (dependentModule.Type == DependencyMetadataModelType.Incompatible)
                     {
-                        deps[dependentModule.ModuleId] = tmp.Clear()
+                        deps[dependentModule.ModuleOrPluginId] = tmp.Clear()
                             .Append("Incompatible ")
-                            .Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(dependentModule.ModuleId).Append("\")'>")
-                            .Append(dependentModule.ModuleId)
+                            .Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(dependentModule.ModuleOrPluginId).Append("\")'>")
+                            .Append(dependentModule.ModuleOrPluginId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
                             .AppendIf(hasVersion, sb => sb.Append(" >= ").Append(dependentModule.Version))
                             .AppendIf(hasVersionRange, dependentModule.VersionRange)
                             .ToString();
                     }
-                    else if (dependentModule.Type == ModuleDependencyMetadataModelType.LoadAfter)
+                    else if (dependentModule.Type == DependencyMetadataModelType.LoadAfter)
                     {
-                        deps[dependentModule.ModuleId] = tmp.Clear()
-                            .Append("Load ").Append("Before ")
-                            .Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(dependentModule.ModuleId).Append("\")'>")
-                            .Append(dependentModule.ModuleId)
-                            .Append("</a>")
-                            .AppendIf(dependentModule.IsOptional, " (optional)")
-                            .AppendIf(hasVersion, sb => sb.Append(" >= ").Append(dependentModule.Version))
-                            .AppendIf(hasVersionRange, dependentModule.VersionRange)
-                            .ToString();
-                    }
-                    else if (dependentModule.Type == ModuleDependencyMetadataModelType.LoadBefore)
-                    {
-                        deps[dependentModule.ModuleId] = tmp.Clear()
+                        deps[dependentModule.ModuleOrPluginId] = tmp.Clear()
                             .Append("Load ").Append("After ")
-                            .Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(dependentModule.ModuleId).Append("\")'>")
-                            .Append(dependentModule.ModuleId)
+                            .Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(dependentModule.ModuleOrPluginId).Append("\")'>")
+                            .Append(dependentModule.ModuleOrPluginId)
+                            .Append("</a>")
+                            .AppendIf(dependentModule.IsOptional, " (optional)")
+                            .AppendIf(hasVersion, sb => sb.Append(" >= ").Append(dependentModule.Version))
+                            .AppendIf(hasVersionRange, dependentModule.VersionRange)
+                            .ToString();
+                    }
+                    else if (dependentModule.Type == DependencyMetadataModelType.LoadBefore)
+                    {
+                        deps[dependentModule.ModuleOrPluginId] = tmp.Clear()
+                            .Append("Load ").Append("Before ")
+                            .Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(dependentModule.ModuleOrPluginId).Append("\")'>")
+                            .Append(dependentModule.ModuleOrPluginId)
                             .Append("</a>")
                             .AppendIf(dependentModule.IsOptional, " (optional)")
                             .AppendIf(hasVersion, sb => sb.Append(" >= ").Append(dependentModule.Version))
@@ -733,7 +444,7 @@ namespace BUTR.CrashReport.Bannerlord
                         .Append(module.IsOfficial ? "<div class=\"submodules-official-container\">" : "<div class=\"submodules-container\">")
                         .Append("<b>").Append(subModule.Name).Append("</b>").Append("</br>")
                         .Append("Name: ").Append(subModule.Name).Append("</br>")
-                        .Append("DLLName: ").Append(subModule.AssemblyName).Append("</br>")
+                        .Append("DLLName: ").Append(subModule.AssemblyId?.Name).Append("</br>")
                         .Append("SubModuleClassType: ").Append(subModule.Entrypoint).Append("</br>")
                         .AppendIf(hasTags, sb => sb.Append("Tags:").Append("</br>"))
                         .AppendIf(hasTags, "<ul>")
@@ -752,7 +463,7 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 additionalAssembliesBuilder.Clear();
                 foreach (var assembly in crashReport.Assemblies.Where(y => y.ModuleId == module.Id))
-                    additionalAssembliesBuilder.Append("<li>").Append(assembly.Name).Append(" (").Append(assembly.GetFullName()).Append(")").Append("</li>");
+                    additionalAssembliesBuilder.Append("<li>").Append(assembly.Id.Name).Append(" (").Append(assembly.GetFullName()).Append(")").Append("</li>");
             }
 
             moduleBuilder.Append("<ul>");
@@ -764,9 +475,6 @@ namespace BUTR.CrashReport.Bannerlord
 
                 var isVortexManaged = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:MANAGED_BY_VORTEX")?.Value is { } str && bool.TryParse(str, out var val) && val;
 
-                var capabilities = new HashSet<ModuleCapabilities>(CrashReportShared.GetModuleCapabilities(crashReport, module));
-                if (capabilities.Count == 0) capabilities.Add(ModuleCapabilities.None);
-
                 var container = module switch
                 {
                     { IsOfficial: true } => "modules-official-container",
@@ -775,7 +483,7 @@ namespace BUTR.CrashReport.Bannerlord
                 };
                 var hasDependencies = dependenciesBuilder.Length != 0;
                 var hasUrl = !string.IsNullOrWhiteSpace(module.Url);
-                var hasUpdateInfo = !string.IsNullOrWhiteSpace(module.UpdateInfo);
+                var hasUpdateInfo = module.UpdateInfo is not null;
                 var hasSubModules = subModulesBuilder.Length != 0;
                 var hasAssemblies = additionalAssembliesBuilder.Length != 0;
                 moduleBuilder.Append("<li>")
@@ -796,21 +504,16 @@ namespace BUTR.CrashReport.Bannerlord
                     .AppendIf(hasDependencies, "</ul>")
                     .Append("Capabilities:").Append("</br>")
                     .Append("<ul>")
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.None), sb => sb.Append("<li>").Append("None").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.OSFileSystem), sb => sb.Append("<li>").Append("OS File System").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.GameFileSystem), sb => sb.Append("<li>").Append("Game File System").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Shell), sb => sb.Append("<li>").Append("Shell").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.SaveSystem), sb => sb.Append("<li>").Append("Save System").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.GameEntities), sb => sb.Append("<li>").Append("Game Entities").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.InputSystem), sb => sb.Append("<li>").Append("Input System").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Localization), sb => sb.Append("<li>").Append("Localization System").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.UserInterface), sb => sb.Append("<li>").Append("User Interface").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Http), sb => sb.Append("<li>").Append("Http").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Achievements), sb => sb.Append("<li>").Append("Achievements").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Campaign), sb => sb.Append("<li>").Append("Campaign").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Skills), sb => sb.Append("<li>").Append("Skills").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Items), sb => sb.Append("<li>").Append("Items").Append("</li>"))
-                    .AppendIf(capabilities.Contains(ModuleCapabilities.Cultures), sb => sb.Append("<li>").Append("Cultures").Append("</li>"))
+                    .Append((StringBuilder sb) =>
+                    {
+                        if (module.Capabilities.Count == 0)
+                            sb.Append("<li>").Append("None").Append("</li>");
+                        
+                        foreach (var capability in module.Capabilities)
+                            sb.Append("<li>").Append(capability).Append("</li>");
+                        
+                        return sb;
+                    })
                     .Append("</ul>")
                     .AppendIf(hasUrl, sb => sb.Append("Url: <a href='").Append(module.Url).Append("'>").Append(module.Url).Append("</a>").Append("</br>"))
                     .AppendIf(hasUpdateInfo, sb => sb.Append("Update Info: ").Append(module.UpdateInfo).Append("</br>"))
@@ -830,8 +533,34 @@ namespace BUTR.CrashReport.Bannerlord
 
             return moduleBuilder.ToString();
         }
+        
+        private static string GetLoadedBLSEPluginsHtml(CrashReportModel crashReport)
+        {
+            var moduleBuilder = new StringBuilder();
 
-        private static string GetAssemblyListHtml(CrashReportModel crashReport)
+            moduleBuilder.Append("<ul>");
+            foreach (var plugin in crashReport.LoaderPlugins)
+            {
+                var container = "modules-container";
+                var hasUpdateInfo = plugin.UpdateInfo is not null;
+                moduleBuilder.Append("<li>")
+                    .Append("<div class='").Append(container).Append("'>")
+                    .Append("<b><a href='javascript:;' onclick='showHideById(this, \"").Append(plugin.Id).Append("\")'>").Append("+ ").Append(plugin.Name).Append(" (").Append(plugin.Id).AppendIf(!string.IsNullOrEmpty(plugin.Version), sb => sb.Append(", ").Append(plugin.Version)).Append(")").Append("</a></b>")
+                    .Append("<div id='").Append(plugin.Id).Append("' style='display: none'>")
+                    .Append("Id: ").Append(plugin.Id).Append("</br>")
+                    .Append("Name: ").Append(plugin.Name).Append("</br>")
+                    .AppendIf(!string.IsNullOrEmpty(plugin.Version), sb => sb.Append("Version: ").Append(plugin.Version).Append("</br>"))
+                    .AppendIf(hasUpdateInfo, sb => sb.Append("Update Info: ").Append(plugin.UpdateInfo).Append("</br>"))
+                    .Append("</div>")
+                    .Append("</div>")
+                    .Append("</li>");
+            }
+            moduleBuilder.Append("</ul>");
+
+            return moduleBuilder.ToString();
+        }
+
+        private static string GetAssembliesHtml(CrashReportModel crashReport)
         {
             var sb0 = new StringBuilder();
 
@@ -842,16 +571,18 @@ namespace BUTR.CrashReport.Bannerlord
                     AssemblyModelType.Dynamic => "dynamic_assembly",
                     AssemblyModelType.GAC => "gac_assembly",
                     AssemblyModelType.System => "sys_assembly",
-                    AssemblyModelType.GameCore => "tw_assembly",
-                    AssemblyModelType.GameModule => "tw_module_assembly",
+                    AssemblyModelType.GameCore => "game_assembly",
+                    AssemblyModelType.GameModule => "game_module_assembly",
                     AssemblyModelType.Module => "module_assembly",
+                    AssemblyModelType.Loader => "loader_assembly",
+                    AssemblyModelType.LoaderPlugin => "loader_plugin_assembly",
                     _ => string.Empty,
                 }));
                 var isDynamic = assembly.Type.HasFlag(AssemblyModelType.Dynamic);
                 var hasPath = assembly.AnonymizedPath != "EMPTY" && !string.IsNullOrWhiteSpace(assembly.AnonymizedPath);
                 sb0.Append("<li class='").Append(@class).Append("'>")
-                    .Append(assembly.Name).Append(", ")
-                    .Append(assembly.Version).Append(", ")
+                    .Append(assembly.Id.Name).Append(", ")
+                    .Append(assembly.Id.Version).Append(", ")
                     .Append(assembly.Architecture).Append(", ")
                     .AppendIf(!isDynamic, sb => sb.Append(assembly.Hash).Append(", "))
                     .AppendIf(isDynamic && !hasPath, "DYNAMIC")
@@ -868,7 +599,7 @@ namespace BUTR.CrashReport.Bannerlord
             return sb0.ToString();
         }
 
-        private static string GetHarmonyPatchesListHtml(CrashReportModel crashReport)
+        private static string GetHarmonyPatchesHtml(CrashReportModel crashReport)
         {
             var harmonyPatchesListBuilder = new StringBuilder();
             var patchesBuilder = new StringBuilder();
@@ -879,14 +610,15 @@ namespace BUTR.CrashReport.Bannerlord
                 patchBuilder.Clear();
                 foreach (var patch in patches)
                 {
-                    var moduleId = crashReport.Modules.FirstOrDefault(x => crashReport.Assemblies.Where(y => y.ModuleId == x.Id).Any(y => y.Name == patch.AssemblyName))?.Id ?? "UNKNOWN";
+                    var moduleId = patch.ModuleId ?? "UNKNOWN";
+                    var pluginId = patch.LoaderPluginId ?? "UNKNOWN";
                     var hasIndex = patch.Index != 0;
                     var hasPriority = patch.Priority != 400;
                     var hasBefore = patch.Before.Count > 0;
                     var hasAfter = patch.After.Count > 0;
                     patchBuilder.Append("<li>")
-                        .AppendIf(moduleId == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId).Append("; "))
                         .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("; "))
+                        .AppendIf(pluginId != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("; "))
                         .Append("Owner: ").Append(patch.Owner).Append("; ")
                         .Append("Namespace: ").Append(patch.Namespace).Append("; ")
                         .AppendIf(hasIndex, sb => sb.Append("Index: ").Append(patch.Index).Append("; "))
@@ -907,10 +639,10 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 patchesBuilder.Clear();
 
-                AppendPatches("Prefixes", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchModelType.Prefix));
-                AppendPatches("Postfixes", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchModelType.Postfix));
-                AppendPatches("Finalizers", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchModelType.Finalizer));
-                AppendPatches("Transpilers", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchModelType.Transpiler));
+                AppendPatches("Prefixes", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Prefix));
+                AppendPatches("Postfixes", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Postfix));
+                AppendPatches("Finalizers", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Finalizer));
+                AppendPatches("Transpilers", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Transpiler));
 
                 if (patchesBuilder.Length > 0)
                 {
@@ -928,7 +660,7 @@ namespace BUTR.CrashReport.Bannerlord
             return harmonyPatchesListBuilder.ToString();
         }
 
-        private static string GetLogFilesListHtml(IEnumerable<LogSource> files)
+        private static string GetLogFilesHtml(IEnumerable<LogSource> files)
         {
             var sb = new StringBuilder();
 
@@ -943,8 +675,18 @@ namespace BUTR.CrashReport.Bannerlord
                 foreach (var logEntry in logSource.Logs)
                 {
                     var toAppend = (longestType - logEntry.Type.Length) + 1;
-                    var style = logEntry.Level == "ERR" ? "color:red" : logEntry.Level == "WRN" ? "color:orange" : "";
-                    sb.Append(logEntry.Date.ToString("u")).Append(" [").Append(logEntry.Type).Append(']').Append(' ', toAppend).Append('[').Append("<span style ='").Append(style).Append("'>").Append(logEntry.Level).Append("</span>").Append("]: ").Append(logEntry.Message).AppendLine();
+                    var style = logEntry.Level is LogLevel.Error or LogLevel.Fatal ? "color:red" : logEntry.Level is LogLevel.Warning ? "color:orange" : "";
+                    var level = logEntry.Level switch
+                    {
+                        LogLevel.Fatal => "FTL",
+                        LogLevel.Error => "ERR",
+                        LogLevel.Warning => "WRN",
+                        LogLevel.Information => "INF",
+                        LogLevel.Debug => "DBG",
+                        LogLevel.Verbose => "VRB",
+                        _ => "   "
+                    };
+                    sb.Append(logEntry.Date.ToString("u")).Append(" [").Append(logEntry.Type).Append(']').Append(' ', toAppend).Append('[').Append("<span style ='").Append(style).Append("'>").Append(level).Append("</span>").Append("]: ").Append(logEntry.Message).AppendLine();
                 }
                 sb.Append("</pre>").Append("</ul></li>");
             }

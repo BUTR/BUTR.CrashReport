@@ -1,5 +1,5 @@
+﻿using BUTR.CrashReport.Decompilers.Utils;
 using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Utils;
 
 using System;
 using System.Globalization;

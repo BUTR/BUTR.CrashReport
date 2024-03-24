@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.Decompilers.Utils;
 
 partial class MethodDecompiler
 {
@@ -21,7 +22,10 @@ partial class MethodDecompiler
                 stream = File.OpenRead(assembly.Location);
                 return true;
             }
-            catch (Exception) { /* ignore */ }
+            catch (Exception e)
+            {
+                Trace.TraceError(e.ToString());
+            }
         }
 
         try
@@ -33,7 +37,10 @@ partial class MethodDecompiler
                 return true;
             }
         }
-        catch (Exception) { /* ignore */ }
+        catch (Exception e)
+        {
+            Trace.TraceError(e.ToString());
+        }
 
         stream = null;
         methodHandle = default;

@@ -10,12 +10,24 @@ public sealed record HarmonyPatchModel
     /// <summary>
     /// The type of the patch.
     /// </summary>
-    public required HarmonyPatchModelType Type { get; set; }
+    public required HarmonyPatchType Type { get; set; }
 
     /// <summary>
-    /// The <see cref="AssemblyModel.Name"/> of the assembly that contains the patch.
+    /// <inheritdoc cref="ModuleModel.Id"/> Is null if not from a module.
     /// </summary>
-    public required string? AssemblyName { get; set; }
+    /// <returns><inheritdoc cref="ModuleModel.Id"/></returns>
+    public required string? ModuleId { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="LoaderPluginModel.Id"/> Is null if not from a module.
+    /// </summary>
+    /// <returns><inheritdoc cref="LoaderPluginModel.Id"/></returns>
+    public required string? LoaderPluginId { get; set; }
+
+    /// <summary>
+    /// The <see cref="AssemblyIdModel.Name"/> of the assembly that contains the patch.
+    /// </summary>
+    public required AssemblyIdModel? AssemblyId { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.Patch.owner"/>
@@ -45,17 +57,17 @@ public sealed record HarmonyPatchModel
     /// <inheritdoc cref="HarmonyLib.Patch.before"/>
     /// </summary>
     /// <returns><inheritdoc cref="HarmonyLib.Patch.before"/></returns>
-    public required IReadOnlyList<string> Before { get; set; } = new List<string>();
+    public required IList<string> Before { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.Patch.after"/>
     /// </summary>
     /// <returns><inheritdoc cref="HarmonyLib.Patch.after"/></returns>
-    public required IReadOnlyList<string> After { get; set; } = new List<string>();
+    public required IList<string> After { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

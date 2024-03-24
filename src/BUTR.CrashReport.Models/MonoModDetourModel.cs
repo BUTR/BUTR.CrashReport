@@ -1,3 +1,4 @@
+﻿/*
 using System.Collections.Generic;
 
 namespace BUTR.CrashReport.Models;
@@ -11,11 +12,11 @@ public sealed record MonoModDetourModel
     /// The type of the detour.
     /// </summary>
     public required MonoModDetourModelType Type { get; set; }
-
+    
     /// <summary>
-    /// The <see cref="AssemblyModel.Name"/> of the assembly that contains the patch.
+    /// The method that is doing the detour.
     /// </summary>
-    public required string? AssemblyName { get; set; }
+    public required MethodSimple? Method { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Id"/>
@@ -33,17 +34,18 @@ public sealed record MonoModDetourModel
     /// <inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Before"/>
     /// </summary>
     /// <returns><inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Before"/></returns>
-    public required IReadOnlyList<string> Before { get; set; } = new List<string>();
+    public required IList<string> Before { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.After"/>
     /// </summary>
     /// <returns><inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.After"/></returns>
-    public required IReadOnlyList<string> After { get; set; } = new List<string>();
+    public required IList<string> After { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }
+*/

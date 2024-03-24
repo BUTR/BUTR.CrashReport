@@ -48,23 +48,28 @@ public sealed record ModuleModel
     public required string? Url { get; set; }
 
     /// <summary>
-    /// The Key:Value pair for updating the module. The Key can be 'NexusMods:%MODID%' or 'GitHub:%USER%/%REPO%'.
+    /// The information for updating the module.
     /// </summary>
-    public required string? UpdateInfo { get; set; }
+    public required UpdateInfoModuleOrLoaderPlugin? UpdateInfo { get; set; }
 
     /// <summary>
-    /// The dependencies of the module.
+    /// The dependencies of the module, if there are any.
     /// </summary>
-    public required IReadOnlyList<ModuleDependencyMetadataModel> DependencyMetadatas { get; set; } = new List<ModuleDependencyMetadataModel>();
+    public required IList<DependencyMetadataModel> DependencyMetadatas { get; set; } = new List<DependencyMetadataModel>();
 
     /// <summary>
-    /// The submodules of the module.
+    /// The submodules of the module, if there are any.
     /// </summary>
-    public required IReadOnlyList<ModuleSubModuleModel> SubModules { get; set; } = new List<ModuleSubModuleModel>();
+    public required IList<ModuleSubModuleModel> SubModules { get; set; } = new List<ModuleSubModuleModel>();
+    
+    /// <summary>
+    /// The capabilities, if there are any.
+    /// </summary>
+    public required IList<CapabilityModuleOrPluginModel> Capabilities { get; set; } = new List<CapabilityModuleOrPluginModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

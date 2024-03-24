@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.Decompilers.Utils;
 
 /// <summary>
 /// Provides methods for matching file system names.
@@ -23,7 +23,7 @@ public static class FileSystemName
     /// <param name="name">The name to check against the expression.</param>
     /// <param name="ignoreCase"><see langword="true" /> to ignore case (default); <see langword="false" /> if the match should be case-sensitive.</param>
     /// <returns><see langword="true" /> if the given expression matches the given name; otherwise, <see langword="false" />.</returns>
-    public static bool MatchesSimpleExpression(ReadOnlySpan<char> expression, ReadOnlySpan<char> name, bool ignoreCase = true)
+    private static bool MatchesSimpleExpression(ReadOnlySpan<char> expression, ReadOnlySpan<char> name, bool ignoreCase = true)
     {
         return MatchPattern(expression, name, ignoreCase, useExtendedWildcards: false);
     }

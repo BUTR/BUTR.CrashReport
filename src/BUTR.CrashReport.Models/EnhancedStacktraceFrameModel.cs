@@ -41,13 +41,13 @@ public record EnhancedStacktraceFrameModel
     public required MethodSimple? OriginalMethod { get; set; }
 
     /// <summary>
-    /// The list of Harmony patch methods that are applied to the method.
+    /// The list of patch methods that are applied to the method.
     /// </summary>
-    public required IReadOnlyList<MethodSimple> PatchMethods { get; set; } = new List<MethodSimple>();
+    public required IList<MethodSimple> PatchMethods { get; set; } = new List<MethodSimple>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

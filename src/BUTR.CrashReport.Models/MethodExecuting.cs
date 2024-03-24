@@ -10,5 +10,5 @@ public record MethodExecuting : MethodSimple
     /// <summary>
     /// The native code of the method that was compiled by the JIT.
     /// </summary>
-    public required IReadOnlyList<string> NativeInstructions { get; set; } = new List<string>();
+    public required IList<string> NativeInstructions { get; set; } = new List<string>();
 }

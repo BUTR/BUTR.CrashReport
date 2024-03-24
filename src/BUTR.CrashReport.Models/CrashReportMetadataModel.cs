@@ -8,6 +8,26 @@ namespace BUTR.CrashReport.Models;
 public record CrashReportMetadataModel
 {
     /// <summary>
+    /// The game name.
+    /// </summary>
+    public required string? GameName { get; set; }
+
+    /// <summary>
+    /// The game version.
+    /// </summary>
+    public required string GameVersion { get; set; }
+
+    /// <summary>
+    /// The loader plugin provider name that was used to launch the game.
+    /// </summary>
+    public required string? LoaderPluginProviderName { get; set; }
+
+    /// <summary>
+    /// The loader plugin provider version that was used to launch the game.
+    /// </summary>
+    public required string? LoaderPluginProviderVersion { get; set; }
+
+    /// <summary>
     /// The launcher type that was used to launch the game. Usually it's the process name.
     /// </summary>
     public required string? LauncherType { get; set; }
@@ -26,5 +46,5 @@ public record CrashReportMetadataModel
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

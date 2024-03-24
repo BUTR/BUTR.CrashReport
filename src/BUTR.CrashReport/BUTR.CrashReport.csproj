@@ -10,16 +10,14 @@
 
   <PropertyGroup>
     <ILRepackTargetConfigurations>Debug;Release</ILRepackTargetConfigurations>
-    <ILRepackAllowDuplicateResources>false</ILRepackAllowDuplicateResources>
+    <ILRepackAllowDuplicateResources>true</ILRepackAllowDuplicateResources>
     <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
     <ILRepackPerformInternalize>true</ILRepackPerformInternalize>
     <ILRepackCopyAttributes>false</ILRepackCopyAttributes>
-    <ILRepackBuildToolingPath>$(PkgBUTR_ILRepack)\tools\net461\ILRepack.exe</ILRepackBuildToolingPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.18" PrivateAssets="all" IncludeAssets="none" />
-    <PackageReference Include="BUTR.ILRepack" Version="2.1.9-beta7" GeneratePathProperty="true" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="ILRepack.FullAuto" Version="1.2.0" PrivateAssets="all" />
+    <PackageReference Include="ILRepack" Version="2.0.27" PrivateAssets="all" />
+    <PackageReference Include="ILRepack.FullAuto" Version="1.5.0" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -32,30 +30,31 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ben.Demystifier" Version="0.4.1" PrivateAssets="all" />
     <PackageReference Include="Required" Version="1.0.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    
+    <PackageReference Include="Ben.Demystifier" Version="0.4.1" PrivateAssets="all" />
     <PackageReference Include="System.Collections.Immutable" Version="8.0.0" PrivateAssets="all" />
     <PackageReference Include="System.Memory" Version="4.5.5" PrivateAssets="all" />
     <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" PrivateAssets="all" />
   </ItemGroup>
-  
+
+  <!-- We need them for documentation -->
   <ItemGroup>
-    <PackageReference Include="Harmony.Extensions" Version="3.2.0.77" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="Lib.Harmony" Version="2.2.2" PrivateAssets="all" />
+    <PackageReference Include="Lib.Harmony.Ref" Version="*" PrivateAssets="all" IncludeAssets="none" GeneratePathProperty="true" />
+    <Reference Include="$(PkgLib_Harmony_Ref)\ref\netstandard2.0\0Harmony.dll" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BUTR.CrashReport.Decompilers\BUTR.CrashReport.Decompilers.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Decompilers\BUTR.CrashReport.Decompilers.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
   </ItemGroup>
 
-  <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepare">
+  <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepareBuild">
     <PropertyGroup>
       <!-- We merge everything except 0Harmony, since we support 2.2 and 2.3 -->
       <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)0Harmony.dll;</ILRepackExcludeAssemblies>
 
       <!-- Exclude the Model -->
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Decompilers.dll;</ILRepackExcludeAssemblies>
       <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models.dll;</ILRepackExcludeAssemblies>
     </PropertyGroup>
   </Target>

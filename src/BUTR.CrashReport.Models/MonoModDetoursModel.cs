@@ -1,3 +1,4 @@
+﻿/*
 using System.Collections.Generic;
 
 namespace BUTR.CrashReport.Models;
@@ -20,11 +21,12 @@ public sealed record MonoModDetoursModel
     /// <summary>
     /// The list of MonoMod detours.
     /// </summary>
-    public required IReadOnlyList<MonoModDetourModel> Detours { get; set; } = new List<MonoModDetourModel>();
+    public required IList<MonoModDetourModel> Detours { get; set; } = new List<MonoModDetourModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }
+*/

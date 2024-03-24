@@ -20,11 +20,11 @@ public sealed record HarmonyPatchesModel
     /// <summary>
     /// The list of Harmony patches.
     /// </summary>
-    public required IReadOnlyList<HarmonyPatchModel> Patches { get; set; } = new List<HarmonyPatchModel>();
+    public required IList<HarmonyPatchModel> Patches { get; set; } = new List<HarmonyPatchModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

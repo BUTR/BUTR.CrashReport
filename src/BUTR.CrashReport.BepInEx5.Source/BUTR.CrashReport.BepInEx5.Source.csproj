@@ -1,0 +1,55 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.BepInEx5.Source</PackageId>
+    <Title>BUTR.CrashReport.BepInEx5.Source</Title>
+    <Description>Source code for creating the crash report model and render it as HTML</Description>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
+    <PackageTags>butr crash report bannerlord</PackageTags>
+  </PropertyGroup>
+
+  <!--NuGetizer-->
+  <PropertyGroup>
+    <BuildProjectReferences>false</BuildProjectReferences>
+    <BuildOnPack>false</BuildOnPack>
+    <PackOnBuild>false</PackOnBuild>
+    <PackBuildOutput>false</PackBuildOutput>
+    <PackSymbols>false</PackSymbols>
+    <PackCompile>false</PackCompile>
+    <PackEmbeddedResource>true</PackEmbeddedResource>
+    <PackDependencies>false</PackDependencies>
+    <PackProjectReferences>false</PackProjectReferences>
+    <EnablePackCleanup>true</EnablePackCleanup>
+    <EnablePackInference>true</EnablePackInference>
+
+    <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">obj</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageFile Include="**/*.cs" PackagePath="content\cs\$(TargetFramework)\$(ProjectName)\%(RelativeDir)%(Filename).cs" Exclude="$(BaseIntermediateOutputPath)/**/*.cs" />
+    <PackageFile Include="**/*.cs" PackagePath="contentFiles\cs\$(TargetFramework)\$(ProjectName)\%(RelativeDir)%(Filename).cs" Exclude="$(BaseIntermediateOutputPath)/**/*.cs" />
+    <PackageFile Include="BUTR.CrashReport.BepInEx5.Source.props" PackagePath="build/BUTR.CrashReport.BepInEx5.Source.props" />
+    <PackageFile Include="../../assets/Icon128x128.png" PackagePath="icon.png"  Visible="false" />
+    <PackageFile Include="BUTR.CrashReport.Models" Version="$(Version)" PackFolder="Dependency" Visible="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NuGetizer" Version="1.2.1" Pack="false" />
+  </ItemGroup>
+  <!--NuGetizer-->
+  
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.15" PrivateAssets="all" IncludeAssets="compile" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
+  </ItemGroup>
+
+</Project>

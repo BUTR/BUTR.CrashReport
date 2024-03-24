@@ -1,4 +1,4 @@
-using ICSharpCode.Decompiler;
+﻿using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp.Syntax;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.Metadata;
@@ -9,7 +9,7 @@ using System.IO;
 using System.Reflection.Metadata;
 using System.Text;
 
-namespace BUTR.CrashReport.ILSpy;
+namespace BUTR.CrashReport.Decompilers.ILSpy;
 
 internal class PlainTextOutput2 : ITextOutput
 {

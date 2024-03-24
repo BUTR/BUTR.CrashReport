@@ -2,7 +2,7 @@
 
 namespace BUTR.CrashReport.Bannerlord.Tool;
 
-[Verb("html", HelpText = "Converts to the HTML report")]
+[Verb("html", HelpText = "Converts the zip file to the HTML report")]
 public class HtmlOptions
 {
     [Option('i', "input", Required = true, HelpText = "The full path to the zip file to parse.")]

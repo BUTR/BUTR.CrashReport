@@ -42,4 +42,19 @@ public enum AssemblyModelType
     /// Custom module assembly
     /// </summary>
     Module = 32,
+
+    /// <summary>
+    /// Loader assembly
+    /// </summary>
+    Loader = 64,
+
+    /// <summary>
+    /// Loader plugin assembly
+    /// </summary>
+    LoaderPlugin = 128,
+
+    /// <summary>
+    /// Assembly is protected from disassembly
+    /// </summary>
+    ProtectedFromDisassembly = 256,
 }

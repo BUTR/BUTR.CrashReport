@@ -34,7 +34,7 @@ public static class CrashReportParser
         return list;
     }
 
-    private static IReadOnlyList<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(ReadOnlySpan<char> rawContent, int version, HtmlNode node)
+    private static IList<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(ReadOnlySpan<char> rawContent, int version, HtmlNode node)
     {
         const string enhancedStacktraceStartDelimiter1 = "<div id='enhanced-stacktrace' class='headers-container'>";
         const string enhancedStacktraceStartDelimiter2 = "<div id=\"enhanced-stacktrace\" class=\"headers-container\">";
@@ -179,7 +179,16 @@ public static class CrashReportParser
             {
                 Date = date,
                 Type = line.Substring(idxTypeStart, idxTypeEnd - idxTypeStart),
-                Level = line.Substring(idxLevelStart, idxLevelEnd - idxLevelStart),
+                Level = line.Substring(idxLevelStart, idxLevelEnd - idxLevelStart) switch
+                {
+                    "VRB" => LogLevel.Verbose,
+                    "DBG" => LogLevel.Debug,
+                    "INF" => LogLevel.Information,
+                    "WRN" => LogLevel.Warning,
+                    "ERR" => LogLevel.Error,
+                    "FTL" => LogLevel.Fatal,
+                    _ => LogLevel.Information,
+                },
                 Message = line.Substring(idxLevelEnd + 3),
             };
         }
@@ -213,7 +222,7 @@ public static class CrashReportParser
         var gameVersion = node.SelectSingleNode("descendant::game")?.Attributes?["version"]?.Value ?? string.Empty;
         var installedModules = node.SelectSingleNode("descendant::div[@id=\"installed-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseModule(version, x)).DistinctBy(x => x.Id).ToArray() ?? Array.Empty<ModuleModel>();
         var exception = ParseExceptions(node.SelectSingleNode("descendant::div[@id=\"exception\"]"), installedModules);
-        var involvedModules = node.SelectSingleNode("descendant::div[@id=\"involved-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").SelectMany(ParseInvolvedModule).ToArray() ?? Array.Empty<InvolvedModuleModel>();
+        var involvedModules = node.SelectSingleNode("descendant::div[@id=\"involved-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").SelectMany(ParseInvolvedModule).ToArray() ?? Array.Empty<InvolvedModuleOrPluginModel>();
         var enhancedStacktrace = GetEnhancedStacktrace(content.AsSpan(), version, node);
 
         var assemblies = node.SelectSingleNode("descendant::div[@id=\"assemblies\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseAssembly(x, installedModules)).ToArray() ?? Array.Empty<AssemblyModel>();
@@ -229,17 +238,18 @@ public static class CrashReportParser
         {
             Id = Guid.TryParse(id, out var val) ? val : Guid.Empty,
             Version = version,
-            GameVersion = gameVersion,
             Exception = exception,
             Metadata = new()
             {
+                GameName = "Bannerlord",
+                GameVersion = gameVersion,
+                LoaderPluginProviderName = !string.IsNullOrEmpty(butrloaderVersion) ? "BUTRLoader" : string.IsNullOrEmpty(blseVersion) ? "BLSE" : null,
+                LoaderPluginProviderVersion = !string.IsNullOrEmpty(butrloaderVersion) ? butrloaderVersion : string.IsNullOrEmpty(blseVersion) ? blseVersion : null,
                 LauncherType = launcherType,
                 LauncherVersion = launcherVersion,
                 Runtime = runtime,
                 AdditionalMetadata = new List<MetadataModel>
                 {
-                    new() { Key = "BUTRLoaderVersion", Value = butrloaderVersion },
-                    new() { Key = "BLSEVersion", Value = blseVersion },
                     new() { Key = "LauncherExVersion", Value = launcherexVersion },
                 },
             },
@@ -248,7 +258,9 @@ public static class CrashReportParser
             EnhancedStacktrace = enhancedStacktrace,
             Assemblies = assemblies,
             HarmonyPatches = harmonyPatches,
-            MonoModDetours = Array.Empty<MonoModDetoursModel>(),
+            //MonoModDetours = Array.Empty<MonoModDetoursModel>(),
+            LoaderPlugins = Array.Empty<LoaderPluginModel>(),
+            InvolvedLoaderPlugins = Array.Empty<InvolvedModuleOrPluginModel>(),
             AdditionalMetadata = Array.Empty<MetadataModel>(),
         };
     }
@@ -259,7 +271,7 @@ public static class CrashReportParser
 
         foreach (var exception in node.InnerHtml.Split("Inner Exception information"))
         {
-            var exceptionLines = exception.Split(new[] { "<br>", "</br>" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim().Trim('\n')).Where(x => x.Length != 0).ToList();
+            var exceptionLines = exception.Split(["<br>", "</br>"], StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim().Trim('\n')).Where(x => x.Length != 0).ToList();
             var type = exceptionLines.First(x => x.StartsWith("Type: ")).Substring(6);
             var message = exceptionLines.First(x => x.StartsWith("Message: ")).Substring(9);
             var source = exceptionLines.First(x => x.StartsWith("Source: ")).Substring(8);
@@ -267,7 +279,9 @@ public static class CrashReportParser
             var callstack = string.Join(Environment.NewLine, exceptionLines.Skip(callstackIdx + 1)).Replace("<ol>\n", "").Replace("<li>", "").Replace("</li>\n", Environment.NewLine).Replace("</ol>", "");
             exceptions.Add(new ExceptionModel
             {
+                SourceAssemblyId = null,
                 SourceModuleId = modules.Any(x => x.Id == source) ? source : null,
+                SourceLoaderPluginId = null,
                 Type = type,
                 Message = message,
                 CallStack = callstack,
@@ -289,34 +303,39 @@ public static class CrashReportParser
     private static ModuleModel ParseModule(byte version, HtmlNode node)
     {
         static string GetField(IEnumerable<string> lines, string field) => lines
-            .FirstOrDefault(l => l.StartsWith($"{field}:"))?.Split(new[] { $"{field}:" }, StringSplitOptions.None).Skip(1).FirstOrDefault()?.Trim() ?? string.Empty;
+            .FirstOrDefault(l => l.StartsWith($"{field}:"))?.Split([$"{field}:"], StringSplitOptions.None).Skip(1).FirstOrDefault()?.Trim() ?? string.Empty;
 
         static IReadOnlyList<string> GetRange(IEnumerable<string> lines, string bField, IEnumerable<string> eFields) => lines
             .SkipWhile(l => !l.StartsWith($"{bField}:")).Skip(1)
             .TakeWhile(l => eFields.All(f => !l.StartsWith($"{f}:")))
             .ToArray();
 
-        static IReadOnlyList<ModuleDependencyMetadataModel> GetModuleDependencyMetadatas(IReadOnlyList<string> lines) => lines.Select(sml => new ModuleDependencyMetadataModel
+        static IList<DependencyMetadataModel> GetModuleDependencyMetadatas(IReadOnlyList<string> lines) => lines.Select(sml => new DependencyMetadataModel
         {
-            Type = sml.StartsWith("Load Before") ? ModuleDependencyMetadataModelType.LoadBefore
-                : sml.StartsWith("Load After") ? ModuleDependencyMetadataModelType.LoadAfter
-                : sml.StartsWith("Incompatible") ? ModuleDependencyMetadataModelType.Incompatible
+            Type = sml.StartsWith("Load Before") ? DependencyMetadataModelType.LoadBefore
+                : sml.StartsWith("Load After") ? DependencyMetadataModelType.LoadAfter
+                : sml.StartsWith("Incompatible") ? DependencyMetadataModelType.Incompatible
                 : 0,
-            ModuleId = sml.Replace("Load Before", "").Replace("Load After", "").Replace("Incompatible", "").Replace("(optional)", "").Trim(),
+            ModuleOrPluginId = sml.Replace("Load Before", "").Replace("Load After", "").Replace("Incompatible", "").Replace("(optional)", "").Trim(),
             IsOptional = sml.Contains("(optional)"),
             Version = null, // Was not available pre 13
             VersionRange = null, // Was not available pre 13
             AdditionalMetadata = Array.Empty<MetadataModel>(),
         }).ToArray();
 
-        static IReadOnlyList<ModuleSubModuleModel> GetModuleSubModules(IReadOnlyList<string> lines) => lines
+        static IList<ModuleSubModuleModel> GetModuleSubModules(IReadOnlyList<string> lines) => lines
             .Select((item, index) => new { Item = item, Index = index })
             .Where(o => !o.Item.Contains(':') && !o.Item.Contains(".dll"))
             .Select(o => lines.Skip(o.Index + 1).TakeWhile(l => l.Contains(':') || l.Contains(".dll")).ToArray())
             .Select(sml => new ModuleSubModuleModel
             {
                 Name = sml.FirstOrDefault(l => l.StartsWith("Name:"))?.Split("Name:").Skip(1).FirstOrDefault()?.Trim() ?? string.Empty,
-                AssemblyName = sml.FirstOrDefault(l => l.StartsWith("DLLName:"))?.Split("DLLName:").Skip(1).FirstOrDefault()?.Trim() ?? string.Empty,
+                AssemblyId = new()
+                {
+                    Name = sml.FirstOrDefault(l => l.StartsWith("DLLName:"))?.Split("DLLName:").Skip(1).FirstOrDefault()?.Trim() ?? string.Empty,
+                    Version = null,
+                    PublicKeyToken = null
+                },
                 Entrypoint = sml.FirstOrDefault(l => l.StartsWith("SubModuleClassType:"))?.Split("SubModuleClassType:").Skip(1).FirstOrDefault()?.Trim() ?? string.Empty,
                 AdditionalMetadata = sml.SkipWhile(l => !l.StartsWith("Tags:")).Skip(1).TakeWhile(l => !l.StartsWith("Assemblies:")).Select(l =>
                 {
@@ -329,7 +348,7 @@ public static class CrashReportParser
             })
             .ToArray();
 
-        var lines = node.InnerText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
+        var lines = node.InnerText.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
         var isVortex = GetField(lines, "Vortex").Equals("true", StringComparison.OrdinalIgnoreCase);
         var moduleModel = new ModuleModel
         {
@@ -344,6 +363,7 @@ public static class CrashReportParser
             UpdateInfo = null,
             DependencyMetadatas = GetModuleDependencyMetadatas(GetRange(lines, version == 1 ? "Dependency Metadatas" : "Dependencies", new[] { "SubModules", "Additional Assemblies", "Url" })),
             SubModules = GetModuleSubModules(GetRange(lines, "SubModules", new[] { "Additional Assemblies" })),
+            Capabilities = Array.Empty<CapabilityModuleOrPluginModel>(),
             AdditionalMetadata = new List<MetadataModel> { new() { Key = "METADATA:MANAGED_BY_VORTEX", Value = isVortex.ToString() } }.Concat(lines.SkipWhile(l => !l.StartsWith("Additional Assemblies:")).Skip(1).Select(l =>
             {
                 return new MetadataModel { Key = "METADATA:AdditionalAssembly", Value = l, };
@@ -352,20 +372,20 @@ public static class CrashReportParser
         return moduleModel;
     }
 
-    private static IEnumerable<InvolvedModuleModel> ParseInvolvedModule(HtmlNode node)
+    private static IEnumerable<InvolvedModuleOrPluginModel> ParseInvolvedModule(HtmlNode node)
     {
         var id = node.ChildNodes.FirstOrDefault(x => x.Name == "a")?.InnerText.Trim() ?? string.Empty;
         return node.ChildNodes.FirstOrDefault(x => x.Name == "ul")?.ChildNodes.Select(x =>
         {
             var lines = x.InnerHtml.Split("<br>");
             var frame = lines.FirstOrDefault(y => y.StartsWith("Frame: "))?.Replace("::", ".").Substring(7) ?? string.Empty;
-            return new InvolvedModuleModel
+            return new InvolvedModuleOrPluginModel
             {
-                ModuleId = id,
+                ModuleOrLoaderPluginId = id,
                 EnhancedStacktraceFrameName = frame,
                 AdditionalMetadata = Array.Empty<MetadataModel>(),
             };
-        }) ?? Array.Empty<InvolvedModuleModel>();
+        }) ?? Array.Empty<InvolvedModuleOrPluginModel>();
     }
 
     private static EnhancedStacktraceFrameModel ParseEnhancedStacktrace(HtmlNode node)
@@ -391,12 +411,14 @@ public static class CrashReportParser
                     .Where((_, i) => i % 2 == 0)
                     .Select(x => x.Trim(','))
                     .ToList()
-                : new();
+                : [];
             var methodFullName = methodSplit[0].Replace("::", ".");
             var split = methodFullName.Split('.');
-            methods.Add(new MethodSimple
+            methods.Add(new()
             {
+                AssemblyId = null,
                 ModuleId = module,
+                LoaderPluginId = null,
                 MethodDeclaredTypeName = split.Length == 1 ? null : string.Join(".", split.Take(split.Length - 1)),
                 MethodName = split.Last(),
                 MethodFullDescription = methodFullDescription,
@@ -416,7 +438,9 @@ public static class CrashReportParser
             FrameDescription = name,
             ExecutingMethod = new()
             {
+                AssemblyId = null,
                 ModuleId = executingMethod.ModuleId,
+                LoaderPluginId = null,
                 MethodDeclaredTypeName = executingMethod.MethodDeclaredTypeName,
                 MethodName = executingMethod.MethodName,
                 MethodFullDescription = executingMethod.MethodFullDescription,
@@ -450,11 +474,15 @@ public static class CrashReportParser
         }));
         var assemblyModel = new AssemblyModel
         {
+            Id = new()
+            {
+                Name = splt[0],
+                Version = splt[1],
+                PublicKeyToken = null,
+            },
             ModuleId = module?.Id,
-            Name = splt[0],
-            Version = splt[1],
-            Culture = null,
-            PublicKeyToken = null,
+            LoaderPluginId = null,
+            CultureName = null,
             Architecture = splt[2],
             Hash = isDynamic || isEmpty ? string.Empty : splt[3],
             AnonymizedPath = isDynamic ? "DYNAMIC" : isEmpty ? "EMPTY" : Anonymizer.AnonymizePath(splt[4]),
@@ -476,13 +504,15 @@ public static class CrashReportParser
 
     private static HarmonyPatchesModel ParseHarmonyPatch(HtmlNode node)
     {
-        static HarmonyPatchModel ParsePatch(HtmlNode node, HarmonyPatchModelType type)
+        static HarmonyPatchModel ParsePatch(HtmlNode node, HarmonyPatchType type)
         {
             var split = node.InnerText.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
             return new HarmonyPatchModel
             {
                 Type = type,
-                AssemblyName = null,
+                AssemblyId = null,
+                ModuleId = null,
+                LoaderPluginId = null,
                 Owner = split.FirstOrDefault(x => x.StartsWith("Owner: "))?.Split(':')[1] ?? string.Empty,
                 Namespace = split.FirstOrDefault(x => x.StartsWith("Namespace: "))?.Split(':')[1] ?? string.Empty,
                 Index = split.FirstOrDefault(x => x.StartsWith("Index: "))?.Split(':')[1] is { } strIndex && int.TryParse(strIndex, out var index) ? index : 0,
@@ -494,10 +524,10 @@ public static class CrashReportParser
         }
 
         var originalMethodFullName = node.ChildNodes.Skip(0).First().InnerText.Trim('\n');
-        var prefixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Prefixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Prefix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
-        var postfixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Postfixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Postfix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
-        var transpilers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Transpilers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Transpiler)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
-        var finalizers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Finalizers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchModelType.Finalizer)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var prefixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Prefixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Prefix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var postfixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Postfixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Postfix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var transpilers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Transpilers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Transpiler)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var finalizers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Finalizers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Finalizer)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
         var harmonyPatchModel = new HarmonyPatchesModel
         {
             OriginalMethodName = originalMethodFullName.Split('.').Last(),

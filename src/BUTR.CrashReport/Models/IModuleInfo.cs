@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BUTR.CrashReport;
+namespace BUTR.CrashReport.Models;
 
 /// <summary>
 /// Represents a module.

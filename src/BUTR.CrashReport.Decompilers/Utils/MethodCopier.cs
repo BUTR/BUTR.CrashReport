@@ -3,16 +3,17 @@ using AsmResolver.DotNet.Cloning;
 using AsmResolver.DotNet.Dynamic;
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
 using TypeAttributes = AsmResolver.PE.DotNet.Metadata.Tables.Rows.TypeAttributes;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.Decompilers.Utils;
 
 internal static class MethodCopier
 {
-    public static Stream? GetAssemblyCopy(MethodBase method, out int metadataToken)
+    public static MemoryStream? GetAssemblyCopy(MethodBase method, out int metadataToken)
     {
         metadataToken = 0;
         MethodDefinition? methodDefinition = null;
@@ -23,14 +24,20 @@ internal static class MethodCopier
             module = ModuleDefinition.FromModule(typeof(MethodDecompiler).Module);
             methodDefinition = new DynamicMethodDefinition(module, method);
         }
-        catch (Exception) { /* ignore */ }
+        catch (Exception e)
+        {
+            Trace.TraceError(e.ToString());
+        }
 
         try
         {
             module = ModuleDefinition.FromModule(method.Module);
             methodDefinition = module.LookupMember(method.MetadataToken) as MethodDefinition;
         }
-        catch (Exception) { /* ignore */ }
+        catch (Exception e)
+        {
+            Trace.TraceError(e.ToString());
+        }
 
         if (module is null || methodDefinition is null) return null;
 
@@ -42,7 +49,7 @@ internal static class MethodCopier
         cloner.AddListener(new InjectTypeClonerListener(destinationModule));
         cloner.AddListener(new AssignTokensClonerListener(destinationModule));
         var result = cloner.Clone();
-        
+
         var clonedMethodDefinition = result.GetClonedMember(methodDefinition);
         metadataToken = clonedMethodDefinition.MetadataToken.ToInt32();
 

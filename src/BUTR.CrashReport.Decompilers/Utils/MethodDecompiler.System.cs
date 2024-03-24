@@ -20,7 +20,7 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.Decompilers.Utils;
 
 partial class MethodDecompiler
 {

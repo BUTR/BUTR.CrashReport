@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace BUTR.CrashReport.ILSpy;
+namespace BUTR.CrashReport.Decompilers.ILSpy;
 
 internal static class TextWriterExtensions
 {

@@ -1,4 +1,4 @@
-using ICSharpCode.Decompiler;
+﻿using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.CSharp.OutputVisitor;
 using ICSharpCode.Decompiler.CSharp.Syntax;
@@ -13,7 +13,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 
-namespace BUTR.CrashReport.ILSpy;
+namespace BUTR.CrashReport.Decompilers.ILSpy;
 
 internal static class CSharpILMixedLanguage
 {
@@ -42,13 +42,13 @@ internal static class CSharpILMixedLanguage
     private static CSharpDecompiler CreateDecompiler(PEFile module, DecompilerSettings settings, CancellationToken ct)
     {
         var resolver = new UniversalAssemblyResolver(null, false, module.DetectTargetFrameworkId(), module.DetectRuntimePack());
-        return new CSharpDecompiler(module, resolver, settings) {CancellationToken = ct};
+        return new CSharpDecompiler(module, resolver, settings) { CancellationToken = ct };
     }
 
     private static void WriteCode(TextWriter output, DecompilerSettings settings, SyntaxTree syntaxTree)
     {
-        syntaxTree.AcceptVisitor(new InsertParenthesesVisitor {InsertParenthesesForReadability = true});
-        TokenWriter tokenWriter = new TextWriterTokenWriter(output) {IndentationString = settings.CSharpFormattingOptions.IndentationString};
+        syntaxTree.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
+        TokenWriter tokenWriter = new TextWriterTokenWriter(output) { IndentationString = settings.CSharpFormattingOptions.IndentationString };
         tokenWriter = TokenWriter.WrapInWriterThatSetsLocationsInAST(tokenWriter);
         syntaxTree.AcceptVisitor(new CSharpOutputVisitor(tokenWriter, settings.CSharpFormattingOptions));
     }

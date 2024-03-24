@@ -19,11 +19,6 @@ public record CrashReportModel
     public required byte Version { get; set; }
 
     /// <summary>
-    /// The game version.
-    /// </summary>
-    public required string GameVersion { get; set; }
-
-    /// <summary>
     /// The exception that caused the crash.
     /// </summary>
     public required ExceptionModel Exception { get; set; }
@@ -36,36 +31,50 @@ public record CrashReportModel
     /// <summary>
     /// The list of modules that are loaded in the process.
     /// </summary>
-    public required IReadOnlyList<ModuleModel> Modules { get; set; } = new List<ModuleModel>();
+    public required IList<ModuleModel> Modules { get; set; } = new List<ModuleModel>();
 
     /// <summary>
     /// The list of involved modules in the crash.
     /// </summary>
-    public required IReadOnlyList<InvolvedModuleModel> InvolvedModules { get; set; } = new List<InvolvedModuleModel>();
+    public required IList<InvolvedModuleOrPluginModel> InvolvedModules { get; set; } = new List<InvolvedModuleOrPluginModel>();
 
     /// <summary>
     /// The enhanced stack trace frames.
     /// </summary>
-    public required IReadOnlyList<EnhancedStacktraceFrameModel> EnhancedStacktrace { get; set; } = new List<EnhancedStacktraceFrameModel>();
+    public required IList<EnhancedStacktraceFrameModel> EnhancedStacktrace { get; set; } = new List<EnhancedStacktraceFrameModel>();
 
     /// <summary>
     /// The list of assemblies that are present.
     /// </summary>
-    public required IReadOnlyList<AssemblyModel> Assemblies { get; set; } = new List<AssemblyModel>();
+    public required IList<AssemblyModel> Assemblies { get; set; } = new List<AssemblyModel>();
+
+
+    /*
+    /// <summary>
+    /// The list of MonoMod detours that are present.
+    /// MonoMod does not keep a list of detours. If you have a library that does, here it could be exposed.
+    /// </summary>
+    public required IList<MonoModDetoursModel> MonoModDetours { get; set; } = new List<MonoModDetoursModel>();
+    */
 
     /// <summary>
     /// The list of Harmony patches that are present.
     /// </summary>
-    public required IReadOnlyList<HarmonyPatchesModel> HarmonyPatches { get; set; } = new List<HarmonyPatchesModel>();
+    public required IList<HarmonyPatchesModel> HarmonyPatches { get; set; } = new List<HarmonyPatchesModel>();
 
     /// <summary>
-    /// The list of MonoMod detours that are present.
+    /// The list of loader plugins that are present.
     /// </summary>
-    public required IReadOnlyList<MonoModDetoursModel> MonoModDetours { get; set; } = new List<MonoModDetoursModel>();
+    public required IList<LoaderPluginModel> LoaderPlugins { get; set; } = new List<LoaderPluginModel>();
+
+    /// <summary>
+    /// The list of involved loader plugins in the crash.
+    /// </summary>
+    public required IList<InvolvedModuleOrPluginModel> InvolvedLoaderPlugins { get; set; } = new List<InvolvedModuleOrPluginModel>();
 
     /// <summary>
     /// Additional metadata associated with the model.
     /// </summary>
     /// <returns>A key:value list of metadatas.</returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

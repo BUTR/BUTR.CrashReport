@@ -1,5 +1,5 @@
+﻿using BUTR.CrashReport.Decompilers.Utils;
 using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Utils;
 
 namespace BUTR.CrashReport.Extensions;
 
@@ -13,5 +13,5 @@ public static class AssemblyModelExtensions
     /// </summary>
     /// <returns><inheritdoc cref="System.Reflection.AssemblyName.FullName"/></returns>
     public static string GetFullName(this AssemblyModel model) =>
-        AssemblyNameFormatter.ComputeDisplayName(model.Name, model.Version, model.Culture, model.PublicKeyToken);
+        AssemblyNameFormatter.ComputeDisplayName(model.Id.Name, model.Id.Version, model.CultureName, model.Id.PublicKeyToken);
 }

@@ -136,62 +136,68 @@ namespace BUTR.CrashReport.Bannerlord
             "TaleWorlds.*Culture*",
         };
 
-        public static IEnumerable<ModuleCapabilities> GetModuleCapabilities(CrashReportModel crashReport, ModuleModel module)
+        public static IEnumerable<CapabilityModuleOrPluginModel> GetModuleCapabilities(ICollection<AssemblyModel> assemblies, ModuleModel module)
         {
-            var assemblies = crashReport.Assemblies;
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.OSFileSystemTypeReferences))
-                yield return ModuleCapabilities.OSFileSystem;
+                yield return new CapabilityModuleOrPluginModel("OS File System");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.GameFileSystemTypeReferences))
-                yield return ModuleCapabilities.GameFileSystem;
+                yield return new CapabilityModuleOrPluginModel("Game File System");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.ShellTypeReferences))
-                yield return ModuleCapabilities.Shell;
+                yield return new CapabilityModuleOrPluginModel("Shell");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.SaveSystemTypeReferences))
-                yield return ModuleCapabilities.SaveSystem;
+                yield return new CapabilityModuleOrPluginModel("Save System");
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.SaveSystemAssemblyReferences))
-                yield return ModuleCapabilities.SaveSystem;
+                yield return new CapabilityModuleOrPluginModel("Save System");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.GameEntitiesTypeReferences))
-                yield return ModuleCapabilities.GameEntities;
+                yield return new CapabilityModuleOrPluginModel("Game Entities");
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.GameEntitiesAssemblyReferences))
-                yield return ModuleCapabilities.GameEntities;
+                yield return new CapabilityModuleOrPluginModel("Game Entities");
 
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.InputSystemAssemblyReferences))
-                yield return ModuleCapabilities.InputSystem;
+                yield return new CapabilityModuleOrPluginModel("Input System");
 
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.LocalizationSystemAssemblyReferences))
-                yield return ModuleCapabilities.Localization;
+                yield return new CapabilityModuleOrPluginModel("Localization");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.UITypeReferences))
-                yield return ModuleCapabilities.UserInterface;
+                yield return new CapabilityModuleOrPluginModel("User Interface");
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.UIAssemblyReferences))
-                yield return ModuleCapabilities.UserInterface;
+                yield return new CapabilityModuleOrPluginModel("User Interface");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.HttpTypeReferences))
-                yield return ModuleCapabilities.Http;
+                yield return new CapabilityModuleOrPluginModel("Http");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.AchievementSystemTypeReferences))
-                yield return ModuleCapabilities.Achievements;
+                yield return new CapabilityModuleOrPluginModel("Achievements");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.CampaignSystemTypeReferences))
-                yield return ModuleCapabilities.Campaign;
+                yield return new CapabilityModuleOrPluginModel("Campaign");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.SkillSystemTypeReferences))
-                yield return ModuleCapabilities.Skills;
+                yield return new CapabilityModuleOrPluginModel("Skills");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.ItemSystemTypeReferences))
-                yield return ModuleCapabilities.Items;
+                yield return new CapabilityModuleOrPluginModel("Items");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.CultureSystemTypeReferences))
-                yield return ModuleCapabilities.Cultures;
+                yield return new CapabilityModuleOrPluginModel("Cultures");
         }
 
         public static string GetBUTRLoaderVersion(CrashReportModel crashReport)
         {
-            if (crashReport.Assemblies.FirstOrDefault(x => x.Name == "Bannerlord.BUTRLoader") is { } bAssembly)
-                return bAssembly.Version;
+            if (crashReport.Assemblies.FirstOrDefault(x => x.Id.Name == "Bannerlord.BUTRLoader") is { } bAssembly)
+                return bAssembly.Id.Version ?? string.Empty;
+            return string.Empty;
+        }
+        
+        public static string GetBLSEVersion(CrashReportModel crashReport)
+        {
+            if (crashReport.Assemblies.FirstOrDefault(x => x.Id.Name == "Bannerlord.BLSE") is { } bAssembly)
+                return bAssembly.Id.Version ?? string.Empty;
             return string.Empty;
         }
 
@@ -218,6 +224,9 @@ namespace BUTR.CrashReport.Bannerlord
             if (!string.IsNullOrEmpty(GetBUTRLoaderVersion(crashReport)))
                 return "butrloader";
 
+            if (!string.IsNullOrEmpty(GetBLSEVersion(crashReport)))
+                return "blse";
+
             return "vanilla";
         }
 
@@ -228,6 +237,9 @@ namespace BUTR.CrashReport.Bannerlord
 
             if (GetBUTRLoaderVersion(crashReport) is { } bVersion && !string.IsNullOrEmpty(bVersion))
                 return bVersion;
+
+            if (GetBLSEVersion(crashReport) is { } blseVersion && !string.IsNullOrEmpty(blseVersion))
+                return blseVersion;
 
             return "0";
         }

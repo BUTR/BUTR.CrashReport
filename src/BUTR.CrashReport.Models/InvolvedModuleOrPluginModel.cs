@@ -5,13 +5,13 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents an involved module info.
 /// </summary>
-public record InvolvedModuleModel
+public record InvolvedModuleOrPluginModel
 {
     /// <summary>
     /// <inheritdoc cref="ModuleModel.Id"/>
     /// </summary>
     /// <returns><inheritdoc cref="ModuleModel.Id"/></returns>
-    public required string ModuleId { get; set; }
+    public required string ModuleOrLoaderPluginId { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="EnhancedStacktraceFrameModel.FrameDescription"/>
@@ -23,5 +23,5 @@ public record InvolvedModuleModel
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

@@ -5,18 +5,18 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents the dependency metadata for a module.
 /// </summary>
-public record ModuleDependencyMetadataModel
+public record DependencyMetadataModel
 {
     /// <summary>
-    /// <inheritdoc cref="ModuleModel.Id"/>
+    /// <inheritdoc cref="ModuleModel.Id"/> Is null if not from a module.
+    /// <inheritdoc cref="LoaderPluginModel.Id"/> Is null if not from a plugin
     /// </summary>
-    /// <returns><inheritdoc cref="ModuleModel.Id"/></returns>
-    public required string ModuleId { get; set; }
+    public required string ModuleOrPluginId { get; set; }
 
     /// <summary>
     /// The dependency type.
     /// </summary>
-    public required ModuleDependencyMetadataModelType Type { get; set; }
+    public required DependencyMetadataModelType Type { get; set; }
 
     /// <summary>
     /// Whether the dependency is required.
@@ -37,5 +37,5 @@ public record ModuleDependencyMetadataModel
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

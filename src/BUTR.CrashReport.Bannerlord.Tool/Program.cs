@@ -78,7 +78,7 @@ public static class Program
 
             return 0;
         }
-        catch (FileNotFoundException fex)
+        catch (FileNotFoundException)
         {
             Console.WriteLine("The input file could not be found");
             if (parsedOptions is not null)

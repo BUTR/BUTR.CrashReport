@@ -1,4 +1,4 @@
-﻿namespace BUTR.CrashReport.Utils;
+﻿namespace BUTR.CrashReport.Decompilers.Utils;
 
 /// <summary>
 /// Can provide C#, IL and Native representation of a method.

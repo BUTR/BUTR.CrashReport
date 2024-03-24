@@ -3,25 +3,25 @@
 /// <summary>
 /// Represents the type of a Harmony patch.
 /// </summary>
-public enum HarmonyPatchModelType
+public enum HarmonyPatchType
 {
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.HarmonyPatchType.Prefix"/>
     /// </summary>
-    Prefix,
+    Prefix = 1,
 
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.HarmonyPatchType.Postfix"/>
     /// </summary>
-    Postfix,
+    Postfix = 2,
 
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.HarmonyPatchType.Finalizer"/>
     /// </summary>
-    Finalizer,
+    Finalizer = 3,
 
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.HarmonyPatchType.Transpiler"/>
     /// </summary>
-    Transpiler,
+    Transpiler = 4,
 }

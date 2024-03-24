@@ -15,7 +15,7 @@ public record ModuleSubModuleModel
     /// <summary>
     /// The main assembly of the SubModule.
     /// </summary>
-    public required string AssemblyName { get; set; }
+    public required AssemblyIdModel? AssemblyId { get; set; }
 
     /// <summary>
     /// The entry point of the assembly. Can be a method or a type full name.
@@ -26,5 +26,5 @@ public record ModuleSubModuleModel
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

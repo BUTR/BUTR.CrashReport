@@ -1,3 +1,4 @@
+﻿/*
 namespace BUTR.CrashReport.Models;
 
 /// <summary>
@@ -15,3 +16,4 @@ public enum MonoModDetourModelType
     /// </summary>
     ILHook,
 }
+*/

@@ -45,6 +45,7 @@
 namespace BUTR.CrashReport.Bannerlord
 {
     using global::Bannerlord.ModuleManager;
+    using global::BUTR.CrashReport.Models;
 
     using global::System.Linq;
 
@@ -52,7 +53,7 @@ namespace BUTR.CrashReport.Bannerlord
     {
         public SubModuleInfoExtended InternalSubModuleInfo { get; }
 
-        public string AssemblyName => InternalSubModuleInfo.DLLName;
+        public string AssemblyFile => InternalSubModuleInfo.DLLName;
         public string[] Dependencies => InternalSubModuleInfo.Assemblies.ToArray();
 
         public ModuleSubModuleInfo(SubModuleInfoExtended internalSubModuleInfo) => InternalSubModuleInfo = internalSubModuleInfo;

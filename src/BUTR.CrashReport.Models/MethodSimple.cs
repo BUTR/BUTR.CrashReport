@@ -8,10 +8,21 @@ namespace BUTR.CrashReport.Models;
 public record MethodSimple
 {
     /// <summary>
+    /// The assembly identity of the assembly that contains the method.
+    /// </summary>
+    public required AssemblyIdModel? AssemblyId { get; set; }
+
+    /// <summary>
     /// <inheritdoc cref="ModuleModel.Id"/>
     /// </summary>
     /// <returns><inheritdoc cref="ModuleModel.Id"/></returns>
     public required string? ModuleId { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="LoaderPluginModel.Id"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="LoaderPluginModel.Id"/></returns>
+    public required string? LoaderPluginId { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="System.Reflection.TypeInfo.Name"/>
@@ -34,26 +45,26 @@ public record MethodSimple
     /// <summary>
     /// The list of types that are part of the method signature.
     /// </summary>
-    public required IReadOnlyList<string> MethodParameters { get; set; } = new List<string>();
+    public required IList<string> MethodParameters { get; set; } = new List<string>();
 
     /// <summary>
     /// The Common Intermediate Language (CIL/IL) representation of the method.
     /// </summary>
-    public required IReadOnlyList<string> ILInstructions { get; set; } = new List<string>();
-    
+    public required IList<string> ILInstructions { get; set; } = new List<string>();
+
     /// <summary>
     /// The C# and Common Intermediate Language (CIL/IL) representation of the method.
     /// </summary>
-    public required IReadOnlyList<string> CSharpILMixedInstructions { get; set; } = new List<string>();
-    
+    public required IList<string> CSharpILMixedInstructions { get; set; } = new List<string>();
+
     /// <summary>
     /// The C# representation the method.
     /// </summary>
-    public required IReadOnlyList<string> CSharpInstructions { get; set; } = new List<string>();
+    public required IList<string> CSharpInstructions { get; set; } = new List<string>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

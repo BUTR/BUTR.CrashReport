@@ -8,10 +8,21 @@ namespace BUTR.CrashReport.Models;
 public record ExceptionModel
 {
     /// <summary>
+    /// The assembly identity of the assembly. Is associated with the source of the exception.
+    /// </summary>
+    public required AssemblyIdModel? SourceAssemblyId { get; set; }
+
+    /// <summary>
     /// <inheritdoc cref="ModuleModel.Id"/> Is associated with the source of the exception.
     /// </summary>
     /// <returns><inheritdoc cref="ModuleModel.Id"/></returns>
     public required string? SourceModuleId { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="LoaderPluginModel.Id"/> Is associated with the source of the exception.
+    /// </summary>
+    /// <returns><inheritdoc cref="LoaderPluginModel.Id"/></returns>
+    public required string? SourceLoaderPluginId { get; set; }
 
     /// <summary>
     /// The type full name of the exception.
@@ -40,5 +51,5 @@ public record ExceptionModel
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

@@ -15,11 +15,11 @@ public record LogSource
     /// <summary>
     /// The log entries associated with the log source.
     /// </summary>
-    public required IReadOnlyList<LogEntry> Logs { get; set; } = new List<LogEntry>();
+    public required IList<LogEntry> Logs { get; set; } = new List<LogEntry>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

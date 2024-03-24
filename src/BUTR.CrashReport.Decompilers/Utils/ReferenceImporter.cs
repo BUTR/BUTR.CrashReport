@@ -2,32 +2,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.Decompilers.Utils;
 
 /// <summary>
-/// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal"/>
+/// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal"/>
 /// </summary>
 public record AssemblyTypeReferenceInternal
 {
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Name"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Name"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Name"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Name"/></returns>
     public required string Name { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Namespace"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Namespace"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.Namespace"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Namespace"/></returns>
     public required string Namespace { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.FullName"/>
+    /// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.FullName"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Utils.AssemblyTypeReferenceInternal.FullName"/></returns>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.FullName"/></returns>
     public required string FullName { get; set; }
 }
 
@@ -41,6 +42,7 @@ public static class ReferenceImporter
     /// </summary>
     public static Dictionary<AssemblyName, AssemblyTypeReferenceInternal[]> GetImportedTypeReferences(Dictionary<AssemblyName, Assembly> AvailableAssemblies) => AvailableAssemblies.ToDictionary(x => x.Key, x =>
     {
+        // TODO: Can we do that with the built-in Reflection API?
         foreach (var assemblyModule in x.Value.Modules)
         {
             try
@@ -53,9 +55,32 @@ public static class ReferenceImporter
                     FullName = y.FullName,
                 }).ToArray();
             }
-            catch (Exception) { /* ignore */ }
-
+            catch (Exception e)
+            {
+                Trace.TraceError(x.Key.ToString());
+                Trace.TraceError(e.ToString());
+            }
         }
+        
+        try
+        {
+            var assembly = AssemblyDefinition.FromFile(x.Value.Location);
+            foreach (var module in assembly.Modules)
+            {
+                return module.GetImportedTypeReferences().Select(y => new AssemblyTypeReferenceInternal
+                {
+                    Name = y.Name ?? string.Empty,
+                    Namespace = y.Namespace ?? string.Empty,
+                    FullName = y.FullName,
+                }).ToArray();
+            }
+        }
+        catch (Exception e)
+        {
+            Trace.TraceError(x.Key.ToString());
+            Trace.TraceError(e.ToString());
+        }
+        
         return Array.Empty<AssemblyTypeReferenceInternal>();
     });
 }

@@ -1,4 +1,5 @@
 ﻿extern alias iced;
+
 using iced::Iced.Intel;
 
 using System;
@@ -9,11 +10,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using static BUTR.CrashReport.Utils.MonoModUtils;
+using static BUTR.CrashReport.Decompilers.Utils.MonoModUtils;
 
 using Decoder = iced::Iced.Intel.Decoder;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.Decompilers.Utils;
 
 partial class MethodDecompiler
 {
@@ -24,7 +25,8 @@ partial class MethodDecompiler
     {
         static IEnumerable<string> GetLines(MethodBase method, int nativeILOffset)
         {
-            var nativeCodePtr = GetNativeMethodBody!(CurrentPlatformTriple!(), method);
+            var nativeCodePtr = GetNativeMethodBody(method);
+            if (nativeCodePtr == IntPtr.Zero) yield break;
 
             var length = (uint) nativeILOffset + 16;
             var bytecode = new byte[length];
@@ -58,14 +60,16 @@ partial class MethodDecompiler
 
         if (method is null) return Array.Empty<string>();
         if (nativeILOffset == StackFrame.OFFSET_UNKNOWN) return Array.Empty<string>();
-        if (CurrentPlatformTriple is null || GetNativeMethodBody is null) return Array.Empty<string>();
 
         try
         {
             return GetLines(method, nativeILOffset).ToArray();
         }
-        catch (Exception) { /* ignore */ }
-        
+        catch (Exception e)
+        {
+            Trace.TraceError(e.ToString());
+        }
+
         return Array.Empty<string>();
     }
 }

@@ -3,22 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.Decompilers.Utils;
 
-/// <summary>
-/// 
-/// </summary>
 public static class AssemblyNameFormatter
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="name"></param>
-    /// <param name="version"></param>
-    /// <param name="cultureName"></param>
-    /// <param name="publicKeyToken"></param>
-    /// <returns></returns>
-    /// <exception cref="FileLoadException"></exception>
     public static string ComputeDisplayName(string? name, string? version, string? cultureName, string? publicKeyToken)
     {
         if (name == string.Empty)
@@ -58,7 +46,7 @@ public static class AssemblyNameFormatter
 
     private static void AppendQuoted(this StringBuilder sb, string s)
     {
-        bool needsQuoting = false;
+        var needsQuoting = false;
         const char quoteChar = '\"';
 
         //@todo: App-compat: You can use double or single quotes to quote a name, and Fusion (or rather the IdentityAuthority) picks one
@@ -69,12 +57,14 @@ public static class AssemblyNameFormatter
         if (needsQuoting)
             sb.Append(quoteChar);
 
-        for (int i = 0; i < s.Length; i++)
+        for (var i = 0; i < s.Length; i++)
         {
-            bool addedEscape = false;
-            foreach (KeyValuePair<char, string> kv in EscapeSequences)
+            var addedEscape = false;
+            foreach (var kv in EscapeSequences)
             {
-                string escapeReplacement = kv.Value;
+                var key = kv.Key;
+                var escapeReplacement = kv.Value;
+
                 if (s[i] != escapeReplacement[0])
                     continue;
                 if (s.Length - i < escapeReplacement.Length)
@@ -82,7 +72,7 @@ public static class AssemblyNameFormatter
                 if (s.AsSpan(i, escapeReplacement.Length).SequenceEqual(escapeReplacement.AsSpan()))
                 {
                     sb.Append('\\');
-                    sb.Append(kv.Key);
+                    sb.Append(key);
                     addedEscape = true;
                 }
             }
@@ -95,37 +85,26 @@ public static class AssemblyNameFormatter
             sb.Append(quoteChar);
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="version"></param>
-    /// <returns></returns>
     public static string GetVersion(Version version)
     {
         var sb = new StringBuilder();
         var canonicalizedVersion = version.CanonicalizeVersion();
-        if (canonicalizedVersion.Major != ushort.MaxValue)
-        {
-            sb.Append(canonicalizedVersion.Major);
 
-            if (canonicalizedVersion.Minor != ushort.MaxValue)
-            {
-                sb.Append('.');
-                sb.Append(canonicalizedVersion.Minor);
+        if (canonicalizedVersion.Major == ushort.MaxValue) return sb.ToString();
+        sb.Append(canonicalizedVersion.Major);
 
-                if (canonicalizedVersion.Build != ushort.MaxValue)
-                {
-                    sb.Append('.');
-                    sb.Append(canonicalizedVersion.Build);
+        if (canonicalizedVersion.Minor == ushort.MaxValue) return sb.ToString();
+        sb.Append('.');
+        sb.Append(canonicalizedVersion.Minor);
 
-                    if (canonicalizedVersion.Revision != ushort.MaxValue)
-                    {
-                        sb.Append('.');
-                        sb.Append(canonicalizedVersion.Revision);
-                    }
-                }
-            }
-        }
+        if (canonicalizedVersion.Build == ushort.MaxValue) return sb.ToString();
+        sb.Append('.');
+        sb.Append(canonicalizedVersion.Build);
+
+        if (canonicalizedVersion.Revision == ushort.MaxValue) return sb.ToString();
+        sb.Append('.');
+        sb.Append(canonicalizedVersion.Revision);
+
         return sb.ToString();
     }
 
@@ -143,13 +122,13 @@ public static class AssemblyNameFormatter
     }
 
     private static readonly KeyValuePair<char, string>[] EscapeSequences =
-    {
+    [
         new('\\', "\\"),
         new(',', ","),
         new('=', "="),
         new('\'', "'"),
         new('\"', "\""),
         new('n', Environment.NewLine),
-        new('t', "\t"),
-    };
+        new('t', "\t")
+    ];
 }

@@ -14,28 +14,21 @@ public record AssemblyModel
     public required string? ModuleId { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="System.Reflection.AssemblyName.Name"/>
+    /// <inheritdoc cref="LoaderPluginModel.Id"/> Is null if not from a module.
     /// </summary>
-    /// <returns><inheritdoc cref="System.Reflection.AssemblyName.Name"/></returns>
-    public required string Name { get; set; }
+    /// <returns><inheritdoc cref="LoaderPluginModel.Id"/></returns>
+    public required string? LoaderPluginId { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="System.Reflection.AssemblyName.Version"/>
+    /// <inheritdoc cref="AssemblyIdModel"/>
     /// </summary>
-    /// <returns>A string that represents the major, minor, build, and revision numbers of the assembly.</returns>
-    public required string Version { get; set; }
+    public required AssemblyIdModel Id { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="System.Reflection.AssemblyName.CultureName"/>
     /// </summary>
     /// <returns><inheritdoc cref="System.Reflection.AssemblyName.CultureName"/></returns>
-    public required string? Culture { get; set; }
-
-    /// <summary>
-    /// <inheritdoc cref="System.Reflection.AssemblyName.GetPublicKeyToken"/>
-    /// </summary>
-    /// <returns>A hex string that contains the public key token.</returns>
-    public required string? PublicKeyToken { get; set; }
+    public required string? CultureName { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="System.Reflection.AssemblyName.ProcessorArchitecture"/>
@@ -61,16 +54,16 @@ public record AssemblyModel
     /// <summary>
     /// The list of imported type references from the assembly.
     /// </summary>
-    public required IReadOnlyList<AssemblyImportedTypeReferenceModel> ImportedTypeReferences { get; set; } = new List<AssemblyImportedTypeReferenceModel>();
+    public required IList<AssemblyImportedTypeReferenceModel> ImportedTypeReferences { get; set; } = new List<AssemblyImportedTypeReferenceModel>();
 
     /// <summary>
     /// The list of imported assembly references from the assembly.
     /// </summary>
-    public required IReadOnlyList<AssemblyImportedReferenceModel> ImportedAssemblyReferences { get; set; } = new List<AssemblyImportedReferenceModel>();
+    public required IList<AssemblyImportedReferenceModel> ImportedAssemblyReferences { get; set; } = new List<AssemblyImportedReferenceModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
-    public required IReadOnlyList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 }

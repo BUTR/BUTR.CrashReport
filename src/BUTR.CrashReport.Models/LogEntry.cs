@@ -20,7 +20,7 @@ public record LogEntry
     /// <summary>
     /// The level of the log entry.
     /// </summary>
-    public required string Level { get; set; }
+    public required LogLevel Level { get; set; }
 
     /// <summary>
     /// The message of the log entry.

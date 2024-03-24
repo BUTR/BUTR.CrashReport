@@ -36,13 +36,14 @@
   <ItemGroup>
     <PackageFile Include="**/*.cs" PackagePath="content\cs\$(TargetFramework)\$(ProjectName)\%(RelativeDir)%(Filename).cs" Exclude="$(BaseIntermediateOutputPath)/**/*.cs" />
     <PackageFile Include="**/*.cs" PackagePath="contentFiles\cs\$(TargetFramework)\$(ProjectName)\%(RelativeDir)%(Filename).cs" Exclude="$(BaseIntermediateOutputPath)/**/*.cs" />
-    <PackageFile Include="../BUTR.CrashReport.Bannerlord.Source.props" PackagePath="build/BUTR.CrashReport.Bannerlord.Source.props"  Visible="false" />
+    <PackageFile Include="BUTR.CrashReport.Bannerlord.Source.props" PackagePath="build/BUTR.CrashReport.Bannerlord.Source.props" />
     <PackageFile Include="../../assets/Icon128x128.png" PackagePath="icon.png"  Visible="false" />
     <PackageFile Include="BUTR.CrashReport.Models" Version="$(Version)" PackFolder="Dependency" Visible="false" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NuGetizer" Version="1.2.1" Pack="false" />
   </ItemGroup>
+  <!--NuGetizer-->
 
   <ItemGroup>
     <PackageReference Include="Harmony.Extensions" Version="3.2.0.77" Pack="true" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
