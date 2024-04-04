@@ -19,7 +19,7 @@ internal class CSharpLanguage : Language
 {
     private const int _transformCount = int.MaxValue;
 
-    public static CSharpDecompiler CreateDecompiler(PEFile module, DecompilerSettings settings, CancellationToken ct)
+    public static CSharpDecompiler CreateDecompiler(MetadataFile module, DecompilerSettings settings, CancellationToken ct)
     {
         var resolver = new UniversalAssemblyResolver(null, false, module.DetectTargetFrameworkId(), module.DetectRuntimePack());
         var decompiler = new CSharpDecompiler(module, resolver, settings) { CancellationToken = ct };
@@ -39,10 +39,10 @@ internal class CSharpLanguage : Language
 
     public override void DecompileMethod(IMethod method, ITextOutput output, DecompilerSettings settings)
     {
-        if (method.ParentModule?.PEFile is null)
+        if (method.ParentModule?.MetadataFile is null)
             return;
 
-        var assembly = method.ParentModule.PEFile;
+        var assembly = method.ParentModule.MetadataFile;
         var decompiler = CreateDecompiler(assembly, settings, CancellationToken.None);
         WriteCommentLine(output, assembly.FullName);
         WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));

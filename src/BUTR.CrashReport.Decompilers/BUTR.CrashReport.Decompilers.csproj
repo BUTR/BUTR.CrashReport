@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iced" Version="1.20.0" Alias="iced" Private="false" />
-    <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="5.5.0" />
-    <PackageReference Include="ICSharpCode.Decompiler" Version="8.2.0.7535" />
+    <PackageReference Include="Iced" Version="1.21.0" Alias="iced" Private="false" />
+    <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="5.5.1" />
+    <PackageReference Include="ICSharpCode.Decompiler" Version="9.0.0.7618-preview1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Polyfill" Version="1.34.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Polyfill" Version="4.3.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
   <!-- We need them for documentation -->

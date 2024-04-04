@@ -61,7 +61,7 @@ public static class ReferenceImporter
                 Trace.TraceError(e.ToString());
             }
         }
-        
+
         try
         {
             var assembly = AssemblyDefinition.FromFile(x.Value.Location);
@@ -80,7 +80,7 @@ public static class ReferenceImporter
             Trace.TraceError(x.Key.ToString());
             Trace.TraceError(e.ToString());
         }
-        
+
         return Array.Empty<AssemblyTypeReferenceInternal>();
     });
 }

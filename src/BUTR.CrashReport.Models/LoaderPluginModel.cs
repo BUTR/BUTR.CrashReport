@@ -36,7 +36,7 @@ public sealed record LoaderPluginModel
     /// The capabilities, if there are any.
     /// </summary>
     public required IList<CapabilityModuleOrPluginModel> Capabilities { get; set; } = new List<CapabilityModuleOrPluginModel>();
-    
+
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>

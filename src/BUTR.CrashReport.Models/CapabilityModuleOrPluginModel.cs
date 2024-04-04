@@ -9,7 +9,7 @@ public record CapabilityModuleOrPluginModel
     /// The name of the capability.
     /// </summary>
     public string Name { get; }
-    
+
     /// <summary>
     /// An optional description of the capability.
     /// </summary>

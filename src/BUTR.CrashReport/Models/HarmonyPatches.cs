@@ -11,17 +11,17 @@ public record HarmonyPatches
     /// <inheritdoc cref="HarmonyLib.Patches.Prefixes"/>
     /// </summary>
     public required IList<HarmonyPatch> Prefixes { get; set; }
-    
+
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.Patches.Postfixes"/>
     /// </summary>
     public required IList<HarmonyPatch> Postfixes { get; set; }
-    
+
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.Patches.Finalizers"/>
     /// </summary>
     public required IList<HarmonyPatch> Finalizers { get; set; }
-    
+
     /// <summary>
     /// <inheritdoc cref="HarmonyLib.Patches.Transpilers"/>
     /// </summary>

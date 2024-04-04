@@ -61,7 +61,7 @@ public sealed record ModuleModel
     /// The submodules of the module, if there are any.
     /// </summary>
     public required IList<ModuleSubModuleModel> SubModules { get; set; } = new List<ModuleSubModuleModel>();
-    
+
     /// <summary>
     /// The capabilities, if there are any.
     /// </summary>

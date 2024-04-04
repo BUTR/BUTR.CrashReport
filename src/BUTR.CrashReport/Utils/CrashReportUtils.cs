@@ -30,17 +30,17 @@ public static class CrashReportUtils
         /// <inheritdoc cref="EnhancedStacktraceFrameModel.OriginalMethod"/>
         /// </summary>
         public required MethodBase? Original { get; set; }
-        
+
         /// <summary>
         /// <inheritdoc cref="EnhancedStacktraceFrameModel.ExecutingMethod"/>
         /// </summary>
         public required MethodInfo? Replacement { get; set; }
-        
+
         /// <summary>
         /// <inheritdoc cref="EnhancedStacktraceFrameModel.PatchMethods"/>
         /// </summary>
         public required List<MethodEntry> Patches { get; set; }
-        
+
         /// <summary>
         /// <inheritdoc cref="EnhancedStacktraceFrameModel.MethodFromStackframeIssue"/>
         /// </summary>
