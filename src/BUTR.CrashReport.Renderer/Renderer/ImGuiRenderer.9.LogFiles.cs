@@ -1,6 +1,5 @@
-﻿using BUTR.CrashReport.Renderer.Extensions;
-
-using BUTR.CrashReport.Models;
+﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.Extensions;
 
 using HonkPerf.NET.RefLinq;
 

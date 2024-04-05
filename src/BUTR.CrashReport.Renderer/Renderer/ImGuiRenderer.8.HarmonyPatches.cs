@@ -1,8 +1,7 @@
-﻿using BUTR.CrashReport.Renderer.Extensions;
+﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.Extensions;
 using BUTR.CrashReport.Renderer.UnsafeUtils;
 using BUTR.CrashReport.Renderer.Utils;
-
-using BUTR.CrashReport.Models;
 
 using HonkPerf.NET.Core;
 using HonkPerf.NET.RefLinq;

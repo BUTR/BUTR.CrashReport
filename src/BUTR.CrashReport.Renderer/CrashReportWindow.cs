@@ -1,9 +1,8 @@
-﻿using BUTR.CrashReport.Renderer.Controller;
+﻿using BUTR.CrashReport.Interfaces;
+using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.Controller;
 using BUTR.CrashReport.Renderer.ImGui;
 using BUTR.CrashReport.Renderer.Renderer;
-
-using BUTR.CrashReport.Interfaces;
-using BUTR.CrashReport.Models;
 
 using Silk.NET.Core.Loader;
 using Silk.NET.Input;
@@ -27,20 +26,20 @@ public class CrashReportWindow
         GlfwWindowing.RegisterPlatform();
     }
 
-    public static void ShowAndWait(Exception exception, IList<LogSource> logSources, Dictionary<string,string> additionalMetadata,
-        ICrashReportMetadataProvider crashReportMetadataProvider, 
-        IStacktraceFilter stacktraceFilter, 
-        IAssemblyUtilities assemblyUtilities, 
-        IModuleProvider moduleProvider, 
-        ILoaderPluginProvider loaderPluginProvider, 
+    public static void ShowAndWait(Exception exception, IList<LogSource> logSources, Dictionary<string, string> additionalMetadata,
+        ICrashReportMetadataProvider crashReportMetadataProvider,
+        IStacktraceFilter stacktraceFilter,
+        IAssemblyUtilities assemblyUtilities,
+        IModuleProvider moduleProvider,
+        ILoaderPluginProvider loaderPluginProvider,
         IHarmonyProvider harmonyProvider,
-        IModelConverter modelConverter, 
-        IPathAnonymizer pathAnonymizer, 
+        IModelConverter modelConverter,
+        IPathAnonymizer pathAnonymizer,
         ICrashReportRendererUtilities crashReportRendererUtilities)
     {
         if (PathResolver.Default is DefaultPathResolver pr)
             pr.Resolvers = [path => crashReportRendererUtilities.GetNativeLibrariesFolderPath().Select(x => Path.Combine(x, path))];
-        
+
         var crashReport = CrashReportInfo.Create(exception, additionalMetadata, stacktraceFilter, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider);
 
         var crashReportModel = CrashReportInfo.ToModel(crashReport, crashReportMetadataProvider, modelConverter, moduleProvider, loaderPluginProvider, assemblyUtilities, pathAnonymizer);

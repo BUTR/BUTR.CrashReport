@@ -1,6 +1,5 @@
-﻿using BUTR.CrashReport.Renderer.UnsafeUtils;
-
-using BUTR.CrashReport.Models;
+﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.UnsafeUtils;
 
 using System;
 using System.Linq;

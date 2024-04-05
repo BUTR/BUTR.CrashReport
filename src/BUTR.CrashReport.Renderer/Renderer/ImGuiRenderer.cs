@@ -1,7 +1,6 @@
-﻿using BUTR.CrashReport.Renderer.ImGui;
+﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.ImGui;
 using BUTR.CrashReport.Renderer.UnsafeUtils;
-
-using BUTR.CrashReport.Models;
 
 using ImGuiNET;
 
