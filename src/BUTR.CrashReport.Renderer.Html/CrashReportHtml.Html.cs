@@ -1,7 +1,7 @@
+﻿using BUTR.CrashReport.Models;
+
 using System.Collections.Generic;
 using System.Text;
-
-using BUTR.CrashReport.Models;
 
 namespace BUTR.CrashReport.Renderer.Html;
 

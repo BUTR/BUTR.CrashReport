@@ -1,13 +1,14 @@
+﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.Html.Extensions;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BUTR.CrashReport.Extensions;
-using BUTR.CrashReport.Models;
 
 namespace BUTR.CrashReport.Renderer.Html;
-    
+
 public static partial class CrashReportHtml
 {
     private static readonly string MiniDumpTag = "<!-- MINI DUMP -->";
@@ -66,7 +67,7 @@ public static partial class CrashReportHtml
                                               <![endif]>
                                               """);
         }
-            
+
         htmlReport = htmlReport
             .Replace(JsonModelTag, gzipBase64CrashReportJson)
             .Replace(JsonModelButtonTag, """
@@ -80,7 +81,7 @@ public static partial class CrashReportHtml
 
         return htmlReport;
     }
-     
+
     public static string Build(CrashReportModel crashReportModel, IEnumerable<LogSource> files) => GetBase(crashReportModel, files);
 
     private static string GetRecursiveExceptionHtml(CrashReportModel crashReport, ExceptionModel? ex)
@@ -93,7 +94,7 @@ public static partial class CrashReportHtml
 
         var moduleId = stacktrace?.ExecutingMethod.ModuleId ?? "UNKNOWN";
         var sourceModuleId = ex.SourceModuleId ?? "UNKNOWN";
-            
+
         var pluginId = stacktrace?.ExecutingMethod.LoaderPluginId ?? "UNKNOWN";
         var sourcePluginId = ex.SourceLoaderPluginId ?? "UNKNOWN";
 
@@ -102,10 +103,10 @@ public static partial class CrashReportHtml
         var hasInner = ex.InnerException is not null;
         return new StringBuilder()
             .Append("Exception Information:").Append("<br/>")
-            .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Potential Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
-            .AppendIf(sourceModuleId != "UNKNOWN", sb =>  sb.Append("Potential Source Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourceModuleId).Append("\")'>").Append(sourceModuleId).Append("</a></b>").Append("<br/>"))
-            .AppendIf(pluginId != "UNKNOWN", sb =>  sb.Append("Potential Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
-            .AppendIf(sourcePluginId != "UNKNOWN", sb =>  sb.Append("Potential Source Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourcePluginId).Append("\")'>").Append(sourcePluginId).Append("</a></b>").Append("<br/>"))
+            .AppendIf(moduleId != "UNKNOWN", sb => sb.Append("Potential Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
+            .AppendIf(sourceModuleId != "UNKNOWN", sb => sb.Append("Potential Source Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourceModuleId).Append("\")'>").Append(sourceModuleId).Append("</a></b>").Append("<br/>"))
+            .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Potential Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
+            .AppendIf(sourcePluginId != "UNKNOWN", sb => sb.Append("Potential Source Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourcePluginId).Append("\")'>").Append(sourcePluginId).Append("</a></b>").Append("<br/>"))
             .Append("Type: ").Append(ex.Type.EscapeGenerics()).Append("<br/>")
             .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message.EscapeGenerics()).Append("<br/>"))
             .AppendIf(hasCallStack, sb => sb.Append("Stacktrace:").Append("<br/>"))
@@ -139,8 +140,8 @@ public static partial class CrashReportHtml
                 .Append("Executing Method:")
                 .Append("<ul>")
                 .Append("<li>")
-                .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
-                .AppendIf(pluginId2 != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
+                .AppendIf(moduleId2 != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
+                .AppendIf(pluginId2 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
                 .Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                 .Append("Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
                 .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
@@ -189,15 +190,15 @@ public static partial class CrashReportHtml
             {
                 var moduleId3 = stacktrace.OriginalMethod.ModuleId ?? "UNKNOWN";
                 var pluginId3 = stacktrace.OriginalMethod.LoaderPluginId ?? "UNKNOWN";
-                    
+
                 var id01 = random.Next();
                 var id02 = random.Next();
                 var id03 = random.Next();
                 sbMain.Append("Original Method:")
                     .Append("<ul>")
                     .Append("<li>")
-                    .AppendIf(moduleId3 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId3).Append("\")'>").Append(moduleId3).Append("</a></b>").Append("<br/>"))
-                    .AppendIf(pluginId3 != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId3).Append("\")'>").Append(pluginId3).Append("</a></b>").Append("<br/>"))
+                    .AppendIf(moduleId3 != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId3).Append("\")'>").Append(moduleId3).Append("</a></b>").Append("<br/>"))
+                    .AppendIf(pluginId3 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId3).Append("\")'>").Append(pluginId3).Append("</a></b>").Append("<br/>"))
                     .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                     .AppendIf(stacktrace.OriginalMethod.ILInstructions.Count > 0, sb => sb
                         .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics())))))
@@ -239,13 +240,13 @@ public static partial class CrashReportHtml
                     foreach (var method in stacktrace.PatchMethods)
                     {
                         var harmonyPatch = method as MethodHarmonyPatch;
-                            
+
                         // Ignore blank transpilers used to force the jitter to skip inlining
                         if (method.MethodName == "BlankTranspiler") continue;
                         var moduleId2 = method.ModuleId ?? "UNKNOWN";
                         sbMain.Append("<li>")
-                            .AppendIf(moduleId2 == "UNKNOWN", sb =>  sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
-                            .AppendIf(moduleId2 != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
+                            .AppendIf(moduleId2 == "UNKNOWN", sb => sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
+                            .AppendIf(moduleId2 != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
                             .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                             .AppendIf(harmonyPatch is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatch!.PatchType).Append("<br/>"))
                             .Append("</li>");
@@ -283,13 +284,13 @@ public static partial class CrashReportHtml
                     foreach (var method in stacktrace.PatchMethods)
                     {
                         var harmonyPatch = method as MethodHarmonyPatch;
-                            
+
                         // Ignore blank transpilers used to force the jitter to skip inlining
                         if (method.MethodName == "BlankTranspiler") continue;
                         var pluginId2 = method.LoaderPluginId ?? "UNKNOWN";
                         sbMain.Append("<li>")
-                            .AppendIf(pluginId2 == "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append(pluginId2).Append("<br/>"))
-                            .AppendIf(pluginId2 != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
+                            .AppendIf(pluginId2 == "UNKNOWN", sb => sb.Append("Plugin Id: ").Append(pluginId2).Append("<br/>"))
+                            .AppendIf(pluginId2 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
                             .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                             .AppendIf(harmonyPatch is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatch!.PatchType).Append("<br/>"))
                             .Append("</li>");
@@ -463,10 +464,10 @@ public static partial class CrashReportHtml
                 {
                     if (module.Capabilities.Count == 0)
                         sb.Append("<li>").Append("None").Append("</li>");
-                        
+
                     foreach (var capability in module.Capabilities)
                         sb.Append("<li>").Append(capability).Append("</li>");
-                        
+
                     return sb;
                 })
                 .Append("</ul>")
@@ -488,7 +489,7 @@ public static partial class CrashReportHtml
 
         return moduleBuilder.ToString();
     }
-        
+
     private static string GetLoadedBLSEPluginsHtml(CrashReportModel crashReport)
     {
         var moduleBuilder = new StringBuilder();
@@ -572,8 +573,8 @@ public static partial class CrashReportHtml
                 var hasBefore = patch.Before.Count > 0;
                 var hasAfter = patch.After.Count > 0;
                 patchBuilder.Append("<li>")
-                    .AppendIf(moduleId != "UNKNOWN", sb =>  sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("; "))
-                    .AppendIf(pluginId != "UNKNOWN", sb =>  sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("; "))
+                    .AppendIf(moduleId != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("; "))
+                    .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("; "))
                     .Append("Owner: ").Append(patch.Owner).Append("; ")
                     .Append("Namespace: ").Append(patch.Namespace).Append("; ")
                     .AppendIf(hasIndex, sb => sb.Append("Index: ").Append(patch.Index).Append("; "))

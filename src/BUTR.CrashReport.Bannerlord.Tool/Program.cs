@@ -1,4 +1,5 @@
 ﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.Html;
 
 using CommandLine;
 
@@ -10,7 +11,6 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using BUTR.CrashReport.Renderer.Html;
 
 namespace BUTR.CrashReport.Bannerlord.Tool;
 
