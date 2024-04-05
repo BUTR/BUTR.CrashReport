@@ -34,11 +34,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.BepInEx5.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.BepInEx6.Source", "BUTR.CrashReport.BepInEx6.Source\BUTR.CrashReport.BepInEx6.Source.csproj", "{D8AB3D2C-6026-4ACA-BFBB-A341E4D913AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer", "BUTR.CrashReport.Renderer\BUTR.CrashReport.Renderer.csproj", "{62EDA4D7-1DF2-4D63-8FD5-E0EFF813650D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.ImGui", "BUTR.CrashReport.Renderer.ImGui\BUTR.CrashReport.Renderer.ImGui.csproj", "{62EDA4D7-1DF2-4D63-8FD5-E0EFF813650D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.Html", "BUTR.CrashReport.Renderer.Html\BUTR.CrashReport.Renderer.Html.csproj", "{4FE11F43-B2CC-43C3-A947-5231050F8AA5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.Zip", "BUTR.CrashReport.Renderer.Zip\BUTR.CrashReport.Renderer.Zip.csproj", "{B63FD775-79E8-48A2-AECA-1F7D73643024}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.WinForms", "BUTR.CrashReport.Renderer.WinForms\BUTR.CrashReport.Renderer.WinForms.csproj", "{1464F441-48F8-4CB5-B944-1683F0ACBC3E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -90,6 +92,10 @@ Global
 		{B63FD775-79E8-48A2-AECA-1F7D73643024}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B63FD775-79E8-48A2-AECA-1F7D73643024}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B63FD775-79E8-48A2-AECA-1F7D73643024}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1464F441-48F8-4CB5-B944-1683F0ACBC3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1464F441-48F8-4CB5-B944-1683F0ACBC3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1464F441-48F8-4CB5-B944-1683F0ACBC3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1464F441-48F8-4CB5-B944-1683F0ACBC3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,5 +115,6 @@ Global
 		{62EDA4D7-1DF2-4D63-8FD5-E0EFF813650D} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 		{4FE11F43-B2CC-43C3-A947-5231050F8AA5} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 		{B63FD775-79E8-48A2-AECA-1F7D73643024} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
+		{1464F441-48F8-4CB5-B944-1683F0ACBC3E} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 	EndGlobalSection
 EndGlobal

@@ -7,6 +7,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.Renderer.WinForms</PackageId>
+    <Title>BUTR.CrashReport.Renderer.WinForms</Title>
+    <Description>Contains the renderer for creating the crash report</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
+    <PackageTags>butr crash report bannerlord</PackageTags>
+  </PropertyGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
   </ItemGroup>

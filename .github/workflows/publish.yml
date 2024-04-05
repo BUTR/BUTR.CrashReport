@@ -35,8 +35,9 @@ jobs:
       run: >-
         dotnet pack src/BUTR.CrashReport.Models/BUTR.CrashReport.Models.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport/BUTR.CrashReport.csproj --configuration Release -o "./packages";
-        dotnet pack src/BUTR.CrashReport.Renderer/BUTR.CrashReport.Renderer.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Renderer.Html/BUTR.CrashReport.Renderer.Html.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Renderer.ImGui/BUTR.CrashReport.Renderer.ImGui.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Renderer.WinForms/BUTR.CrashReport.Renderer.WinForms.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Renderer.Zip/BUTR.CrashReport.Renderer.Zip.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Bannerlord.Source/BUTR.CrashReport.Bannerlord.Source.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Bannerlord.Parser/BUTR.CrashReport.Bannerlord.Parser.csproj --configuration Release -o "./packages";
