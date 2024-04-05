@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using BUTR.CrashReport.Renderer.Html;
 
 namespace BUTR.CrashReport.Bannerlord.Tool;
 
@@ -65,7 +66,7 @@ public static class Program
                     })!;
                     var logs = logsStream is not null ? JsonSerializer.Deserialize<LogSource[]>(logsStream)! : Array.Empty<LogSource>();
 
-                    var html = CrashReportHtmlRenderer.AddData(CrashReportHtmlRenderer.Build(crashReport, logs), crashReportJson, minidump, saveFile, screenshot);
+                    var html = CrashReportHtml.AddData(CrashReportHtml.Build(crashReport, logs), crashReportJson, minidump, saveFile, screenshot);
 
                     var output = options.OutputFile ?? Path.Combine(Path.GetDirectoryName(options.ArchiveFile)!, $"{Path.GetFileNameWithoutExtension(options.ArchiveFile)}.html");
                     await File.WriteAllTextAsync(output, html);

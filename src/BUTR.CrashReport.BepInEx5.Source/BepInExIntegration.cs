@@ -51,50 +51,72 @@ namespace BUTR.CrashReport.BepInEx5
     using global::BepInEx.Bootstrap;
     using global::BUTR.CrashReport.Models;
     
-    public static class BepInExIntegration
+    public abstract class BepInExIntegration
     {
-        public static List<LoaderPluginModel> GetPlugins() => Chainloader.PluginInfos.Select(kv => new LoaderPluginModel
+        public abstract IEnumerable<CapabilityModuleOrPluginModel> GetModuleCapabilities(ICollection<AssemblyModel> assemblies, LoaderPluginModel loaderPlugin);
+        
+        public List<LoaderPluginModel> GetPlugins(ICollection<AssemblyModel> assemblies) => Chainloader.PluginInfos.Select(kv =>
         {
-            Id = kv.Value.Metadata.GUID,
-            Name = kv.Value.Metadata.Name,
-            Version = kv.Value.Metadata.Version.ToString(4),
-            Dependencies = kv.Value.Dependencies.Select(x => new DependencyMetadataModel
+            var capabilities = new List<CapabilityModuleOrPluginModel>();
+            var loaderPlugin = new LoaderPluginModel
             {
-                ModuleOrPluginId = x.DependencyGUID,
-                Version = x.MinimumVersion.ToString(4),
-                VersionRange = null,
-                Type = DependencyMetadataModelType.LoadBefore,
-                IsOptional = x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency),
-                AdditionalMetadata = new List<MetadataModel>
+                Id = kv.Value.Metadata.GUID,
+                Name = kv.Value.Metadata.Name,
+                Version = kv.Value.Metadata.Version.ToString(4),
+                UpdateInfo = null,
+                Dependencies = kv.Value.Dependencies.Select(x => new DependencyMetadataModel
+                    {
+                        ModuleOrPluginId = x.DependencyGUID,
+                        Version = x.MinimumVersion.ToString(4),
+                        VersionRange = null,
+                        Type = DependencyMetadataModelType.LoadBefore,
+                        IsOptional = x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency),
+                        AdditionalMetadata = new List<MetadataModel>
+                        {
+                            new MetadataModel
+                            {
+                                Key = "IsHardDependency",
+                                Value = x.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency)
+                                    .ToString()
+                            },
+                            new MetadataModel
+                            {
+                                Key = "IsSoftDependency",
+                                Value = x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency)
+                                    .ToString()
+                            },
+                        },
+                    })
+                    .Concat(kv.Value.Incompatibilities.Select(x => new DependencyMetadataModel
+                    {
+                        ModuleOrPluginId = x.IncompatibilityGUID,
+                        Version = null,
+                        VersionRange = null,
+                        Type = DependencyMetadataModelType.Incompatible,
+                        IsOptional = false,
+                        AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    }))
+                    .ToList(),
+                AdditionalMetadata = new[]
                 {
+                    //new MetadataModel { Key = "TargettedBepInExVersion", Value = kv.Value.TargettedBepInExVersion.ToString() },
                     new MetadataModel
                     {
-                        Key = "IsHardDependency",
-                        Value = x.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency).ToString()
+                        Key = "Location",
+                        Value = kv.Value.Location
                     },
+                    //new MetadataModel { Key = "TypeName", Value = kv.Value.TypeName },
                     new MetadataModel
                     {
-                        Key = "IsSoftDependency",
-                        Value = x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency).ToString()
+                        Key = "Processes",
+                        Value = string.Join("; ",
+                            kv.Value.Processes.Select(x => x.ProcessName))
                     },
                 },
-            }).Concat(kv.Value.Incompatibilities.Select(x => new DependencyMetadataModel
-            {
-                ModuleOrPluginId = x.IncompatibilityGUID,
-                Version = null,
-                VersionRange = null,
-                Type = DependencyMetadataModelType.Incompatible,
-                IsOptional = false,
-                AdditionalMetadata = Array.Empty<MetadataModel>(),
-            })).ToList(),
-            AdditionalMetadata = new[]
-            {
-                //new MetadataModel { Key = "TargettedBepInExVersion", Value = kv.Value.TargettedBepInExVersion.ToString() },
-                new MetadataModel { Key = "Location", Value = kv.Value.Location },
-                //new MetadataModel { Key = "TypeName", Value = kv.Value.TypeName },
-                new MetadataModel { Key = "Processes", Value = string.Join("; ", kv.Value.Processes.Select(x => x.ProcessName)) },
-            },
-            UpdateInfo = null,
+                Capabilities = capabilities,
+            };
+            capabilities.AddRange(GetModuleCapabilities(assemblies, loaderPlugin).GroupBy(x => x.Name).Select(x => x.First()));
+            return loaderPlugin;
         }).ToList();
     }
 }

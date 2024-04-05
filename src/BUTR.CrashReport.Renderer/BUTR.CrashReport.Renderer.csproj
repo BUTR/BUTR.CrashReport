@@ -3,10 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>$(DefineConstants);</DefineConstants>
-    <SkipDependencies>true</SkipDependencies>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -57,8 +55,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="$(PkgImGui_NET)\runtimes\**\*" Pack="true" PackagePath="runtime" />
-    <Content Include="$(PkgUltz_Native_GLFW)\runtimes\**\*" Pack="true" PackagePath="runtime" />
+    <Content Include="$(PkgImGui_NET)\runtimes\**\*" Pack="true" PackagePath="runtime" Visible="false" />
+    <Content Include="$(PkgUltz_Native_GLFW)\runtimes\**\*" Pack="true" PackagePath="runtime" Visible="false" />
   </ItemGroup>
 
   <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepareBuild">

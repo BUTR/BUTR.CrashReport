@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.Html\BUTR.CrashReport.Renderer.Html.csproj" />
     <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" Targets="DisableILRepack;Build" />
     <Compile Include="..\BUTR.CrashReport.Bannerlord.Source\*.cs" />
   </ItemGroup>
