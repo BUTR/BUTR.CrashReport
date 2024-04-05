@@ -91,7 +91,7 @@ Clicking 'Close Report' will continue with the Game's error report mechanism.
     public bool IncludeSaveFile { get; set; }
     public bool IncludeScreenshot { get; set; }
 
-    internal HtmlCrashReportForm(CrashReportModel crashReport, ICollection<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
+    public HtmlCrashReportForm(CrashReportModel crashReport, ICollection<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
     {
         CrashReportRendererUtilities = crashReportRendererUtilities;
         CrashReport = crashReport;
