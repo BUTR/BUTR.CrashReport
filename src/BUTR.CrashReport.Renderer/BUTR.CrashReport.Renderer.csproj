@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="HonkPerf.NET.RefLinq" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="ImGui.NET" Version="1.90.1.1" PrivateAssets="all" />
+    <PackageReference Include="ImGui.NET" Version="1.90.1.1" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="Silk.NET.GLFW" Version="2.20.0" PrivateAssets="all" />
     <PackageReference Include="Silk.NET.Input.Glfw" Version="2.20.0" PrivateAssets="all" />
     <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.20.0" PrivateAssets="all" />
@@ -41,6 +41,7 @@
     <PackageReference Include="System.Memory" Version="4.5.5" PrivateAssets="all" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="SkipLocalsInit" Version="1.1.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Ultz.Native.GLFW" Version="3.3.9.2" PrivateAssets="all" GeneratePathProperty="true" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +54,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" Targets="DisableILRepack;Build" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(PkgImGui_NET)\runtimes\**\*" Pack="true" PackagePath="runtime" />
+    <Content Include="$(PkgUltz_Native_GLFW)\runtimes\**\*" Pack="true" PackagePath="runtime" />
   </ItemGroup>
 
   <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepareBuild">
