@@ -14,5 +14,5 @@ public static class AssemblyUtils
     /// <param name="publicKeyToken">The public key token.</param>
     /// <returns> The public key token as string.</returns>
     public static string PublicKeyAsString(byte[]? publicKeyToken) =>
-        string.Join(string.Empty, Array.ConvertAll(publicKeyToken ?? Array.Empty<byte>(), x => x.ToString("x2", CultureInfo.InvariantCulture)));
+        string.Join(string.Empty, Array.ConvertAll(publicKeyToken ?? new byte[0], x => x.ToString("x2", CultureInfo.InvariantCulture)));
 }

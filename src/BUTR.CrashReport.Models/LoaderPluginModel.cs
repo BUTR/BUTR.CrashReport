@@ -42,4 +42,28 @@ public sealed record LoaderPluginModel
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+
+    /// <inheritdoc />
+    public bool Equals(LoaderPluginModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id == other.Id && Name == other.Name && Version == other.Version && Equals(UpdateInfo, other.UpdateInfo) && Dependencies.Equals(other.Dependencies) && Capabilities.Equals(other.Capabilities) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Id.GetHashCode();
+            hashCode = (hashCode * 397) ^ Name.GetHashCode();
+            hashCode = (hashCode * 397) ^ (Version != null ? Version.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (UpdateInfo != null ? UpdateInfo.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ Dependencies.GetHashCode();
+            hashCode = (hashCode * 397) ^ Capabilities.GetHashCode();
+            hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
+            return hashCode;
+        }
+    }
 }

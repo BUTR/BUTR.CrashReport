@@ -6,7 +6,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents the main model of a crash report.
 /// </summary>
-public record CrashReportModel
+public sealed record CrashReportModel
 {
     /// <summary>
     /// The id of the crash report.
@@ -77,4 +77,33 @@ public record CrashReportModel
     /// </summary>
     /// <returns>A key:value list of metadatas.</returns>
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+
+    /// <inheritdoc />
+    public bool Equals(CrashReportModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id.Equals(other.Id) && Version == other.Version && Exception.Equals(other.Exception) && Metadata.Equals(other.Metadata) && Modules.Equals(other.Modules) && InvolvedModules.Equals(other.InvolvedModules) && EnhancedStacktrace.Equals(other.EnhancedStacktrace) && Assemblies.Equals(other.Assemblies) && HarmonyPatches.Equals(other.HarmonyPatches) && LoaderPlugins.Equals(other.LoaderPlugins) && InvolvedLoaderPlugins.Equals(other.InvolvedLoaderPlugins) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Id.GetHashCode();
+            hashCode = (hashCode * 397) ^ Version.GetHashCode();
+            hashCode = (hashCode * 397) ^ Exception.GetHashCode();
+            hashCode = (hashCode * 397) ^ Metadata.GetHashCode();
+            hashCode = (hashCode * 397) ^ Modules.GetHashCode();
+            hashCode = (hashCode * 397) ^ InvolvedModules.GetHashCode();
+            hashCode = (hashCode * 397) ^ EnhancedStacktrace.GetHashCode();
+            hashCode = (hashCode * 397) ^ Assemblies.GetHashCode();
+            hashCode = (hashCode * 397) ^ HarmonyPatches.GetHashCode();
+            hashCode = (hashCode * 397) ^ LoaderPlugins.GetHashCode();
+            hashCode = (hashCode * 397) ^ InvolvedLoaderPlugins.GetHashCode();
+            hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
+            return hashCode;
+        }
+    }
 }

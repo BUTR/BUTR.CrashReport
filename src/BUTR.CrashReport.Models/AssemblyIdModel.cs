@@ -41,10 +41,24 @@ public sealed record AssemblyIdModel : IEquatable<AssemblyModel>, IEquatable<Ass
     public required string? PublicKeyToken { get; set; }
 
     /// <inheritdoc />
-    public bool Equals(AssemblyIdModel? other) => other is not null &&
-                                                  Name == other.Name &&
-                                                  ((Version is null || other.Version is null) || Version == other.Version) &&
-                                                  PublicKeyToken == other.PublicKeyToken;
+    public bool Equals(AssemblyIdModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Name == other.Name && Version == other.Version && PublicKeyToken == other.PublicKeyToken;
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Name.GetHashCode();
+            hashCode = (hashCode * 397) ^ (Version != null ? Version.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (PublicKeyToken != null ? PublicKeyToken.GetHashCode() : 0);
+            return hashCode;
+        }
+    }
 
     /// <inheritdoc />
     public bool Equals(AssemblyModel? other) => other is not null && other.Id.Equals(this);

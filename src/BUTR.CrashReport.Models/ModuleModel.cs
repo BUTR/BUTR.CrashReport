@@ -72,4 +72,34 @@ public sealed record ModuleModel
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+
+    /// <inheritdoc />
+    public bool Equals(ModuleModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Id == other.Id && Name == other.Name && Version == other.Version && IsExternal == other.IsExternal && IsOfficial == other.IsOfficial && IsSingleplayer == other.IsSingleplayer && IsMultiplayer == other.IsMultiplayer && Url == other.Url && Equals(UpdateInfo, other.UpdateInfo) && DependencyMetadatas.Equals(other.DependencyMetadatas) && SubModules.Equals(other.SubModules) && Capabilities.Equals(other.Capabilities) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Id.GetHashCode();
+            hashCode = (hashCode * 397) ^ Name.GetHashCode();
+            hashCode = (hashCode * 397) ^ Version.GetHashCode();
+            hashCode = (hashCode * 397) ^ IsExternal.GetHashCode();
+            hashCode = (hashCode * 397) ^ IsOfficial.GetHashCode();
+            hashCode = (hashCode * 397) ^ IsSingleplayer.GetHashCode();
+            hashCode = (hashCode * 397) ^ IsMultiplayer.GetHashCode();
+            hashCode = (hashCode * 397) ^ (Url != null ? Url.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (UpdateInfo != null ? UpdateInfo.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ DependencyMetadatas.GetHashCode();
+            hashCode = (hashCode * 397) ^ SubModules.GetHashCode();
+            hashCode = (hashCode * 397) ^ Capabilities.GetHashCode();
+            hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
+            return hashCode;
+        }
+    }
 }

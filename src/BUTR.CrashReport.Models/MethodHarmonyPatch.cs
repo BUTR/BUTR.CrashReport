@@ -5,7 +5,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents a Harmony patch method.
 /// </summary>
-public record MethodHarmonyPatch : MethodSimple
+public sealed record MethodHarmonyPatch : MethodSimple
 {
     /// <summary>
     /// The type of the patch.
@@ -35,5 +35,22 @@ public record MethodHarmonyPatch : MethodSimple
         CSharpInstructions = methodSimple.CSharpInstructions;
         AdditionalMetadata = methodSimple.AdditionalMetadata;
         PatchType = patchType;
+    }
+
+    /// <inheritdoc />
+    public bool Equals(MethodHarmonyPatch? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return base.Equals(other) && PatchType == other.PatchType;
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (base.GetHashCode() * 397) ^ (int) PatchType;
+        }
     }
 }

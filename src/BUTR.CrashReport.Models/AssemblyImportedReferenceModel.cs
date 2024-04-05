@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents an imported assembly reference.
 /// </summary>
-public record AssemblyImportedReferenceModel
+public sealed record AssemblyImportedReferenceModel
 {
     /// <summary>
     /// <inheritdoc cref="System.Reflection.AssemblyName.Name"/>
@@ -33,4 +33,25 @@ public record AssemblyImportedReferenceModel
     /// The empty default constructor.
     /// </summary>
     public AssemblyImportedReferenceModel() { }
+
+    /// <inheritdoc />
+    public bool Equals(AssemblyImportedReferenceModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Name == other.Name && Version == other.Version && Culture == other.Culture && PublicKeyToken == other.PublicKeyToken;
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = Name.GetHashCode();
+            hashCode = (hashCode * 397) ^ Version.GetHashCode();
+            hashCode = (hashCode * 397) ^ (Culture != null ? Culture.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (PublicKeyToken != null ? PublicKeyToken.GetHashCode() : 0);
+            return hashCode;
+        }
+    }
 }

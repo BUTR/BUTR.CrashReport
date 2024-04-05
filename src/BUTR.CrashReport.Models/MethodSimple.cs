@@ -67,4 +67,32 @@ public record MethodSimple
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+
+    /// <inheritdoc />
+    public virtual bool Equals(MethodSimple? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Equals(AssemblyId, other.AssemblyId) && ModuleId == other.ModuleId && LoaderPluginId == other.LoaderPluginId && MethodDeclaredTypeName == other.MethodDeclaredTypeName && MethodName == other.MethodName && MethodFullDescription == other.MethodFullDescription && MethodParameters.Equals(other.MethodParameters) && ILInstructions.Equals(other.ILInstructions) && CSharpILMixedInstructions.Equals(other.CSharpILMixedInstructions) && CSharpInstructions.Equals(other.CSharpInstructions) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = (AssemblyId != null ? AssemblyId.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (ModuleId != null ? ModuleId.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (LoaderPluginId != null ? LoaderPluginId.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (MethodDeclaredTypeName != null ? MethodDeclaredTypeName.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ MethodName.GetHashCode();
+            hashCode = (hashCode * 397) ^ MethodFullDescription.GetHashCode();
+            hashCode = (hashCode * 397) ^ MethodParameters.GetHashCode();
+            hashCode = (hashCode * 397) ^ ILInstructions.GetHashCode();
+            hashCode = (hashCode * 397) ^ CSharpILMixedInstructions.GetHashCode();
+            hashCode = (hashCode * 397) ^ CSharpInstructions.GetHashCode();
+            hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
+            return hashCode;
+        }
+    }
 }

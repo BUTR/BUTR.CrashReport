@@ -17,4 +17,21 @@ public sealed record UpdateInfoModuleOrLoaderPlugin
 
     /// <inheritdoc/>
     public override string ToString() => $"{Provider}:{Value}";
+
+    /// <inheritdoc />
+    public bool Equals(UpdateInfoModuleOrLoaderPlugin? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Provider == other.Provider && Value == other.Value;
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (Provider.GetHashCode() * 397) ^ Value.GetHashCode();
+        }
+    }
 }

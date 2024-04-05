@@ -5,7 +5,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents a method from stack trace.
 /// </summary>
-public record EnhancedStacktraceFrameModel
+public sealed record EnhancedStacktraceFrameModel
 {
     /// <summary>
     /// <inheritdoc cref="System.Diagnostics.StackFrame.ToString"/>
@@ -50,4 +50,29 @@ public record EnhancedStacktraceFrameModel
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+
+    /// <inheritdoc />
+    public bool Equals(EnhancedStacktraceFrameModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return FrameDescription == other.FrameDescription && MethodFromStackframeIssue == other.MethodFromStackframeIssue && ILOffset == other.ILOffset && NativeOffset == other.NativeOffset && ExecutingMethod.Equals(other.ExecutingMethod) && Equals(OriginalMethod, other.OriginalMethod) && PatchMethods.Equals(other.PatchMethods) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = FrameDescription.GetHashCode();
+            hashCode = (hashCode * 397) ^ MethodFromStackframeIssue.GetHashCode();
+            hashCode = (hashCode * 397) ^ ILOffset.GetHashCode();
+            hashCode = (hashCode * 397) ^ NativeOffset.GetHashCode();
+            hashCode = (hashCode * 397) ^ ExecutingMethod.GetHashCode();
+            hashCode = (hashCode * 397) ^ (OriginalMethod != null ? OriginalMethod.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ PatchMethods.GetHashCode();
+            hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
+            return hashCode;
+        }
+    }
 }

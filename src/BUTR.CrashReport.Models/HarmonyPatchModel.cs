@@ -70,4 +70,32 @@ public sealed record HarmonyPatchModel
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+
+    /// <inheritdoc />
+    public bool Equals(HarmonyPatchModel? other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Type == other.Type && ModuleId == other.ModuleId && LoaderPluginId == other.LoaderPluginId && Equals(AssemblyId, other.AssemblyId) && Owner == other.Owner && Namespace == other.Namespace && Index == other.Index && Priority == other.Priority && Before.Equals(other.Before) && After.Equals(other.After) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            var hashCode = (int) Type;
+            hashCode = (hashCode * 397) ^ (ModuleId != null ? ModuleId.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (LoaderPluginId != null ? LoaderPluginId.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ (AssemblyId != null ? AssemblyId.GetHashCode() : 0);
+            hashCode = (hashCode * 397) ^ Owner.GetHashCode();
+            hashCode = (hashCode * 397) ^ Namespace.GetHashCode();
+            hashCode = (hashCode * 397) ^ Index;
+            hashCode = (hashCode * 397) ^ Priority;
+            hashCode = (hashCode * 397) ^ Before.GetHashCode();
+            hashCode = (hashCode * 397) ^ After.GetHashCode();
+            hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
+            return hashCode;
+        }
+    }
 }
