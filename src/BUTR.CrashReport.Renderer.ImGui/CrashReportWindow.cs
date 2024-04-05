@@ -37,9 +37,6 @@ public class CrashReportWindow
         IPathAnonymizer pathAnonymizer,
         ICrashReportRendererUtilities crashReportRendererUtilities)
     {
-        if (PathResolver.Default is DefaultPathResolver pr)
-            pr.Resolvers = [path => crashReportRendererUtilities.GetNativeLibrariesFolderPath().Select(x => Path.Combine(x, path))];
-
         var crashReport = CrashReportInfo.Create(exception, additionalMetadata, stacktraceFilter, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider);
 
         var crashReportModel = CrashReportInfo.ToModel(crashReport, crashReportMetadataProvider, modelConverter, moduleProvider, loaderPluginProvider, assemblyUtilities, pathAnonymizer);
@@ -47,8 +44,11 @@ public class CrashReportWindow
         ShowAndWait(crashReportModel, logSources, crashReportRendererUtilities);
     }
 
-    private static void ShowAndWait(CrashReportModel crashReportModel, IList<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
+    public static void ShowAndWait(CrashReportModel crashReportModel, IList<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
     {
+        if (PathResolver.Default is DefaultPathResolver pr)
+            pr.Resolvers = [path => crashReportRendererUtilities.GetNativeLibrariesFolderPath().Select(x => Path.Combine(x, path))];
+        
         var window = Window.Create(WindowOptions.Default with
         {
             Title = $"{crashReportModel.Metadata.GameName} Crash Report",
