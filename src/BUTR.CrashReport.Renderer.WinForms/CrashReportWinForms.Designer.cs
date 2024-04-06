@@ -1,6 +1,6 @@
 ﻿namespace BUTR.CrashReport.Renderer.WinForms;
 
-partial class HtmlCrashReportForm
+partial class CrashReportWinForms
 {
     /// <summary>
     /// Required designer variable.

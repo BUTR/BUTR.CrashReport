@@ -18,9 +18,9 @@ using System.Linq;
 
 namespace BUTR.CrashReport.Renderer.ImGui;
 
-public class CrashReportWindow
+public class CrashReportImGui
 {
-    static CrashReportWindow()
+    static CrashReportImGui()
     {
         GlfwInput.RegisterPlatform();
         GlfwWindowing.RegisterPlatform();
@@ -52,7 +52,7 @@ public class CrashReportWindow
         var window = Window.Create(WindowOptions.Default with
         {
             Title = $"{crashReportModel.Metadata.GameName} Crash Report",
-            VSync = false,
+            VSync = true,
         });
 
         var gl = default(GL)!;

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace BUTR.CrashReport.Renderer.WinForms;
 
-public partial class HtmlCrashReportForm : Form
+public partial class CrashReportWinForms : Form
 {
     // https://gist.github.com/eikes/2299607
     // Copyright: Eike Send http://eike.se/nd
@@ -91,7 +91,7 @@ Clicking 'Close Report' will continue with the Game's error report mechanism.
     public bool IncludeSaveFile { get; set; }
     public bool IncludeScreenshot { get; set; }
 
-    public HtmlCrashReportForm(CrashReportModel crashReport, ICollection<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
+    public CrashReportWinForms(CrashReportModel crashReport, ICollection<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
     {
         CrashReportRendererUtilities = crashReportRendererUtilities;
         CrashReport = crashReport;
