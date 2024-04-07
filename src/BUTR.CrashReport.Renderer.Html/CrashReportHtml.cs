@@ -460,13 +460,13 @@ public static partial class CrashReportHtml
                 .AppendIf(hasDependencies, "</ul>")
                 .Append("Capabilities:").Append("</br>")
                 .Append("<ul>")
-                .Append((StringBuilder sb) =>
+                .AppendSb(sb =>
                 {
                     if (module.Capabilities.Count == 0)
                         sb.Append("<li>").Append("None").Append("</li>");
 
                     foreach (var capability in module.Capabilities)
-                        sb.Append("<li>").Append(capability).Append("</li>");
+                        sb.Append("<li>").Append(capability.Name).Append("</li>");
 
                     return sb;
                 })

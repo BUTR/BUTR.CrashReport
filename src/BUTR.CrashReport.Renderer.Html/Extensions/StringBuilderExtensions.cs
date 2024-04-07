@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BUTR.CrashReport.Renderer.Html;
+namespace BUTR.CrashReport.Renderer.Html.Extensions;
 
 internal static class StringBuilderExtensions
 {
@@ -43,4 +43,6 @@ internal static class StringBuilderExtensions
     public static StringBuilder AppendLineIf(this StringBuilder builder, bool condition, string value) => condition ? builder.AppendLine(value) : builder;
 
     public static StringBuilder AppendIf(this StringBuilder builder, bool condition, Func<StringBuilder, StringBuilder> lambda) => condition ? lambda(builder) : builder;
+   
+    public static StringBuilder AppendSb(this StringBuilder builder, Func<StringBuilder, StringBuilder> lambda) => lambda(builder);
 }

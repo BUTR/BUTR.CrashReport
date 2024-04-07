@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BUTR.CrashReport.Renderer.Html;
+namespace BUTR.CrashReport.Renderer.Html.Extensions;
 
 internal static class EnumExtensions
 {
