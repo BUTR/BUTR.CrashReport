@@ -36,7 +36,7 @@ public sealed record EnhancedStacktraceFrameModel
     public required MethodExecuting ExecutingMethod { get; set; }
 
     /// <summary>
-    /// The original method that might be patched.
+    /// The original method that is being patched. Is null when no patches exists. Use <see cref="ExecutingMethod"/> instead.
     /// </summary>
     public required MethodSimple? OriginalMethod { get; set; }
 

@@ -80,6 +80,9 @@ partial class CrashReportHtml
         padding: 5px;
       }
     </style>
+<![if !IE]>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
+<![endif]>
   </head>
   <body style='background-color: #ececec;'>
     <table style='width: 100%;'>
@@ -127,7 +130,9 @@ partial class CrashReportHtml
 {{Container("enhanced-stacktrace", "Enhanced Stacktrace", GetEnhancedStacktraceHtml(crashReport))}}
 {{Container("involved", "Involved Modules and Plugins", GetInvolvedHtml(crashReport))}}
 {{Container("installed-modules", "Installed Modules", GetInstalledModulesHtml(crashReport))}}
-{{Container("installed-plugins", $"Loaded {crashReport.Metadata.LoaderPluginProviderName} Plugins", GetLoadedBLSEPluginsHtml(crashReport))}}
+{{(crashReport.Metadata.LoaderPluginProviderName is not null
+  ? Container("installed-plugins", $"Loaded {crashReport.Metadata.LoaderPluginProviderName} Plugins", GetLoadedBLSEPluginsHtml(crashReport))
+  : string.Empty)}}
 {{Container("assemblies", "Assemblies", $"""
         <label>Hide: </label>
         <label><input type='checkbox' onclick='showHideByClassName(this, "sys_assembly")' /> System</label>
@@ -152,6 +157,8 @@ partial class CrashReportHtml
 
 <![if !IE]>
     <script src="https://cdn.jsdelivr.net/pako/1.0.3/pako_inflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <![endif]>
     {{Scripts}}
   </body>
@@ -306,13 +313,11 @@ partial class CrashReportHtml
     </div>
 """;
         
-    private static string ContainerCode(string id, string name, string content, bool hide = false) => $"""
+    private static string ContainerCode(string id, string name, string content, string language, bool hide = false) => $"""
     <div>
       <a href="javascript:;" class="headers" onclick="showHideById(this, '{id}')">+ {name}</a>
       <div id="{id}" class="headers-container" style="display: none;">
-        <pre>
-          {content}
-        </pre>
+        <pre><code class="language-{language}">{content}</code></pre>
       </div>
     </div>
 """;

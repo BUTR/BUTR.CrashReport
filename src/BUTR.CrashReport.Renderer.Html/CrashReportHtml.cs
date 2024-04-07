@@ -147,13 +147,13 @@ public static partial class CrashReportHtml
                 .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
                 .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN").Append("<br/>")
                 .AppendIf(stacktrace.ExecutingMethod.ILInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id1}", "IL:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.ILInstructions.Select(x => x.EscapeGenerics())))))
+                    .Append(ContainerCode($"{id1}", "IL:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.ILInstructions.Select(x => x.EscapeGenerics())), "cil")))
                 .AppendIf(stacktrace.ExecutingMethod.CSharpILMixedInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id2}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
+                    .Append(ContainerCode($"{id2}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())), "cil")))
                 .AppendIf(stacktrace.ExecutingMethod.CSharpInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id3}", "C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpInstructions.Select(x => x.EscapeGenerics())))))
+                    .Append(ContainerCode($"{id3}", "C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpInstructions.Select(x => x.EscapeGenerics())), "csharp")))
                 .AppendIf(stacktrace.ExecutingMethod.NativeInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id4}", "Native:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics())))))
+                    .Append(ContainerCode($"{id4}", "Native (NASM):", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics())), "nasm")))
                 .Append("</li>")
                 .Append("</ul>");
 
@@ -176,11 +176,11 @@ public static partial class CrashReportHtml
                         .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
                         .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                         .AppendIf(method.ILInstructions.Count > 0, sp => sp
-                            .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, method.ILInstructions.Select(x => x.EscapeGenerics())))))
+                            .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, method.ILInstructions.Select(x => x.EscapeGenerics())), "cil")))
                         .AppendIf(method.CSharpILMixedInstructions.Count > 0, sp => sp
-                            .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
+                            .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())), "cil")))
                         .AppendIf(method.CSharpInstructions.Count > 0, sp => sp
-                            .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, method.CSharpInstructions.Select(x => x.EscapeGenerics())))))
+                            .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, method.CSharpInstructions.Select(x => x.EscapeGenerics())), "csharp")))
                         .Append("</li>");
                 }
                 sbMain.Append("</ul>");
@@ -201,11 +201,11 @@ public static partial class CrashReportHtml
                     .AppendIf(pluginId3 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId3).Append("\")'>").Append(pluginId3).Append("</a></b>").Append("<br/>"))
                     .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                     .AppendIf(stacktrace.OriginalMethod.ILInstructions.Count > 0, sb => sb
-                        .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics())))))
+                        .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics())), "cil")))
                     .AppendIf(stacktrace.OriginalMethod.CSharpILMixedInstructions.Count > 0, sb => sb
-                        .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
+                        .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())), "cil")))
                     .AppendIf(stacktrace.OriginalMethod.CSharpInstructions.Count > 0, sb => sb
-                        .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpInstructions.Select(x => x.EscapeGenerics())))))
+                        .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpInstructions.Select(x => x.EscapeGenerics())), "csharp")))
                     .Append("</li>")
                     .Append("</ul>");
             }

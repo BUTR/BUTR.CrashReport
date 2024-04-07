@@ -44,14 +44,11 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
-    using global::Bannerlord.BUTR.Shared.Extensions;
     using global::Bannerlord.BUTR.Shared.Helpers;
     using global::Bannerlord.ModuleManager;
 
-    using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Interfaces;
     using global::BUTR.CrashReport.Models;
-    using global::BUTR.CrashReport.Utils;
 
     using global::HarmonyLib;
     using global::HarmonyLib.BUTR.Extensions;
@@ -59,11 +56,9 @@ namespace BUTR.CrashReport.Bannerlord
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics;
-    using global::System.Globalization;
     using global::System.IO;
     using global::System.Linq;
     using global::System.Reflection;
-    using global::System.Security.Cryptography;
 
     internal class CrashReportInfoHelper :
         IAssemblyUtilities,
@@ -88,9 +83,13 @@ namespace BUTR.CrashReport.Bannerlord
                 .Select(x => x.Substring("Bannerlord.BLSE.Features.".Length))
                 .Select(x => x.Substring(0, x.IndexOf('.') is var idx and not -1 ? idx : x.Length))
                 .Distinct()
-                .Select(x => $"BLSE.{x}");
+                .Select(x => $"BLSE.{x}")
+                .ToList();
             
-            return featurePatches.Concat(new[] { "BLSE.AssemblyResolver"}).Select(x => new LoaderPluginInfo
+            if (featurePatches.Count > 0)
+                featurePatches.Add("BLSE.AssemblyResolver");
+            
+            return featurePatches.Select(x => new LoaderPluginInfo
             {
                 Id = x,
                 Version = null,

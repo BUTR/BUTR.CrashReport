@@ -1,4 +1,5 @@
-﻿using BUTR.CrashReport.Models;
+﻿using System;
+using BUTR.CrashReport.Models;
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,4 +33,14 @@ public interface IHarmonyProvider
     /// Returns the method from a stackframe.
     /// </summary>
     MethodBase? GetMethodFromStackframe(StackFrame frame);
+
+    /// <summary>
+    /// The runtime can return several different MethodInfo's that point to the same method. Will return the correct one.
+    /// </summary>
+    MethodBase? GetIdentifiable(MethodBase method);
+
+    /// <summary>
+    /// Returns the JIT compiled (native) start address of a method.
+    /// </summary>
+    IntPtr GetNativeMethodBody(MethodBase method);
 }

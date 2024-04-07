@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 
 using static BUTR.CrashReport.Decompilers.Utils.MethodDecompiler;
-using static BUTR.CrashReport.Decompilers.Utils.MonoModUtils;
 
 using HarmonyPatch = BUTR.CrashReport.Models.HarmonyPatch;
 
@@ -29,12 +28,12 @@ public static class CrashReportUtils
         /// <summary>
         /// <inheritdoc cref="EnhancedStacktraceFrameModel.OriginalMethod"/>
         /// </summary>
-        public required MethodBase? Original { get; set; }
+        public required MethodBase? OriginalMethod { get; set; }
 
         /// <summary>
         /// <inheritdoc cref="EnhancedStacktraceFrameModel.ExecutingMethod"/>
         /// </summary>
-        public required MethodInfo? Replacement { get; set; }
+        public required MethodInfo? ExecutingMethod { get; set; }
 
         /// <summary>
         /// <inheritdoc cref="EnhancedStacktraceFrameModel.PatchMethods"/>
@@ -51,8 +50,8 @@ public static class CrashReportUtils
         /// </summary>
         public void Deconstruct(out MethodBase? original, out MethodInfo? replacement, out List<MethodEntry> patches, out bool issues)
         {
-            original = Original;
-            replacement = Replacement;
+            original = OriginalMethod;
+            replacement = ExecutingMethod;
             patches = Patches;
             issues = Issues;
         }
@@ -175,17 +174,17 @@ public static class CrashReportUtils
     /// </summary>
     public static StackframePatchData GetHarmonyData(StackFrame frame, IHarmonyProvider harmonyProvider, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
     {
-        MethodBase? method;
+        MethodBase? executingMethod;
         var methodFromStackframeIssue = false;
         try
         {
-            method = harmonyProvider.GetMethodFromStackframe(frame);
+            executingMethod = harmonyProvider.GetMethodFromStackframe(frame);
         }
         // NullReferenceException means the method was not found. Harmony doesn't handle this case gracefully
         catch (NullReferenceException e)
         {
             Trace.TraceError(e.ToString());
-            method = frame.GetMethod()!;
+            executingMethod = frame.GetMethod()!;
         }
         // The given generic instantiation was invalid.
         // From what I understand, this will occur with generic methods
@@ -194,17 +193,17 @@ public static class CrashReportUtils
         {
             Trace.TraceError(e.ToString());
             methodFromStackframeIssue = true;
-            method = frame.GetMethod()!;
+            executingMethod = frame.GetMethod()!;
         }
 
-        var methods = new List<MethodEntry>();
-        var identifiableMethod = method is MethodInfo mi ? GetIdentifiable(mi) is MethodInfo v ? v : mi : null;
-        var original = identifiableMethod is not null ? harmonyProvider.GetOriginalMethod(identifiableMethod) : null;
-        var patches = original is not null ? harmonyProvider.GetPatchInfo(original) : null;
+        var patches = new List<MethodEntry>();
+        var executingIdentifiableMethod = executingMethod is MethodInfo mi ? harmonyProvider.GetIdentifiable(mi) as MethodInfo ?? mi : null;
+        var originalIdentifiableMethod = executingIdentifiableMethod is not null ? harmonyProvider.GetOriginalMethod(executingIdentifiableMethod) : null;
+        var harmonyPatches = originalIdentifiableMethod is not null ? harmonyProvider.GetPatchInfo(originalIdentifiableMethod) : null;
 
-        foreach (var (patch, moduleInfo, loaderPluginInfo) in GetHarmonyPatchMethods(patches, moduleProvider, loaderPluginProvider))
+        foreach (var (patch, moduleInfo, loaderPluginInfo) in GetHarmonyPatchMethods(harmonyPatches, moduleProvider, loaderPluginProvider))
         {
-            methods.Add(new MethodEntryHarmony
+            patches.Add(new MethodEntryHarmony
             {
                 Patch = patch,
                 Method = patch.PatchMethod,
@@ -218,9 +217,9 @@ public static class CrashReportUtils
 
         return new()
         {
-            Original = original,
-            Replacement = identifiableMethod,
-            Patches = methods,
+            OriginalMethod = originalIdentifiableMethod,
+            ExecutingMethod = executingIdentifiableMethod,
+            Patches = patches,
             Issues = methodFromStackframeIssue,
         };
     }
@@ -242,32 +241,33 @@ public static class CrashReportUtils
         {
             if (!frame.HasMethod()) continue;
 
-            var (original, identifiableMethod, patches, methodFromStackframeIssue) = GetHarmonyData(frame, harmonyProvider, moduleProvider, loaderPluginProvider);
+            var (originalMethod, executingMethod, patches, methodFromStackframeIssue) = GetHarmonyData(frame, harmonyProvider, moduleProvider, loaderPluginProvider);
 
             var ilOffset = frame.GetILOffset();
             var nativeILOffset = frame.GetNativeOffset();
+            var nativeCodePtr = executingMethod is not null ? harmonyProvider.GetNativeMethodBody(executingMethod) : IntPtr.Zero;
             yield return new()
             {
-                Method = identifiableMethod!,
-                OriginalMethod = original is not null ? new()
+                Method = executingMethod!,
+                OriginalMethod = originalMethod is not null && originalMethod != executingMethod ? new()
                 {
-                    Method = original,
-                    ModuleInfo = GetModuleInfoIfMod(original, assemblies, moduleProvider),
-                    LoaderPluginInfo = GetLoaderPluginIfMod(original, assemblies, loaderPluginProvider),
-                    ILInstructions = DecompileILCode(original),
-                    CSharpILMixedInstructions = DecompileILWithCSharpCode(original),
-                    CSharpInstructions = DecompileCSharpCode(original),
+                    Method = originalMethod,
+                    ModuleInfo = GetModuleInfoIfMod(originalMethod, assemblies, moduleProvider),
+                    LoaderPluginInfo = GetLoaderPluginIfMod(originalMethod, assemblies, loaderPluginProvider),
+                    ILInstructions = DecompileILCode(originalMethod),
+                    CSharpILMixedInstructions = DecompileILWithCSharpCode(originalMethod),
+                    CSharpInstructions = DecompileCSharpCode(originalMethod),
                 } : null,
                 MethodFromStackframeIssue = methodFromStackframeIssue,
-                ModuleInfo = GetModuleInfoIfMod(identifiableMethod, assemblies, moduleProvider),
-                LoaderPluginInfo = GetLoaderPluginIfMod(identifiableMethod, assemblies, loaderPluginProvider),
+                ModuleInfo = GetModuleInfoIfMod(executingMethod, assemblies, moduleProvider),
+                LoaderPluginInfo = GetLoaderPluginIfMod(executingMethod, assemblies, loaderPluginProvider),
                 ILOffset = ilOffset != StackFrame.OFFSET_UNKNOWN ? ilOffset : null,
                 NativeOffset = nativeILOffset != StackFrame.OFFSET_UNKNOWN ? nativeILOffset : null,
                 StackFrameDescription = frame.ToString(),
-                NativeInstructions = DecompileNativeCode(identifiableMethod, nativeILOffset),
-                ILInstructions = DecompileILCode(identifiableMethod),
-                CSharpILMixedInstructions = DecompileILWithCSharpCode(identifiableMethod),
-                CSharpInstructions = DecompileCSharpCode(identifiableMethod),
+                NativeInstructions = DecompileNativeCode(nativeCodePtr, nativeILOffset),
+                ILInstructions = DecompileILCode(executingMethod),
+                CSharpILMixedInstructions = DecompileILWithCSharpCode(executingMethod),
+                CSharpInstructions = DecompileCSharpCode(executingMethod),
                 PatchMethods = patches.ToArray(),
             };
         }

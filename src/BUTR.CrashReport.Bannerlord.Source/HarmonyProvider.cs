@@ -44,29 +44,84 @@
 
 namespace BUTR.CrashReport.Bannerlord
 {
-    using global::Bannerlord.BUTR.Shared.Extensions;
-    using global::Bannerlord.BUTR.Shared.Helpers;
-    using global::Bannerlord.ModuleManager;
-
-    using global::BUTR.CrashReport.Extensions;
     using global::BUTR.CrashReport.Interfaces;
-    using global::BUTR.CrashReport.Models;
-    using global::BUTR.CrashReport.Utils;
 
     using global::HarmonyLib;
-    using global::HarmonyLib.BUTR.Extensions;
 
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics;
-    using global::System.Globalization;
-    using global::System.IO;
     using global::System.Linq;
     using global::System.Reflection;
-    using global::System.Security.Cryptography;
+    
+    using static global::HarmonyLib.BUTR.Extensions.AccessTools2;
 
     public class HarmonyProvider : IHarmonyProvider
     {
+        private static class MonoModUtils
+        {
+            private delegate object GetCurrentRuntimeDelegate();
+            private static readonly GetCurrentRuntimeDelegate? CurrentRuntimeMethod = GetPropertyGetterDelegate<GetCurrentRuntimeDelegate>(
+                "MonoMod.RuntimeDetour.DetourHelper:Runtime", logErrorInTrace: false);
+
+            private delegate MethodBase GetIdentifiableOldDelegate(object instance, MethodBase method);
+            private static readonly GetIdentifiableOldDelegate? GetIdentifiableOldMethod = GetDelegate<GetIdentifiableOldDelegate>(
+                "MonoMod.RuntimeDetour.IDetourRuntimePlatform:GetIdentifiable", logErrorInTrace: false);
+
+            private delegate IntPtr GetNativeStartDelegate(object instance, MethodBase method);
+            private static readonly GetNativeStartDelegate? GetNativeStartMethod = GetDelegate<GetNativeStartDelegate>(
+                "MonoMod.RuntimeDetour.IDetourRuntimePlatform:GetNativeStart", logErrorInTrace: false);
+
+
+            private delegate object GetCurrentPlatformTripleDelegate();
+            private static readonly GetCurrentPlatformTripleDelegate? CurrentPlatformTripleMethod = GetPropertyGetterDelegate<GetCurrentPlatformTripleDelegate>(
+                "MonoMod.Core.Platforms.PlatformTriple:Current", logErrorInTrace: false);
+
+            private delegate MethodBase GetIdentifiableDelegate(object instance, MethodBase method);
+            private static readonly GetIdentifiableDelegate? GetIdentifiableMethod = GetDelegate<GetIdentifiableDelegate>(
+                "MonoMod.Core.Platforms.PlatformTriple:GetIdentifiable", logErrorInTrace: false);
+
+            private delegate IntPtr GetNativeMethodBodyDelegate(object instance, MethodBase method);
+            private static readonly GetNativeMethodBodyDelegate? GetNativeMethodBodyMethod = GetDelegate<GetNativeMethodBodyDelegate>(
+                "MonoMod.Core.Platforms.PlatformTriple:GetNativeMethodBody", logErrorInTrace: false);
+
+            public static MethodBase? GetIdentifiable(MethodBase method)
+            {
+                try
+                {
+                    if (CurrentRuntimeMethod?.Invoke() is { } runtime)
+                        return GetIdentifiableOldMethod?.Invoke(runtime, method);
+
+                    if (CurrentPlatformTripleMethod?.Invoke() is { } platformTriple)
+                        return GetIdentifiableMethod?.Invoke(platformTriple, method);
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.ToString());
+                }
+
+                return null;
+            }
+
+            public static IntPtr GetNativeMethodBody(MethodBase method)
+            {
+                try
+                {
+                    if (CurrentRuntimeMethod?.Invoke() is { } runtine)
+                        return GetNativeStartMethod?.Invoke(runtine, method) ?? IntPtr.Zero;
+
+                    if (CurrentPlatformTripleMethod?.Invoke() is { } platformTriple)
+                        return GetNativeMethodBodyMethod?.Invoke(platformTriple, method) ?? IntPtr.Zero;
+                }
+                catch (Exception e)
+                {
+                    Trace.TraceError(e.ToString());
+                }
+
+                return IntPtr.Zero;
+            }
+        }
+        
         public virtual IEnumerable<MethodBase> GetAllPatchedMethods() => Harmony.GetAllPatchedMethods();
 
         public virtual global::BUTR.CrashReport.Models.HarmonyPatches? GetPatchInfo(MethodBase originalMethod)
@@ -118,6 +173,10 @@ namespace BUTR.CrashReport.Bannerlord
                 return null;
             }
         }
+        
+        public MethodBase? GetIdentifiable(MethodBase method) => MonoModUtils.GetIdentifiable(method);
+
+        public IntPtr GetNativeMethodBody(MethodBase method) => MonoModUtils.GetNativeMethodBody(method);
     }
 }
 
