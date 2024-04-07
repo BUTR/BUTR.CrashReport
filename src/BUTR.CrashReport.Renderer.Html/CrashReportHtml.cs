@@ -151,7 +151,7 @@ public static partial class CrashReportHtml
                 .AppendIf(stacktrace.ExecutingMethod.CSharpILMixedInstructions.Count > 0, sp => sp
                     .Append(ContainerCode($"{id2}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                 .AppendIf(stacktrace.ExecutingMethod.CSharpInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id3}", "C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
+                    .Append(ContainerCode($"{id3}", "C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpInstructions.Select(x => x.EscapeGenerics())))))
                 .AppendIf(stacktrace.ExecutingMethod.NativeInstructions.Count > 0, sp => sp
                     .Append(ContainerCode($"{id4}", "Native:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics())))))
                 .Append("</li>")
@@ -180,7 +180,7 @@ public static partial class CrashReportHtml
                         .AppendIf(method.CSharpILMixedInstructions.Count > 0, sp => sp
                             .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                         .AppendIf(method.CSharpInstructions.Count > 0, sp => sp
-                            .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
+                            .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, method.CSharpInstructions.Select(x => x.EscapeGenerics())))))
                         .Append("</li>");
                 }
                 sbMain.Append("</ul>");
@@ -205,7 +205,7 @@ public static partial class CrashReportHtml
                     .AppendIf(stacktrace.OriginalMethod.CSharpILMixedInstructions.Count > 0, sb => sb
                         .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
                     .AppendIf(stacktrace.OriginalMethod.CSharpInstructions.Count > 0, sb => sb
-                        .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())))))
+                        .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpInstructions.Select(x => x.EscapeGenerics())))))
                     .Append("</li>")
                     .Append("</ul>");
             }
