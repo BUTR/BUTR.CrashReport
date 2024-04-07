@@ -109,6 +109,12 @@ namespace BUTR.CrashReport.Bannerlord
         {
             var butrLoaderVersion = GetBUTRLoaderVersion(crashReport);
             var blseVersion = GetBLSEVersion(crashReport);
+            var launcherExVersion = GetLauncherExVersion(crashReport);
+            
+            var additionalMetdata = new List<MetadataModel>();
+            if (!string.IsNullOrEmpty(launcherExVersion))
+                additionalMetdata.Add(new MetadataModel { Key = "LauncherExVersion", Value = launcherExVersion });
+            
             return new CrashReportMetadataModel
             {
                 GameName = "Bannerlord",
@@ -122,10 +128,7 @@ namespace BUTR.CrashReport.Bannerlord
 
                 Runtime = null,
 
-                AdditionalMetadata = new MetadataModel[]
-                {
-                    new MetadataModel { Key = "LauncherExVersion", Value = GetLauncherExVersion(crashReport) },
-                },
+                AdditionalMetadata = additionalMetdata,
             };
         }
 
