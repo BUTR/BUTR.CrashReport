@@ -69,7 +69,7 @@ namespace BUTR.CrashReport.Bannerlord
     {
         public virtual IEnumerable<MethodBase> GetAllPatchedMethods() => Harmony.GetAllPatchedMethods();
 
-        public virtual global::BUTR.CrashReport.Models.HarmonyPatches GetPatchInfo(MethodBase originalMethod)
+        public virtual global::BUTR.CrashReport.Models.HarmonyPatches? GetPatchInfo(MethodBase originalMethod)
         {
             static global::BUTR.CrashReport.Models.HarmonyPatch Convert(Patch patch, global::BUTR.CrashReport.Models.HarmonyPatchType type) => new()
             {
@@ -83,6 +83,7 @@ namespace BUTR.CrashReport.Bannerlord
             };
         
             var patches = Harmony.GetPatchInfo(originalMethod);
+            if (patches is null) return null;
             return new()
             {
                 Prefixes = patches.Prefixes.Select(x => Convert(x, Models.HarmonyPatchType.Prefix)).ToArray(),
