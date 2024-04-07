@@ -299,7 +299,7 @@ partial class CrashReportHtml
         
     private static string Container(string id, string name, string content, bool hide = false) => $"""
     <div class='root-container' {(hide ? "style='display: none;'" : string.Empty)}>
-      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, '{id}')'>+ {name}</a></h2>
+      <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "{id}")'>+ {name}</a></h2>
       <div id='{id}' class='headers-container'>
         {content}
       </div>
