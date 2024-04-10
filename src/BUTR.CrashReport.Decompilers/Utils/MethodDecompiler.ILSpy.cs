@@ -22,11 +22,11 @@ partial class MethodDecompiler
     /// </summary>
     public static string[] DecompileILCodeExtended(MethodBase? method)
     {
-        if (method is null) return Array.Empty<string>();
+        if (method is null) return [];
 
         try
         {
-            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return Array.Empty<string>();
+            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return [];
 
             using var _ = stream;
             using var peFile = new PEFile("Assembly", stream);
@@ -42,7 +42,7 @@ partial class MethodDecompiler
             Trace.TraceError(e.ToString());
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 
     /// <summary>
@@ -50,11 +50,11 @@ partial class MethodDecompiler
     /// </summary>
     public static string[] DecompileILWithCSharpCode(MethodBase? method)
     {
-        if (method is null) return Array.Empty<string>();
+        if (method is null) return [];
 
         try
         {
-            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return Array.Empty<string>();
+            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return [];
 
             using var _ = stream;
             using var peFile = new PEFile("Assembly", stream);
@@ -70,7 +70,7 @@ partial class MethodDecompiler
             Trace.TraceError(e.ToString());
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 
     /// <summary>
@@ -78,11 +78,11 @@ partial class MethodDecompiler
     /// </summary>
     public static string[] DecompileCSharpCode(MethodBase? method)
     {
-        if (method is null) return Array.Empty<string>();
+        if (method is null) return [];
 
         try
         {
-            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return Array.Empty<string>();
+            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return [];
 
             using var _ = stream;
             using var peFile = new PEFile("Assembly", stream);
@@ -108,6 +108,6 @@ partial class MethodDecompiler
             Trace.TraceError(e.ToString());
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 }

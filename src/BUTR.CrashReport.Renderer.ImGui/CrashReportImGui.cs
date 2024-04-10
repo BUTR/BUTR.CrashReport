@@ -48,7 +48,7 @@ public class CrashReportImGui
     {
         if (PathResolver.Default is DefaultPathResolver pr)
             pr.Resolvers = [path => crashReportRendererUtilities.GetNativeLibrariesFolderPath().Select(x => Path.Combine(x, path))];
-        
+
         var window = Window.Create(WindowOptions.Default with
         {
             Title = $"{crashReportModel.Metadata.GameName} Crash Report",

@@ -51,8 +51,8 @@ partial class MethodDecompiler
             }
         }
 
-        if (nativeCodePtr == IntPtr.Zero) return Array.Empty<string>();
-        if (nativeILOffset == StackFrame.OFFSET_UNKNOWN) return Array.Empty<string>();
+        if (nativeCodePtr == IntPtr.Zero) return [];
+        if (nativeILOffset == StackFrame.OFFSET_UNKNOWN) return [];
 
         try
         {
@@ -63,6 +63,6 @@ partial class MethodDecompiler
             Trace.TraceError(e.ToString());
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 }

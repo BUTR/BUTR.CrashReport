@@ -58,7 +58,7 @@ public static class CrashReportParser
             node = enhancedStacktraceDoc.DocumentNode;
         }
 
-        return node.SelectSingleNode("descendant::div[@id=\"enhanced-stacktrace\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(ParseEnhancedStacktrace).ToArray() ?? Array.Empty<EnhancedStacktraceFrameModel>();
+        return node.SelectSingleNode("descendant::div[@id=\"enhanced-stacktrace\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(ParseEnhancedStacktrace).ToArray() ?? [];
     }
 
     private static HtmlDocument Create(ref string content)
@@ -220,12 +220,12 @@ public static class CrashReportParser
         var node = document.DocumentNode;
         var id = node.SelectSingleNode("descendant::report")?.Attributes?["id"]?.Value ?? string.Empty;
         var gameVersion = node.SelectSingleNode("descendant::game")?.Attributes?["version"]?.Value ?? string.Empty;
-        var installedModules = node.SelectSingleNode("descendant::div[@id=\"installed-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseModule(version, x)).DistinctBy(x => x.Id).ToArray() ?? Array.Empty<ModuleModel>();
+        var installedModules = node.SelectSingleNode("descendant::div[@id=\"installed-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseModule(version, x)).DistinctBy(x => x.Id).ToArray() ?? [];
         var exception = ParseExceptions(node.SelectSingleNode("descendant::div[@id=\"exception\"]"), installedModules);
-        var involvedModules = node.SelectSingleNode("descendant::div[@id=\"involved-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").SelectMany(ParseInvolvedModule).ToArray() ?? Array.Empty<InvolvedModuleOrPluginModel>();
+        var involvedModules = node.SelectSingleNode("descendant::div[@id=\"involved-modules\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").SelectMany(ParseInvolvedModule).ToArray() ?? [];
         var enhancedStacktrace = GetEnhancedStacktrace(content.AsSpan(), version, node);
 
-        var assemblies = node.SelectSingleNode("descendant::div[@id=\"assemblies\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseAssembly(x, installedModules)).ToArray() ?? Array.Empty<AssemblyModel>();
+        var assemblies = node.SelectSingleNode("descendant::div[@id=\"assemblies\"]/ul")?.ChildNodes.Where(cn => cn.Name == "li").Select(x => ParseAssembly(x, installedModules)).ToArray() ?? [];
         var harmonyPatches = node.SelectSingleNode("descendant::div[@id=\"harmony-patches\"]/ul").ChildNodes.Where(cn => cn.Name == "li").Select(ParseHarmonyPatch).ToArray();
         var launcherType = node.SelectSingleNode("descendant::launcher")?.Attributes?["type"]?.Value ?? string.Empty;
         var launcherVersion = node.SelectSingleNode("descendant::launcher")?.Attributes?["version"]?.Value ?? string.Empty;
@@ -452,7 +452,7 @@ public static class CrashReportParser
                 AdditionalMetadata = executingMethod.AdditionalMetadata,
             },
             OriginalMethod = null,
-            PatchMethods = methods.Count == 1 ? Array.Empty<MethodSimple>() : methods.Take(methods.Count - 1).ToArray(),
+            PatchMethods = methods.Count == 1 ? [] : methods.Take(methods.Count - 1).ToArray(),
             MethodFromStackframeIssue = false,
             AdditionalMetadata = Array.Empty<MetadataModel>(),
         };
@@ -517,17 +517,17 @@ public static class CrashReportParser
                 Namespace = split.FirstOrDefault(x => x.StartsWith("Namespace: "))?.Split(':')[1] ?? string.Empty,
                 Index = split.FirstOrDefault(x => x.StartsWith("Index: "))?.Split(':')[1] is { } strIndex && int.TryParse(strIndex, out var index) ? index : 0,
                 Priority = split.FirstOrDefault(x => x.StartsWith("Priority: "))?.Split(':')[1] is { } strPriority && int.TryParse(strPriority, out var piority) ? piority : 400,
-                Before = split.FirstOrDefault(x => x.StartsWith("Before: "))?.Split(':')[1].Split(',') ?? Array.Empty<string>(),
-                After = split.FirstOrDefault(x => x.StartsWith("After: "))?.Split(':')[1].Split(',') ?? Array.Empty<string>(),
+                Before = split.FirstOrDefault(x => x.StartsWith("Before: "))?.Split(':')[1].Split(',') ?? [],
+                After = split.FirstOrDefault(x => x.StartsWith("After: "))?.Split(':')[1].Split(',') ?? [],
                 AdditionalMetadata = Array.Empty<MetadataModel>(),
             };
         }
 
         var originalMethodFullName = node.ChildNodes.Skip(0).First().InnerText.Trim('\n');
-        var prefixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Prefixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Prefix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
-        var postfixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Postfixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Postfix)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
-        var transpilers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Transpilers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Transpiler)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
-        var finalizers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Finalizers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Finalizer)).ToArray() ?? Array.Empty<HarmonyPatchModel>();
+        var prefixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Prefixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Prefix)).ToArray() ?? [];
+        var postfixes = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Postfixes") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Postfix)).ToArray() ?? [];
+        var transpilers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Transpilers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Transpiler)).ToArray() ?? [];
+        var finalizers = node.ChildNodes.FirstOrDefault(x => x.InnerText?.Contains("Finalizers") == true)?.SelectSingleNode("descendant::ul/li")?.ChildNodes.Select(x => ParsePatch(x, HarmonyPatchType.Finalizer)).ToArray() ?? [];
         var harmonyPatchModel = new HarmonyPatchesModel
         {
             OriginalMethodName = originalMethodFullName.Split('.').Last(),

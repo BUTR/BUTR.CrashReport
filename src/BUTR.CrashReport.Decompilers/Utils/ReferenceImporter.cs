@@ -81,6 +81,6 @@ public static class ReferenceImporter
             Trace.TraceError(e.ToString());
         }
 
-        return Array.Empty<AssemblyTypeReferenceInternal>();
+        return [];
     });
 }

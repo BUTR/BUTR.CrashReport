@@ -47,13 +47,13 @@ partial class MethodDecompiler
     /// </summary>
     public static string[] DecompileILCode(MethodBase? method)
     {
-        static string[] ToLines(CilInstructionCollection? instructions) => instructions?.Select(x => x.ToString()).ToArray() ?? Array.Empty<string>();
+        static string[] ToLines(CilInstructionCollection? instructions) => instructions?.Select(x => x.ToString()).ToArray() ?? [];
 
-        if (method is null) return Array.Empty<string>();
+        if (method is null) return [];
 
         try
         {
-            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return Array.Empty<string>();
+            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return [];
 
             using var _ = stream;
             using var ms = stream as MemoryStream ?? new MemoryStream();
@@ -70,7 +70,7 @@ partial class MethodDecompiler
 
         try
         {
-            if (!TryGetMethodDefinition(method, out _, out var methodDefinition)) return Array.Empty<string>();
+            if (!TryGetMethodDefinition(method, out _, out var methodDefinition)) return [];
 
             return ToLines(methodDefinition.CilMethodBody?.Instructions);
         }
@@ -79,6 +79,6 @@ partial class MethodDecompiler
             Trace.TraceError(e.ToString());
         }
 
-        return Array.Empty<string>();
+        return [];
     }
 }

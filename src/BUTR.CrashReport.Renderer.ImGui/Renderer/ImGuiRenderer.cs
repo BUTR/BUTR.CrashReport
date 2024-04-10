@@ -55,7 +55,7 @@ internal partial class ImGuiRenderer
     private readonly ICrashReportRendererUtilities _crashReportRendererUtilities;
     private readonly Action _onClose;
 
-    private byte[] _loadedPluginsTitle = Array.Empty<byte>();
+    private byte[] _loadedPluginsTitle = [];
 
     public ImGuiRenderer(CmGui imgui, CrashReportModel crashReport, IList<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities, Action onClose)
     {

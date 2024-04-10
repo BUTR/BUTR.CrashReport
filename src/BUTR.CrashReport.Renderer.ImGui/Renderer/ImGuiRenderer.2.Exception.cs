@@ -9,10 +9,10 @@ namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
-    private byte[][] _exceptionsUtf8 = Array.Empty<byte[]>();
-    private EnhancedStacktraceFrameModel?[] _stacktracesUtf8 = Array.Empty<EnhancedStacktraceFrameModel>();
-    private byte[][] _levelInputIdUtf8 = Array.Empty<byte[]>();
-    private int[] _callstackLineCount = Array.Empty<int>();
+    private byte[][] _exceptionsUtf8 = [];
+    private EnhancedStacktraceFrameModel?[] _stacktracesUtf8 = [];
+    private byte[][] _levelInputIdUtf8 = [];
+    private int[] _callstackLineCount = [];
 
     private void InitializeExceptionRecursively()
     {

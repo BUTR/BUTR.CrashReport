@@ -1,5 +1,8 @@
 ﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.ImGui.Extensions;
 using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
+
+using HonkPerf.NET.RefLinq;
 
 using ImGuiNET;
 
@@ -176,19 +179,18 @@ partial class ImGuiRenderer
 
                         var moduleId2 = method.ModuleId ?? "UNKNOWN";
                         var pluginId2 = method.LoaderPluginId ?? "UNKNOWN";
-                        var harmonyPatch = method as MethodHarmonyPatch;
+                        var harmonyPatchType = method.AdditionalMetadata.ToRefLinq().Where(x => x.Key == "HarmonyPatchType").FirstOrDefault();
 
                         if (moduleId2 != "UNKNOWN") _imgui.RenderId("Module Id:\0"u8, moduleId2);
                         if (pluginId2 != "UNKNOWN") _imgui.RenderId("Plugin Id:\0"u8, pluginId2);
 
                         _imgui.TextSameLine("Type: \0"u8);
-                        _imgui.Text(harmonyPatch is not null ? "Harmony\0"u8 : "UNKNOWN\0"u8);
+                        _imgui.Text(harmonyPatchType is not null ? "Harmony\0"u8 : "UNKNOWN\0"u8);
 
-                        if (harmonyPatch is not null)
+                        if (harmonyPatchType is not null)
                         {
-                            var harmonyPatchType = Clamp(harmonyPatch.PatchType, HarmonyPatchType.Prefix, HarmonyPatchType.Transpiler);
                             _imgui.TextSameLine("Patch Type: \0"u8);
-                            _imgui.Text(_harmonyPatchTypeNames[harmonyPatchType]);
+                            _imgui.Text(harmonyPatchType.Value);
                         }
 
                         RenderCode(method);

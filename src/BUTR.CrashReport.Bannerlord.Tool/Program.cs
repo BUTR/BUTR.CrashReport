@@ -64,7 +64,7 @@ public static class Program
                     {
                         Converters = { new JsonStringEnumConverter() }
                     })!;
-                    var logs = logsStream is not null ? JsonSerializer.Deserialize<LogSource[]>(logsStream)! : Array.Empty<LogSource>();
+                    var logs = logsStream is not null ? JsonSerializer.Deserialize<LogSource[]>(logsStream)! : [];
 
                     var html = CrashReportHtml.AddData(CrashReportHtml.Build(crashReport, logs), crashReportJson, minidump, saveFile, screenshot);
 

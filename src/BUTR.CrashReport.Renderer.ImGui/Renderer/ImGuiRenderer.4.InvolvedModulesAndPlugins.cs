@@ -1,4 +1,7 @@
 ﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.ImGui.Extensions;
+
+using HonkPerf.NET.RefLinq;
 
 using ImGuiNET;
 
@@ -10,17 +13,8 @@ namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
-    private static readonly byte[][] _harmonyPatchTypeNames =
-    [
-        [],
-        "Prefix\0"u8.ToArray(),     // Prefix
-        "Postfix\0"u8.ToArray(),    // Postfix
-        "Transpiler\0"u8.ToArray(), // Transpiler
-        "Finalizer\0"u8.ToArray(),  // Finalizer
-    ];
-
-    private KeyValuePair<string, EnhancedStacktraceFrameModel[]>[] _enhancedStacktraceGroupedByModuleId = Array.Empty<KeyValuePair<string, EnhancedStacktraceFrameModel[]>>();
-    private KeyValuePair<string, EnhancedStacktraceFrameModel[]>[] _enhancedStacktraceGroupedByLoaderPluginIdId = Array.Empty<KeyValuePair<string, EnhancedStacktraceFrameModel[]>>();
+    private KeyValuePair<string, EnhancedStacktraceFrameModel[]>[] _enhancedStacktraceGroupedByModuleId = [];
+    private KeyValuePair<string, EnhancedStacktraceFrameModel[]>[] _enhancedStacktraceGroupedByLoaderPluginIdId = [];
 
     private void InitializeInvolved()
     {
@@ -65,7 +59,7 @@ partial class ImGuiRenderer
                         for (var k = 0; k < stacktrace.PatchMethods.Count; k++)
                         {
                             var method = stacktrace.PatchMethods[k];
-                            var harmonyPatch = method as MethodHarmonyPatch;
+                            var harmonyPatchType = method.AdditionalMetadata.ToRefLinq().Where(x => x.Key == "HarmonyPatchType").FirstOrDefault();
 
                             // Ignore blank transpilers used to force the jitter to skip inlining
                             if (method.MethodName == "BlankTranspiler") continue;
@@ -74,11 +68,10 @@ partial class ImGuiRenderer
                             if (moduleId2 == "UNKNOWN") _imgui.RenderId("Module Id:\0"u8, kv.Key);
                             _imgui.TextSameLine("Method: \0"u8);
                             _imgui.Text(method.MethodFullDescription);
-                            if (harmonyPatch is not null)
+                            if (harmonyPatchType is not null)
                             {
-                                var harmonyPatchType = Clamp(harmonyPatch.PatchType, HarmonyPatchType.Prefix, HarmonyPatchType.Transpiler);
                                 _imgui.TextSameLine("Harmony Patch Type: }\0"u8);
-                                _imgui.Text(_harmonyPatchTypeNames[harmonyPatchType]);
+                                _imgui.Text(harmonyPatchType.Value);
                             }
                         }
 
@@ -124,7 +117,7 @@ partial class ImGuiRenderer
                         for (var k = 0; k < stacktrace.PatchMethods.Count; k++)
                         {
                             var method = stacktrace.PatchMethods[k];
-                            var harmonyPatch = method as MethodHarmonyPatch;
+                            var harmonyPatchType = method.AdditionalMetadata.ToRefLinq().Where(x => x.Key == "HarmonyPatchType").FirstOrDefault();
 
                             // Ignore blank transpilers used to force the jitter to skip inlining
                             if (method.MethodName == "BlankTranspiler") continue;
@@ -133,11 +126,10 @@ partial class ImGuiRenderer
                             if (pluginId2 == "UNKNOWN") _imgui.RenderId("Plugin Id:\0"u8, kv.Key);
                             _imgui.TextSameLine("Method: \0"u8);
                             _imgui.Text(method.MethodFullDescription);
-                            if (harmonyPatch is not null)
+                            if (harmonyPatchType is not null)
                             {
-                                var harmonyPatchType = Clamp(harmonyPatch.PatchType, HarmonyPatchType.Prefix, HarmonyPatchType.Transpiler);
                                 _imgui.TextSameLine("Harmony Patch Type: \0"u8);
-                                _imgui.Text(_harmonyPatchTypeNames[harmonyPatchType]);
+                                _imgui.Text(harmonyPatchType.Value);
                             }
                         }
 

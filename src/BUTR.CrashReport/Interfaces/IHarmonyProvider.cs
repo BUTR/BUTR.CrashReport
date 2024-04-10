@@ -1,6 +1,6 @@
-﻿using System;
-using BUTR.CrashReport.Models;
+﻿using BUTR.CrashReport.Models;
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;

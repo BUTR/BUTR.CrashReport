@@ -103,7 +103,7 @@ internal static unsafe class UnsafeHelper
     public static byte[] ToUtf8Array(string value)
     {
         if (string.IsNullOrEmpty(value))
-            return Array.Empty<byte>();
+            return [];
 
         var length = Encoding.UTF8.GetMaxByteCount(value.Length) + 1;
         var array = new byte[length];

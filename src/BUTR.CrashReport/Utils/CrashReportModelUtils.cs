@@ -72,7 +72,10 @@ public static class CrashReportModelUtils
                     };
                     methods.Add(patchMethod switch
                     {
-                        MethodEntryHarmony meh => new MethodHarmonyPatch(methodSimple, meh.Patch.Type),
+                        MethodEntryHarmony meh => methodSimple with
+                        {
+                            AdditionalMetadata = methodSimple.AdditionalMetadata.Append(new MetadataModel { Key = "HarmonyPatchType", Value = meh.Patch.Type.ToString() }).ToArray()
+                        },
                         _ => methodSimple
                     });
                 }
@@ -106,8 +109,8 @@ public static class CrashReportModelUtils
                         MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
                         NativeInstructions = entry.NativeInstructions,
                         ILInstructions = entry.ILInstructions,
-                        CSharpILMixedInstructions = skipDisassemblyForExecuting ? Array.Empty<string>() : entry.CSharpILMixedInstructions,
-                        CSharpInstructions = skipDisassemblyForExecuting ? Array.Empty<string>() : entry.CSharpInstructions,
+                        CSharpILMixedInstructions = skipDisassemblyForExecuting ? [] : entry.CSharpILMixedInstructions,
+                        CSharpInstructions = skipDisassemblyForExecuting ? [] : entry.CSharpInstructions,
                         AdditionalMetadata = Array.Empty<MetadataModel>(),
                     },
                     OriginalMethod = entry.OriginalMethod is not null ? new()
@@ -120,8 +123,8 @@ public static class CrashReportModelUtils
                         MethodFullDescription = entry.OriginalMethod.Method.FullDescription(),
                         MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
                         ILInstructions = entry.OriginalMethod.ILInstructions,
-                        CSharpILMixedInstructions = skipDisassemblyForOriginal ? Array.Empty<string>() : entry.OriginalMethod.CSharpILMixedInstructions,
-                        CSharpInstructions = skipDisassemblyForOriginal ? Array.Empty<string>() : entry.OriginalMethod.CSharpInstructions,
+                        CSharpILMixedInstructions = skipDisassemblyForOriginal ? [] : entry.OriginalMethod.CSharpILMixedInstructions,
+                        CSharpInstructions = skipDisassemblyForOriginal ? [] : entry.OriginalMethod.CSharpInstructions,
                         AdditionalMetadata = Array.Empty<MetadataModel>()
                     } : null,
                     PatchMethods = methods,
@@ -262,11 +265,11 @@ public static class CrashReportModelUtils
                         Namespace = x.Namespace,
                         Name = x.Name,
                         FullName = x.FullName,
-                    }).ToArray() : Array.Empty<AssemblyImportedTypeReferenceModel>()
-                    : Array.Empty<AssemblyImportedTypeReferenceModel>(),
+                    }).ToArray() : []
+                    : [],
                 ImportedAssemblyReferences = (type & AssemblyModelType.System) == 0
                     ? assembly.GetReferencedAssemblies().Select(AssemblyImportedReferenceModelExtensions.Create).ToArray()
-                    : Array.Empty<AssemblyImportedReferenceModel>(),
+                    : [],
                 AdditionalMetadata = Array.Empty<MetadataModel>(),
             });
         }

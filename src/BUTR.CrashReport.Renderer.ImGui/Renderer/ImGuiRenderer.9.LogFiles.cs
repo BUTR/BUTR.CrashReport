@@ -22,7 +22,7 @@ partial class ImGuiRenderer
         "FTL\0"u8.ToArray(), // Fatal
     ];
 
-    private int[] _logSourceMaxTypeLengths = Array.Empty<int>();
+    private int[] _logSourceMaxTypeLengths = [];
 
     private void InitializeLogFiles()
     {

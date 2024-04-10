@@ -168,10 +168,10 @@ public static partial class CrashReportHtml
                     var id03 = random.Next();
                     var moduleId = method.ModuleId ?? "UNKNOWN";
                     var pluginId = method.LoaderPluginId ?? "UNKNOWN";
-                    var harmonyPatch = method as MethodHarmonyPatch;
+                    var harmonyPatchType = method.AdditionalMetadata.FirstOrDefault(x => x.Key == "HarmonyPatchType");
                     sbMain.Append("<li>")
-                        .Append("Type: ").Append(harmonyPatch is not null ? "Harmony" : "UNKNOWN").Append("<br/>")
-                        .AppendIf(harmonyPatch is not null, sb => sb.Append("Patch Type: ").Append(harmonyPatch!.PatchType.ToString()).Append("<br/>"))
+                        .Append("Type: ").Append(harmonyPatchType is not null ? "Harmony" : "UNKNOWN").Append("<br/>")
+                        .AppendIf(harmonyPatchType is not null, sb => sb.Append("Patch Type: ").Append(harmonyPatchType!.Value).Append("<br/>"))
                         .AppendIf(moduleId != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
                         .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
                         .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
@@ -239,7 +239,7 @@ public static partial class CrashReportHtml
                         .Append("<ul>");
                     foreach (var method in stacktrace.PatchMethods)
                     {
-                        var harmonyPatch = method as MethodHarmonyPatch;
+                        var harmonyPatchType = method.AdditionalMetadata.FirstOrDefault(x => x.Key == "HarmonyPatchType");
 
                         // Ignore blank transpilers used to force the jitter to skip inlining
                         if (method.MethodName == "BlankTranspiler") continue;
@@ -248,7 +248,7 @@ public static partial class CrashReportHtml
                             .AppendIf(moduleId2 == "UNKNOWN", sb => sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
                             .AppendIf(moduleId2 != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
                             .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                            .AppendIf(harmonyPatch is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatch!.PatchType).Append("<br/>"))
+                            .AppendIf(harmonyPatchType is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatchType!.Value).Append("<br/>"))
                             .Append("</li>");
                     }
                     sbMain.Append("</ul>");
@@ -283,7 +283,7 @@ public static partial class CrashReportHtml
                         .Append("<ul>");
                     foreach (var method in stacktrace.PatchMethods)
                     {
-                        var harmonyPatch = method as MethodHarmonyPatch;
+                        var harmonyPatchType = method.AdditionalMetadata.FirstOrDefault(x => x.Key == "HarmonyPatchType");
 
                         // Ignore blank transpilers used to force the jitter to skip inlining
                         if (method.MethodName == "BlankTranspiler") continue;
@@ -292,7 +292,7 @@ public static partial class CrashReportHtml
                             .AppendIf(pluginId2 == "UNKNOWN", sb => sb.Append("Plugin Id: ").Append(pluginId2).Append("<br/>"))
                             .AppendIf(pluginId2 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
                             .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                            .AppendIf(harmonyPatch is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatch!.PatchType).Append("<br/>"))
+                            .AppendIf(harmonyPatchType is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatchType!.Value).Append("<br/>"))
                             .Append("</li>");
                     }
                     sbMain.Append("</ul>");
