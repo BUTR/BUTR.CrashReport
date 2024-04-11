@@ -223,7 +223,7 @@ public static partial class CrashReportHtml
         foreach (var involvedModule in crashReport.InvolvedModules.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
             sbMain.Append("<li>")
-                .Append("Module Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a>").Append("<br/>");
+                .Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a></b>").Append("<br/>");
 
             foreach (var involved in involvedModule)
             {
@@ -238,7 +238,7 @@ public static partial class CrashReportHtml
         foreach (var involvedPlugin in crashReport.InvolvedLoaderPlugins.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
             sbMain.Append("<li>")
-                .Append("Plugin Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(involvedPlugin.Key).Append("\")'>").Append(involvedPlugin.Key).Append("</a>").Append("<br/>");
+                .Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedPlugin.Key).Append("\")'>").Append(involvedPlugin.Key).Append("</a></b>").Append("<br/>");
 
             foreach (var involved in involvedPlugin)
             {
