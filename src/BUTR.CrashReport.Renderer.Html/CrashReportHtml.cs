@@ -222,16 +222,18 @@ public static partial class CrashReportHtml
     {
         foreach (var involvedModule in crashReport.InvolvedModules.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
-            sbMain.Append("<li>")
-                .Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a></b>").Append("<br/>")
-                .Append("<ul>");
+            sbMain.Append("<li>");
+            sbMain.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a></b>");
 
+            sbMain.Append("<ul>");
             foreach (var involved in involvedModule)
             {
                 sbMain.Append("<li>");
                 sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics());
                 sbMain.Append("</li>");
             }
+            sbMain.Append("/<ul>");
+
             sbMain.Append("</li>");
         }
     }
@@ -239,30 +241,34 @@ public static partial class CrashReportHtml
     {
         foreach (var involvedPlugin in crashReport.InvolvedLoaderPlugins.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
-            sbMain.Append("<li>")
-                .Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedPlugin.Key).Append("\")'>").Append(involvedPlugin.Key).Append("</a></b>").Append("<br/>")
-                .Append("<ul>");
+            sbMain.Append("<li>");
+            sbMain.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedPlugin.Key).Append("\")'>").Append(involvedPlugin.Key).Append("</a></b>");
 
+            sbMain.Append("<ul>");
             foreach (var involved in involvedPlugin)
             {
                 sbMain.Append("<li>");
                 sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics());
                 sbMain.Append("</li>");
             }
-            sbMain
-                .Append("</ul>")
-                .Append("</li>");
+            sbMain.Append("/<ul>");
+
+            sbMain.Append("</li>");
         }
     }
     private static string GetInvolvedHtml(CrashReportModel crashReport)
     {
-        var sb = new StringBuilder();
-        sb.Append("From highest probability to lowest:")
-            .Append("<ul>");
-        AddInvolvedModules(crashReport, sb);
-        AddInvolvedPlugins(crashReport, sb);
-        sb.Append("</ul>");
-        return sb.ToString();
+        if (crashReport.InvolvedModules.Count > 0 || crashReport.InvolvedLoaderPlugins.Count > 0)
+        {
+            var sb = new StringBuilder();
+            sb.Append("From highest probability to lowest:")
+                .Append("<ul>");
+            AddInvolvedModules(crashReport, sb);
+            AddInvolvedPlugins(crashReport, sb);
+            sb.Append("</ul>");
+            return sb.ToString();
+        }
+        return string.Empty;
     }
 
     private static string GetInstalledModulesHtml(CrashReportModel crashReport)

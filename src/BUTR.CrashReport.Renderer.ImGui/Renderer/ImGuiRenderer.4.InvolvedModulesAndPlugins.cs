@@ -41,7 +41,7 @@ partial class ImGuiRenderer
 
                     _imgui.TextSameLine("Frame: \0"u8);
                     _imgui.Text(involved.EnhancedStacktraceFrameName);
-                    
+
                     _imgui.Unindent();
                 }
 
@@ -66,7 +66,7 @@ partial class ImGuiRenderer
 
                     _imgui.TextSameLine("Frame: \0"u8);
                     _imgui.Text(involved.EnhancedStacktraceFrameName);
-                    
+
                     _imgui.Unindent();
                 }
 
@@ -77,10 +77,13 @@ partial class ImGuiRenderer
 
     private void RenderInvolvedModulesAndPlugins()
     {
-        _imgui.Text("From highest probability to lowest:\0"u8);
-        _imgui.Indent();
-        RenderInvolvedModules();
-        RenderInvolvedPlugins();
-        _imgui.Unindent();
+        if (_enhancedStacktraceGroupedByModuleId.Length > 0 || _enhancedStacktraceGroupedByLoaderPluginIdId.Length > 0)
+        {
+            _imgui.Text("From highest probability to lowest:\0"u8);
+            _imgui.Indent();
+            RenderInvolvedModules();
+            RenderInvolvedPlugins();
+            _imgui.Unindent();
+        }
     }
 }

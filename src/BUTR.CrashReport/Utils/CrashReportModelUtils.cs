@@ -161,7 +161,7 @@ public static class CrashReportModelUtils
             foreach (var patch in stacktrace.PatchMethods)
             {
                 if (patch.ModuleInfo is null) continue;
-                
+
                 involvedModels.Add(new()
                 {
                     ModuleOrLoaderPluginId = patch.ModuleInfo.Id,
@@ -196,7 +196,7 @@ public static class CrashReportModelUtils
             foreach (var patch in stacktrace.PatchMethods)
             {
                 if (patch.LoaderPluginInfo is null) continue;
-                
+
                 involvedPluginModels.Add(new()
                 {
                     ModuleOrLoaderPluginId = patch.LoaderPluginInfo.Id,
