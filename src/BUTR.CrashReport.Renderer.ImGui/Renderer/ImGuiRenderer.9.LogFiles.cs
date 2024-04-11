@@ -5,8 +5,6 @@ using HonkPerf.NET.RefLinq;
 
 using ImGuiNET;
 
-using System;
-
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer

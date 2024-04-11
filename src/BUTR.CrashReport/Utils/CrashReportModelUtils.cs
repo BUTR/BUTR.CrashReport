@@ -144,17 +144,31 @@ public static class CrashReportModelUtils
     public static List<InvolvedModuleOrPluginModel> GetInvolvedModules(CrashReportInfo crashReport)
     {
         var involvedModels = new List<InvolvedModuleOrPluginModel>();
-        foreach (var stacktrace in crashReport.FilteredStacktrace.GroupBy(m => m.ModuleInfo))
+        foreach (var stacktraces in crashReport.FilteredStacktrace.GroupBy(m => m.ModuleInfo))
         {
-            var module = stacktrace.Key;
-            if (module is null) continue;
-
-            involvedModels.Add(new()
+            if (stacktraces.Key is { } module)
             {
-                ModuleOrLoaderPluginId = module.Id,
-                EnhancedStacktraceFrameName = stacktrace.Last().StackFrameDescription,
-                AdditionalMetadata = Array.Empty<MetadataModel>(),
-            });
+                involvedModels.Add(new()
+                {
+                    ModuleOrLoaderPluginId = module.Id,
+                    EnhancedStacktraceFrameName = stacktraces.Last().StackFrameDescription,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                });
+            }
+        }
+        foreach (var stacktrace in crashReport.FilteredStacktrace)
+        {
+            foreach (var patch in stacktrace.PatchMethods)
+            {
+                if (patch.ModuleInfo is null) continue;
+                
+                involvedModels.Add(new()
+                {
+                    ModuleOrLoaderPluginId = patch.ModuleInfo.Id,
+                    EnhancedStacktraceFrameName = stacktrace.StackFrameDescription,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                });
+            }
         }
         return involvedModels;
     }
@@ -165,17 +179,31 @@ public static class CrashReportModelUtils
     public static List<InvolvedModuleOrPluginModel> GetInvolvedPlugins(CrashReportInfo crashReport)
     {
         var involvedPluginModels = new List<InvolvedModuleOrPluginModel>();
-        foreach (var stacktrace in crashReport.FilteredStacktrace.GroupBy(m => m.LoaderPluginInfo))
+        foreach (var stacktraces in crashReport.FilteredStacktrace.GroupBy(m => m.LoaderPluginInfo))
         {
-            var loaderPlugin = stacktrace.Key;
-            if (loaderPlugin is null) continue;
-
-            involvedPluginModels.Add(new()
+            if (stacktraces.Key is { } loaderPlugin)
             {
-                ModuleOrLoaderPluginId = loaderPlugin.Id,
-                EnhancedStacktraceFrameName = stacktrace.Last().StackFrameDescription,
-                AdditionalMetadata = Array.Empty<MetadataModel>(),
-            });
+                involvedPluginModels.Add(new()
+                {
+                    ModuleOrLoaderPluginId = loaderPlugin.Id,
+                    EnhancedStacktraceFrameName = stacktraces.Last().StackFrameDescription,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                });
+            }
+        }
+        foreach (var stacktrace in crashReport.FilteredStacktrace)
+        {
+            foreach (var patch in stacktrace.PatchMethods)
+            {
+                if (patch.LoaderPluginInfo is null) continue;
+                
+                involvedPluginModels.Add(new()
+                {
+                    ModuleOrLoaderPluginId = patch.LoaderPluginInfo.Id,
+                    EnhancedStacktraceFrameName = stacktrace.StackFrameDescription,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                });
+            }
         }
         return involvedPluginModels;
     }

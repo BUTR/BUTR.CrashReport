@@ -5,7 +5,6 @@ using HonkPerf.NET.RefLinq;
 
 using ImGuiNET;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -146,7 +145,7 @@ partial class ImGuiRenderer
 
     private void RenderInvolvedModulesAndPlugins()
     {
-        _imgui.Text("Based on Stacktrace:\0"u8);
+        _imgui.Text("Based on Stacktrace (From highest probability to lowest):\0"u8);
         _imgui.Indent();
         RenderInvolvedModules();
         RenderInvolvedPlugins();
