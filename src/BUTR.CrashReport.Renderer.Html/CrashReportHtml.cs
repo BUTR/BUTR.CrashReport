@@ -251,7 +251,7 @@ public static partial class CrashReportHtml
     private static string GetInvolvedHtml(CrashReportModel crashReport)
     {
         var sb = new StringBuilder();
-        sb.Append("Based on Stacktrace (From highest probability to lowest):")
+        sb.Append("From highest probability to lowest:")
             .Append("<ul>");
         AddInvolvedModules(crashReport, sb);
         AddInvolvedPlugins(crashReport, sb);
