@@ -223,11 +223,13 @@ public static partial class CrashReportHtml
         foreach (var involvedModule in crashReport.InvolvedModules.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
             sbMain.Append("<li>")
-                .Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a></b>").Append("<br/>");
+                .Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a></b>").Append("<br/>")
+                .Append("<ul>");
 
             foreach (var involved in involvedModule)
             {
-                sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics()).Append("<br/>");
+                sbMain.Append("<li>");
+                sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics());
                 sbMain.Append("</li>");
             }
             sbMain.Append("</li>");
@@ -238,14 +240,18 @@ public static partial class CrashReportHtml
         foreach (var involvedPlugin in crashReport.InvolvedLoaderPlugins.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
             sbMain.Append("<li>")
-                .Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedPlugin.Key).Append("\")'>").Append(involvedPlugin.Key).Append("</a></b>").Append("<br/>");
+                .Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(involvedPlugin.Key).Append("\")'>").Append(involvedPlugin.Key).Append("</a></b>").Append("<br/>")
+                .Append("<ul>");
 
             foreach (var involved in involvedPlugin)
             {
-                sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics()).Append("<br/>");
+                sbMain.Append("<li>");
+                sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics());
                 sbMain.Append("</li>");
             }
-            sbMain.Append("</li>");
+            sbMain
+                .Append("</ul>")
+                .Append("</li>");
         }
     }
     private static string GetInvolvedHtml(CrashReportModel crashReport)
