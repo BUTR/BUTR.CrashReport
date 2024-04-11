@@ -220,89 +220,31 @@ public static partial class CrashReportHtml
 
     private static void AddInvolvedModules(CrashReportModel crashReport, StringBuilder sbMain)
     {
-        foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.ExecutingMethod.ModuleId ?? "UNKNOWN"))
+        foreach (var involvedModule in crashReport.InvolvedLoaderPlugins.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
-            var moduleId = grouping.Key;
-            if (moduleId == "UNKNOWN") continue;
-
             sbMain.Append("<li>")
-                .Append("Module Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a>").Append("<br/>");
+                .Append("Module Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a>").Append("<br/>");
 
-            foreach (var stacktrace in grouping)
+            foreach (var involved in involvedModule)
             {
-                sbMain.Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                    .Append("Frame: ").Append(stacktrace.FrameDescription.EscapeGenerics()).Append("<br/>");
-
-                if (stacktrace.PatchMethods.Count > 0)
-                {
-                    sbMain.Append("Patches:").Append("<br/>")
-                        .Append("<ul>");
-                    foreach (var method in stacktrace.PatchMethods)
-                    {
-                        var harmonyPatchType = method.AdditionalMetadata.FirstOrDefault(x => x.Key == "HarmonyPatchType");
-
-                        // Ignore blank transpilers used to force the jitter to skip inlining
-                        if (method.MethodName == "BlankTranspiler") continue;
-                        var moduleId2 = method.ModuleId ?? "UNKNOWN";
-                        sbMain.Append("<li>")
-                            .AppendIf(moduleId2 == "UNKNOWN", sb => sb.Append("Module Id: ").Append(moduleId2).Append("<br/>"))
-                            .AppendIf(moduleId2 != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
-                            .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                            .AppendIf(harmonyPatchType is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatchType!.Value).Append("<br/>"))
-                            .Append("</li>");
-                    }
-                    sbMain.Append("</ul>");
-                }
-
-                sbMain.Append("</br>");
-
+                sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics()).Append("<br/>");
                 sbMain.Append("</li>");
             }
-
             sbMain.Append("</li>");
         }
     }
     private static void AddInvolvedPlugins(CrashReportModel crashReport, StringBuilder sbMain)
     {
-        foreach (var grouping in crashReport.EnhancedStacktrace.GroupBy(x => x.ExecutingMethod.LoaderPluginId ?? "UNKNOWN"))
+        foreach (var involvedPlugin in crashReport.InvolvedLoaderPlugins.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
-            var pluginId = grouping.Key;
-            if (pluginId == "UNKNOWN") continue;
-
             sbMain.Append("<li>")
-                .Append("Plugin Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a>").Append("<br/>");
+                .Append("Plugin Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(involvedPlugin.Key).Append("\")'>").Append(involvedPlugin.Key).Append("</a>").Append("<br/>");
 
-            foreach (var stacktrace in grouping)
+            foreach (var involved in involvedPlugin)
             {
-                sbMain.Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                    .Append("Frame: ").Append(stacktrace.FrameDescription.EscapeGenerics()).Append("<br/>");
-
-                if (stacktrace.PatchMethods.Count > 0)
-                {
-                    sbMain.Append("Patches:").Append("<br/>")
-                        .Append("<ul>");
-                    foreach (var method in stacktrace.PatchMethods)
-                    {
-                        var harmonyPatchType = method.AdditionalMetadata.FirstOrDefault(x => x.Key == "HarmonyPatchType");
-
-                        // Ignore blank transpilers used to force the jitter to skip inlining
-                        if (method.MethodName == "BlankTranspiler") continue;
-                        var pluginId2 = method.LoaderPluginId ?? "UNKNOWN";
-                        sbMain.Append("<li>")
-                            .AppendIf(pluginId2 == "UNKNOWN", sb => sb.Append("Plugin Id: ").Append(pluginId2).Append("<br/>"))
-                            .AppendIf(pluginId2 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
-                            .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                            .AppendIf(harmonyPatchType is not null, sb => sb.Append("Harmony Patch Type: ").Append(harmonyPatchType!.Value).Append("<br/>"))
-                            .Append("</li>");
-                    }
-                    sbMain.Append("</ul>");
-                }
-
-                sbMain.Append("</br>");
-
+                sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics()).Append("<br/>");
                 sbMain.Append("</li>");
             }
-
             sbMain.Append("</li>");
         }
     }

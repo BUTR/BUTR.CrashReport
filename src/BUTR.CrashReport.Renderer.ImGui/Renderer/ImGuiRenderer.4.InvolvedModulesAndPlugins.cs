@@ -1,7 +1,4 @@
 ﻿using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Renderer.ImGui.Extensions;
-
-using HonkPerf.NET.RefLinq;
 
 using ImGuiNET;
 
@@ -12,19 +9,19 @@ namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
-    private KeyValuePair<string, EnhancedStacktraceFrameModel[]>[] _enhancedStacktraceGroupedByModuleId = [];
-    private KeyValuePair<string, EnhancedStacktraceFrameModel[]>[] _enhancedStacktraceGroupedByLoaderPluginIdId = [];
+    private KeyValuePair<string, InvolvedModuleOrPluginModel[]>[] _enhancedStacktraceGroupedByModuleId = [];
+    private KeyValuePair<string, InvolvedModuleOrPluginModel[]>[] _enhancedStacktraceGroupedByLoaderPluginIdId = [];
 
     private void InitializeInvolved()
     {
-        _enhancedStacktraceGroupedByModuleId = _crashReport.EnhancedStacktrace
-            .GroupBy(x => x.ExecutingMethod.ModuleId ?? "UNKNOWN")
-            .Select(x => new KeyValuePair<string, EnhancedStacktraceFrameModel[]>(x.Key, x.ToArray()))
+        _enhancedStacktraceGroupedByModuleId = _crashReport.InvolvedModules
+            .GroupBy(x => x.ModuleOrLoaderPluginId)
+            .Select(x => new KeyValuePair<string, InvolvedModuleOrPluginModel[]>(x.Key, x.ToArray()))
             .ToArray();
 
-        _enhancedStacktraceGroupedByLoaderPluginIdId = _crashReport.EnhancedStacktrace
-            .GroupBy(x => x.ExecutingMethod.LoaderPluginId ?? "UNKNOWN")
-            .Select(x => new KeyValuePair<string, EnhancedStacktraceFrameModel[]>(x.Key, x.ToArray()))
+        _enhancedStacktraceGroupedByLoaderPluginIdId = _crashReport.InvolvedLoaderPlugins
+            .GroupBy(x => x.ModuleOrLoaderPluginId)
+            .Select(x => new KeyValuePair<string, InvolvedModuleOrPluginModel[]>(x.Key, x.ToArray()))
             .ToArray();
     }
 
@@ -32,51 +29,19 @@ partial class ImGuiRenderer
     {
         foreach (var kv in _enhancedStacktraceGroupedByModuleId)
         {
-            if (kv.Key == "UNKNOWN") continue;
-
             if (_imgui.TreeNode(kv.Key, ImGuiTreeNodeFlags.DefaultOpen))
             {
                 _imgui.RenderId("Module Id:\0"u8, kv.Key);
 
                 for (var j = 0; j < kv.Value.Length; j++)
                 {
-                    var stacktrace = kv.Value[j];
+                    var involved = kv.Value[j];
                     _imgui.Bullet();
                     _imgui.Indent();
 
-                    _imgui.TextSameLine("Method: \0"u8);
-                    _imgui.Text(stacktrace.ExecutingMethod.MethodFullDescription);
                     _imgui.TextSameLine("Frame: \0"u8);
-                    _imgui.Text(stacktrace.FrameDescription);
-
-                    if (stacktrace.PatchMethods.Count > 0)
-                    {
-                        _imgui.Text("Patches:\0"u8);
-
-                        _imgui.Bullet();
-                        _imgui.Indent();
-                        for (var k = 0; k < stacktrace.PatchMethods.Count; k++)
-                        {
-                            var method = stacktrace.PatchMethods[k];
-                            var harmonyPatchType = method.AdditionalMetadata.ToRefLinq().Where(x => x.Key == "HarmonyPatchType").FirstOrDefault();
-
-                            // Ignore blank transpilers used to force the jitter to skip inlining
-                            if (method.MethodName == "BlankTranspiler") continue;
-                            var moduleId2 = method.ModuleId ?? "UNKNOWN";
-
-                            if (moduleId2 == "UNKNOWN") _imgui.RenderId("Module Id:\0"u8, kv.Key);
-                            _imgui.TextSameLine("Method: \0"u8);
-                            _imgui.Text(method.MethodFullDescription);
-                            if (harmonyPatchType is not null)
-                            {
-                                _imgui.TextSameLine("Harmony Patch Type: }\0"u8);
-                                _imgui.Text(harmonyPatchType.Value);
-                            }
-                        }
-
-                        _imgui.Unindent();
-                    }
-
+                    _imgui.Text(involved.EnhancedStacktraceFrameName);
+                    
                     _imgui.Unindent();
                 }
 
@@ -89,52 +54,19 @@ partial class ImGuiRenderer
     {
         foreach (var kv in _enhancedStacktraceGroupedByLoaderPluginIdId)
         {
-            if (kv.Key == "UNKNOWN") continue;
-
             if (_imgui.TreeNode(kv.Key, ImGuiTreeNodeFlags.DefaultOpen))
             {
                 _imgui.RenderId("Plugin Id:\0"u8, kv.Key);
 
                 for (var j = 0; j < kv.Value.Length; j++)
                 {
-                    var stacktrace = kv.Value[j];
+                    var involved = kv.Value[j];
                     _imgui.Bullet();
                     _imgui.Indent();
 
-                    _imgui.TextSameLine("Method: \0"u8);
-                    _imgui.Text(stacktrace.ExecutingMethod.MethodFullDescription);
                     _imgui.TextSameLine("Frame: \0"u8);
-                    _imgui.Text(stacktrace.FrameDescription);
-
-                    if (stacktrace.PatchMethods.Count > 0)
-                    {
-                        _imgui.Text("Patches:\0"u8);
-
-                        _imgui.Bullet();
-                        _imgui.Indent();
-
-                        for (var k = 0; k < stacktrace.PatchMethods.Count; k++)
-                        {
-                            var method = stacktrace.PatchMethods[k];
-                            var harmonyPatchType = method.AdditionalMetadata.ToRefLinq().Where(x => x.Key == "HarmonyPatchType").FirstOrDefault();
-
-                            // Ignore blank transpilers used to force the jitter to skip inlining
-                            if (method.MethodName == "BlankTranspiler") continue;
-                            var pluginId2 = method.LoaderPluginId ?? "UNKNOWN";
-
-                            if (pluginId2 == "UNKNOWN") _imgui.RenderId("Plugin Id:\0"u8, kv.Key);
-                            _imgui.TextSameLine("Method: \0"u8);
-                            _imgui.Text(method.MethodFullDescription);
-                            if (harmonyPatchType is not null)
-                            {
-                                _imgui.TextSameLine("Harmony Patch Type: \0"u8);
-                                _imgui.Text(harmonyPatchType.Value);
-                            }
-                        }
-
-                        _imgui.Unindent();
-                    }
-
+                    _imgui.Text(involved.EnhancedStacktraceFrameName);
+                    
                     _imgui.Unindent();
                 }
 
@@ -145,7 +77,7 @@ partial class ImGuiRenderer
 
     private void RenderInvolvedModulesAndPlugins()
     {
-        _imgui.Text("Based on Stacktrace (From highest probability to lowest):\0"u8);
+        _imgui.Text("From highest probability to lowest:\0"u8);
         _imgui.Indent();
         RenderInvolvedModules();
         RenderInvolvedPlugins();
