@@ -261,7 +261,7 @@ public static partial class CrashReportHtml
         if (crashReport.InvolvedModules.Count > 0 || crashReport.InvolvedLoaderPlugins.Count > 0)
         {
             var sb = new StringBuilder();
-            sb.Append("From highest probability to lowest:")
+            sb.Append("From Highest Probability to Lowest:")
                 .Append("<ul>");
             AddInvolvedModules(crashReport, sb);
             AddInvolvedPlugins(crashReport, sb);

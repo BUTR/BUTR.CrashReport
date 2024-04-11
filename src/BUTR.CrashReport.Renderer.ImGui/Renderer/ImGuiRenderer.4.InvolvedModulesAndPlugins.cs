@@ -79,7 +79,7 @@ partial class ImGuiRenderer
     {
         if (_enhancedStacktraceGroupedByModuleId.Length > 0 || _enhancedStacktraceGroupedByLoaderPluginIdId.Length > 0)
         {
-            _imgui.Text("From highest probability to lowest:\0"u8);
+            _imgui.Text("From Highest Probability to Lowest:\0"u8);
             _imgui.Indent();
             RenderInvolvedModules();
             RenderInvolvedPlugins();
