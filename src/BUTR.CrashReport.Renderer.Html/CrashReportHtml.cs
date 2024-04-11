@@ -232,7 +232,7 @@ public static partial class CrashReportHtml
                 sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics());
                 sbMain.Append("</li>");
             }
-            sbMain.Append("/<ul>");
+            sbMain.Append("</ul>");
 
             sbMain.Append("</li>");
         }
@@ -251,7 +251,7 @@ public static partial class CrashReportHtml
                 sbMain.Append("Frame: ").Append(involved.EnhancedStacktraceFrameName.EscapeGenerics());
                 sbMain.Append("</li>");
             }
-            sbMain.Append("/<ul>");
+            sbMain.Append("</ul>");
 
             sbMain.Append("</li>");
         }
