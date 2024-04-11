@@ -220,7 +220,7 @@ public static partial class CrashReportHtml
 
     private static void AddInvolvedModules(CrashReportModel crashReport, StringBuilder sbMain)
     {
-        foreach (var involvedModule in crashReport.InvolvedLoaderPlugins.GroupBy(x => x.ModuleOrLoaderPluginId))
+        foreach (var involvedModule in crashReport.InvolvedModules.GroupBy(x => x.ModuleOrLoaderPluginId))
         {
             sbMain.Append("<li>")
                 .Append("Module Id: ").Append("<a href='javascript:;' onclick='scrollToElement(\"").Append(involvedModule.Key).Append("\")'>").Append(involvedModule.Key).Append("</a>").Append("<br/>");
