@@ -22,16 +22,16 @@ We also gather all currently loaded mods and their capabilities (like using Shel
 Optionally, if a plugin loader like BepInEx exiss, it's plugins will also be exposed.  
 
 ## Formats
-* HTML - has the ability to create a 'lite' and 'fat' versions. The 'lite' version includes the crash report data and the logs. The 'fat' can include a minidump, a save file and a screenshot.
-* ZIP - stores the JSON version of the crash report, a log file, a minidump, a save file and a screenshot.
+* `HTML` - has the ability to create a 'lite' and 'fat' versions. The 'lite' version includes the crash report data and the logs. The 'fat' can include a minidump, a save file and a screenshot.
+* `ZIP` - stores the JSON version of the crash report, a log file, a minidump, a save file and a screenshot.
 
 ## Examples
 * HTML Lite - https://report.butr.link/05C876
 * JSON of that crash report https://report.butr.link/05C876.json
 
 ## Backends
-* ImGui - uses Dear ImGui ([cimgui](https://github.com/cimgui/cimgui)) via GLFW and OpenGL
-* WinForms - uses the HTML format and renders it via the `WebBrowser` control
+* `ImGui` - uses Dear ImGui ([cimgui](https://github.com/cimgui/cimgui)) via GLFW and OpenGL
+* `WinForms` - uses the HTML format and renders it via the `WebBrowser` control
 
 ## Usage
 Add the `BUTR.CrashReport` NuGet package to your project
@@ -45,7 +45,7 @@ The following interfaces should be implemented:
 * `IPathAnonymizer` - Anonymizes paths.
 * `IStacktraceFilter` - Represents a filter that can be used to filter out irrelevant stack trace frames from a crash report.
 
-`[BUTR.CrashReport.Bannerlord.Source](https://github.com/BUTR/BUTR.CrashReport/tree/master/src/BUTR.CrashReport.Bannerlord.Source)` can be used as a reference for implementing most of the interfaces
+[`BUTR.CrashReport.Bannerlord.Source`](https://github.com/BUTR/BUTR.CrashReport/tree/master/src/BUTR.CrashReport.Bannerlord.Source) can be used as a reference for implementing most of the interfaces
 
 Add a backend
 * `BUTR.CrashReport.Renderer.ImGui` for the ImGui backend
