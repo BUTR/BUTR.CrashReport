@@ -34,6 +34,14 @@ If a plugin loader like BepInEx exists, its plugins will also be exposed.
 ## Export Formats
 * `HTML` - 'lite' and 'fat' versions. The 'lite' version includes the crash report data and the logs. The 'fat' version can include a minidump, a save file and a screenshot.
 * `ZIP` - stores the JSON version of the crash report, a log file, a minidump, a save file and a screenshot.
+```
+crashreport.zip/
+├── crashreport.json
+├── logs.json
+├── minudump.dmp
+├── save.sav
+└── screenshot.bmp
+```
 
 ## Examples
 * HTML Lite - https://report.butr.link/05C876
