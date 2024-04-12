@@ -1,6 +1,6 @@
 ﻿using CommandLine;
 
-namespace BUTR.CrashReport.Bannerlord.Tool;
+namespace BUTR.CrashReport.Tool;
 
 [Verb("html", HelpText = "Converts the zip file to the HTML report")]
 public class HtmlOptions

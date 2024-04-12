@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace BUTR.CrashReport.Bannerlord.Tool;
+namespace BUTR.CrashReport.Tool;
 
 public static class Program
 {

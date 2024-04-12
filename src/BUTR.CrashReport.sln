@@ -15,6 +15,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8013DEFB-F940-4891-9F74-BFE1A8106506}"
 	ProjectSection(SolutionItems) = preProject
 		..\.editorconfig = ..\.editorconfig
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{56E6B143-9B80-4E7E-999A-3D4C17761F86}"
@@ -24,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{56E6B143
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Bannerlord.Parser", "BUTR.CrashReport.Bannerlord.Parser\BUTR.CrashReport.Bannerlord.Parser.csproj", "{51A4BB52-A8E0-4BC3-8476-23E272413954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Bannerlord.Tool", "BUTR.CrashReport.Bannerlord.Tool\BUTR.CrashReport.Bannerlord.Tool.csproj", "{36A642D2-9075-470D-B5B4-40EA20E0C16C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Tool", "BUTR.CrashReport.Tool\BUTR.CrashReport.Tool.csproj", "{36A642D2-9075-470D-B5B4-40EA20E0C16C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Models", "BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj", "{03DE899E-3EE2-4EA4-8D5D-188C1AB83365}"
 EndProject
