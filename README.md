@@ -55,7 +55,7 @@ The following interfaces should be implemented:
 * `IPathAnonymizer` - Anonymizes paths.
 * `IStacktraceFilter` - Represents a filter that can be used to filter out irrelevant stack trace frames from a crash report.
 
-Refer to [`BUTR.CrashReport.Bannerlord.Source`](https://github.com/BUTR/BUTR.CrashReport/tree/master/src/BUTR.CrashReport.Bannerlord.Source) for implementation examples.
+Refer to [`BUTR.CrashReport.Bannerlord.Source`](https://github.com/BUTR/BUTR.CrashReport/tree/master/src/BUTR.CrashReport.Bannerlord.Source) and [Valheim.CrashReporter](https://github.com/BUTR/Valheim.CrashReporter) for implementation examples.
 
 Add a backend
 * `BUTR.CrashReport.Renderer.ImGui` for the ImGui backend
