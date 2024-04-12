@@ -21,7 +21,7 @@ The methods then are decompiled. We expose the Native code (NASM syntax), the IL
 We also gather all currently loaded mods and their capabilities (like using Shell, FileSystem, etc).  
 Optionally, if a plugin loader like BepInEx exiss, it's plugins will also be exposed.  
 
-## Formats
+## Available Formats for Export
 * `HTML` - has the ability to create a 'lite' and 'fat' versions. The 'lite' version includes the crash report data and the logs. The 'fat' can include a minidump, a save file and a screenshot.
 * `ZIP` - stores the JSON version of the crash report, a log file, a minidump, a save file and a screenshot.
 
@@ -29,7 +29,7 @@ Optionally, if a plugin loader like BepInEx exiss, it's plugins will also be exp
 * HTML Lite - https://report.butr.link/05C876
 * JSON of that crash report https://report.butr.link/05C876.json
 
-## Backends
+## Rendering Backends
 * `ImGui` - uses Dear ImGui ([cimgui](https://github.com/cimgui/cimgui)) via GLFW and OpenGL
 * `WinForms` - uses the HTML format and renders it via the `WebBrowser` control
 
