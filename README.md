@@ -13,16 +13,25 @@
   </a>
 </p>
 
-The library is already used in Bannerlord. Check [ButterLib](https://www.nexusmods.com/mountandblade2bannerlord/mods/2018)
+BUTR.CrashReport is a library that provides detailed crash reports for .NET based games. It is currently used in the game Mount & Blase 2: Bannerlord. For more information, check out [ButterLib](https://www.nexusmods.com/mountandblade2bannerlord/mods/2018).
 
-## What Data is Provided
-We analyze the stacktrace of the exception - we find the original method and any Harmony patches that were applied to the original.  
-The methods then are decompiled. We expose the Native code (NASM syntax), the IL code, IL+C# and C# code where possible. We have a ways to exclude an assemsbly from any C# decompilation due to possible copyright infringements.  
-We also gather all currently loaded mods and their capabilities (like using Shell, FileSystem, etc).  
-Optionally, if a plugin loader like BepInEx exiss, it's plugins will also be exposed.  
+## Table of Contents
+- [Data Provided](#data-provided)
+- [Export Formats](#export-formats)
+- [Examples](#examples)
+- [Rendering Backends](#rendering-backends)
+- [Usage](#usage)
+- [Tools](#tools)
+- [Versioning](#versioning)
 
-## Available Formats for Export
-* `HTML` - has the ability to create a 'lite' and 'fat' versions. The 'lite' version includes the crash report data and the logs. The 'fat' can include a minidump, a save file and a screenshot.
+## Data Provided
+BUTR.CrashReport analyzes the stacktrace of the exception to find the original method and any Harmony patches that were applied.  
+It decompiles methods - Native code (NASM syntax), IL code, IL+C# and C# code where possible.  
+It also gathers all currently loaded mods and their capabilities (like using Shell, FileSystem, etc).  
+If a plugin loader like BepInEx exists, its plugins will also be exposed.
+
+## Export Formats
+* `HTML` - 'lite' and 'fat' versions. The 'lite' version includes the crash report data and the logs. The 'fat' version can include a minidump, a save file and a screenshot.
 * `ZIP` - stores the JSON version of the crash report, a log file, a minidump, a save file and a screenshot.
 
 ## Examples
@@ -30,6 +39,7 @@ Optionally, if a plugin loader like BepInEx exiss, it's plugins will also be exp
 * JSON of that crash report https://report.butr.link/05C876.json
 
 ## Rendering Backends
+BUTR.CrashReport supports the following rendering backends:														   
 * `ImGui` - uses Dear ImGui ([cimgui](https://github.com/cimgui/cimgui)) via GLFW and OpenGL
 * `WinForms` - uses the HTML format and renders it via the `WebBrowser` control
 
@@ -45,7 +55,7 @@ The following interfaces should be implemented:
 * `IPathAnonymizer` - Anonymizes paths.
 * `IStacktraceFilter` - Represents a filter that can be used to filter out irrelevant stack trace frames from a crash report.
 
-[`BUTR.CrashReport.Bannerlord.Source`](https://github.com/BUTR/BUTR.CrashReport/tree/master/src/BUTR.CrashReport.Bannerlord.Source) can be used as a reference for implementing most of the interfaces
+Refer to [`BUTR.CrashReport.Bannerlord.Source`](https://github.com/BUTR/BUTR.CrashReport/tree/master/src/BUTR.CrashReport.Bannerlord.Source) for implementation examples.
 
 Add a backend
 * `BUTR.CrashReport.Renderer.ImGui` for the ImGui backend
@@ -69,5 +79,10 @@ forms.ShowDialog();
 ```
 
 ## Tools
-`BUTR.CrashReport.Bannerlord.Tool` - provides the ability to conver a ZIP crash report format to the HTML crash report format
-`BUTR.CrashReport.Bannerlord.Parser` - parses the old crash reports for Bannerlord that didn't use the new Json format (pre version 13)
+											  
+BUTR.CrashReport provides the following tools:
+* `BUTR.CrashReport.Bannerlord.Tool` - converts a ZIP crash report format to the HTML crash report format
+* `BUTR.CrashReport.Bannerlord.Parser` - parses old crash reports for Bannerlord that didn't use the new Json format (pre version 13)
+
+## Versioning
+BUTR.CrashReport follows semantic versioning. Only changes related to the JSON model will affect the versioning.
