@@ -233,6 +233,13 @@ namespace BUTR.CrashReport.Bannerlord
 
         protected static ModuleModel Convert(ModuleInfoExtendedWithMetadata module, bool isManagedByVortex, ICollection<AssemblyModel> assemblies)
         {
+            var updateInfos = module.UpdateInfo.Split(';').Select(x => x.Split(':') is { Length: 2 } split
+                ? new UpdateInfoModuleOrLoaderPlugin()
+                {
+                    Provider = split[0],
+                    Value = split[1],
+                }
+                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray();
             var capabilities = new List<CapabilityModuleOrPluginModel>();
             var moduleModel = new ModuleModel
             {
@@ -244,13 +251,7 @@ namespace BUTR.CrashReport.Bannerlord
                 IsSingleplayer = module.IsSingleplayerModule,
                 IsMultiplayer = module.IsMultiplayerModule,
                 Url = !string.IsNullOrEmpty(module.Url) ? module.Url : null,
-                UpdateInfo = !string.IsNullOrEmpty(module.UpdateInfo) && module.UpdateInfo.Split(':') is {Length: 2} split
-                    ? new UpdateInfoModuleOrLoaderPlugin()
-                    {
-                        Provider = split[0],
-                        Value = split[1],
-                    }
-                    : null,
+                UpdateInfo = updateInfos.FirstOrDefault(),
                 DependencyMetadatas = module.DependenciesAllDistinct().Select(x => new DependencyMetadataModel
                 {
                     ModuleOrPluginId = x.Id,
@@ -270,14 +271,15 @@ namespace BUTR.CrashReport.Bannerlord
                         PublicKeyToken = null,
                     },
                     Entrypoint = x.SubModuleClassType,
-                    AdditionalMetadata = x.Assemblies.Select(y => new MetadataModel {Key = "METADATA:Assembly", Value = y})
+                    AdditionalMetadata = x.Assemblies.Select(y => new MetadataModel { Key = "METADATA:Assembly", Value = y })
                         .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new MetadataModel {Key = y.Key, Value = z})))
                         .ToArray(),
                 }).ToArray(),
                 Capabilities = capabilities,
                 AdditionalMetadata = new MetadataModel[]
                 {
-                    new MetadataModel {Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString()},
+                    new MetadataModel { Key = "AdditionalUpdateInfos", Value = string.Join(";", updateInfos.Skip(1).Select(x => $"{x.Provider}:{x.Value}")) },
+                    new MetadataModel { Key = "METADATA:MANAGED_BY_VORTEX", Value = isManagedByVortex.ToString() },
                 },
             };
             capabilities.AddRange(CollectionsExtensions.DistinctBy(CrashReportShared.GetModuleCapabilities(assemblies, moduleModel), x => x.Name));

@@ -391,9 +391,17 @@ public static partial class CrashReportHtml
                 { IsExternal: true } => "modules-external-container",
                 _ => "modules-container",
             };
+            var additionalUpdateInfo = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
+                ? new UpdateInfoModuleOrLoaderPlugin
+                {
+                    Provider = split[0],
+                    Value = split[1],
+                }
+                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
             var hasDependencies = dependenciesBuilder.Length != 0;
             var hasUrl = !string.IsNullOrWhiteSpace(module.Url);
             var hasUpdateInfo = module.UpdateInfo is not null;
+            var hasAdditionalUpdateInfo = additionalUpdateInfo.Length > 0;
             var hasSubModules = subModulesBuilder.Length != 0;
             var hasAssemblies = additionalAssembliesBuilder.Length != 0;
             moduleBuilder.Append("<li>")
@@ -427,6 +435,12 @@ public static partial class CrashReportHtml
                 .Append("</ul>")
                 .AppendIf(hasUrl, sb => sb.Append("Url: <a href='").Append(module.Url).Append("'>").Append(module.Url).Append("</a>").Append("</br>"))
                 .AppendIf(hasUpdateInfo, sb => sb.Append("Update Info: ").Append(module.UpdateInfo).Append("</br>"))
+                .AppendIf(hasAdditionalUpdateInfo, sb =>
+                {
+                    foreach (var updateInfo in additionalUpdateInfo)
+                        sb.Append("Update Info: ").Append(updateInfo).Append("</br>");
+                    return sb;
+                })
                 .AppendIf(hasSubModules, sb => sb.Append("SubModules:").Append("</br>"))
                 .AppendIf(hasSubModules, "<ul>")
                 .AppendIf(hasSubModules, subModulesBuilder)
@@ -452,7 +466,15 @@ public static partial class CrashReportHtml
         foreach (var plugin in crashReport.LoaderPlugins)
         {
             var container = "modules-container";
+            var additionalUpdateInfo = plugin.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
+                ? new UpdateInfoModuleOrLoaderPlugin
+                {
+                    Provider = split[0],
+                    Value = split[1],
+                }
+                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
             var hasUpdateInfo = plugin.UpdateInfo is not null;
+            var hasAdditionalUpdateInfo = additionalUpdateInfo.Length > 0;
             moduleBuilder.Append("<li>")
                 .Append("<div class='").Append(container).Append("'>")
                 .Append("<b><a href='javascript:;' onclick='showHideById(this, \"").Append(plugin.Id).Append("\")'>").Append("+ ").Append(plugin.Name).Append(" (").Append(plugin.Id).AppendIf(!string.IsNullOrEmpty(plugin.Version), sb => sb.Append(", ").Append(plugin.Version)).Append(")").Append("</a></b>")
@@ -461,6 +483,12 @@ public static partial class CrashReportHtml
                 .Append("Name: ").Append(plugin.Name).Append("</br>")
                 .AppendIf(!string.IsNullOrEmpty(plugin.Version), sb => sb.Append("Version: ").Append(plugin.Version).Append("</br>"))
                 .AppendIf(hasUpdateInfo, sb => sb.Append("Update Info: ").Append(plugin.UpdateInfo).Append("</br>"))
+                .AppendIf(hasAdditionalUpdateInfo, sb =>
+                {
+                    foreach (var updateInfo in additionalUpdateInfo)
+                        sb.Append("Update Info: ").Append(updateInfo).Append("</br>");
+                    return sb;
+                })
                 .Append("</div>")
                 .Append("</div>")
                 .Append("</li>");

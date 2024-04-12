@@ -9,6 +9,7 @@ using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
@@ -24,6 +25,7 @@ partial class ImGuiRenderer
 
     private readonly Dictionary<string, byte[]> _moduleIdUpdateInfoUtf8 = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Dictionary<string, byte[]>> _moduleDependencyTextUtf8 = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, byte[][]> _moduleAdditionalUpdateInfos = new(StringComparer.Ordinal);
 
     private void InitializeInstalledModules()
     {
@@ -35,6 +37,15 @@ partial class ImGuiRenderer
             {
                 _moduleIdUpdateInfoUtf8[module.Id] = UnsafeHelper.ToUtf8Array(module.UpdateInfo.ToString());
             }
+
+            var additionalUpdateInfo = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
+                ? new UpdateInfoModuleOrLoaderPlugin
+                {
+                    Provider = split[0],
+                    Value = split[1],
+                }
+                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
+            _moduleAdditionalUpdateInfos[module.Id] = additionalUpdateInfo.Select(x => UnsafeHelper.ToUtf8Array(x.ToString())).ToArray();
 
             for (var j = 0; j < module.DependencyMetadatas.Count; j++)
             {
@@ -201,6 +212,15 @@ partial class ImGuiRenderer
                     {
                         _imgui.TextSameLine("Update Info: \0"u8);
                         _imgui.Text(_moduleIdUpdateInfoUtf8[module.Id]);
+                    }
+
+                    if (_moduleAdditionalUpdateInfos[module.Id].Length > 0)
+                    {
+                        for (var j = 0; j < _moduleAdditionalUpdateInfos[module.Id].Length; j++)
+                        {
+                            _imgui.Text("Update Info:\0"u8);
+                            _imgui.Text(_moduleAdditionalUpdateInfos[module.Id][j]);
+                        }
                     }
 
                     RenderSubModules(module.SubModules);

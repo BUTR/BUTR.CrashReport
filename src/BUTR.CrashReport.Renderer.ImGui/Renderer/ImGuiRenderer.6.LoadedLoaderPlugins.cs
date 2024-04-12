@@ -1,15 +1,18 @@
-﻿using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
+﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
 
 using ImGuiNET;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
     private readonly Dictionary<string, byte[]> _loaderPluginIdUpdateInfoUtf8 = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, byte[][]> _loaderPluginIdAdditionalUpdateInfos = new(StringComparer.Ordinal);
 
     private void InitializeInstalledLoaderPlugins()
     {
@@ -20,6 +23,15 @@ partial class ImGuiRenderer
             {
                 _loaderPluginIdUpdateInfoUtf8[loaderPlugin.Id] = UnsafeHelper.ToUtf8Array(loaderPlugin.UpdateInfo.ToString());
             }
+
+            var additionalUpdateInfo = loaderPlugin.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
+                ? new UpdateInfoModuleOrLoaderPlugin
+                {
+                    Provider = split[0],
+                    Value = split[1],
+                }
+                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
+            _loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id] = additionalUpdateInfo.Select(x => UnsafeHelper.ToUtf8Array(x.ToString())).ToArray();
         }
     }
 
@@ -50,6 +62,15 @@ partial class ImGuiRenderer
                     {
                         _imgui.TextSameLine("Update Info: \0"u8);
                         _imgui.Text(_loaderPluginIdUpdateInfoUtf8[loaderPlugin.Id]);
+                    }
+
+                    if (_moduleAdditionalUpdateInfos[loaderPlugin.Id].Length > 0)
+                    {
+                        for (var j = 0; j < _moduleAdditionalUpdateInfos[loaderPlugin.Id].Length; j++)
+                        {
+                            _imgui.Text("Update Info:\0"u8);
+                            _imgui.Text(_moduleAdditionalUpdateInfos[loaderPlugin.Id][j]);
+                        }
                     }
 
                     RenderCapabilities(loaderPlugin.Capabilities);
