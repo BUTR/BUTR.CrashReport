@@ -68,7 +68,7 @@ partial class ImGuiRenderer
                     {
                         for (var j = 0; j < _moduleAdditionalUpdateInfos[loaderPlugin.Id].Length; j++)
                         {
-                            _imgui.Text("Update Info:\0"u8);
+                            _imgui.TextSameLine("Update Info: \0"u8);
                             _imgui.Text(_moduleAdditionalUpdateInfos[loaderPlugin.Id][j]);
                         }
                     }
