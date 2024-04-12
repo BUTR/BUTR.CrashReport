@@ -13,7 +13,8 @@
   </a>
 </p>
 
-BUTR.CrashReport is a library that provides detailed crash reports for .NET based games. It is currently used in the game Mount & Blase 2: Bannerlord. For more information, check out [ButterLib](https://www.nexusmods.com/mountandblade2bannerlord/mods/2018).
+This is a library that provides detailed crash reports for .NET based games. It is currently used in the game Mount & Blase 2: Bannerlord. For more information, check out [ButterLib](https://www.nexusmods.com/mountandblade2bannerlord/mods/2018).  
+Unity is supported, see the [Valheim](https://github.com/BUTR/Valheim.CrashReporter) PoC as an example.
 
 ## Table of Contents
 - [Data Provided](#data-provided)
@@ -39,7 +40,6 @@ If a plugin loader like BepInEx exists, its plugins will also be exposed.
 * JSON of that crash report https://report.butr.link/05C876.json
 
 ## Rendering Backends
-BUTR.CrashReport supports the following rendering backends:														   
 * `ImGui` - uses Dear ImGui ([cimgui](https://github.com/cimgui/cimgui)) via GLFW and OpenGL
 * `WinForms` - uses the HTML format and renders it via the `WebBrowser` control
 
@@ -79,10 +79,8 @@ forms.ShowDialog();
 ```
 
 ## Tools
-											  
-BUTR.CrashReport provides the following tools:
 * `BUTR.CrashReport.Bannerlord.Tool` - converts a ZIP crash report format to the HTML crash report format
 * `BUTR.CrashReport.Bannerlord.Parser` - parses old crash reports for Bannerlord that didn't use the new Json format (pre version 13)
 
 ## Versioning
-BUTR.CrashReport follows semantic versioning. Only changes related to the JSON model will affect the versioning.
+The project follows semantic versioning. Only changes related to the JSON model will affect the versioning.
