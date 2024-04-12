@@ -11,6 +11,10 @@
   <a href="https://www.nuget.org/packages/BUTR.CrashReport.Renderer.WinForms" alt="NuGet BUTR.CrashReport.Renderer.WinForms">
     <img src="https://img.shields.io/nuget/v/BUTR.CrashReport.Renderer.WinForms?label=NuGet%20BUTR.CrashReport.Renderer.WinForms&colorB=blue" />
   </a>
+  </br>
+  <a href="https://www.nuget.org/packages/BUTR.CrashReport.Tool" alt="NuGet BUTR.CrashReport.Tool">
+    <img src="https://img.shields.io/nuget/v/BUTR.CrashReport.Tool?label=NuGet%20BUTR.CrashReport.Tool&colorB=blue" />
+  </a>
 </p>
 
 This is a library that provides detailed crash reports for .NET based games. It is currently used in the game Mount & Blade 2: Bannerlord. For more information, check out [ButterLib](https://www.nexusmods.com/mountandblade2bannerlord/mods/2018).  
@@ -87,7 +91,7 @@ forms.ShowDialog();
 ```
 
 ## Tools
-* `BUTR.CrashReport.Bannerlord.Tool` - converts a ZIP crash report format to the HTML crash report format
+* `BUTR.CrashReport.Tool` - converts a ZIP crash report format to the HTML crash report format
 * `BUTR.CrashReport.Bannerlord.Parser` - parses old crash reports for Bannerlord that didn't use the new Json format (pre version 13)
 
 ## Versioning
