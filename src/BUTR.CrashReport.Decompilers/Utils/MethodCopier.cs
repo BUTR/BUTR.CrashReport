@@ -6,8 +6,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-
-using TypeAttributes = AsmResolver.PE.DotNet.Metadata.Tables.Rows.TypeAttributes;
+using TypeAttributes = AsmResolver.PE.DotNet.Metadata.Tables.TypeAttributes;
 
 namespace BUTR.CrashReport.Decompilers.Utils;
 

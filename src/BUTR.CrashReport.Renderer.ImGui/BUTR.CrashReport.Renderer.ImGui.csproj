@@ -15,8 +15,8 @@
     <ILRepackCopyAttributes>false</ILRepackCopyAttributes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.30" PrivateAssets="all" />
-    <PackageReference Include="ILRepack.FullAuto" Version="1.5.0" PrivateAssets="all" />
+    <PackageReference Include="ILRepack" Version="2.0.34" PrivateAssets="all" />
+    <PackageReference Include="ILRepack.FullAuto" Version="1.6.0" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -30,16 +30,16 @@
 
   <ItemGroup>
     <PackageReference Include="HonkPerf.NET.RefLinq" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="ImGui.NET" Version="1.90.1.1" PrivateAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="Silk.NET.GLFW" Version="2.20.0" PrivateAssets="all" />
-    <PackageReference Include="Silk.NET.Input.Glfw" Version="2.20.0" PrivateAssets="all" />
-    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.20.0" PrivateAssets="all" />
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.20.0" PrivateAssets="all" />
+    <PackageReference Include="ImGui.NET" Version="1.90.9.1" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Silk.NET.GLFW" Version="2.21.0" PrivateAssets="all" />
+    <PackageReference Include="Silk.NET.Input.Glfw" Version="2.21.0" PrivateAssets="all" />
+    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.21.0" PrivateAssets="all" />
+    <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" PrivateAssets="all" />
     <PackageReference Include="System.Collections.Immutable" Version="8.0.0" PrivateAssets="all" />
     <PackageReference Include="System.Memory" Version="4.5.5" PrivateAssets="all" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" PrivateAssets="all" />
     <PackageReference Include="SkipLocalsInit" Version="1.1.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="Ultz.Native.GLFW" Version="3.3.9.2" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Ultz.Native.GLFW" Version="3.4.0" PrivateAssets="all" GeneratePathProperty="true" />
   </ItemGroup>
 
   <ItemGroup>

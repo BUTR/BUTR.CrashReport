@@ -42,7 +42,7 @@
     <PackageFile Include="BUTR.CrashReport.Models" Version="$(Version)" PackFolder="Dependency" Visible="false" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NuGetizer" Version="1.2.1" Pack="false" />
+    <PackageReference Include="NuGetizer" Version="0.9.2" Pack="false" />
   </ItemGroup>
   <!--NuGetizer-->
 
@@ -53,8 +53,8 @@
 
   <ItemGroup>
     <PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="1.0.0.*-*" Pack="false" PrivateAssets="all" />
-    <PackageReference Include="Bannerlord.ModuleManager.Source" Version="5.0.221" Pack="true" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="Bannerlord.BUTR.Shared" Version="3.0.0.138" Pack="true" />
+    <PackageReference Include="Bannerlord.ModuleManager.Source" Version="5.0.226" Pack="true" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Bannerlord.BUTR.Shared" Version="3.0.0.142" Pack="true" />
   </ItemGroup>
 
   <ItemGroup>

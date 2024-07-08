@@ -53,7 +53,7 @@ namespace BUTR.CrashReport.Bannerlord
 
     internal class ModuleInfo : IModuleInfo
     {
-        public ModuleInfoExtendedWithMetadata InternalModuleInfo { get; }
+        public ModuleInfoExtendedHelper InternalModuleInfo { get; }
 
         public string Id => InternalModuleInfo.Id;
         public string Version => InternalModuleInfo.Version.ToString();
@@ -61,7 +61,7 @@ namespace BUTR.CrashReport.Bannerlord
 
         public IEnumerable<IModuleSubModuleInfo> SubModules => InternalModuleInfo.SubModules.Select(x => new ModuleSubModuleInfo(x));
 
-        public ModuleInfo(ModuleInfoExtendedWithMetadata internalModuleInfo) => InternalModuleInfo = internalModuleInfo;
+        public ModuleInfo(ModuleInfoExtendedHelper internalModuleInfo) => InternalModuleInfo = internalModuleInfo;
     }
 }
 

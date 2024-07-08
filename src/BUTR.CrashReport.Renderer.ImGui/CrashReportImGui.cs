@@ -55,7 +55,7 @@ public class CrashReportImGui
             VSync = true,
         });
 
-        var gl = default(GL)!;
+        var gl = default(GL)!; // Disposed in Controller
         var controller = default(ImGuiController)!;
         var imGuiRenderer = default(ImGuiRenderer)!;
 
@@ -63,10 +63,10 @@ public class CrashReportImGui
         {
             window.SetDefaultIcon();
 
-            var imgui = new CmGui();
-            var inputContext = window.CreateInput();
+            var imgui = new CmGui(); // Disposed in Controller
+            var inputContext = window.CreateInput(); // Disposed in Controller
 
-            gl = window.CreateOpenGL();
+            gl = window.CreateOpenGL(); // Disposed in Controller
             controller = new ImGuiController(imgui, gl, window, inputContext);
             imGuiRenderer = new ImGuiRenderer(imgui, crashReportModel, logSources, crashReportRendererUtilities, window.Close);
 

@@ -231,7 +231,7 @@ namespace BUTR.CrashReport.Bannerlord
             return false;
         }
 
-        protected static ModuleModel Convert(ModuleInfoExtendedWithMetadata module, bool isManagedByVortex, ICollection<AssemblyModel> assemblies)
+        protected static ModuleModel Convert(ModuleInfoExtendedHelper module, bool isManagedByVortex, ICollection<AssemblyModel> assemblies)
         {
             var updateInfos = module.UpdateInfo.Split(';').Select(x => x.Split(':') is { Length: 2 } split
                 ? new UpdateInfoModuleOrLoaderPlugin()
