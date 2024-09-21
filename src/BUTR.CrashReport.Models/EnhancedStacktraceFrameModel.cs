@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -56,7 +57,14 @@ public sealed record EnhancedStacktraceFrameModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return FrameDescription == other.FrameDescription && MethodFromStackframeIssue == other.MethodFromStackframeIssue && ILOffset == other.ILOffset && NativeOffset == other.NativeOffset && ExecutingMethod.Equals(other.ExecutingMethod) && Equals(OriginalMethod, other.OriginalMethod) && PatchMethods.Equals(other.PatchMethods) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return FrameDescription == other.FrameDescription &&
+               MethodFromStackframeIssue == other.MethodFromStackframeIssue &&
+               ILOffset == other.ILOffset &&
+               NativeOffset == other.NativeOffset &&
+               ExecutingMethod.Equals(other.ExecutingMethod) &&
+               Equals(OriginalMethod, other.OriginalMethod) &&
+               PatchMethods.SequenceEqual(other.PatchMethods) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

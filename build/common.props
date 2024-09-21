@@ -4,7 +4,7 @@
   <!--Development Variables-->
   <PropertyGroup>
     <GITHUB_RUN_NUMBER Condition="$(GITHUB_RUN_NUMBER) == ''">7</GITHUB_RUN_NUMBER>
-    <Version>13.0.0.$(GITHUB_RUN_NUMBER)</Version>
+    <Version>14.0.0.$(GITHUB_RUN_NUMBER)</Version>
     <LangVersion>11.0</LangVersion>
     <Nullable>enable</Nullable>
 

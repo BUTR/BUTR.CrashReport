@@ -32,7 +32,10 @@ public sealed record LogEntry
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Date.Equals(other.Date) && Type == other.Type && Level == other.Level && Message == other.Message;
+        return Date.Equals(other.Date) &&
+               Type == other.Type &&
+               Level == other.Level &&
+               Message == other.Message;
     }
 
     /// <inheritdoc />

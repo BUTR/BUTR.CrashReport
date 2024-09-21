@@ -44,7 +44,12 @@ public sealed record DependencyMetadataModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return ModuleOrPluginId == other.ModuleOrPluginId && Type == other.Type && IsOptional == other.IsOptional && Version == other.Version && VersionRange == other.VersionRange && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return ModuleOrPluginId == other.ModuleOrPluginId &&
+               Type == other.Type &&
+               IsOptional == other.IsOptional &&
+               Version == other.Version &&
+               VersionRange == other.VersionRange &&
+               AdditionalMetadata.Equals(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

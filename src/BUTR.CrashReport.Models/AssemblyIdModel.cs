@@ -45,7 +45,9 @@ public sealed record AssemblyIdModel : IEquatable<AssemblyModel>, IEquatable<Ass
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Name == other.Name && Version == other.Version && PublicKeyToken == other.PublicKeyToken;
+        return Name == other.Name &&
+               Version == other.Version &&
+               PublicKeyToken == other.PublicKeyToken;
     }
 
     /// <inheritdoc />

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -17,7 +18,8 @@ public sealed record MethodExecuting : MethodSimple
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return base.Equals(other) && NativeInstructions.Equals(other.NativeInstructions);
+        return base.Equals(other) &&
+               NativeInstructions.SequenceEqual(other.NativeInstructions);
     }
 
     /// <inheritdoc />

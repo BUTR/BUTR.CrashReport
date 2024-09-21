@@ -521,7 +521,7 @@ public static partial class CrashReportHtml
             sb0.Append("<li class='").Append(@class).Append("'>")
                 .Append(assembly.Id.Name).Append(", ")
                 .Append(assembly.Id.Version).Append(", ")
-                .Append(assembly.Architecture).Append(", ")
+                .Append(assembly.Architecture.ToString()).Append(", ")
                 .AppendIf(!isDynamic, sb => sb.Append(assembly.Hash).Append(", "))
                 .AppendIf(isDynamic && !hasPath, "DYNAMIC")
                 .AppendIf(!isDynamic && !hasPath, "EMPTY")
@@ -532,6 +532,28 @@ public static partial class CrashReportHtml
         sb0.Append("<ul>");
         foreach (var assembly in crashReport.Assemblies)
             AppendAssembly(assembly);
+        sb0.Append("</ul>");
+
+        return sb0.ToString();
+    }
+
+    private static string GetNativesHtml(CrashReportModel crashReport)
+    {
+        var sb0 = new StringBuilder();
+
+        void AppendNative(NativeAssemblyModel assembly)
+        {
+            sb0.Append("<li>")
+                .Append(assembly.Id.Name).Append(", ")
+                .Append(assembly.Id.Version).Append(", ")
+                .Append(assembly.Architecture.ToString()).Append(", ")
+                .Append("<a href='javascript:;'>...").Append(Path.DirectorySeparatorChar).Append(assembly.AnonymizedPath).Append("</a>")
+                .Append("</li>");
+        }
+
+        sb0.Append("<ul>");
+        foreach (var native in crashReport.NativeModules)
+            AppendNative(native);
         sb0.Append("</ul>");
 
         return sb0.ToString();

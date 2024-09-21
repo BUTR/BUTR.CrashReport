@@ -72,6 +72,7 @@ internal partial class ImGuiRenderer
         InitializeInstalledModules();
         InitializeInstalledLoaderPlugins();
         InitializeAssemblies();
+        InitializeNatives();
         InitializeHarmonyPatches();
         InitializeLogFiles();
     }
@@ -177,6 +178,19 @@ internal partial class ImGuiRenderer
                 {
                     _imgui.SetWindowFontScale(1);
                     RenderAssemblies();
+                }
+                _imgui.TreePop();
+                _imgui.SetWindowFontScale(1);
+            }
+            _imgui.EndChild();
+
+            if (_imgui.BeginChild("Native Assemblies\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            {
+                _imgui.SetWindowFontScale(2);
+                if (_imgui.TreeNode("Native Assemblies\0"u8))
+                {
+                    _imgui.SetWindowFontScale(1);
+                    RenderNatives();
                 }
                 _imgui.TreePop();
                 _imgui.SetWindowFontScale(1);

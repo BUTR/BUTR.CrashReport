@@ -39,7 +39,10 @@ public sealed record AssemblyImportedReferenceModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Name == other.Name && Version == other.Version && Culture == other.Culture && PublicKeyToken == other.PublicKeyToken;
+        return Name == other.Name &&
+               Version == other.Version &&
+               Culture == other.Culture &&
+               PublicKeyToken == other.PublicKeyToken;
     }
 
     /// <inheritdoc />

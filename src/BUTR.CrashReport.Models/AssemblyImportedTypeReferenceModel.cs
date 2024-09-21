@@ -28,7 +28,9 @@ public sealed record AssemblyImportedTypeReferenceModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Name == other.Name && Namespace == other.Namespace && FullName == other.FullName;
+        return Name == other.Name &&
+               Namespace == other.Namespace &&
+               FullName == other.FullName;
     }
 
     /// <inheritdoc />

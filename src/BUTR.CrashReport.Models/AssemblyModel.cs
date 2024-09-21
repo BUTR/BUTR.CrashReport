@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -34,7 +35,7 @@ public sealed record AssemblyModel
     /// <inheritdoc cref="System.Reflection.AssemblyName.ProcessorArchitecture"/>
     /// </summary>
     /// <returns><inheritdoc cref="System.Reflection.AssemblyName.ProcessorArchitecture"/></returns>
-    public required string Architecture { get; set; }
+    public required AssemblyArchitectureType Architecture { get; set; }
 
     /// <summary>
     /// The hash of the assembly.
@@ -72,7 +73,17 @@ public sealed record AssemblyModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return ModuleId == other.ModuleId && LoaderPluginId == other.LoaderPluginId && Id.Equals(other.Id) && CultureName == other.CultureName && Architecture == other.Architecture && Hash == other.Hash && AnonymizedPath == other.AnonymizedPath && Type == other.Type && ImportedTypeReferences.Equals(other.ImportedTypeReferences) && ImportedAssemblyReferences.Equals(other.ImportedAssemblyReferences) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return ModuleId == other.ModuleId &&
+               LoaderPluginId == other.LoaderPluginId &&
+               Id.Equals(other.Id) &&
+               CultureName == other.CultureName &&
+               Architecture == other.Architecture &&
+               Hash == other.Hash &&
+               AnonymizedPath == other.AnonymizedPath &&
+               Type == other.Type &&
+               ImportedTypeReferences.SequenceEqual(other.ImportedTypeReferences) &&
+               ImportedAssemblyReferences.SequenceEqual(other.ImportedAssemblyReferences) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

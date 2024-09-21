@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -58,7 +59,14 @@ public sealed record ExceptionModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Equals(SourceAssemblyId, other.SourceAssemblyId) && SourceModuleId == other.SourceModuleId && SourceLoaderPluginId == other.SourceLoaderPluginId && Type == other.Type && Message == other.Message && CallStack == other.CallStack && Equals(InnerException, other.InnerException) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return Equals(SourceAssemblyId, other.SourceAssemblyId) &&
+               SourceModuleId == other.SourceModuleId &&
+               SourceLoaderPluginId == other.SourceLoaderPluginId &&
+               Type == other.Type &&
+               Message == other.Message &&
+               CallStack == other.CallStack &&
+               Equals(InnerException, other.InnerException) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

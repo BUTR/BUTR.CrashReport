@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Iced" Version="1.21.0" Alias="iced" Private="false" />
     <PackageReference Include="AsmResolver.DotNet.Dynamic" Version="6.0.0-beta.1" />
-    <PackageReference Include="ICSharpCode.Decompiler" Version="9.0.0.7618-preview1" />
+    <PackageReference Include="ICSharpCode.Decompiler" Version="9.0.0.7660-preview2" />
   </ItemGroup>
 
   <ItemGroup>

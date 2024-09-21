@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -33,7 +34,10 @@ public sealed record HarmonyPatchesModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return OriginalMethodDeclaredTypeName == other.OriginalMethodDeclaredTypeName && OriginalMethodName == other.OriginalMethodName && Patches.Equals(other.Patches) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return OriginalMethodDeclaredTypeName == other.OriginalMethodDeclaredTypeName &&
+               OriginalMethodName == other.OriginalMethodName &&
+               Patches.SequenceEqual(other.Patches) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

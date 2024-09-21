@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -33,7 +34,10 @@ public sealed record ModuleSubModuleModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Name == other.Name && Equals(AssemblyId, other.AssemblyId) && Entrypoint == other.Entrypoint && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return Name == other.Name &&
+               Equals(AssemblyId, other.AssemblyId) &&
+               Entrypoint == other.Entrypoint &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

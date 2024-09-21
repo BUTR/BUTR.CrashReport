@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -73,7 +74,17 @@ public record MethodSimple
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Equals(AssemblyId, other.AssemblyId) && ModuleId == other.ModuleId && LoaderPluginId == other.LoaderPluginId && MethodDeclaredTypeName == other.MethodDeclaredTypeName && MethodName == other.MethodName && MethodFullDescription == other.MethodFullDescription && MethodParameters.Equals(other.MethodParameters) && ILInstructions.Equals(other.ILInstructions) && CSharpILMixedInstructions.Equals(other.CSharpILMixedInstructions) && CSharpInstructions.Equals(other.CSharpInstructions) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return Equals(AssemblyId, other.AssemblyId) &&
+               ModuleId == other.ModuleId &&
+               LoaderPluginId == other.LoaderPluginId &&
+               MethodDeclaredTypeName == other.MethodDeclaredTypeName &&
+               MethodName == other.MethodName &&
+               MethodFullDescription == other.MethodFullDescription &&
+               MethodParameters.SequenceEqual(other.MethodParameters) &&
+               ILInstructions.SequenceEqual(other.ILInstructions) &&
+               CSharpILMixedInstructions.SequenceEqual(other.CSharpILMixedInstructions) &&
+               CSharpInstructions.SequenceEqual(other.CSharpInstructions) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

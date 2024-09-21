@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <PackageReference Include="HonkPerf.NET.RefLinq" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="ImGui.NET" Version="1.90.9.1" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="ImGui.NET" Version="1.91.0.1" PrivateAssets="all" GeneratePathProperty="true" />
     <PackageReference Include="Silk.NET.GLFW" Version="2.21.0" PrivateAssets="all" />
     <PackageReference Include="Silk.NET.Input.Glfw" Version="2.21.0" PrivateAssets="all" />
     <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.21.0" PrivateAssets="all" />

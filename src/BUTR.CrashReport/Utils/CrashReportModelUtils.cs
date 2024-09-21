@@ -235,14 +235,6 @@ public static class CrashReportModelUtils
             return attibutes.Any(x => x.Key == "ProtectedFromDisassembly" && !string.Equals(x.Value, "false", StringComparison.OrdinalIgnoreCase));
         }
 
-        static string CalculateMD5(string filename)
-        {
-            using var md5 = MD5.Create();
-            using var stream = File.OpenRead(filename);
-            var hash = md5.ComputeHash(stream);
-            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-        }
-
         var assemblyModels = new List<AssemblyModel>(crashReport.AvailableAssemblies.Count);
 
         var systemAssemblyDirectory = Path.GetDirectoryName(typeof(object).Assembly.Location);
@@ -283,8 +275,8 @@ public static class CrashReportModelUtils
                 ModuleId = module?.Id,
                 LoaderPluginId = loaderPlugin?.Id,
                 CultureName = assemblyName.CultureName,
-                Architecture = GetProcessorArchitecture(assemblyName).ToString(),
-                Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CalculateMD5(assembly.Location),
+                Architecture = (AssemblyArchitectureType) GetProcessorArchitecture(assemblyName),
+                Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CrashReportUtils.CalculateMD5(assembly.Location),
                 AnonymizedPath = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : anonymizedPath,
                 Type = type,
                 ImportedTypeReferences = (type & AssemblyModelType.System) == 0

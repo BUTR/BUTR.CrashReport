@@ -33,6 +33,21 @@ public class CrashReportInfo
         var plugins = modelConverter.ToLoaderPluginModels(crashReport.LoadedLoaderPlugins, assemblies);
         var metadata = crashReportMetadataProvider.GetCrashReportMetadataModel(crashReport);
         metadata.Runtime ??= System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
+        var process = Process.GetCurrentProcess();
+        var nativeModules = NativeModuleUtils.CollectModules(process);
+        var nativeAssemblies = nativeModules.Select(x => new NativeAssemblyModel
+        {
+            Id = new AssemblyIdModel
+            {
+                Name = x.ModuleName,
+                Version = x.Version,
+                PublicKeyToken = null,
+            },
+            Architecture = x.Architecture,
+            Hash = x.Hash,
+            AnonymizedPath = x.AnonymizedPath,
+            AdditionalMetadata = Array.Empty<MetadataModel>(),
+        }).ToArray();
         return new CrashReportModel
         {
             Id = crashReport.Id,
@@ -42,6 +57,7 @@ public class CrashReportInfo
             InvolvedModules = CrashReportModelUtils.GetInvolvedModules(crashReport),
             Modules = modules,
             Assemblies = assemblies,
+            NativeModules = nativeAssemblies,
             HarmonyPatches = CrashReportModelUtils.GetHarmonyPatches(crashReport, assemblies, moduleProvider, loaderPluginProvider),
             //MonoModDetours = Array.Empty<MonoModDetoursModel>(),
             LoaderPlugins = plugins,
@@ -66,7 +82,7 @@ public class CrashReportInfo
     /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Version"/>
     /// </summary>
     /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Version"/></returns>
-    public readonly byte Version = 13;
+    public readonly byte Version = 14;
 
     /// <summary>
     /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Id"/>

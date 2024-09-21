@@ -6,8 +6,10 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 
 using static BUTR.CrashReport.Decompilers.Utils.MethodDecompiler;
 
@@ -271,5 +273,18 @@ public static class CrashReportUtils
                 PatchMethods = patches.ToArray(),
             };
         }
+    }
+
+    public static string CalculateMD5(string filename)
+    {
+        using var stream = File.OpenRead(filename);
+        return CalculateMD5(stream);
+    }
+
+    public static string CalculateMD5(Stream stream)
+    {
+        using var md5 = MD5.Create();
+        var hash = md5.ComputeHash(stream);
+        return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
     }
 }

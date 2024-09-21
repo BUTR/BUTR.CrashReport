@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -48,7 +49,13 @@ public sealed record LoaderPluginModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Id == other.Id && Name == other.Name && Version == other.Version && Equals(UpdateInfo, other.UpdateInfo) && Dependencies.Equals(other.Dependencies) && Capabilities.Equals(other.Capabilities) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return Id == other.Id &&
+               Name == other.Name &&
+               Version == other.Version &&
+               Equals(UpdateInfo, other.UpdateInfo) &&
+               Dependencies.SequenceEqual(other.Dependencies) &&
+               Capabilities.SequenceEqual(other.Capabilities) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

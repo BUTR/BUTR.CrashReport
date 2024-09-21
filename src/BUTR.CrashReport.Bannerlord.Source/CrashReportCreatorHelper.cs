@@ -59,6 +59,8 @@ namespace BUTR.CrashReport.Bannerlord
     using global::System.IO;
     using global::System.Linq;
     using global::System.Reflection;
+    using global::System.Runtime.InteropServices;
+    using global::System.Xml.Linq;
 
     internal class CrashReportInfoHelper :
         IAssemblyUtilities,
@@ -127,9 +129,153 @@ namespace BUTR.CrashReport.Bannerlord
                 LauncherVersion = GetLauncherVersion(crashReport),
 
                 Runtime = null,
+                
+                OperatingSystemType = GetOperatingSystemType(),
+                OperatingSystemVersion = GetOSVersion(),
 
                 AdditionalMetadata = additionalMetdata,
             };
+        }
+        
+        private OperatingSystemType GetOperatingSystemType()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return OperatingSystemType.Windows;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return OperatingSystemType.Linux;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                return OperatingSystemType.MacOS;
+            return OperatingSystemType.Unknown;
+        }
+        
+        private string? GetOSVersion()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return GetOSVersionWindows();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return GetOSVersionLinux();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                return GetOSXVersion();
+            return null;
+        }
+        
+
+        [DllImport("ntdll.dll", SetLastError = true)]
+        private static extern int RtlGetVersion(out RTL_OSVERSIONINFOEX lpVersionInformation);
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RTL_OSVERSIONINFOEX
+        {
+            internal uint dwOSVersionInfoSize;
+            internal uint dwMajorVersion;
+            internal uint dwMinorVersion;
+            internal uint dwBuildNumber;
+            internal uint dwPlatformId;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+            internal string szCSDVersion;
+        }
+        private string GetOSVersionWindows()
+        {
+            var osName = "Windows";
+            var osVersion  = string.Empty;
+            
+            var osvi = new RTL_OSVERSIONINFOEX();
+            osvi.dwOSVersionInfoSize = (uint) Marshal.SizeOf(osvi);
+            if (RtlGetVersion(out osvi) == 0)
+                osVersion = $"{osvi.dwMajorVersion}.{osvi.dwMinorVersion}.{osvi.dwBuildNumber}";
+            
+            return $"{osName} {osVersion}";
+        }
+
+        private static string GetOSVersionLinux()
+        {
+            var osName = string.Empty;
+            var osVersion  = string.Empty;
+            
+            var filePath = string.Empty;
+
+            try
+            {
+                if (File.Exists("/usr/lib/os-release"))
+                    filePath = "/usr/lib/os-release";
+            }
+            catch { /* ignored */ }
+            
+            try
+            {
+                if (File.Exists("/etc/os-release"))
+                    filePath = "/etc/os-release";
+            }
+            catch { /* ignored */ }
+            
+            try
+            {
+                if (File.Exists("/etc/lsb-release"))
+                    filePath = "/etc/lsb-release";
+            }
+            catch { /* ignored */ }
+
+            if (string.IsNullOrEmpty(filePath))
+                return "UNKNOWN LINUX";
+
+            try
+            {
+                using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = new StreamReader(fileStream))
+                    {
+                        string? line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            if (line.StartsWith("NAME="))
+                                osName = line.Split('=')[1].Trim('"');
+                            if (line.StartsWith("DISTRIB_ID="))
+                                osName = line.Split('=')[1].Trim('"');
+
+                            if (line.StartsWith("VERSION_ID="))
+                                osVersion = line.Split('=')[1].Trim('"');
+                            if (line.StartsWith("DISTRIB_RELEASE="))
+                                osVersion = line.Split('=')[1].Trim('"');
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                return "UNKNOWN LINUX";
+            }
+            
+            return $"{osName} {osVersion}";
+        }
+        
+        private static string? GetOSXVersion()
+        {
+            try
+            {
+                if (!File.Exists("/System/Library/CoreServices/SystemVersion.plist"))
+                    return null;
+            }
+            catch { /* ignored */ }
+
+            try
+            {
+                using (var fileStream = new FileStream("/System/Library/CoreServices/SystemVersion.plist", FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = new StreamReader(fileStream))
+                    {
+                        var systemVersionFile = XDocument.Load(reader);
+                        var parsedSystemVersionFile = systemVersionFile.Descendants("dict")
+                            .SelectMany(d => d.Elements("key").Zip(d.Elements().Where(e => e.Name != "key"), (k, v) => new { Key = k, Value = v }))
+                            .ToDictionary(i => i.Key.Value, i => i.Value.Value);
+                        var productName = parsedSystemVersionFile.ContainsKey("ProductName") ? parsedSystemVersionFile["ProductName"] : null;
+                        var productVersion = parsedSystemVersionFile.ContainsKey("ProductVersion") ? parsedSystemVersionFile["ProductVersion"] : null;
+                        return $"{productName} {productVersion}";
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
         }
 
 

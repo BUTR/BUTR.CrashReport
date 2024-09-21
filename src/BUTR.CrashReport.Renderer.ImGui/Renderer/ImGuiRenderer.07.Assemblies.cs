@@ -31,6 +31,16 @@ partial class ImGuiRenderer
     private readonly Dictionary<AssemblyModel, byte[]> _assemblyPathUtf8 = new(AssemblyModelEqualityComparer.Instance);
     private readonly Dictionary<AssemblyModel, byte[]> _assemblyFullNameUtf8 = new(AssemblyModelEqualityComparer.Instance);
 
+    private static readonly byte[][] _architectureTypeNames =
+    [
+        "Unknown"u8.ToArray(),  // Unknown
+        "MSIL"u8.ToArray(),  // MSIL
+        "x86"u8.ToArray(),  // X86
+        "IA64"u8.ToArray(),  // IA64
+        "x64"u8.ToArray(),  // Amd64
+        "Arm"u8.ToArray(),  // Arm
+    ];
+
     private void InitializeAssemblies()
     {
         for (var i = 0; i < _crashReport.Assemblies.Count; i++)
@@ -75,7 +85,7 @@ partial class ImGuiRenderer
             _imgui.TextSameLine(", \0"u8);
             _imgui.TextSameLine(assembly.Id.Version ?? string.Empty);
             _imgui.TextSameLine(", \0"u8);
-            _imgui.TextSameLine(assembly.Architecture);
+            _imgui.TextSameLine(_architectureTypeNames[(int) assembly.Architecture]);
             if (!isDynamic)
             {
                 _imgui.TextSameLine(", \0"u8);

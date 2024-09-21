@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -78,7 +79,19 @@ public sealed record ModuleModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Id == other.Id && Name == other.Name && Version == other.Version && IsExternal == other.IsExternal && IsOfficial == other.IsOfficial && IsSingleplayer == other.IsSingleplayer && IsMultiplayer == other.IsMultiplayer && Url == other.Url && Equals(UpdateInfo, other.UpdateInfo) && DependencyMetadatas.Equals(other.DependencyMetadatas) && SubModules.Equals(other.SubModules) && Capabilities.Equals(other.Capabilities) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return Id == other.Id &&
+               Name == other.Name &&
+               Version == other.Version &&
+               IsExternal == other.IsExternal &&
+               IsOfficial == other.IsOfficial &&
+               IsSingleplayer == other.IsSingleplayer &&
+               IsMultiplayer == other.IsMultiplayer &&
+               Url == other.Url &&
+               Equals(UpdateInfo, other.UpdateInfo) &&
+               DependencyMetadatas.SequenceEqual(other.DependencyMetadatas) &&
+               SubModules.SequenceEqual(other.SubModules) &&
+               Capabilities.SequenceEqual(other.Capabilities) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

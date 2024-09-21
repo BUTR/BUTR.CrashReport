@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -43,6 +44,16 @@ public sealed record CrashReportMetadataModel
     public required string? Runtime { get; set; }
 
     /// <summary>
+    /// The operating system that was used to launch the game.
+    /// </summary>
+    public required OperatingSystemType OperatingSystemType { get; set; }
+
+    /// <summary>
+    /// The operating system that was used to launch the game.
+    /// </summary>
+    public required string? OperatingSystemVersion { get; set; }
+
+    /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
@@ -53,7 +64,14 @@ public sealed record CrashReportMetadataModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return GameName == other.GameName && GameVersion == other.GameVersion && LoaderPluginProviderName == other.LoaderPluginProviderName && LoaderPluginProviderVersion == other.LoaderPluginProviderVersion && LauncherType == other.LauncherType && LauncherVersion == other.LauncherVersion && Runtime == other.Runtime && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return GameName == other.GameName &&
+               GameVersion == other.GameVersion &&
+               LoaderPluginProviderName == other.LoaderPluginProviderName &&
+               LoaderPluginProviderVersion == other.LoaderPluginProviderVersion &&
+               LauncherType == other.LauncherType &&
+               LauncherVersion == other.LauncherVersion &&
+               Runtime == other.Runtime &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

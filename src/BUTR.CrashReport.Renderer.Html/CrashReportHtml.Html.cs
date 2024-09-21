@@ -146,6 +146,9 @@ partial class CrashReportHtml
         <label><input type='checkbox' onclick='showHideByClassName(this, "unclas_assembly")' /> Unclassified</label>
         {GetAssembliesHtml(crashReport)}
 """)}}
+{{Container("native-assemblies", "Native Assemblies", $"""
+        {GetNativesHtml(crashReport)}
+""")}}
 {{Container("harmony-patches", "Harmony Patches", GetHarmonyPatchesHtml(crashReport))}}
 {{Container("log-files", "Log Files", GetLogFilesHtml(files))}}
 
@@ -209,6 +212,7 @@ partial class CrashReportHtml
      document.getElementById("installed-modules").style.fontSize = fontSize.value;
      document.getElementById("installed-plugins").style.fontSize = fontSize.value;
      document.getElementById("assemblies").style.fontSize = fontSize.value;
+     document.getElementById("native-assemblies").style.fontSize = fontSize.value;
      document.getElementById("harmony-patches").style.fontSize = fontSize.value;
    }
    function changeBackgroundColor(element) {

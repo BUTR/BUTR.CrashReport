@@ -20,7 +20,8 @@ public sealed record MetadataModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Key == other.Key && Value == other.Value;
+        return Key == other.Key &&
+               Value == other.Value;
     }
 
     /// <inheritdoc />

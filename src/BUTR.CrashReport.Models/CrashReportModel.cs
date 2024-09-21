@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -48,6 +49,11 @@ public sealed record CrashReportModel
     /// </summary>
     public required IList<AssemblyModel> Assemblies { get; set; } = new List<AssemblyModel>();
 
+    /// <summary>
+    /// The list of native modules that are present.
+    /// </summary>
+    public required IList<NativeAssemblyModel> NativeModules { get; set; } = new List<NativeAssemblyModel>();
+
 
     /*
     /// <summary>
@@ -83,7 +89,18 @@ public sealed record CrashReportModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Id.Equals(other.Id) && Version == other.Version && Exception.Equals(other.Exception) && Metadata.Equals(other.Metadata) && Modules.Equals(other.Modules) && InvolvedModules.Equals(other.InvolvedModules) && EnhancedStacktrace.Equals(other.EnhancedStacktrace) && Assemblies.Equals(other.Assemblies) && HarmonyPatches.Equals(other.HarmonyPatches) && LoaderPlugins.Equals(other.LoaderPlugins) && InvolvedLoaderPlugins.Equals(other.InvolvedLoaderPlugins) && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return Id.Equals(other.Id) &&
+               Version == other.Version &&
+               Exception.Equals(other.Exception) &&
+               Metadata.Equals(other.Metadata) &&
+               Modules.SequenceEqual(other.Modules) &&
+               InvolvedModules.SequenceEqual(other.InvolvedModules) &&
+               EnhancedStacktrace.SequenceEqual(other.EnhancedStacktrace) &&
+               Assemblies.SequenceEqual(other.Assemblies) &&
+               HarmonyPatches.SequenceEqual(other.HarmonyPatches) &&
+               LoaderPlugins.SequenceEqual(other.LoaderPlugins) &&
+               InvolvedLoaderPlugins.SequenceEqual(other.InvolvedLoaderPlugins) &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />

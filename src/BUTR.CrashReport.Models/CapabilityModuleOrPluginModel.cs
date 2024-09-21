@@ -25,7 +25,8 @@ public sealed record CapabilityModuleOrPluginModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return Name == other.Name && Description == other.Description;
+        return Name == other.Name &&
+               Description == other.Description;
     }
 
     /// <inheritdoc />

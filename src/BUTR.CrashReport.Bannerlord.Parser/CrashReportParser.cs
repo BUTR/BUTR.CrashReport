@@ -248,6 +248,8 @@ public static class CrashReportParser
                 LauncherType = launcherType,
                 LauncherVersion = launcherVersion,
                 Runtime = runtime,
+                OperatingSystemType = OperatingSystemType.Unknown,
+                OperatingSystemVersion = null,
                 AdditionalMetadata = new List<MetadataModel>
                 {
                     new() { Key = "LauncherExVersion", Value = launcherexVersion },
@@ -257,6 +259,7 @@ public static class CrashReportParser
             InvolvedModules = involvedModules,
             EnhancedStacktrace = enhancedStacktrace,
             Assemblies = assemblies,
+            NativeModules = Array.Empty<NativeAssemblyModel>(),
             HarmonyPatches = harmonyPatches,
             //MonoModDetours = Array.Empty<MonoModDetoursModel>(),
             LoaderPlugins = Array.Empty<LoaderPluginModel>(),
@@ -483,7 +486,7 @@ public static class CrashReportParser
             ModuleId = module?.Id,
             LoaderPluginId = null,
             CultureName = null,
-            Architecture = splt[2],
+            Architecture = (AssemblyArchitectureType) Enum.Parse(typeof(AssemblyArchitectureType), splt[2], true),
             Hash = isDynamic || isEmpty ? string.Empty : splt[3],
             AnonymizedPath = isDynamic ? "DYNAMIC" : isEmpty ? "EMPTY" : Anonymizer.AnonymizePath(splt[4]),
 

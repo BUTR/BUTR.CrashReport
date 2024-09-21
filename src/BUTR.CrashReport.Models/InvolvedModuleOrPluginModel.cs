@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BUTR.CrashReport.Models;
 
@@ -30,7 +31,9 @@ public sealed record InvolvedModuleOrPluginModel
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return ModuleOrLoaderPluginId == other.ModuleOrLoaderPluginId && EnhancedStacktraceFrameName == other.EnhancedStacktraceFrameName && AdditionalMetadata.Equals(other.AdditionalMetadata);
+        return ModuleOrLoaderPluginId == other.ModuleOrLoaderPluginId &&
+               EnhancedStacktraceFrameName == other.EnhancedStacktraceFrameName &&
+               AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
     /// <inheritdoc />
