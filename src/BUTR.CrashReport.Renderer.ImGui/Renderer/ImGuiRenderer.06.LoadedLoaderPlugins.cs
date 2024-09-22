@@ -64,12 +64,12 @@ partial class ImGuiRenderer
                         _imgui.Text(_loaderPluginIdUpdateInfoUtf8[loaderPlugin.Id]);
                     }
 
-                    if (_moduleAdditionalUpdateInfos[loaderPlugin.Id].Length > 0)
+                    if (_loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id].Length > 0)
                     {
-                        for (var j = 0; j < _moduleAdditionalUpdateInfos[loaderPlugin.Id].Length; j++)
+                        for (var j = 0; j < _loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id].Length; j++)
                         {
                             _imgui.TextSameLine("Update Info: \0"u8);
-                            _imgui.Text(_moduleAdditionalUpdateInfos[loaderPlugin.Id][j]);
+                            _imgui.Text(_loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id][j]);
                         }
                     }
 
