@@ -486,7 +486,7 @@ public static class CrashReportParser
             ModuleId = module?.Id,
             LoaderPluginId = null,
             CultureName = null,
-            Architecture = (AssemblyArchitectureType) Enum.Parse(typeof(AssemblyArchitectureType), splt[2], true),
+            Architecture = Enum.TryParse<AssemblyArchitectureType>(splt[2], true, out var arch) ? arch : AssemblyArchitectureType.Unknown,
             Hash = isDynamic || isEmpty ? string.Empty : splt[3],
             AnonymizedPath = isDynamic ? "DYNAMIC" : isEmpty ? "EMPTY" : Anonymizer.AnonymizePath(splt[4]),
 
