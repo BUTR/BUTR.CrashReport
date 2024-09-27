@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
+using BUTR.CrashReport.Interfaces;
 
 namespace BUTR.CrashReport.Utils;
 
@@ -20,7 +21,7 @@ internal static class NativeModuleUtils
     private static readonly byte[] MachOMagic = [0xFE, 0xED, 0xFA, 0xCE];
     private static readonly byte[] MachOMagic64 = [0xFE, 0xED, 0xFA, 0xCF];
 
-    public static List<NativeModule> CollectModules(Process process) => process.Modules.OfType<ProcessModule>().Select(x =>
+    public static List<NativeModule> CollectModules(Process process, IPathAnonymizer pathAnonymizer) => process.Modules.OfType<ProcessModule>().Select(x =>
     {
         try
         {
@@ -45,7 +46,10 @@ internal static class NativeModuleUtils
 
             var version = x.FileVersionInfo.FileVersion ?? x.FileVersionInfo.ProductVersion;
 
-            return new NativeModule(x.ModuleName, Anonymizer.AnonymizePath(x.FileName), version, arch, (uint) fs.Length, x.BaseAddress, (uint) x.ModuleMemorySize, hash);
+            if (!pathAnonymizer.TryHandlePath(x.FileName, out var anonymizedPath))
+                anonymizedPath = Anonymizer.AnonymizePath(x.FileName);
+            
+            return new NativeModule(x.ModuleName, anonymizedPath, version, arch, (uint) fs.Length, x.BaseAddress, (uint) x.ModuleMemorySize, hash);
         }
         catch
         {

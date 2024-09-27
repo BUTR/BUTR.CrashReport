@@ -34,7 +34,7 @@ public class CrashReportInfo
         var metadata = crashReportMetadataProvider.GetCrashReportMetadataModel(crashReport);
         metadata.Runtime ??= System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
         var process = Process.GetCurrentProcess();
-        var nativeModules = NativeModuleUtils.CollectModules(process);
+        var nativeModules = NativeModuleUtils.CollectModules(process, pathAnonymizer);
         var nativeAssemblies = nativeModules.Select(x => new NativeAssemblyModel
         {
             Id = new AssemblyIdModel

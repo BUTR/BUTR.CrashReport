@@ -19,8 +19,10 @@ partial class CrashReportHtml
         return $$"""
 <html>  
   <head>
-    <title>{{crashReport.Metadata.GameName}} Crash Report</title>
     <meta charset='utf-8' />
+    <title>{{crashReport.Metadata.GameName}} Crash Report</title>
+    <meta name='description' content='{{crashReport.Metadata.GameName}} Crash Report File.'>
+    <meta http-equiv='content-language' content='en-gb'>
     <style>
       .headers {
         font-family: 'Consolas', monospace;
@@ -85,6 +87,7 @@ partial class CrashReportHtml
 <![endif]>
   </head>
   <body style='background-color: #ececec;'>
+    <h1 style='display: none;'>{{crashReport.Metadata.GameName}} Crash Report</h1>
     <table style='width: 100%;'>
       <tbody>
         <tr>
@@ -100,6 +103,7 @@ partial class CrashReportHtml
               If you were in the middle of something, the progress might be lost.
               <br />
               <br />
+              Operating System: {{crashReport.Metadata.OperatingSystemType}} ({{crashReport.Metadata.OperatingSystemVersion}})
               Launcher: {{crashReport.Metadata.LauncherType}} ({{crashReport.Metadata.LauncherVersion}})
               <br />
               Runtime: {{crashReport.Metadata.Runtime}}
