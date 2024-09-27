@@ -103,7 +103,7 @@ partial class CrashReportHtml
               If you were in the middle of something, the progress might be lost.
               <br />
               <br />
-              Operating System: {{crashReport.Metadata.OperatingSystemType}} ({{crashReport.Metadata.OperatingSystemVersion}})
+              Operating System: {{crashReport.Metadata.OperatingSystemType.ToString()}} ({{crashReport.Metadata.OperatingSystemVersion}})
               Launcher: {{crashReport.Metadata.LauncherType}} ({{crashReport.Metadata.LauncherVersion}})
               <br />
               Runtime: {{crashReport.Metadata.Runtime}}

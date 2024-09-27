@@ -2,6 +2,14 @@
 
 partial class ImGuiRenderer
 {
+    private static readonly byte[][] _operatingSystemTypeNames =
+    [
+        "Unknown"u8.ToArray(),  // Unknown
+        "Windows"u8.ToArray(),  // Windows
+        "Linux"u8.ToArray(),  // Linux
+        "MacOS"u8.ToArray(),  // MacOS
+    ];
+
     private bool _addScreenshots;
     private bool _addLatestSave;
     private bool _addMiniDump;
@@ -67,6 +75,12 @@ partial class ImGuiRenderer
         _imgui.Text("If you were in the middle of something, the progress might be lost.\0"u8);
 
         _imgui.NewLine();
+        
+        _imgui.TextSameLine("Operating System: \0"u8);
+        _imgui.TextSameLine(_operatingSystemTypeNames[(int) _crashReport.Metadata.OperatingSystemType]);
+        _imgui.TextSameLine(" (\0"u8);
+        _imgui.TextSameLine(_crashReport.Metadata.OperatingSystemVersion ?? string.Empty);
+        _imgui.Text(")\0"u8);
 
         _imgui.TextSameLine("Launcher: \0"u8);
         _imgui.TextSameLine(_crashReport.Metadata.LauncherType ?? string.Empty);
