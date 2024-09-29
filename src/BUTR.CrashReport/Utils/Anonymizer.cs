@@ -28,6 +28,9 @@ public static class Anonymizer
         if (entries.FirstOrDefault(x => x.Substring.Equals("steamapps", StringComparison.OrdinalIgnoreCase)) is { } entrySteamapps)
             return path.Substring(entrySteamapps.Index);
 
+        if (entries.FirstOrDefault(x => x.Substring.Equals(".local", StringComparison.OrdinalIgnoreCase)) is { } entryLocal)
+            return path.Substring(entryLocal.Index);
+
         if (normalizedPath.StartsWith(Windows, StringComparison.OrdinalIgnoreCase))
             return Path.Combine("Windows", normalizedPath.Substring(Windows.Length + 1));
 
