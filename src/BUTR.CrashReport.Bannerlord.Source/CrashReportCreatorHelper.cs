@@ -140,7 +140,12 @@ namespace BUTR.CrashReport.Bannerlord
         private OperatingSystemType GetOperatingSystemType()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var handle = GetModuleHandle("ntdll.dll");
+                if (handle != IntPtr.Zero && GetProcAddress(handle, "wine_get_version") != IntPtr.Zero)
+                    return OperatingSystemType.WindowsOnWine;
                 return OperatingSystemType.Windows;
+            }
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 return OperatingSystemType.Linux;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -159,7 +164,12 @@ namespace BUTR.CrashReport.Bannerlord
             return null;
         }
         
+        [DllImport("kernel32", CharSet=CharSet.Ansi, ExactSpelling=true, SetLastError=true)]
+        static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
+        [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
+        public static extern IntPtr GetModuleHandle([MarshalAs(UnmanagedType.LPWStr)] string lpModuleName);
+        
         [DllImport("ntdll.dll", SetLastError = true)]
         private static extern int RtlGetVersion(out RTL_OSVERSIONINFOEX lpVersionInformation);
         [StructLayout(LayoutKind.Sequential)]

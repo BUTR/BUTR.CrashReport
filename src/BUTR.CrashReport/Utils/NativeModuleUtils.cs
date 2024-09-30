@@ -1,4 +1,5 @@
-﻿using BUTR.CrashReport.Models;
+﻿using BUTR.CrashReport.Interfaces;
+using BUTR.CrashReport.Models;
 
 using ELFSharp.ELF;
 using ELFSharp.MachO;
@@ -9,7 +10,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
-using BUTR.CrashReport.Interfaces;
 
 namespace BUTR.CrashReport.Utils;
 
@@ -48,7 +48,7 @@ internal static class NativeModuleUtils
 
             if (!pathAnonymizer.TryHandlePath(x.FileName, out var anonymizedPath))
                 anonymizedPath = Anonymizer.AnonymizePath(x.FileName);
-            
+
             return new NativeModule(x.ModuleName, anonymizedPath, version, arch, (uint) fs.Length, x.BaseAddress, (uint) x.ModuleMemorySize, hash);
         }
         catch

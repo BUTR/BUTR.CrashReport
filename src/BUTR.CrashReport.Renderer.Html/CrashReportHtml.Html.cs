@@ -104,6 +104,7 @@ partial class CrashReportHtml
               <br />
               <br />
               Operating System: {{crashReport.Metadata.OperatingSystemType.ToString()}} ({{crashReport.Metadata.OperatingSystemVersion}})
+              <br />
               Launcher: {{crashReport.Metadata.LauncherType}} ({{crashReport.Metadata.LauncherVersion}})
               <br />
               Runtime: {{crashReport.Metadata.Runtime}}

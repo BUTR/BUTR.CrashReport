@@ -24,4 +24,9 @@ public enum OperatingSystemType
     /// MacOS operating system.
     /// </summary>
     MacOS = 3,
+
+    /// <summary>
+    /// Wine emulating a Windows operating system.
+    /// </summary>
+    WindowsOnWine = 4,
 }

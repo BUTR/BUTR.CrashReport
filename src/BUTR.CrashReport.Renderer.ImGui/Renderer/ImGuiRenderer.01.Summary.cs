@@ -8,6 +8,7 @@ partial class ImGuiRenderer
         "Windows"u8.ToArray(),  // Windows
         "Linux"u8.ToArray(),  // Linux
         "MacOS"u8.ToArray(),  // MacOS
+        "Windows on Wine"u8.ToArray(),  // WindowsWine
     ];
 
     private bool _addScreenshots;
@@ -75,7 +76,7 @@ partial class ImGuiRenderer
         _imgui.Text("If you were in the middle of something, the progress might be lost.\0"u8);
 
         _imgui.NewLine();
-        
+
         _imgui.TextSameLine("Operating System: \0"u8);
         _imgui.TextSameLine(_operatingSystemTypeNames[(int) _crashReport.Metadata.OperatingSystemType]);
         _imgui.TextSameLine(" (\0"u8);
