@@ -60,7 +60,6 @@ namespace BUTR.CrashReport.Bannerlord
     using global::System.Linq;
     using global::System.Reflection;
     using global::System.Runtime.InteropServices;
-    using global::System.Xml.Linq;
 
     internal class CrashReportInfoHelper :
         IAssemblyUtilities,
@@ -141,8 +140,7 @@ namespace BUTR.CrashReport.Bannerlord
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                var handle = GetModuleHandle("ntdll.dll");
-                if (handle != IntPtr.Zero && GetProcAddress(handle, "wine_get_version") != IntPtr.Zero)
+                if (OSUtilities.IsWine())
                     return OperatingSystemType.WindowsOnWine;
                 return OperatingSystemType.Windows;
             }
@@ -156,139 +154,14 @@ namespace BUTR.CrashReport.Bannerlord
         private string? GetOSVersion()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return GetOSVersionWindows();
+                return OSUtilities.GetOSVersionWindows();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                return GetOSVersionLinux();
+                return OSUtilities.GetOSVersionLinux();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                return GetOSXVersion();
+                return OSUtilities.GetOSXVersion();
             return null;
         }
         
-        [DllImport("kernel32", CharSet=CharSet.Ansi, ExactSpelling=true, SetLastError=true)]
-        static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
-
-        [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
-        public static extern IntPtr GetModuleHandle([MarshalAs(UnmanagedType.LPWStr)] string lpModuleName);
-        
-        [DllImport("ntdll.dll", SetLastError = true)]
-        private static extern int RtlGetVersion(out RTL_OSVERSIONINFOEX lpVersionInformation);
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RTL_OSVERSIONINFOEX
-        {
-            internal uint dwOSVersionInfoSize;
-            internal uint dwMajorVersion;
-            internal uint dwMinorVersion;
-            internal uint dwBuildNumber;
-            internal uint dwPlatformId;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-            internal string szCSDVersion;
-        }
-        private string GetOSVersionWindows()
-        {
-            var osName = "Windows";
-            var osVersion  = string.Empty;
-            
-            var osvi = new RTL_OSVERSIONINFOEX();
-            osvi.dwOSVersionInfoSize = (uint) Marshal.SizeOf(osvi);
-            if (RtlGetVersion(out osvi) == 0)
-                osVersion = $"{osvi.dwMajorVersion}.{osvi.dwMinorVersion}.{osvi.dwBuildNumber}";
-            
-            return $"{osName} {osVersion}";
-        }
-
-        private static string GetOSVersionLinux()
-        {
-            var osName = string.Empty;
-            var osVersion  = string.Empty;
-            
-            var filePath = string.Empty;
-
-            try
-            {
-                if (File.Exists("/usr/lib/os-release"))
-                    filePath = "/usr/lib/os-release";
-            }
-            catch { /* ignored */ }
-            
-            try
-            {
-                if (File.Exists("/etc/os-release"))
-                    filePath = "/etc/os-release";
-            }
-            catch { /* ignored */ }
-            
-            try
-            {
-                if (File.Exists("/etc/lsb-release"))
-                    filePath = "/etc/lsb-release";
-            }
-            catch { /* ignored */ }
-
-            if (string.IsNullOrEmpty(filePath))
-                return "UNKNOWN LINUX";
-
-            try
-            {
-                using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
-                {
-                    using (var reader = new StreamReader(fileStream))
-                    {
-                        string? line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            if (line.StartsWith("NAME="))
-                                osName = line.Split('=')[1].Trim('"');
-                            if (line.StartsWith("DISTRIB_ID="))
-                                osName = line.Split('=')[1].Trim('"');
-
-                            if (line.StartsWith("VERSION_ID="))
-                                osVersion = line.Split('=')[1].Trim('"');
-                            if (line.StartsWith("DISTRIB_RELEASE="))
-                                osVersion = line.Split('=')[1].Trim('"');
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                return "UNKNOWN LINUX";
-            }
-            
-            return $"{osName} {osVersion}";
-        }
-        
-        private static string? GetOSXVersion()
-        {
-            try
-            {
-                if (!File.Exists("/System/Library/CoreServices/SystemVersion.plist"))
-                    return null;
-            }
-            catch { /* ignored */ }
-
-            try
-            {
-                using (var fileStream = new FileStream("/System/Library/CoreServices/SystemVersion.plist", FileMode.Open, FileAccess.Read))
-                {
-                    using (var reader = new StreamReader(fileStream))
-                    {
-                        var systemVersionFile = XDocument.Load(reader);
-                        var parsedSystemVersionFile = systemVersionFile.Descendants("dict")
-                            .SelectMany(d => d.Elements("key").Zip(d.Elements().Where(e => e.Name != "key"), (k, v) => new { Key = k, Value = v }))
-                            .ToDictionary(i => i.Key.Value, i => i.Value.Value);
-                        var productName = parsedSystemVersionFile.ContainsKey("ProductName") ? parsedSystemVersionFile["ProductName"] : null;
-                        var productVersion = parsedSystemVersionFile.ContainsKey("ProductVersion") ? parsedSystemVersionFile["ProductVersion"] : null;
-                        return $"{productName} {productVersion}";
-                    }
-                }
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-
         public virtual IEnumerable<Assembly> Assemblies() => AccessTools2.AllAssemblies();
 
         public virtual IModuleInfo? GetAssemblyModule(CrashReportInfo crashReport, Assembly assembly)
@@ -309,7 +182,22 @@ namespace BUTR.CrashReport.Bannerlord
         
         public virtual AssemblyModelType GetAssemblyType(AssemblyModelType type, CrashReportInfo crashReport, Assembly assembly)
         {
-            var isTWCore = !assembly.IsDynamic && assembly.Location.IndexOf(@"Mount & Blade II Bannerlord\bin\", StringComparison.InvariantCultureIgnoreCase) >= 0;
+            static bool IsTWCore(Assembly assembly)
+            {
+                if (assembly.IsDynamic)
+                    return false;
+                var binFolder = Path.GetDirectoryName(assembly.Location);
+                if (!string.Equals(binFolder, "bin", StringComparison.OrdinalIgnoreCase))
+                    return false;
+                var moduleFolder = Path.GetDirectoryName(binFolder);
+                var modulesFolder = Path.GetDirectoryName(binFolder);
+                if (string.Equals(binFolder, "Modules", StringComparison.OrdinalIgnoreCase))
+                    return false;
+                
+                return true;
+            }
+
+            var isTWCore = IsTWCore(assembly);
             if (isTWCore) type |= AssemblyModelType.GameCore;
 
             var module = !assembly.IsDynamic ? ModuleInfoHelper.GetModuleByType(AccessTools2.GetTypesFromAssembly(assembly).FirstOrDefault()) : null;
@@ -377,10 +265,16 @@ namespace BUTR.CrashReport.Bannerlord
         public virtual bool TryHandlePath(string path, out string anonymizedPath)
         {
             anonymizedPath = string.Empty;
-            
+
             if (path.IndexOf("Mount & Blade II Bannerlord", StringComparison.OrdinalIgnoreCase) is var idxRoot and not -1)
             {
                 anonymizedPath = path.Substring(idxRoot);
+                return true;
+            }
+            
+            if (path.IndexOf("Mount & Blade II- Bannerlord", StringComparison.OrdinalIgnoreCase) is var idxRoot2 and not -1)
+            {
+                anonymizedPath = path.Substring(idxRoot2);
                 return true;
             }
 
@@ -389,13 +283,11 @@ namespace BUTR.CrashReport.Bannerlord
 
         protected static ModuleModel Convert(ModuleInfoExtendedHelper module, bool isManagedByVortex, ICollection<AssemblyModel> assemblies)
         {
-            var updateInfos = module.UpdateInfo.Split(';').Select(x => x.Split(':') is { Length: 2 } split
-                ? new UpdateInfoModuleOrLoaderPlugin()
-                {
-                    Provider = split[0],
-                    Value = split[1],
-                }
-                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray();
+            var updateInfos = module.UpdateInfo.Split(';').Select(x => x.Split(':') is { Length: 2 } split ? new UpdateInfoModuleOrLoaderPlugin()
+            {
+                Provider = split[0],
+                Value = split[1],
+            } : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray();
             var capabilities = new List<CapabilityModuleOrPluginModel>();
             var moduleModel = new ModuleModel
             {
@@ -428,7 +320,7 @@ namespace BUTR.CrashReport.Bannerlord
                     },
                     Entrypoint = x.SubModuleClassType,
                     AdditionalMetadata = x.Assemblies.Select(y => new MetadataModel { Key = "METADATA:Assembly", Value = y })
-                        .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new MetadataModel {Key = y.Key, Value = z})))
+                        .Concat(x.Tags.SelectMany(y => y.Value.Select(z => new MetadataModel { Key = y.Key, Value = z })))
                         .ToArray(),
                 }).ToArray(),
                 Capabilities = capabilities,

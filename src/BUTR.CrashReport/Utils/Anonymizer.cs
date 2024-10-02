@@ -21,9 +21,13 @@ public static class Anonymizer
 
     private static string NormalizePath(this string path) => path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
+    // TODO: Use store metadata to get the game install path?
     private static readonly List<string> AnonymizationPathsSimple = new()
     {
         "steamapps",
+        "XboxGames",
+        "GOG Games",
+        "Epic Games",
         ".local",
     };
 
