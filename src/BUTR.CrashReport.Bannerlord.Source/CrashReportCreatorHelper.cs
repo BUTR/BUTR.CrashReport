@@ -190,15 +190,14 @@ namespace BUTR.CrashReport.Bannerlord
                 if (!string.Equals(binFolder, "bin", StringComparison.OrdinalIgnoreCase))
                     return false;
                 var moduleFolder = Path.GetDirectoryName(binFolder);
-                var modulesFolder = Path.GetDirectoryName(binFolder);
+                var modulesFolder = Path.GetDirectoryName(moduleFolder);
                 if (string.Equals(binFolder, "Modules", StringComparison.OrdinalIgnoreCase))
                     return false;
                 
                 return true;
             }
 
-            var isTWCore = IsTWCore(assembly);
-            if (isTWCore) type |= AssemblyModelType.GameCore;
+            if (IsTWCore(assembly)) type |= AssemblyModelType.GameCore;
 
             var module = !assembly.IsDynamic ? ModuleInfoHelper.GetModuleByType(AccessTools2.GetTypesFromAssembly(assembly).FirstOrDefault()) : null;
             if (module is not null && !module.IsOfficial) type |= AssemblyModelType.Module;
