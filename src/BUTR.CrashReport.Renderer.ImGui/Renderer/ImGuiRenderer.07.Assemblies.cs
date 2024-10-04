@@ -6,7 +6,6 @@ using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
 using ImGuiNET;
 
 using System.Collections.Generic;
-using System.IO;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
@@ -27,8 +26,8 @@ partial class ImGuiRenderer
     private static bool _hideLoaderAssemblies;
     private static bool _hideLoaderPluginsAssemblies;
     private static bool _hideDynamicAssemblies;
+    private static bool _hideUnclassifiedAssemblies;
 
-    private readonly Dictionary<AssemblyModel, byte[]> _assemblyPathUtf8 = new(AssemblyModelEqualityComparer.Instance);
     private readonly Dictionary<AssemblyModel, byte[]> _assemblyFullNameUtf8 = new(AssemblyModelEqualityComparer.Instance);
 
     private static readonly byte[][] _architectureTypeNames =
@@ -46,7 +45,6 @@ partial class ImGuiRenderer
         for (var i = 0; i < _crashReport.Assemblies.Count; i++)
         {
             var assembly = _crashReport.Assemblies[i];
-            _assemblyPathUtf8[assembly] = UnsafeHelper.ToUtf8Array($"..{Path.DirectorySeparatorChar}{assembly.AnonymizedPath}");
             _assemblyFullNameUtf8[assembly] = UnsafeHelper.ToUtf8Array(assembly.GetFullName());
         }
     }
@@ -62,7 +60,8 @@ partial class ImGuiRenderer
         _imgui.CheckboxSameLine(" Modules | \0"u8, ref _hideModulesAssemblies);
         _imgui.CheckboxSameLine(" Loader | \0"u8, ref _hideLoaderAssemblies);
         _imgui.CheckboxSameLine(" Loader Plugins | \0"u8, ref _hideLoaderPluginsAssemblies);
-        _imgui.Checkbox(" Dynamic \0"u8, ref _hideDynamicAssemblies);
+        _imgui.CheckboxSameLine(" Dynamic \0"u8, ref _hideDynamicAssemblies);
+        _imgui.Checkbox(" Unclassified | \0"u8, ref _hideUnclassifiedAssemblies);
         _imgui.PopStyleVar();
 
         for (var i = 0; i < _crashReport.Assemblies.Count; i++)
@@ -76,6 +75,7 @@ partial class ImGuiRenderer
             if (_hideLoaderAssemblies && assembly.Type.IsSet(AssemblyModelType.Loader)) continue;
             if (_hideLoaderPluginsAssemblies && assembly.Type.IsSet(AssemblyModelType.LoaderPlugin)) continue;
             if (_hideDynamicAssemblies && assembly.Type.IsSet(AssemblyModelType.Dynamic)) continue;
+            if (_hideUnclassifiedAssemblies && assembly.Type == AssemblyModelType.Unclassified) continue;
 
             var isDynamic = assembly.Type.IsSet(AssemblyModelType.Dynamic);
             var hasPath = assembly.AnonymizedPath != "EMPTY" && assembly.AnonymizedPath != "DYNAMIC" && !string.IsNullOrWhiteSpace(assembly.AnonymizedPath);
@@ -94,7 +94,7 @@ partial class ImGuiRenderer
             if (hasPath)
             {
                 _imgui.TextSameLine(", \0"u8);
-                _imgui.SmallButton(_assemblyPathUtf8[assembly]);
+                _imgui.SmallButton(assembly.AnonymizedPath);
             }
             else
             {

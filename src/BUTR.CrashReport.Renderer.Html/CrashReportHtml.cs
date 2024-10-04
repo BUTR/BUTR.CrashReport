@@ -525,7 +525,7 @@ public static partial class CrashReportHtml
                 .AppendIf(!isDynamic, sb => sb.Append(assembly.Hash).Append(", "))
                 .AppendIf(isDynamic && !hasPath, "DYNAMIC")
                 .AppendIf(!isDynamic && !hasPath, "EMPTY")
-                .AppendIf(!isDynamic && hasPath, sb => sb.Append("<a href='javascript:;'>...").Append(Path.DirectorySeparatorChar).Append(assembly.AnonymizedPath).Append("</a>"))
+                .AppendIf(!isDynamic && hasPath, sb => sb.Append("<a href='javascript:;'>").Append(assembly.AnonymizedPath).Append("</a>"))
                 .Append("</li>");
         }
 
@@ -547,7 +547,7 @@ public static partial class CrashReportHtml
                 .Append(assembly.Id.Name).Append(", ")
                 .Append(assembly.Id.Version).Append(", ")
                 .Append(assembly.Architecture.ToString()).Append(", ")
-                .Append("<a href='javascript:;'>...").Append(Path.DirectorySeparatorChar).Append(assembly.AnonymizedPath).Append("</a>")
+                .Append("<a href='javascript:;'>").Append(assembly.AnonymizedPath).Append("</a>")
                 .Append("</li>");
         }
 

@@ -27,17 +27,8 @@ partial class ImGuiRenderer
         "Arm"u8.ToArray(),  // Arm
         "Arm64"u8.ToArray(),  // Arm64
     ];
-
-    private readonly Dictionary<NativeAssemblyModel, byte[]> _nativePathUtf8 = new(NativeAssemblyModelEqualityComparer.Instance);
-
-    private void InitializeNatives()
-    {
-        for (var i = 0; i < _crashReport.NativeModules.Count; i++)
-        {
-            var native = _crashReport.NativeModules[i];
-            _nativePathUtf8[native] = UnsafeHelper.ToUtf8Array($"..{Path.DirectorySeparatorChar}{native.AnonymizedPath}");
-        }
-    }
+    
+    private void InitializeNatives() { }
 
     private void RenderNatives()
     {
@@ -54,7 +45,7 @@ partial class ImGuiRenderer
             _imgui.TextSameLine(", \0"u8);
             _imgui.TextSameLine(assembly.Hash);
             _imgui.TextSameLine(", \0"u8);
-            _imgui.SmallButton(_nativePathUtf8[assembly]);
+            _imgui.SmallButton(assembly.AnonymizedPath);
         }
     }
 }
