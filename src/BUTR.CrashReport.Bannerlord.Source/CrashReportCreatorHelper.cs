@@ -191,7 +191,7 @@ namespace BUTR.CrashReport.Bannerlord
                     return false;
                 var moduleFolder = Path.GetDirectoryName(binFolder);
                 var modulesFolder = Path.GetDirectoryName(moduleFolder);
-                if (string.Equals(binFolder, "Modules", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(modulesFolder, "Modules", StringComparison.OrdinalIgnoreCase))
                     return false;
                 
                 return true;
