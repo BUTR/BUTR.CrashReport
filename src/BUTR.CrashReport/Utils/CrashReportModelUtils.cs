@@ -265,9 +265,10 @@ public static class CrashReportModelUtils
 
             type = assemblyUtilities.GetAssemblyType(type, crashReport, assembly);
 
-            var anonymizedPath = !assembly.IsDynamic ? assembly.Location : string.Empty;
-            if (!assembly.IsDynamic && !pathAnonymizer.TryHandlePath(anonymizedPath, out anonymizedPath))
-                anonymizedPath = Anonymizer.AnonymizePath(anonymizedPath);
+            var path = !assembly.IsDynamic ? assembly.Location : string.Empty;
+            var anonymizedPath = string.Empty;
+            if (!assembly.IsDynamic && !pathAnonymizer.TryHandlePath(path, out anonymizedPath))
+                anonymizedPath = Anonymizer.AnonymizePath(path);
 
             assemblyModels.Add(new()
             {

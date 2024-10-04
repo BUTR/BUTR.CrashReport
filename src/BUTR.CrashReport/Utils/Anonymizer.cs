@@ -83,7 +83,7 @@ public static class Anonymizer
     /// <returns>The anonymized path.</returns>
     public static string AnonymizePath(string path)
     {
-        var normalizedPath = path;
+        var normalizedPath = path.NormalizePath();
         var entries = SplitWithIndex(normalizedPath, Path.DirectorySeparatorChar);
 
         foreach (var kv in AnonymizationPaths)

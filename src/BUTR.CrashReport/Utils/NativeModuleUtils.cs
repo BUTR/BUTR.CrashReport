@@ -46,8 +46,10 @@ internal static class NativeModuleUtils
 
             var version = x.FileVersionInfo.FileVersion ?? x.FileVersionInfo.ProductVersion;
 
-            if (!pathAnonymizer.TryHandlePath(x.FileName, out var anonymizedPath))
-                anonymizedPath = Anonymizer.AnonymizePath(x.FileName);
+            var path = x.FileName;
+            var anonymizedPath = string.Empty;
+            if (!pathAnonymizer.TryHandlePath(path, out anonymizedPath))
+                anonymizedPath = Anonymizer.AnonymizePath(path);
 
             return new NativeModule(x.ModuleName, anonymizedPath, version, arch, (uint) fs.Length, x.BaseAddress, (uint) x.ModuleMemorySize, hash);
         }

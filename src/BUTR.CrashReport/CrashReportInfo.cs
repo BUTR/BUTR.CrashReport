@@ -143,8 +143,11 @@ public class CrashReportInfo
     /// Creates the CrashReportInfo based on initial crash report data.
     /// </summary>
     private CrashReportInfo(Exception exception, Dictionary<string, string> additionalMetadata,
-        IStacktraceFilter stacktraceFilter, IAssemblyUtilities assemblyUtilities,
-        IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider, IHarmonyProvider harmonyProvider)
+        IStacktraceFilter stacktraceFilter,
+        IAssemblyUtilities assemblyUtilities,
+        IModuleProvider moduleProvider,
+        ILoaderPluginProvider loaderPluginProvider,
+        IHarmonyProvider harmonyProvider)
     {
         var assemblies = assemblyUtilities.Assemblies().ToArray();
 
