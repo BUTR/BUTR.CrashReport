@@ -184,7 +184,7 @@ namespace BUTR.CrashReport.Bannerlord
         {
             static bool IsTWCore(Assembly assembly)
             {
-                if (assembly.IsDynamic)
+                if (assembly.IsDynamic || string.IsNullOrEmpty(assembly.Location))
                     return false;
                 var binFolder = Path.GetDirectoryName(assembly.Location);
                 if (!string.Equals(binFolder, "bin", StringComparison.OrdinalIgnoreCase))
