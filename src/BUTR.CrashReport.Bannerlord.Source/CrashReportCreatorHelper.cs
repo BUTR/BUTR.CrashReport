@@ -186,7 +186,8 @@ namespace BUTR.CrashReport.Bannerlord
             {
                 if (assembly.IsDynamic || string.IsNullOrEmpty(assembly.Location))
                     return false;
-                var binFolder = Path.GetDirectoryName(assembly.Location);
+                var configurationFolder = Path.GetDirectoryName(assembly.Location);
+                var binFolder = Path.GetDirectoryName(configurationFolder);
                 if (!string.Equals(binFolder, "bin", StringComparison.OrdinalIgnoreCase))
                     return false;
                 var moduleFolder = Path.GetDirectoryName(binFolder);
