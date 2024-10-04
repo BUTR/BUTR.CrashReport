@@ -60,8 +60,8 @@ partial class ImGuiRenderer
         _imgui.CheckboxSameLine(" Modules | \0"u8, ref _hideModulesAssemblies);
         _imgui.CheckboxSameLine(" Loader | \0"u8, ref _hideLoaderAssemblies);
         _imgui.CheckboxSameLine(" Loader Plugins | \0"u8, ref _hideLoaderPluginsAssemblies);
-        _imgui.CheckboxSameLine(" Dynamic \0"u8, ref _hideDynamicAssemblies);
-        _imgui.Checkbox(" Unclassified | \0"u8, ref _hideUnclassifiedAssemblies);
+        _imgui.CheckboxSameLine(" Dynamic | \0"u8, ref _hideDynamicAssemblies);
+        _imgui.Checkbox(" Unclassified \0"u8, ref _hideUnclassifiedAssemblies);
         _imgui.PopStyleVar();
 
         for (var i = 0; i < _crashReport.Assemblies.Count; i++)
