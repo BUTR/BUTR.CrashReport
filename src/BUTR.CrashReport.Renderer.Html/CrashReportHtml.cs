@@ -514,7 +514,8 @@ public static partial class CrashReportHtml
                 AssemblyModelType.Module => "module_assembly",
                 AssemblyModelType.Loader => "loader_assembly",
                 AssemblyModelType.LoaderPlugin => "loader_plugin_assembly",
-                _ => "unclas_assembly",
+                _ when assembly.Type == AssemblyModelType.Unclassified => "unclas_assembly",
+                _ => string.Empty
             }));
             var isDynamic = assembly.Type.HasFlag(AssemblyModelType.Dynamic);
             var hasPath = assembly.AnonymizedPath != "EMPTY" && !string.IsNullOrWhiteSpace(assembly.AnonymizedPath);
