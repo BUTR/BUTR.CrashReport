@@ -164,7 +164,7 @@ public class CrashReportInfo
             FullName = y.FullName
         }).ToArray());
 
-        Stacktrace = CrashReportUtils.GetAllInvolvedModules(Exception, assemblies, moduleProvider, loaderPluginProvider, harmonyProvider).ToArray();
+        Stacktrace = CrashReportUtils.GetAllInvolvedModules(Exception, assemblies, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider).ToArray();
         FilteredStacktrace = stacktraceFilter.Filter(Stacktrace).ToArray();
 
         foreach (var originalMethod in harmonyProvider.GetAllPatchedMethods())

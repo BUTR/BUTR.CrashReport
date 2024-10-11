@@ -164,6 +164,8 @@ namespace BUTR.CrashReport.Bannerlord
         
         public virtual IEnumerable<Assembly> Assemblies() => AccessTools2.AllAssemblies();
 
+        public IEnumerable<Type> TypesFromAssembly(Assembly assembly) => AccessTools.GetTypesFromAssembly(assembly);
+
         public virtual IModuleInfo? GetAssemblyModule(CrashReportInfo crashReport, Assembly assembly)
         {
             try

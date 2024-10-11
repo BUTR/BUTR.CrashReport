@@ -1,8 +1,6 @@
 ﻿using BUTR.CrashReport.Interfaces;
 using BUTR.CrashReport.Models;
 
-using HarmonyLib;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -89,7 +87,7 @@ public static class CrashReportUtils
     /// <summary>
     /// Gets the module info if the method is from a mod.
     /// </summary>
-    public static IModuleInfo? GetModuleInfoIfMod(MethodBase? method, IEnumerable<Assembly> assemblies, IModuleProvider moduleProvider)
+    public static IModuleInfo? GetModuleInfoIfMod(MethodBase? method, IEnumerable<Assembly> assemblies, IAssemblyUtilities assemblyUtilities, IModuleProvider moduleProvider)
     {
         if (method is null)
             return null;
@@ -113,7 +111,7 @@ public static class CrashReportUtils
 
             var fullMethodName = string.Join("", patchPostfix.Take(patchPostfix.Length - 1));
             var foundMethod = assemblies.Where(x => !x.IsDynamic)
-                .SelectMany(AccessTools.GetTypesFromAssembly)
+                .SelectMany(assemblyUtilities.TypesFromAssembly)
                 .Where(x => !x.IsAbstract)
                 .Where(x => !string.IsNullOrEmpty(x.DeclaringType?.FullName) && fullMethodName.StartsWith(x.DeclaringType!.FullName))
                 .SelectMany(x => x.GetMethods())
@@ -132,7 +130,7 @@ public static class CrashReportUtils
     /// <summary>
     /// Gets the loader plugin if the method is from a mod.
     /// </summary>
-    public static ILoaderPluginInfo? GetLoaderPluginIfMod(MethodBase? method, IEnumerable<Assembly> assemblies, ILoaderPluginProvider loaderPluginProvider)
+    public static ILoaderPluginInfo? GetLoaderPluginIfMod(MethodBase? method, IEnumerable<Assembly> assemblies, IAssemblyUtilities assemblyUtilities, ILoaderPluginProvider loaderPluginProvider)
     {
         if (method is null)
             return null;
@@ -156,7 +154,7 @@ public static class CrashReportUtils
 
             var fullMethodName = string.Join("", patchPostfix.Take(patchPostfix.Length - 1));
             var foundMethod = assemblies.Where(x => !x.IsDynamic)
-                .SelectMany(AccessTools.GetTypesFromAssembly)
+                .SelectMany(assemblyUtilities.TypesFromAssembly)
                 .Where(x => !x.IsAbstract)
                 .Where(x => !string.IsNullOrEmpty(x.DeclaringType?.FullName) && fullMethodName.StartsWith(x.DeclaringType!.FullName))
                 .SelectMany(x => x.GetMethods())
@@ -229,12 +227,12 @@ public static class CrashReportUtils
     /// <summary>
     /// Gets all involved modules in the exception stacktrace.
     /// </summary>
-    public static IEnumerable<StacktraceEntry> GetAllInvolvedModules(Exception ex, ICollection<Assembly> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider, IHarmonyProvider harmonyProvider)
+    public static IEnumerable<StacktraceEntry> GetAllInvolvedModules(Exception ex, ICollection<Assembly> assemblies, IAssemblyUtilities assemblyUtilities, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider, IHarmonyProvider harmonyProvider)
     {
         var inner = ex.InnerException;
         if (inner is not null)
         {
-            foreach (var modInfo in GetAllInvolvedModules(inner, assemblies, moduleProvider, loaderPluginProvider, harmonyProvider))
+            foreach (var modInfo in GetAllInvolvedModules(inner, assemblies, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider))
                 yield return modInfo;
         }
 
@@ -254,15 +252,15 @@ public static class CrashReportUtils
                 OriginalMethod = originalMethod is not null && originalMethod != executingMethod ? new()
                 {
                     Method = originalMethod,
-                    ModuleInfo = GetModuleInfoIfMod(originalMethod, assemblies, moduleProvider),
-                    LoaderPluginInfo = GetLoaderPluginIfMod(originalMethod, assemblies, loaderPluginProvider),
+                    ModuleInfo = GetModuleInfoIfMod(originalMethod, assemblies, assemblyUtilities, moduleProvider),
+                    LoaderPluginInfo = GetLoaderPluginIfMod(originalMethod, assemblies, assemblyUtilities, loaderPluginProvider),
                     ILInstructions = DecompileILCode(originalMethod),
                     CSharpILMixedInstructions = DecompileILWithCSharpCode(originalMethod),
                     CSharpInstructions = DecompileCSharpCode(originalMethod),
                 } : null,
                 MethodFromStackframeIssue = methodFromStackframeIssue,
-                ModuleInfo = GetModuleInfoIfMod(executingMethod, assemblies, moduleProvider),
-                LoaderPluginInfo = GetLoaderPluginIfMod(executingMethod, assemblies, loaderPluginProvider),
+                ModuleInfo = GetModuleInfoIfMod(executingMethod, assemblies, assemblyUtilities, moduleProvider),
+                LoaderPluginInfo = GetLoaderPluginIfMod(executingMethod, assemblies, assemblyUtilities, loaderPluginProvider),
                 ILOffset = ilOffset != StackFrame.OFFSET_UNKNOWN ? ilOffset : null,
                 NativeOffset = nativeILOffset != StackFrame.OFFSET_UNKNOWN ? nativeILOffset : null,
                 StackFrameDescription = frame.ToString(),
