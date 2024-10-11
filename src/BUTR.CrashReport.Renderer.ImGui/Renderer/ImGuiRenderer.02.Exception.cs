@@ -38,7 +38,7 @@ partial class ImGuiRenderer
         curr = _crashReport.Exception;
         while (curr is not null)
         {
-            var callStackLines = curr.CallStack.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(x => x).ToArray();
+            var callStackLines = curr.CallStack.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries).Select(x => x).ToArray();
 
             var sb = new StringBuilder();
             for (var i = 0; i < callStackLines.Length; i++)
@@ -49,7 +49,7 @@ partial class ImGuiRenderer
 
             _exceptionsUtf8[level] = UnsafeHelper.ToUtf8Array(sb.ToString());
 
-            var fistCallstackLine = callStackLines[0].Trim();
+            var fistCallstackLine = callStackLines.Length > 0 ? callStackLines[0].Trim() : string.Empty;
             _stacktracesUtf8[level] = _crashReport.EnhancedStacktrace.FirstOrDefault(x => fistCallstackLine == $"at {x.FrameDescription}");
 
             _callstackLineCount[level] = callStackLines.Length;

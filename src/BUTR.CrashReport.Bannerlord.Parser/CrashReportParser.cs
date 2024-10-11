@@ -145,7 +145,7 @@ public static class CrashReportParser
         {
             case >= 13:
             {
-                return Enumerable.Empty<LogSource>();
+                return [];
             }
             default:
             {
@@ -364,8 +364,9 @@ public static class CrashReportParser
             IsMultiplayer = GetField(lines, "Multiplayer").Equals("true", StringComparison.OrdinalIgnoreCase),
             Url = GetField(lines, "Url"),
             UpdateInfo = null,
-            DependencyMetadatas = GetModuleDependencyMetadatas(GetRange(lines, version == 1 ? "Dependency Metadatas" : "Dependencies", new[] { "SubModules", "Additional Assemblies", "Url" })),
-            SubModules = GetModuleSubModules(GetRange(lines, "SubModules", new[] { "Additional Assemblies" })),
+            DependencyMetadatas = GetModuleDependencyMetadatas(GetRange(lines, version == 1 ? "Dependency Metadatas" : "Dependencies", ["SubModules", "Additional Assemblies", "Url"
+            ])),
+            SubModules = GetModuleSubModules(GetRange(lines, "SubModules", ["Additional Assemblies"])),
             Capabilities = Array.Empty<CapabilityModuleOrPluginModel>(),
             AdditionalMetadata = new List<MetadataModel> { new() { Key = "METADATA:MANAGED_BY_VORTEX", Value = isVortex.ToString() } }.Concat(lines.SkipWhile(l => !l.StartsWith("Additional Assemblies:")).Skip(1).Select(l =>
             {
