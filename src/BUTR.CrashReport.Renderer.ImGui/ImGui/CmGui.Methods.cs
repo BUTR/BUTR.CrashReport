@@ -87,13 +87,11 @@ unsafe partial class CmGui
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void PadRight(int toAppend)
     {
-        fixed (byte* paddingPtr = _padding)
-        {
-            var offset = _padding.Length - toAppend;
-            var paddingPtrWithOffset = (byte*) Unsafe.Add<byte>(paddingPtr, offset);
-            igText(paddingPtrWithOffset);
-            SameLine(0, 0);
-        }
+        Span<byte> padding = stackalloc byte[toAppend + 1];
+        padding.Fill((byte) ' ');
+        padding[toAppend] = 0;
+        Text(padding);
+        SameLine(0, 0);
     }
     public void TextSameLine(ref readonly byte fmt)
     {
