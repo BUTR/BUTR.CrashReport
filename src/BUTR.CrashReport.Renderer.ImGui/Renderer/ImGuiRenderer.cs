@@ -160,18 +160,21 @@ internal partial class ImGuiRenderer
             }
             _imgui.EndChild();
 
-            if (_loadedPluginsTitle.Length > 0 && _imgui.BeginChild(_loadedPluginsTitle, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            if (_loadedPluginsTitle.Length > 0)
             {
-                _imgui.SetWindowFontScale(2);
-                if (_imgui.TreeNode(_loadedPluginsTitle))
+                if (_imgui.BeginChild(_loadedPluginsTitle, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
                 {
+                    _imgui.SetWindowFontScale(2);
+                    if (_imgui.TreeNode(_loadedPluginsTitle))
+                    {
+                        _imgui.SetWindowFontScale(1);
+                        RenderLoadedLoaderPlugins();
+                    }
+                    _imgui.TreePop();
                     _imgui.SetWindowFontScale(1);
-                    RenderLoadedLoaderPlugins();
                 }
-                _imgui.TreePop();
-                _imgui.SetWindowFontScale(1);
+                _imgui.EndChild(); 
             }
-            _imgui.EndChild();
 
             if (_imgui.BeginChild("Assemblies\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
             {
