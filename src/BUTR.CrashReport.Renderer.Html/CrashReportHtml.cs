@@ -458,7 +458,7 @@ public static partial class CrashReportHtml
         return moduleBuilder.ToString();
     }
 
-    private static string GetLoadedBLSEPluginsHtml(CrashReportModel crashReport)
+    private static string GetLoadedPluginsHtml(CrashReportModel crashReport)
     {
         var moduleBuilder = new StringBuilder();
 

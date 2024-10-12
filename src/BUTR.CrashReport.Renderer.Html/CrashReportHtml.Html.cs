@@ -136,7 +136,7 @@ partial class CrashReportHtml
 {{Container("involved", "Involved Modules and Plugins", GetInvolvedHtml(crashReport))}}
 {{Container("installed-modules", "Installed Modules", GetInstalledModulesHtml(crashReport))}}
 {{(crashReport.Metadata.LoaderPluginProviderName is not null
-  ? Container("installed-plugins", $"Loaded {crashReport.Metadata.LoaderPluginProviderName} Plugins", GetLoadedBLSEPluginsHtml(crashReport))
+  ? Container("installed-plugins", $"Loaded {crashReport.Metadata.LoaderPluginProviderName} Plugins", GetLoadedPluginsHtml(crashReport))
   : string.Empty)}}
 {{Container("assemblies", "Assemblies", $"""
         <label>Hide: </label>

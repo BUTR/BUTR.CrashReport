@@ -79,7 +79,9 @@ internal partial class ImGuiRenderer
 
     private void InitializeMain()
     {
-        _loadedPluginsTitle = UnsafeHelper.ToUtf8Array($"Loaded {_crashReport.Metadata.LoaderPluginProviderName} Plugins");
+        _loadedPluginsTitle = !string.IsNullOrEmpty(_crashReport.Metadata.LoaderPluginProviderName)
+            ? UnsafeHelper.ToUtf8Array($"Loaded {_crashReport.Metadata.LoaderPluginProviderName} Plugins")
+            : [];
     }
 
     public void Render()
@@ -158,7 +160,7 @@ internal partial class ImGuiRenderer
             }
             _imgui.EndChild();
 
-            if (_imgui.BeginChild(_loadedPluginsTitle, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            if (_loadedPluginsTitle.Length > 0 && _imgui.BeginChild(_loadedPluginsTitle, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
             {
                 _imgui.SetWindowFontScale(2);
                 if (_imgui.TreeNode(_loadedPluginsTitle))
