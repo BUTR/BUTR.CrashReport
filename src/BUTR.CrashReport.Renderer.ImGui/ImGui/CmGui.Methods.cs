@@ -70,7 +70,7 @@ unsafe partial class CmGui
         Span<byte> valueUtf8 = stackalloc byte[64];
         Utf8Formatter.TryFormat(value, valueUtf8, out var written, new StandardFormat('O'));
         valueUtf8[written + 1] = 0;
-        Text(valueUtf8);
+        Text(valueUtf8.Slice(0, written + 1));
         SameLine(0, 0);
     }
 
