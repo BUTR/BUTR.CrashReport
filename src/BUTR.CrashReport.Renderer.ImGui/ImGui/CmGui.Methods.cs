@@ -40,8 +40,8 @@ unsafe partial class CmGui
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void Text(bool fmt)
     {
-        var @true = "true"u8;
-        var @false = "false"u8;
+        var @true = "true\0"u8;
+        var @false = "false\0"u8;
         Text(fmt ? @true : @false);
     }
 
@@ -69,6 +69,7 @@ unsafe partial class CmGui
     {
         Span<byte> valueUtf8 = stackalloc byte[64];
         Utf8Formatter.TryFormat(value, valueUtf8, out var written, new StandardFormat('O'));
+        valueUtf8[written] = 0;
         Text(valueUtf8.Slice(0, written));
         SameLine(0, 0);
     }
