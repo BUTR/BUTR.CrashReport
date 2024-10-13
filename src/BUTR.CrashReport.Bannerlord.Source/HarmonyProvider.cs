@@ -7,7 +7,7 @@
 //   Consider migrating to PackageReferences instead:
 //   https://docs.microsoft.com/en-us/nuget/consume-packages/migrate-packages-config-to-package-reference
 //   Migrating brings the following benefits:
-//   * The "BUTR.CrashReport.Bannerlord.Source" folder and the "CrashReportCreatorHelper.cs" file don't appear in your project.
+//   * The "BUTR.CrashReport.Bannerlord.Source" folder and the "HarmonyProvider.cs" file don't appear in your project.
 //   * The added file is immutable and can therefore not be modified by coincidence.
 //   * Updating/Uninstalling the package will work flawlessly.
 // </auto-generated>
@@ -36,6 +36,8 @@
 // SOFTWARE.
 #endregion
 
+using TaleWorlds.MountAndBlade.GauntletUI.Widgets.Multiplayer.Lobby;
+
 #if !BUTRCRASHREPORT_DISABLE
 #nullable enable
 #if !BUTRCRASHREPORT_ENABLEWARNINGS
@@ -45,10 +47,13 @@
 namespace BUTR.CrashReport.Bannerlord
 {
     using global::BUTR.CrashReport.Interfaces;
+    using global::BUTR.CrashReport.Models;
 
     using global::HarmonyLib;
+    using global::HarmonyLib.BUTR.Extensions;
 
     using global::System;
+    using global::System.Collections;
     using global::System.Collections.Generic;
     using global::System.Diagnostics;
     using global::System.Linq;
@@ -56,72 +61,112 @@ namespace BUTR.CrashReport.Bannerlord
     
     using static global::HarmonyLib.BUTR.Extensions.AccessTools2;
 
-    public class HarmonyProvider : IHarmonyProvider
+    public class PatchProvider : IPatchProvider
     {
-        private static class MonoModUtils
+        private static IEnumerable<RuntimePatch> GetPatches(string type, MethodBase originalMethod, IEnumerable<Patch> patches) => patches.Select(x => new RuntimePatch
         {
-            private delegate object GetCurrentRuntimeDelegate();
-            private static readonly GetCurrentRuntimeDelegate? CurrentRuntimeMethod = GetPropertyGetterDelegate<GetCurrentRuntimeDelegate>(
-                "MonoMod.RuntimeDetour.DetourHelper:Runtime", logErrorInTrace: false);
-
-            private delegate MethodBase GetIdentifiableOldDelegate(object instance, MethodBase method);
-            private static readonly GetIdentifiableOldDelegate? GetIdentifiableOldMethod = GetDelegate<GetIdentifiableOldDelegate>(
-                "MonoMod.RuntimeDetour.IDetourRuntimePlatform:GetIdentifiable", logErrorInTrace: false);
-
-            private delegate IntPtr GetNativeStartDelegate(object instance, MethodBase method);
-            private static readonly GetNativeStartDelegate? GetNativeStartMethod = GetDelegate<GetNativeStartDelegate>(
-                "MonoMod.RuntimeDetour.IDetourRuntimePlatform:GetNativeStart", logErrorInTrace: false);
-
-
-            private delegate object GetCurrentPlatformTripleDelegate();
-            private static readonly GetCurrentPlatformTripleDelegate? CurrentPlatformTripleMethod = GetPropertyGetterDelegate<GetCurrentPlatformTripleDelegate>(
-                "MonoMod.Core.Platforms.PlatformTriple:Current", logErrorInTrace: false);
-
-            private delegate MethodBase GetIdentifiableDelegate(object instance, MethodBase method);
-            private static readonly GetIdentifiableDelegate? GetIdentifiableMethod = GetDelegate<GetIdentifiableDelegate>(
-                "MonoMod.Core.Platforms.PlatformTriple:GetIdentifiable", logErrorInTrace: false);
-
-            private delegate IntPtr GetNativeMethodBodyDelegate(object instance, MethodBase method);
-            private static readonly GetNativeMethodBodyDelegate? GetNativeMethodBodyMethod = GetDelegate<GetNativeMethodBodyDelegate>(
-                "MonoMod.Core.Platforms.PlatformTriple:GetNativeMethodBody", logErrorInTrace: false);
-
-            public static MethodBase? GetIdentifiable(MethodBase method)
+            PatchProvider = "Harmony",
+            PatchType = type,
+            Original = originalMethod,
+            Patch = x.PatchMethod,
+            AdditionalMetadata = new List<MetadataModel>
             {
-                try
-                {
-                    if (CurrentRuntimeMethod?.Invoke() is { } runtime)
-                        return GetIdentifiableOldMethod?.Invoke(runtime, method);
+                new("Owner", x.owner),
+                new("Index", x.index.ToString()),
+                new("Priority", x.priority.ToString()),
+                new("Before", string.Join(", ", x.before)),
+                new("After", string.Join(", ", x.after)),
+            },
+        });
 
-                    if (CurrentPlatformTripleMethod?.Invoke() is { } platformTriple)
-                        return GetIdentifiableMethod?.Invoke(platformTriple, method);
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.ToString());
-                }
+        public IList<RuntimePatch> GetAllPatches()
+        {
+            var runtimePatches = new List<RuntimePatch>();
+           
+            foreach (var originalMethod in Harmony.GetAllPatchedMethods())
+            {
+                var patches = Harmony.GetPatchInfo(originalMethod);
+                if (patches is null) continue;
+                
+                runtimePatches.AddRange(GetPatches(originalMethod));
+            }
+            
+            return runtimePatches;
+        }
 
-                return null;
+        public IList<RuntimePatch> GetPatches(MethodBase originalMethod)
+        {
+            var patches = Harmony.GetPatchInfo(originalMethod);
+            if (patches is null) return new List<RuntimePatch>();
+                
+            var runtimePatches = new List<RuntimePatch>();
+            runtimePatches.AddRange(GetPatches("Prefix", originalMethod, patches.Prefixes));
+            runtimePatches.AddRange(GetPatches("Postfixes", originalMethod, patches.Postfixes));
+            runtimePatches.AddRange(GetPatches("Finalizers", originalMethod, patches.Finalizers));
+            runtimePatches.AddRange(GetPatches("Transpilers", originalMethod, patches.Transpilers));
+            
+            return runtimePatches;
+        }
+
+        public StackFrameRuntimePatch? GetPatches(StackFrame frame)
+        {
+            MethodBase? executingMethod;
+            var methodFromStackframeIssue = false;
+            try
+            {
+                executingMethod = Harmony.GetMethodFromStackframe(frame);
+            }
+            // NullReferenceException means the method was not found. Harmony doesn't handle this case gracefully
+            catch (NullReferenceException e)
+            {
+                Trace.TraceError(e.ToString());
+                executingMethod = frame.GetMethod()!;
+            }
+            // The given generic instantiation was invalid.
+            // From what I understand, this will occur with generic methods
+            // Also when static constructors throw errors, Harmony resolution will fail
+            catch (Exception e)
+            {
+                Trace.TraceError(e.ToString());
+                methodFromStackframeIssue = true;
+                executingMethod = frame.GetMethod()!;
             }
 
-            public static IntPtr GetNativeMethodBody(MethodBase method)
+            return null;
+            //return GetPatches(executingMethod);
+        }
+
+        public MethodBase GetOriginalMethod(StackFrame frame)
+        {
+            try
             {
-                try
-                {
-                    if (CurrentRuntimeMethod?.Invoke() is { } runtine)
-                        return GetNativeStartMethod?.Invoke(runtine, method) ?? IntPtr.Zero;
+                if (Harmony.GetMethodFromStackframe(frame) is MethodInfo method)
+                    return Harmony.GetOriginalMethod(method);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError(e.ToString());
+            }
+            return frame.GetMethod();
+        }
 
-                    if (CurrentPlatformTripleMethod?.Invoke() is { } platformTriple)
-                        return GetNativeMethodBodyMethod?.Invoke(platformTriple, method) ?? IntPtr.Zero;
-                }
-                catch (Exception e)
-                {
-                    Trace.TraceError(e.ToString());
-                }
-
+        public IntPtr GetNativeMethodBody(MethodBase method)
+        {
+            try
+            {
+                return MonoModUtils.GetNativeMethodBody(method);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError(e.ToString());
                 return IntPtr.Zero;
             }
         }
-        
+    }
+
+    /*
+    public class HarmonyProvider : IHarmonyProvider
+    {
         public virtual IEnumerable<MethodBase> GetAllPatchedMethods() => Harmony.GetAllPatchedMethods();
 
         public virtual global::BUTR.CrashReport.Models.HarmonyPatches? GetPatchInfo(MethodBase originalMethod)
@@ -148,36 +193,66 @@ namespace BUTR.CrashReport.Bannerlord
             };
         }
 
-        public virtual MethodBase? GetOriginalMethod(MethodInfo replacement)
+        public virtual HarmonyPatches? GetPatchInfo(StackFrame frame, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
         {
+            MethodBase? executingMethod;
+            var methodFromStackframeIssue = false;
             try
             {
-                return Harmony.GetOriginalMethod(replacement);
+                executingMethod = Harmony.GetMethodFromStackframe(frame);
             }
+            // NullReferenceException means the method was not found. Harmony doesn't handle this case gracefully
+            catch (NullReferenceException e)
+            {
+                Trace.TraceError(e.ToString());
+                executingMethod = frame.GetMethod()!;
+            }
+            // The given generic instantiation was invalid.
+            // From what I understand, this will occur with generic methods
+            // Also when static constructors throw errors, Harmony resolution will fail
             catch (Exception e)
             {
                 Trace.TraceError(e.ToString());
-                return null;
+                methodFromStackframeIssue = true;
+                executingMethod = frame.GetMethod()!;
             }
+            
+            var executingIdentifiableMethod = executingMethod is MethodInfo mi ? MonoModUtils.GetIdentifiable(mi) as MethodInfo ?? mi : null;
+            var originalIdentifiableMethod = executingIdentifiableMethod is not null ? Harmony.GetOriginalMethod(executingIdentifiableMethod) : null;
+            return originalIdentifiableMethod is not null ? GetPatchInfo(originalIdentifiableMethod) : null;
         }
 
-        public virtual MethodBase? GetMethodFromStackframe(StackFrame frame)
+        public virtual MethodInfo? GetExecutingMethod(StackFrame frame)
         {
             try
             {
-                return Harmony.GetMethodFromStackframe(frame);
+                if (Harmony.GetMethodFromStackframe(frame) is MethodInfo method)
+                    return method;
             }
             catch (Exception e)
             {
                 Trace.TraceError(e.ToString());
-                return null;
             }
+            return null;
         }
-        
-        public MethodBase? GetIdentifiable(MethodBase method) => MonoModUtils.GetIdentifiable(method);
+
+        public virtual MethodBase? GetOriginalMethod(StackFrame frame)
+        {
+            try
+            {
+                if (Harmony.GetMethodFromStackframe(frame) is MethodInfo method)
+                    return Harmony.GetOriginalMethod(method);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError(e.ToString());
+            }
+            return null;
+        }
 
         public IntPtr GetNativeMethodBody(MethodBase method) => MonoModUtils.GetNativeMethodBody(method);
     }
+    */
 }
 
 #pragma warning restore

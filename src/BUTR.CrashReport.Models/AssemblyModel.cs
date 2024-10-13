@@ -50,7 +50,7 @@ public sealed record AssemblyModel
     /// <summary>
     /// The detected types for the assembly.
     /// </summary>
-    public required AssemblyModelType Type { get; set; }
+    public required AssemblyType Type { get; set; }
 
     /// <summary>
     /// The list of imported type references from the assembly.

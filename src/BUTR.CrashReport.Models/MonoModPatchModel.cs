@@ -6,17 +6,37 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents a MonoMod detour.
 /// </summary>
-public sealed record MonoModDetourModel
+public sealed class MonoModPatchModel
 {
     /// <summary>
     /// The type of the detour.
     /// </summary>
-    public required MonoModDetourModelType Type { get; set; }
+    public required MonoModPatchModelType Type { get; set; }
     
     /// <summary>
-    /// The method that is doing the detour.
+    /// <inheritdoc cref="ModuleModel.Id"/> Is null if not from a module.
     /// </summary>
-    public required MethodSimple? Method { get; set; }
+    /// <returns><inheritdoc cref="ModuleModel.Id"/></returns>
+    public required string? ModuleId { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="LoaderPluginModel.Id"/> Is null if not from a module.
+    /// </summary>
+    /// <returns><inheritdoc cref="LoaderPluginModel.Id"/></returns>
+    public required string? LoaderPluginId { get; set; }
+
+    /// <summary>
+    /// The <see cref="AssemblyIdModel.Name"/> of the assembly that contains the patch.
+    /// </summary>
+    public required AssemblyIdModel? AssemblyId { get; set; }
+    
+    public required string Namespace { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="MonoMod.RuntimeDetour.IsApplied"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="MonoMod.RuntimeDetour.IsApplied"/></returns>
+    public required bool IsActive { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Id"/>
@@ -24,11 +44,23 @@ public sealed record MonoModDetourModel
     /// <returns><inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Id"/></returns>
     public required string Id { get; set; }
 
+    public required int? Index { get; set; }
+    
+    public required int? MaxIndex { get; set; }
+    
+    public required int? GlobalIndex { get; set; }
+    
     /// <summary>
     /// <inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Priority"/>
     /// </summary>
     /// <returns><inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Priority"/></returns>
-    public required int Priority { get; set; }
+    public required int? Priority { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.SubPriority"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.SubPriority"/></returns>
+    public required int? SubPriority { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="MonoMod.RuntimeDetour.DetourConfig.Before"/>

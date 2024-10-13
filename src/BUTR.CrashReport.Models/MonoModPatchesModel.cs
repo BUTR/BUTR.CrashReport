@@ -1,0 +1,32 @@
+﻿/*
+using System.Collections.Generic;
+
+namespace BUTR.CrashReport.Models;
+
+/// <summary>
+/// Represents the list of MonoMod detours for a given original method.
+/// </summary>
+public sealed class MonoModPatchesModel
+{
+    /// <summary>
+    /// The original method type name.
+    /// </summary>
+    public required string? OriginalMethodDeclaredTypeName { get; set; }
+
+    /// <summary>
+    /// The original method name.
+    /// </summary>
+    public required string? OriginalMethodName { get; set; }
+    
+    /// <summary>
+    /// The list of MonoMod detours.
+    /// </summary>
+    public required IList<MonoModPatchModel> Detours { get; set; } = new List<MonoModPatchModel>();
+
+    /// <summary>
+    /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
+    public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
+}
+*/

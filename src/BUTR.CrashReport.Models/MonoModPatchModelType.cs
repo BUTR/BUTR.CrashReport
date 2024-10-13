@@ -4,7 +4,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Type of the MonoMod detour
 /// </summary>
-public enum MonoModDetourModelType
+public enum MonoModPatchModelType
 {
     /// <summary>
     /// Native or Simple detour

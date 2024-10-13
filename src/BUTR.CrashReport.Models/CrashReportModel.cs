@@ -53,20 +53,23 @@ public sealed record CrashReportModel
     /// The list of native modules that are present.
     /// </summary>
     public required IList<NativeAssemblyModel> NativeModules { get; set; } = new List<NativeAssemblyModel>();
-
+    
+    /// <summary>
+    /// The list of runtime patches that are present.
+    /// </summary>
+    public required IList<RuntimePatchesModel> RuntimePatches { get; set; } = new List<RuntimePatchesModel>();
 
     /*
     /// <summary>
-    /// The list of MonoMod detours that are present.
-    /// MonoMod does not keep a list of detours. If you have a library that does, here it could be exposed.
+    /// The list of MonoMod patches that are present.
     /// </summary>
-    public required IList<MonoModDetoursModel> MonoModDetours { get; set; } = new List<MonoModDetoursModel>();
-    */
+    public required IList<MonoModPatchesModel> MonoModPatches { get; set; } = new List<MonoModPatchesModel>();
 
     /// <summary>
     /// The list of Harmony patches that are present.
     /// </summary>
     public required IList<HarmonyPatchesModel> HarmonyPatches { get; set; } = new List<HarmonyPatchesModel>();
+    */
 
     /// <summary>
     /// The list of loader plugins that are present.
@@ -97,7 +100,9 @@ public sealed record CrashReportModel
                InvolvedModules.SequenceEqual(other.InvolvedModules) &&
                EnhancedStacktrace.SequenceEqual(other.EnhancedStacktrace) &&
                Assemblies.SequenceEqual(other.Assemblies) &&
-               HarmonyPatches.SequenceEqual(other.HarmonyPatches) &&
+               RuntimePatches.SequenceEqual(other.RuntimePatches) &&
+               //HarmonyPatches.SequenceEqual(other.HarmonyPatches) &&
+               //HarmonyPatches.SequenceEqual(other.HarmonyPatches) &&
                LoaderPlugins.SequenceEqual(other.LoaderPlugins) &&
                InvolvedLoaderPlugins.SequenceEqual(other.InvolvedLoaderPlugins) &&
                AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
@@ -116,7 +121,9 @@ public sealed record CrashReportModel
             hashCode = (hashCode * 397) ^ InvolvedModules.GetHashCode();
             hashCode = (hashCode * 397) ^ EnhancedStacktrace.GetHashCode();
             hashCode = (hashCode * 397) ^ Assemblies.GetHashCode();
-            hashCode = (hashCode * 397) ^ HarmonyPatches.GetHashCode();
+            hashCode = (hashCode * 397) ^ RuntimePatches.GetHashCode();
+            //hashCode = (hashCode * 397) ^ HarmonyPatches.GetHashCode();
+            //hashCode = (hashCode * 397) ^ HarmonyPatches.GetHashCode();
             hashCode = (hashCode * 397) ^ LoaderPlugins.GetHashCode();
             hashCode = (hashCode * 397) ^ InvolvedLoaderPlugins.GetHashCode();
             hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();

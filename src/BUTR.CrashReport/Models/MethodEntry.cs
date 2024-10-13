@@ -25,20 +25,20 @@ public abstract record MethodEntry
     public required ILoaderPluginInfo? LoaderPluginInfo { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/>
+    /// <inheritdoc cref="MethodSimpleModel.ILInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/></returns>
+    /// <returns><inheritdoc cref="MethodSimpleModel.ILInstructions"/></returns>
     public required string[] ILInstructions { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/>
+    /// <inheritdoc cref="MethodSimpleModel.CSharpILMixedInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/></returns>
+    /// <returns><inheritdoc cref="MethodSimpleModel.CSharpILMixedInstructions"/></returns>
     public required string[] CSharpILMixedInstructions { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/>
+    /// <inheritdoc cref="MethodSimpleModel.CSharpInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/></returns>
+    /// <returns><inheritdoc cref="MethodSimpleModel.CSharpInstructions"/></returns>
     public required string[] CSharpInstructions { get; set; }
 }

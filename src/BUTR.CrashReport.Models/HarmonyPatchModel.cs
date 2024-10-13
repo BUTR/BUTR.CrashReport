@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿/*
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BUTR.CrashReport.Models;
@@ -36,10 +37,6 @@ public sealed record HarmonyPatchModel
     /// <returns><inheritdoc cref="HarmonyLib.Patch.owner"/></returns>
     public required string Owner { get; set; }
 
-    /// <summary>
-    /// <inheritdoc cref="HarmonyLib.Patch.index"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="HarmonyLib.Patch.index"/></returns>
     public required string Namespace { get; set; }
 
     /// <summary>
@@ -110,3 +107,4 @@ public sealed record HarmonyPatchModel
         }
     }
 }
+*/

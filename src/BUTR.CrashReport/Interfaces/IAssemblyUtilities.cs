@@ -34,5 +34,5 @@ public interface IAssemblyUtilities
     /// <summary>
     /// Gets the type of the assembly
     /// </summary>
-    AssemblyModelType GetAssemblyType(AssemblyModelType type, CrashReportInfo crashReport, Assembly assembly);
+    AssemblyType GetAssemblyType(AssemblyType type, CrashReportInfo crashReport, Assembly assembly);
 }

@@ -6,7 +6,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents the actual executing method of a stack trace frame. Can the the original method or a patched method.
 /// </summary>
-public sealed record MethodExecuting : MethodSimple
+public sealed record MethodExecutingModel : MethodSimpleModel
 {
     /// <summary>
     /// The native code of the method that was compiled by the JIT.
@@ -14,7 +14,7 @@ public sealed record MethodExecuting : MethodSimple
     public required IList<string> NativeInstructions { get; set; } = new List<string>();
 
     /// <inheritdoc />
-    public bool Equals(MethodExecuting? other)
+    public bool Equals(MethodExecutingModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

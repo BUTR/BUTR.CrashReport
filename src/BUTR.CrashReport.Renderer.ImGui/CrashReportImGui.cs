@@ -26,25 +26,30 @@ public class CrashReportImGui
         GlfwWindowing.RegisterPlatform();
     }
 
-    public static void ShowAndWait(Exception exception, IList<LogSource> logSources, Dictionary<string, string> additionalMetadata,
+    public static void ShowAndWait(Exception exception, IList<LogSourceModel> logSources, Dictionary<string, string> additionalMetadata,
         ICrashReportMetadataProvider crashReportMetadataProvider,
         IStacktraceFilter stacktraceFilter,
         IAssemblyUtilities assemblyUtilities,
         IModuleProvider moduleProvider,
         ILoaderPluginProvider loaderPluginProvider,
+        IPatchProvider patchProvider,
+        /*
+        ICommonProvider commonProvider,
+        IMonoModProvider monoModProvider,
         IHarmonyProvider harmonyProvider,
+        */
         IModelConverter modelConverter,
         IPathAnonymizer pathAnonymizer,
         ICrashReportRendererUtilities crashReportRendererUtilities)
     {
-        var crashReport = CrashReportInfo.Create(exception, additionalMetadata, stacktraceFilter, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider);
+        var crashReport = CrashReportInfo.Create(exception, additionalMetadata, stacktraceFilter, assemblyUtilities, moduleProvider, loaderPluginProvider, patchProvider);
 
         var crashReportModel = CrashReportInfo.ToModel(crashReport, crashReportMetadataProvider, modelConverter, moduleProvider, loaderPluginProvider, assemblyUtilities, pathAnonymizer);
 
         ShowAndWait(crashReportModel, logSources, crashReportRendererUtilities);
     }
 
-    public static void ShowAndWait(CrashReportModel crashReportModel, IList<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
+    public static void ShowAndWait(CrashReportModel crashReportModel, IList<LogSourceModel> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
     {
         if (PathResolver.Default is DefaultPathResolver pr)
             pr.Resolvers = [path => crashReportRendererUtilities.GetNativeLibrariesFolderPath().Select(x => Path.Combine(x, path))];

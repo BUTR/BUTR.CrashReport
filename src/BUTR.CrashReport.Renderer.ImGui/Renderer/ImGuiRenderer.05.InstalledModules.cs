@@ -39,12 +39,12 @@ partial class ImGuiRenderer
             }
 
             var additionalUpdateInfo = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
-                ? new UpdateInfoModuleOrLoaderPlugin
+                ? new UpdateInfo
                 {
                     Provider = split[0],
                     Value = split[1],
                 }
-                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
+                : null).OfType<UpdateInfo>().ToArray() ?? [];
             _moduleAdditionalUpdateInfos[module.Id] = additionalUpdateInfo.Select(x => UnsafeHelper.ToUtf8Array(x.ToString())).ToArray();
 
             for (var j = 0; j < module.DependencyMetadatas.Count; j++)
@@ -68,7 +68,7 @@ partial class ImGuiRenderer
         for (var i = 0; i < module.DependencyMetadatas.Count; i++)
         {
             var dependentModule = module.DependencyMetadatas[i];
-            var type = Clamp(dependentModule.Type, DependencyMetadataModelType.LoadBefore, DependencyMetadataModelType.Incompatible);
+            var type = Clamp(dependentModule.Type, DependencyMetadataType.LoadBefore, DependencyMetadataType.Incompatible);
             _imgui.Bullet();
             _imgui.TextSameLine(_dependencyTypeNames[type]);
             _imgui.SmallButtonSameLine(dependentModule.ModuleOrPluginId);
@@ -76,7 +76,7 @@ partial class ImGuiRenderer
         }
     }
 
-    private void RenderCapabilities(IList<CapabilityModuleOrPluginModel> moduleCapabilities)
+    private void RenderCapabilities(IList<CapabilityModel> moduleCapabilities)
     {
         if (moduleCapabilities.Count == 0) return;
 

@@ -1,28 +1,22 @@
-﻿/*
+/*
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
+using BUTR.CrashReport.Models;
 
 namespace BUTR.CrashReport.Interfaces;
 
-/// <summary>
-/// Provides information about Harmony patches.
-/// </summary>
-public interface IHarmonyProvider
+public interface IMonoModProvider
 {
     /// <summary>
     /// Returns all patched methods.
     /// </summary>
     IEnumerable<MethodBase> GetAllPatchedMethods();
     
-    /// <summary>
-    /// Returns the patch information for a given method.
-    /// </summary>
-    /// <param name="originalMethod"></param>
-    HarmonyPatches? GetPatchInfo(MethodBase originalMethod);
-
-    HarmonyPatches? GetPatchInfo(StackFrame frame, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider);
+    MonoModPatches? GetPatchInfo(MethodBase originalMethod);
+    
+    MonoModPatches? GetPatchInfo(StackFrame frame, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider);
 
     /// <summary>
     /// Returns the actual executing method from a stackframe.

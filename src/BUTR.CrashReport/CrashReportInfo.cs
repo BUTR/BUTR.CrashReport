@@ -58,8 +58,9 @@ public class CrashReportInfo
             Modules = modules,
             Assemblies = assemblies,
             NativeModules = nativeAssemblies,
-            HarmonyPatches = CrashReportModelUtils.GetHarmonyPatches(crashReport, assemblies, moduleProvider, loaderPluginProvider),
-            //MonoModDetours = Array.Empty<MonoModDetoursModel>(),
+            RuntimePatches = CrashReportModelUtils.GetRuntimePatches(crashReport, assemblies, moduleProvider, loaderPluginProvider),
+            //HarmonyPatches = CrashReportModelUtils.GetHarmonyPatches(crashReport, assemblies, moduleProvider, loaderPluginProvider),
+            //MonoModPatches = CrashReportModelUtils.GetMonoModDetours(crashReport, assemblies, moduleProvider, loaderPluginProvider),
             LoaderPlugins = plugins,
             InvolvedLoaderPlugins = CrashReportModelUtils.GetInvolvedPlugins(crashReport),
             Metadata = metadata,
@@ -75,14 +76,16 @@ public class CrashReportInfo
         IAssemblyUtilities assemblyUtilities,
         IModuleProvider moduleProvider,
         ILoaderPluginProvider loaderPluginProvider,
-        IHarmonyProvider harmonyProvider) =>
-        new(exception, additionalMetadata, stacktraceFilter, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider);
+        IPatchProvider patchProvider /*,
+        IMonoModProvider monoModProvider,
+        IHarmonyProvider harmonyProvider*/) =>
+        new(exception, additionalMetadata, stacktraceFilter, assemblyUtilities, moduleProvider, loaderPluginProvider, patchProvider/*, monoModProvider, harmonyProvider*/);
 
     /// <summary>
     /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Version"/>
     /// </summary>
     /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Version"/></returns>
-    public readonly byte Version = 14;
+    public readonly byte Version = 15;
 
     /// <summary>
     /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.Id"/>
@@ -132,7 +135,21 @@ public class CrashReportInfo
     /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.HarmonyPatches"/>
     /// </summary>
     /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.HarmonyPatches"/></returns>
+    public Dictionary<MethodBase, IList<RuntimePatch>> LoadedRuntimePatches { get; } = new();
+    
+    /*
+    /// <summary>
+    /// <inheritdoc cref="CrashReportModel.MonoModPatches"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="CrashReportModel.MonoModPatches"/></returns>
+    public Dictionary<MethodBase, MonoModPatches> LoadedMonoModPatches { get; } = new();
+
+    /// <summary>
+    /// <inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.HarmonyPatches"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.CrashReportModel.HarmonyPatches"/></returns>
     public Dictionary<MethodBase, HarmonyPatches> LoadedHarmonyPatches { get; } = new();
+    */
 
     /// <summary>
     /// Additional metadata about the crash.
@@ -147,7 +164,9 @@ public class CrashReportInfo
         IAssemblyUtilities assemblyUtilities,
         IModuleProvider moduleProvider,
         ILoaderPluginProvider loaderPluginProvider,
-        IHarmonyProvider harmonyProvider)
+        IPatchProvider patchProvider /*,
+        IMonoModProvider monoModProvider,
+        IHarmonyProvider harmonyProvider */)
     {
         var assemblies = assemblyUtilities.Assemblies().ToArray();
 
@@ -164,14 +183,31 @@ public class CrashReportInfo
             FullName = y.FullName
         }).ToArray());
 
-        Stacktrace = CrashReportUtils.GetAllInvolvedModules(Exception, assemblies, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider).ToArray();
+        Stacktrace = CrashReportUtils.GetAllInvolvedModules(Exception, assemblies, assemblyUtilities, moduleProvider, loaderPluginProvider, patchProvider /*monoModProvider, harmonyProvider*/).ToArray();
         FilteredStacktrace = stacktraceFilter.Filter(Stacktrace).ToArray();
 
+        /*
+        foreach (var originalMethod in monoModProvider.GetAllPatchedMethods())
+        {
+            var patches = monoModProvider.GetPatchInfo(originalMethod);
+            if (originalMethod is null || patches is null) continue;
+            LoadedMonoModPatches.Add(originalMethod, patches);
+        }
+        
         foreach (var originalMethod in harmonyProvider.GetAllPatchedMethods())
         {
             var patches = harmonyProvider.GetPatchInfo(originalMethod);
             if (originalMethod is null || patches is null) continue;
             LoadedHarmonyPatches.Add(originalMethod, patches);
+        }
+        */
+        
+        var runtimePatches = patchProvider.GetAllPatches();
+        foreach (var runtimePatch in runtimePatches)
+        {
+            if (!LoadedRuntimePatches.ContainsKey(runtimePatch.Original))
+                LoadedRuntimePatches[runtimePatch.Original] = new List<RuntimePatch>();
+            LoadedRuntimePatches[runtimePatch.Original].Add(runtimePatch);
         }
     }
 }

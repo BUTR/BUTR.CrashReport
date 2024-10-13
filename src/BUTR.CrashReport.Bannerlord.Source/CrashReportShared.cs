@@ -136,112 +136,55 @@ namespace BUTR.CrashReport.Bannerlord
             "TaleWorlds.*Culture*",
         };
 
-        public static IEnumerable<CapabilityModuleOrPluginModel> GetModuleCapabilities(ICollection<AssemblyModel> assemblies, ModuleModel module)
+        public static IEnumerable<CapabilityModel> GetModuleCapabilities(ICollection<AssemblyModel> assemblies, ModuleModel module)
         {
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.OSFileSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("OS File System");
+                yield return new CapabilityModel("OS File System");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.GameFileSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Game File System");
+                yield return new CapabilityModel("Game File System");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.ShellTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Shell");
+                yield return new CapabilityModel("Shell");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.SaveSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Save System");
+                yield return new CapabilityModel("Save System");
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.SaveSystemAssemblyReferences))
-                yield return new CapabilityModuleOrPluginModel("Save System");
+                yield return new CapabilityModel("Save System");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.GameEntitiesTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Game Entities");
+                yield return new CapabilityModel("Game Entities");
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.GameEntitiesAssemblyReferences))
-                yield return new CapabilityModuleOrPluginModel("Game Entities");
+                yield return new CapabilityModel("Game Entities");
 
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.InputSystemAssemblyReferences))
-                yield return new CapabilityModuleOrPluginModel("Input System");
+                yield return new CapabilityModel("Input System");
 
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.LocalizationSystemAssemblyReferences))
-                yield return new CapabilityModuleOrPluginModel("Localization");
+                yield return new CapabilityModel("Localization");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.UITypeReferences))
-                yield return new CapabilityModuleOrPluginModel("User Interface");
+                yield return new CapabilityModel("User Interface");
             if (module.ContainsAssemblyReferences(assemblies, CrashReportShared.UIAssemblyReferences))
-                yield return new CapabilityModuleOrPluginModel("User Interface");
+                yield return new CapabilityModel("User Interface");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.HttpTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Http");
+                yield return new CapabilityModel("Http");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.AchievementSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Achievements");
+                yield return new CapabilityModel("Achievements");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.CampaignSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Campaign");
+                yield return new CapabilityModel("Campaign");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.SkillSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Skills");
+                yield return new CapabilityModel("Skills");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.ItemSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Items");
+                yield return new CapabilityModel("Items");
 
             if (module.ContainsTypeReferences(assemblies, CrashReportShared.CultureSystemTypeReferences))
-                yield return new CapabilityModuleOrPluginModel("Cultures");
-        }
-
-        public static string GetBUTRLoaderVersion(CrashReportModel crashReport)
-        {
-            if (crashReport.Assemblies.FirstOrDefault(x => x.Id.Name == "Bannerlord.BUTRLoader") is { } bAssembly)
-                return bAssembly.Id.Version ?? string.Empty;
-            return string.Empty;
-        }
-        
-        public static string GetBLSEVersion(CrashReportModel crashReport)
-        {
-            if (crashReport.Assemblies.FirstOrDefault(x => x.Id.Name == "Bannerlord.BLSE") is { } bAssembly)
-                return bAssembly.Id.Version ?? string.Empty;
-            return string.Empty;
-        }
-
-        public static string GetLauncherType(CrashReportModel crashReport)
-        {
-            if (crashReport.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:Parent_Process_Name")?.Value is { } parentProcessName)
-            {
-                return parentProcessName switch
-                {
-                    "Vortex" => "vortex",
-                    "BannerLordLauncher" => "bannerlordlauncher",
-                    "steam" => "steam",
-                    "GalaxyClient" => "gog",
-                    "EpicGamesLauncher" => "epicgames",
-                    "devenv" => "debuggervisualstudio",
-                    "JetBrains.Debugger.Worker64c" => "debuggerjetbrains",
-                    "explorer" => "explorer",
-                    "NovusLauncher" => "novus",
-                    "ModOrganizer" => "modorganizer",
-                    _ => $"unknown launcher - {parentProcessName}"
-                };
-            }
-
-            if (!string.IsNullOrEmpty(GetBUTRLoaderVersion(crashReport)))
-                return "butrloader";
-
-            if (!string.IsNullOrEmpty(GetBLSEVersion(crashReport)))
-                return "blse";
-
-            return "vanilla";
-        }
-
-        public static string GetLauncherVersion(CrashReportModel crashReport)
-        {
-            if (crashReport.AdditionalMetadata.FirstOrDefault(x => x.Key == "METADATA:Parent_Process_File_Version")?.Value is { } parentProcessFileVersion)
-                return parentProcessFileVersion;
-
-            if (GetBUTRLoaderVersion(crashReport) is { } bVersion && !string.IsNullOrEmpty(bVersion))
-                return bVersion;
-
-            if (GetBLSEVersion(crashReport) is { } blseVersion && !string.IsNullOrEmpty(blseVersion))
-                return blseVersion;
-
-            return "0";
+                yield return new CapabilityModel("Cultures");
         }
     }
 }

@@ -82,7 +82,7 @@ public static partial class CrashReportHtml
         return htmlReport;
     }
 
-    public static string Build(CrashReportModel crashReportModel, IEnumerable<LogSource> files) => GetBase(crashReportModel, files);
+    public static string Build(CrashReportModel crashReportModel, IEnumerable<LogSourceModel> files) => GetBase(crashReportModel, files);
 
     private static string GetRecursiveExceptionHtml(CrashReportModel crashReport, ExceptionModel? ex)
     {
@@ -143,7 +143,6 @@ public static partial class CrashReportHtml
                 .AppendIf(moduleId2 != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId2).Append("\")'>").Append(moduleId2).Append("</a></b>").Append("<br/>"))
                 .AppendIf(pluginId2 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId2).Append("\")'>").Append(pluginId2).Append("</a></b>").Append("<br/>"))
                 .Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                .Append("Method From Stackframe Issue: ").Append(stacktrace.MethodFromStackframeIssue).Append("<br/>")
                 .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
                 .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN").Append("<br/>")
                 .AppendIf(stacktrace.ExecutingMethod.ILInstructions.Count > 0, sp => sp
@@ -288,7 +287,7 @@ public static partial class CrashReportHtml
             {
                 var hasVersion = !string.IsNullOrEmpty(dependentModule.Version);
                 var hasVersionRange = !string.IsNullOrEmpty(dependentModule.VersionRange);
-                if (dependentModule.Type == DependencyMetadataModelType.Incompatible)
+                if (dependentModule.Type == DependencyMetadataType.Incompatible)
                 {
                     deps[dependentModule.ModuleOrPluginId] = tmp.Clear()
                         .Append("Incompatible ")
@@ -300,7 +299,7 @@ public static partial class CrashReportHtml
                         .AppendIf(hasVersionRange, dependentModule.VersionRange)
                         .ToString();
                 }
-                else if (dependentModule.Type == DependencyMetadataModelType.LoadAfter)
+                else if (dependentModule.Type == DependencyMetadataType.LoadAfter)
                 {
                     deps[dependentModule.ModuleOrPluginId] = tmp.Clear()
                         .Append("Load ").Append("After ")
@@ -312,7 +311,7 @@ public static partial class CrashReportHtml
                         .AppendIf(hasVersionRange, dependentModule.VersionRange)
                         .ToString();
                 }
-                else if (dependentModule.Type == DependencyMetadataModelType.LoadBefore)
+                else if (dependentModule.Type == DependencyMetadataType.LoadBefore)
                 {
                     deps[dependentModule.ModuleOrPluginId] = tmp.Clear()
                         .Append("Load ").Append("Before ")
@@ -392,12 +391,12 @@ public static partial class CrashReportHtml
                 _ => "modules-container",
             };
             var additionalUpdateInfo = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
-                ? new UpdateInfoModuleOrLoaderPlugin
+                ? new UpdateInfo
                 {
                     Provider = split[0],
                     Value = split[1],
                 }
-                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
+                : null).OfType<UpdateInfo>().ToArray() ?? [];
             var hasDependencies = dependenciesBuilder.Length != 0;
             var hasUrl = !string.IsNullOrWhiteSpace(module.Url);
             var hasUpdateInfo = module.UpdateInfo is not null;
@@ -467,12 +466,12 @@ public static partial class CrashReportHtml
         {
             var container = "modules-container";
             var additionalUpdateInfo = plugin.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
-                ? new UpdateInfoModuleOrLoaderPlugin
+                ? new UpdateInfo
                 {
                     Provider = split[0],
                     Value = split[1],
                 }
-                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
+                : null).OfType<UpdateInfo>().ToArray() ?? [];
             var hasUpdateInfo = plugin.UpdateInfo is not null;
             var hasAdditionalUpdateInfo = additionalUpdateInfo.Length > 0;
             moduleBuilder.Append("<li>")
@@ -506,18 +505,18 @@ public static partial class CrashReportHtml
         {
             var @class = string.Join(" ", assembly.Type.GetFlags().Select(x => x switch
             {
-                AssemblyModelType.Dynamic => "dynamic_assembly",
-                AssemblyModelType.GAC => "gac_assembly",
-                AssemblyModelType.System => "sys_assembly",
-                AssemblyModelType.GameCore => "game_assembly",
-                AssemblyModelType.GameModule => "game_module_assembly",
-                AssemblyModelType.Module => "module_assembly",
-                AssemblyModelType.Loader => "loader_assembly",
-                AssemblyModelType.LoaderPlugin => "loader_plugin_assembly",
-                _ when assembly.Type == AssemblyModelType.Unclassified => "unclas_assembly",
+                AssemblyType.Dynamic => "dynamic_assembly",
+                AssemblyType.GAC => "gac_assembly",
+                AssemblyType.System => "sys_assembly",
+                AssemblyType.GameCore => "game_assembly",
+                AssemblyType.GameModule => "game_module_assembly",
+                AssemblyType.Module => "module_assembly",
+                AssemblyType.Loader => "loader_assembly",
+                AssemblyType.LoaderPlugin => "loader_plugin_assembly",
+                _ when assembly.Type == AssemblyType.Unclassified => "unclas_assembly",
                 _ => string.Empty
             }));
-            var isDynamic = assembly.Type.HasFlag(AssemblyModelType.Dynamic);
+            var isDynamic = assembly.Type.HasFlag(AssemblyType.Dynamic);
             var hasPath = assembly.AnonymizedPath != "EMPTY" && !string.IsNullOrWhiteSpace(assembly.AnonymizedPath);
             sb0.Append("<li class='").Append(@class).Append("'>")
                 .Append(assembly.Id.Name).Append(", ")
@@ -566,6 +565,7 @@ public static partial class CrashReportHtml
         var patchesBuilder = new StringBuilder();
         var patchBuilder = new StringBuilder();
 
+        /*
         void AppendPatches(string name, IEnumerable<HarmonyPatchModel> patches)
         {
             patchBuilder.Clear();
@@ -594,7 +594,9 @@ public static partial class CrashReportHtml
                 patchesBuilder.Append("<li>").Append(name).Append("<ul>").Append(patchBuilder).Append("</ul>").Append("</li>");
             }
         }
+        */
 
+        /* TODO:
         harmonyPatchesListBuilder.Append("<ul>");
         foreach (var harmonyPatch in crashReport.HarmonyPatches)
         {
@@ -617,11 +619,12 @@ public static partial class CrashReportHtml
             }
         }
         harmonyPatchesListBuilder.Append("</ul>");
+        */
 
         return harmonyPatchesListBuilder.ToString();
     }
 
-    private static string GetLogFilesHtml(IEnumerable<LogSource> files)
+    private static string GetLogFilesHtml(IEnumerable<LogSourceModel> files)
     {
         var sb = new StringBuilder();
 

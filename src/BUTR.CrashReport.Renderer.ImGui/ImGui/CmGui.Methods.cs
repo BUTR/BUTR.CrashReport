@@ -53,6 +53,16 @@ unsafe partial class CmGui
             igText(fmtPtr);
         }
     }
+    
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
+    public void TextSameLine(bool fmt)
+    {
+        var @true = "true\0"u8;
+        var @false = "false\0"u8;
+        Text(fmt ? @true : @false);
+        SameLine(0, 0);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void TextSameLine(int value)

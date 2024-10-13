@@ -50,9 +50,12 @@ partial class ImGuiRenderer
                     var date = logEntry.Date;
                     var color = logEntry.Level switch
                     {
-                        LogLevel.Fatal => Red,
-                        LogLevel.Error => Red,
-                        LogLevel.Warning => Orange,
+                        LogLevel.Fatal => Fatal,
+                        LogLevel.Error => Error,
+                        LogLevel.Warning => Warn,
+                        LogLevel.Information => Info,
+                        LogLevel.Debug => Debug,
+                        LogLevel.Verbose => Debug,
                         _ => Black
                     };
                     var level = Clamp(logEntry.Level, LogLevel.None, LogLevel.Fatal);

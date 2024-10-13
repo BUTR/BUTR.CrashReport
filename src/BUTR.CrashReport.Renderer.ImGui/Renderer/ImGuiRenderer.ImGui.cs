@@ -10,8 +10,12 @@ partial class ImGuiRenderer
     private static readonly Vector4 Zero4 = Vector4.Zero;
     private static readonly Vector4 Black = FromColor(0, 0, 0, 255);
     private static readonly Vector4 White = FromColor(255, 255, 255, 255);
-    private static readonly Vector4 Red = FromColor(255, 0, 0, 255);
-    private static readonly Vector4 Orange = FromColor(255, 165, 0, 255);
+    
+    private static readonly Vector4 Debug = FromColor(54, 96, 146, 255);
+    private static readonly Vector4 Info = FromColor(0, 125, 60, 255);
+    private static readonly Vector4 Warn = FromColor(225, 125, 50, 255);
+    private static readonly Vector4 Error = FromColor(240, 0, 0, 255);
+    private static readonly Vector4 Fatal = FromColor(190, 0, 0, 255);
 
     private static readonly Vector4 Background = FromColor(236, 236, 236, 255);
     private static readonly Vector4 Plugin = FromColor(255, 255, 224, 255);

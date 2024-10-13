@@ -1,4 +1,5 @@
-﻿using BUTR.CrashReport.Models;
+﻿/*
+using BUTR.CrashReport.Models;
 using BUTR.CrashReport.Renderer.ImGui.Extensions;
 using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
 using BUTR.CrashReport.Renderer.ImGui.Utils;
@@ -79,7 +80,7 @@ partial class ImGuiRenderer
             _imgui.TextSameLine(" Namespace: \0"u8);
             _imgui.TextSameLine(patch.Namespace);
             if (patch.Index != 0) { _imgui.TextSameLine(" Index: \0"u8); _imgui.TextSameLine(patch.Index); }
-            if (patch.Priority != 400) { _imgui.TextSameLine(" Priority: \0"u8); _imgui.TextSameLine(patch.Index); }
+            if (patch.Priority != 400) { _imgui.TextSameLine(" Priority: \0"u8); _imgui.TextSameLine(patch.Priority); }
             if (patch.Before.Count > 0) { _imgui.TextSameLine(" Before: \0"u8); _imgui.TextSameLine(_harmonyBeforeUtf8[patch]); }
             if (patch.After.Count > 0) { _imgui.TextSameLine(" After: \0"u8); _imgui.TextSameLine(_harmonyAfterUtf8[patch]); }
             _imgui.NewLine();
@@ -108,3 +109,4 @@ partial class ImGuiRenderer
         }
     }
 }
+*/

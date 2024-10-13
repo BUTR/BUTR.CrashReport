@@ -17,6 +17,8 @@ partial class ImGuiRenderer
 
     private void RenderSummary()
     {
+        var capabilities = _crashReportRendererUtilities.Capabilities;
+        
         if (_imgui.BeginTable("Buttons\0"u8, 2))
         {
             _imgui.TableNextColumn();
@@ -25,44 +27,71 @@ partial class ImGuiRenderer
             _imgui.SetWindowFontScale(1);
             _imgui.TableNextColumn();
 
-            if (_imgui.Button("Save Report as HTML\0"u8)) _crashReportRendererUtilities.SaveCrashReportAsHtml(_crashReport, _logSources, _addMiniDump, _addLatestSave, _addScreenshots);
-            _imgui.SameLine();
-            if (_imgui.Button("Save Report as ZIP\0"u8)) _crashReportRendererUtilities.SaveCrashReportAsZip(_crashReport, _logSources);
-            _imgui.SameLine();
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.SaveAsHtml))
+            {
+                if (_imgui.Button("Save Report as HTML\0"u8)) _crashReportRendererUtilities.SaveAsHtml(_crashReport, _logSources, _addMiniDump, _addLatestSave, _addScreenshots);
+                _imgui.SameLine();
+            }
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.SaveAsZip))
+            {
+                if (_imgui.Button("Save Report as ZIP\0"u8)) _crashReportRendererUtilities.SaveAsZip(_crashReport, _logSources);
+                _imgui.SameLine();
+            }
             if (_imgui.Button("Close Report and Continue\0"u8, in Secondary, in Secondary2, in Secondary3)) _onClose();
             _imgui.TableNextColumn();
             _imgui.TableNextColumn();
 
-            if (_imgui.Button("Copy as HTML\0"u8)) _crashReportRendererUtilities.CopyAsHtml(_crashReport, _logSources);
-            _imgui.SameLine();
-            if (_imgui.Button("Upload Report as Permalink\0"u8)) _crashReportRendererUtilities.Upload(_crashReport, _logSources);
-            _imgui.TableNextColumn();
-            _imgui.TableNextColumn();
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.CopyAsHtml))
+            {
+                if (_imgui.Button("Copy as HTML\0"u8)) _crashReportRendererUtilities.CopyAsHtml(_crashReport, _logSources);
+                _imgui.SameLine();
+            }
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.Upload))
+            {
+                if (_imgui.Button("Upload Report as Permalink\0"u8)) _crashReportRendererUtilities.Upload(_crashReport, _logSources);
+            }
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.CopyAsHtml | CrashReportRendererCapabilities.Upload))
+            {
+                _imgui.TableNextColumn();
+                _imgui.TableNextColumn();
+            }
 
-            _imgui.Text("Save Report as HTML Options:\0"u8);
-            _imgui.TableNextColumn();
-            _imgui.TableNextColumn();
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasScreenshots | CrashReportRendererCapabilities.HasSaveFiles | CrashReportRendererCapabilities.HasMiniDump))
+            {
+                _imgui.Text("Save Report as HTML Options:\0"u8);
+                _imgui.TableNextColumn();
+                _imgui.TableNextColumn();
+            }
 
-            _imgui.Checkbox("Include Screenshot\0"u8, ref _addScreenshots);
-            _imgui.TableNextColumn();
-            _imgui.TableNextColumn();
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasScreenshots))
+            {
+                _imgui.Checkbox("Include Screenshot\0"u8, ref _addScreenshots);
+                _imgui.TableNextColumn();
+                _imgui.TableNextColumn();
+            }
 
-            _imgui.Checkbox("Include Latest Save File\0"u8, ref _addLatestSave);
-            _imgui.TableNextColumn();
-            _imgui.TableNextColumn();
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasSaveFiles))
+            {
+                _imgui.Checkbox("Include Latest Save File\0"u8, ref _addLatestSave);
+                _imgui.TableNextColumn();
+                _imgui.TableNextColumn();
+            }
 
-            _imgui.Checkbox("Include Mini Dump\0"u8, ref _addMiniDump);
+            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasMiniDump))
+            {
+                _imgui.Checkbox("Include Mini Dump\0"u8, ref _addMiniDump);
+            }
             _imgui.EndTable();
         }
 
-        _imgui.Text("Clicking 'Close Report and Continue' will continue with the Game's error report mechanism.\0"u8);
+        _imgui.Text("Clicking 'Close Report and Continue' will continue with the Game's error reporting mechanism.\0"u8);
 
         _imgui.Separator();
         _imgui.NewLine();
 
         _imgui.SetWindowFontScale(2);
         _imgui.TextSameLine(_crashReport.Metadata.GameName ?? string.Empty);
-        _imgui.Text(" has encountered a problem and will close itself!\0"u8);
+        _imgui.Text(" has encountered a problem!\0"u8);
         _imgui.SetWindowFontScale(1);
 
         _imgui.NewLine();

@@ -25,12 +25,12 @@ partial class ImGuiRenderer
             }
 
             var additionalUpdateInfo = loaderPlugin.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
-                ? new UpdateInfoModuleOrLoaderPlugin
+                ? new UpdateInfo
                 {
                     Provider = split[0],
                     Value = split[1],
                 }
-                : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray() ?? [];
+                : null).OfType<UpdateInfo>().ToArray() ?? [];
             _loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id] = additionalUpdateInfo.Select(x => UnsafeHelper.ToUtf8Array(x.ToString())).ToArray();
         }
     }

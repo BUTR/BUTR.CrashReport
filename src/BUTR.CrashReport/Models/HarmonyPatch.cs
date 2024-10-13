@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿/*
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace BUTR.CrashReport.Models;
@@ -43,3 +44,4 @@ public record HarmonyPatch
     /// </summary>
     public required HarmonyPatchType Type { get; set; }
 }
+*/

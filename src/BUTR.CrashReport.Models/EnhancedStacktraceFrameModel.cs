@@ -15,11 +15,6 @@ public sealed record EnhancedStacktraceFrameModel
     public required string FrameDescription { get; set; }
 
     /// <summary>
-    /// Whether there was an issue with getting the data from the stackframe.
-    /// </summary>
-    public required bool MethodFromStackframeIssue { get; set; }
-
-    /// <summary>
     /// <inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/>
     /// </summary>
     /// <returns><inheritdoc cref="System.Diagnostics.StackFrame.GetILOffset"/></returns>
@@ -34,17 +29,17 @@ public sealed record EnhancedStacktraceFrameModel
     /// <summary>
     /// The method from the stacktrace frame that is being executed.
     /// </summary>
-    public required MethodExecuting ExecutingMethod { get; set; }
+    public required MethodExecutingModel ExecutingMethod { get; set; }
 
     /// <summary>
     /// The original method that is being patched. Is null when no patches exists. Use <see cref="ExecutingMethod"/> instead.
     /// </summary>
-    public required MethodSimple? OriginalMethod { get; set; }
+    public required MethodSimpleModel? OriginalMethod { get; set; }
 
     /// <summary>
     /// The list of patch methods that are applied to the method.
     /// </summary>
-    public required IList<MethodSimple> PatchMethods { get; set; } = new List<MethodSimple>();
+    public required IList<MethodSimpleModel> PatchMethods { get; set; } = new List<MethodSimpleModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
@@ -58,7 +53,6 @@ public sealed record EnhancedStacktraceFrameModel
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return FrameDescription == other.FrameDescription &&
-               MethodFromStackframeIssue == other.MethodFromStackframeIssue &&
                ILOffset == other.ILOffset &&
                NativeOffset == other.NativeOffset &&
                ExecutingMethod.Equals(other.ExecutingMethod) &&
@@ -73,7 +67,6 @@ public sealed record EnhancedStacktraceFrameModel
         unchecked
         {
             var hashCode = FrameDescription.GetHashCode();
-            hashCode = (hashCode * 397) ^ MethodFromStackframeIssue.GetHashCode();
             hashCode = (hashCode * 397) ^ ILOffset.GetHashCode();
             hashCode = (hashCode * 397) ^ NativeOffset.GetHashCode();
             hashCode = (hashCode * 397) ^ ExecutingMethod.GetHashCode();

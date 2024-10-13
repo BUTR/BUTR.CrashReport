@@ -84,14 +84,14 @@ Clicking 'Close Report' will continue with the Game's error report mechanism.
 
     private ICrashReportRendererUtilities CrashReportRendererUtilities { get; }
     private CrashReportModel CrashReport { get; }
-    private ICollection<LogSource> LogSources { get; }
+    private ICollection<LogSourceModel> LogSources { get; }
     private string ReportInHtml { get; }
 
     public bool IncludeMiniDump { get; set; }
     public bool IncludeSaveFile { get; set; }
     public bool IncludeScreenshot { get; set; }
 
-    public CrashReportWinForms(CrashReportModel crashReport, ICollection<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
+    public CrashReportWinForms(CrashReportModel crashReport, ICollection<LogSourceModel> logSources, ICrashReportRendererUtilities crashReportRendererUtilities)
     {
         CrashReportRendererUtilities = crashReportRendererUtilities;
         CrashReport = crashReport;

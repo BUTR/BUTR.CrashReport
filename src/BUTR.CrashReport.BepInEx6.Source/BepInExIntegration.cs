@@ -53,11 +53,11 @@ namespace BUTR.CrashReport.BepInEx6
     
     public abstract class BepInExIntegration
     {
-        public abstract IEnumerable<CapabilityModuleOrPluginModel> GetModuleCapabilities(ICollection<AssemblyModel> assemblies, LoaderPluginModel loaderPlugin);
+        public abstract IEnumerable<CapabilityModel> GetModuleCapabilities(ICollection<AssemblyModel> assemblies, LoaderPluginModel loaderPlugin);
 
         private List<LoaderPluginModel> GetPlugins<TPlugin>(BaseChainloader<TPlugin> chainloader, ICollection<AssemblyModel> assemblies) => chainloader.Plugins.Select(kv =>
         {
-            var capabilities = new List<CapabilityModuleOrPluginModel>();
+            var capabilities = new List<CapabilityModel>();
             var loaderPlugin = new LoaderPluginModel
             {
                 Id = kv.Value.Metadata.GUID,
@@ -69,7 +69,7 @@ namespace BUTR.CrashReport.BepInEx6
                     ModuleOrPluginId = x.DependencyGUID,
                     Version = null,
                     VersionRange = x.VersionRange.ToString(),
-                    Type = DependencyMetadataModelType.LoadBefore,
+                    Type = DependencyMetadataType.LoadBefore,
                     IsOptional = x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency),
                     AdditionalMetadata = new List<MetadataModel>
                     {
@@ -81,7 +81,7 @@ namespace BUTR.CrashReport.BepInEx6
                     ModuleOrPluginId = x.IncompatibilityGUID,
                     Version = null,
                     VersionRange = null,
-                    Type = DependencyMetadataModelType.Incompatible,
+                    Type = DependencyMetadataType.Incompatible,
                     IsOptional = false,
                     AdditionalMetadata = Array.Empty<MetadataModel>(),
                 })).ToList(),

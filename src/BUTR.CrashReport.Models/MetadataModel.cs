@@ -1,4 +1,6 @@
-﻿namespace BUTR.CrashReport.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace BUTR.CrashReport.Models;
 
 /// <summary>
 /// Represents a generic metadata extension for any model.
@@ -15,6 +17,15 @@ public sealed record MetadataModel
     /// </summary>
     public required string Value { get; set; }
 
+    public MetadataModel() { }
+    
+    [SetsRequiredMembers]
+    public MetadataModel(string key, string value)
+    {
+        Key = key;
+        Value = value;
+    }
+    
     /// <inheritdoc />
     public bool Equals(MetadataModel? other)
     {

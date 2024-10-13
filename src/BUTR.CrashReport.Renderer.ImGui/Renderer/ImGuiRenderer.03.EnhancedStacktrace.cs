@@ -19,20 +19,20 @@ partial class ImGuiRenderer
         public bool Equals(int x, int y) => x == y;
         public int GetHashCode(int obj) => obj;
     }
-    private class MethodSimpleEqualityComparer : IEqualityComparer<MethodSimple>
+    private class MethodSimpleEqualityComparer : IEqualityComparer<MethodSimpleModel>
     {
         public static MethodSimpleEqualityComparer Instance { get; } = new();
-        public bool Equals(MethodSimple? x, MethodSimple? y) => ReferenceEquals(x, y); // We can just reference compare here
-        public int GetHashCode(MethodSimple obj) => obj.GetHashCode();
+        public bool Equals(MethodSimpleModel? x, MethodSimpleModel? y) => ReferenceEquals(x, y); // We can just reference compare here
+        public int GetHashCode(MethodSimpleModel obj) => obj.GetHashCode();
     }
 
     private enum CodeType { IL = 0, CSharpILMixed = 1, CSharp = 2, Native = 3 }
-    private readonly Dictionary<MethodSimple, byte[][]> _methodIdUtf8 = new(MethodSimpleEqualityComparer.Instance);
-    private readonly Dictionary<MethodSimple, byte[][]> _methodCodeLinesUtf8 = new(MethodSimpleEqualityComparer.Instance);
-    private readonly Dictionary<MethodSimple, int[]> _methodCodeLineCount = new(MethodSimpleEqualityComparer.Instance);
+    private readonly Dictionary<MethodSimpleModel, byte[][]> _methodIdUtf8 = new(MethodSimpleEqualityComparer.Instance);
+    private readonly Dictionary<MethodSimpleModel, byte[][]> _methodCodeLinesUtf8 = new(MethodSimpleEqualityComparer.Instance);
+    private readonly Dictionary<MethodSimpleModel, int[]> _methodCodeLineCount = new(MethodSimpleEqualityComparer.Instance);
     private readonly Dictionary<int, byte[]> _offsetsUtf8 = new(IntEqualityComparer.Instance);
 
-    private static void SetCodeDictionary<TValue>(IDictionary<MethodSimple, TValue[]> methodDict, MethodSimple key, CodeType codeType, TValue value)
+    private static void SetCodeDictionary<TValue>(IDictionary<MethodSimpleModel, TValue[]> methodDict, MethodSimpleModel key, CodeType codeType, TValue value)
     {
         if (!methodDict.TryGetValue(key, out var codeArray))
             methodDict[key] = (codeArray = new TValue[(int) CodeType.Native + 1]);
@@ -49,7 +49,7 @@ partial class ImGuiRenderer
             return $"{name}##{colapsingHeaderId}";
         }
 
-        void SetupCodeExecuting(MethodExecuting? method)
+        void SetupCodeExecuting(MethodExecutingModel? method)
         {
             if (method is null) return;
 
@@ -59,7 +59,7 @@ partial class ImGuiRenderer
             SetCodeDictionary(_methodCodeLinesUtf8, method, CodeType.Native, UnsafeHelper.ToUtf8Array(string.Join("\n", method.NativeInstructions).Trim('\n')));
             SetCodeDictionary(_methodCodeLineCount, method, CodeType.Native, method.NativeInstructions.Count);
         }
-        void SetupCode(MethodSimple? method)
+        void SetupCode(MethodSimpleModel? method)
         {
             if (method is null) return;
 
@@ -94,7 +94,7 @@ partial class ImGuiRenderer
         }
     }
 
-    private void RenderMethodLines(MethodSimple method, CodeType codeType)
+    private void RenderMethodLines(MethodSimpleModel method, CodeType codeType)
     {
         var id = _methodIdUtf8[method][Unsafe.As<CodeType, int>(ref codeType)];
         var lines = _methodCodeLinesUtf8[method][Unsafe.As<CodeType, int>(ref codeType)];
@@ -118,14 +118,14 @@ partial class ImGuiRenderer
             _imgui.TreePop();
         }
     }
-    private void RenderCodeExecuting(MethodExecuting? method)
+    private void RenderCodeExecuting(MethodExecutingModel? method)
     {
         if (method is null) return;
 
         RenderCode(method);
         RenderMethodLines(method, CodeType.Native);
     }
-    private void RenderCode(MethodSimple? method)
+    private void RenderCode(MethodSimpleModel? method)
     {
         if (method is null) return;
 
@@ -154,8 +154,6 @@ partial class ImGuiRenderer
                 if (moduleId1 != "UNKNOWN") _imgui.RenderId("Module Id:\0"u8, moduleId1);
                 if (pluginId1 != "UNKNOWN") _imgui.RenderId("Plugin Id:\0"u8, pluginId1);
 
-                _imgui.TextSameLine("Method From Stackframe Issue: \0"u8);
-                _imgui.Text(stacktrace.MethodFromStackframeIssue);
                 _imgui.TextSameLine("Approximate IL Offset: \0"u8);
                 _imgui.Text(stacktrace.ILOffset is not null ? _offsetsUtf8[stacktrace.ILOffset.Value] : "UNKNOWN\0"u8);
                 _imgui.TextSameLine("Native Offset: \0"u8);

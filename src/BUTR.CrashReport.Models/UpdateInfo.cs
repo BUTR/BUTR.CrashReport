@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents the module or loader plugin update information.
 /// </summary>
-public sealed record UpdateInfoModuleOrLoaderPlugin
+public sealed record UpdateInfo
 {
     /// <summary>
     /// The provider of the update. Can be 'NexusMods' or 'GitHub', for example.
@@ -19,7 +19,7 @@ public sealed record UpdateInfoModuleOrLoaderPlugin
     public override string ToString() => $"{Provider}:{Value}";
 
     /// <inheritdoc />
-    public bool Equals(UpdateInfoModuleOrLoaderPlugin? other)
+    public bool Equals(UpdateInfo? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

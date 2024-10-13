@@ -51,7 +51,7 @@ public sealed record ModuleModel
     /// <summary>
     /// The information for updating the module.
     /// </summary>
-    public required UpdateInfoModuleOrLoaderPlugin? UpdateInfo { get; set; }
+    public required UpdateInfo? UpdateInfo { get; set; }
 
     /// <summary>
     /// The dependencies of the module, if there are any.
@@ -66,7 +66,7 @@ public sealed record ModuleModel
     /// <summary>
     /// The capabilities, if there are any.
     /// </summary>
-    public required IList<CapabilityModuleOrPluginModel> Capabilities { get; set; } = new List<CapabilityModuleOrPluginModel>();
+    public required IList<CapabilityModel> Capabilities { get; set; } = new List<CapabilityModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>

@@ -51,13 +51,14 @@ internal partial class ImGuiRenderer
 
     private readonly CmGui _imgui;
     private readonly CrashReportModel _crashReport;
-    private readonly IList<LogSource> _logSources;
+    private readonly IList<LogSourceModel> _logSources;
     private readonly ICrashReportRendererUtilities _crashReportRendererUtilities;
     private readonly Action _onClose;
 
+    private byte[] _involvedModulesAndPluginsTitle = [];
     private byte[] _loadedPluginsTitle = [];
 
-    public ImGuiRenderer(CmGui imgui, CrashReportModel crashReport, IList<LogSource> logSources, ICrashReportRendererUtilities crashReportRendererUtilities, Action onClose)
+    public ImGuiRenderer(CmGui imgui, CrashReportModel crashReport, IList<LogSourceModel> logSources, ICrashReportRendererUtilities crashReportRendererUtilities, Action onClose)
     {
         _imgui = imgui;
         _crashReport = crashReport;
@@ -73,15 +74,16 @@ internal partial class ImGuiRenderer
         InitializeInstalledLoaderPlugins();
         InitializeAssemblies();
         InitializeNatives();
-        InitializeHarmonyPatches();
+        InitializeRuntimePatches();
         InitializeLogFiles();
     }
 
     private void InitializeMain()
     {
-        _loadedPluginsTitle = !string.IsNullOrEmpty(_crashReport.Metadata.LoaderPluginProviderName)
-            ? UnsafeHelper.ToUtf8Array($"Loaded {_crashReport.Metadata.LoaderPluginProviderName} Plugins")
-            : [];
+        _loadedPluginsTitle = UnsafeHelper.ToUtf8Array($"Loaded {_crashReport.Metadata.LoaderPluginProviderName} Plugins\0");
+        _involvedModulesAndPluginsTitle = _crashReportRendererUtilities.Capabilities.HasFlag(CrashReportRendererCapabilities.PluginLoader)
+            ? "Involved Modules and Plugins\0"u8.ToArray()
+            : "Involved Modules\0"u8.ToArray();
     }
 
     public void Render()
@@ -134,10 +136,10 @@ internal partial class ImGuiRenderer
             }
             _imgui.EndChild();
 
-            if (_imgui.BeginChild("Involved Modules and Plugins\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            if (_imgui.BeginChild(_involvedModulesAndPluginsTitle, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
             {
                 _imgui.SetWindowFontScale(2);
-                if (_imgui.TreeNode("Involved Modules and Plugins\0"u8))
+                if (_imgui.TreeNode(_involvedModulesAndPluginsTitle))
                 {
                     _imgui.SetWindowFontScale(1);
                     RenderInvolvedModulesAndPlugins();
@@ -160,7 +162,7 @@ internal partial class ImGuiRenderer
             }
             _imgui.EndChild();
 
-            if (_loadedPluginsTitle.Length > 0)
+            if (_crashReportRendererUtilities.Capabilities.HasFlag(CrashReportRendererCapabilities.PluginLoader))
             {
                 if (_imgui.BeginChild(_loadedPluginsTitle, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
                 {
@@ -202,31 +204,68 @@ internal partial class ImGuiRenderer
             }
             _imgui.EndChild();
 
-            if (_imgui.BeginChild("Harmony Patches\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            /*
+            if (_crashReportRendererUtilities.Capabilities.HasFlag(CrashReportRendererCapabilities.MonoModPatches))
+            {
+                if (_imgui.BeginChild("MonoMod Patches\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+                {
+                    _imgui.SetWindowFontScale(2);
+                    if (_imgui.TreeNode("MonoMod Patches\0"u8))
+                    {
+                        _imgui.SetWindowFontScale(1);
+                        RenderMonoModPatches();
+                    }
+                    _imgui.TreePop();
+                    _imgui.SetWindowFontScale(1);
+                }
+                _imgui.EndChild();
+            }
+
+            if (_crashReportRendererUtilities.Capabilities.HasFlag(CrashReportRendererCapabilities.HarmonyPatches))
+            {
+                if (_imgui.BeginChild("Harmony Patches\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+                {
+                    _imgui.SetWindowFontScale(2);
+                    if (_imgui.TreeNode("Harmony Patches\0"u8))
+                    {
+                        _imgui.SetWindowFontScale(1);
+                        RenderHarmonyPatches();
+                    }
+                    _imgui.TreePop();
+                    _imgui.SetWindowFontScale(1);
+                }
+                _imgui.EndChild();
+            }
+            */
+            
+            if (_imgui.BeginChild("Runtime Patches\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
             {
                 _imgui.SetWindowFontScale(2);
-                if (_imgui.TreeNode("Harmony Patches\0"u8))
+                if (_imgui.TreeNode("Runtime Patches\0"u8))
                 {
                     _imgui.SetWindowFontScale(1);
-                    RenderHarmonyPatches();
+                    RenderRuntimePatches();
                 }
                 _imgui.TreePop();
                 _imgui.SetWindowFontScale(1);
             }
             _imgui.EndChild();
 
-            if (_imgui.BeginChild("Log Files\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            if (_crashReportRendererUtilities.Capabilities.HasFlag(CrashReportRendererCapabilities.Logs))
             {
-                _imgui.SetWindowFontScale(2);
-                if (_imgui.TreeNode("Log Files\0"u8))
+                if (_imgui.BeginChild("Log Files\0"u8, in Zero2, in White, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
                 {
+                    _imgui.SetWindowFontScale(2);
+                    if (_imgui.TreeNode("Log Files\0"u8))
+                    {
+                        _imgui.SetWindowFontScale(1);
+                        RenderLogFiles();
+                    }
+                    _imgui.TreePop();
                     _imgui.SetWindowFontScale(1);
-                    RenderLogFiles();
                 }
-                _imgui.TreePop();
-                _imgui.SetWindowFontScale(1);
+                _imgui.EndChild();
             }
-            _imgui.EndChild();
 
             _imgui.End();
         }

@@ -9,5 +9,5 @@ internal static class AssemblyModelTypeExtensions
     private const MethodImplOptions AggressiveOptimization = (MethodImplOptions) 512;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public static bool IsSet(this AssemblyModelType self, AssemblyModelType flag) => (self & flag) == flag;
+    public static bool IsSet(this AssemblyType self, AssemblyType flag) => (self & flag) == flag;
 }

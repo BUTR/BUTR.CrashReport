@@ -5,7 +5,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents a single log entry.
 /// </summary>
-public sealed record LogEntry
+public sealed record LogEntryModel
 {
     /// <summary>
     /// The date and time this log entry was created.
@@ -28,7 +28,7 @@ public sealed record LogEntry
     public required string Message { get; set; }
 
     /// <inheritdoc />
-    public bool Equals(LogEntry? other)
+    public bool Equals(LogEntryModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

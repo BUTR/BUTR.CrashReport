@@ -11,8 +11,6 @@ using System.Security.Cryptography;
 
 using static BUTR.CrashReport.Decompilers.Utils.MethodDecompiler;
 
-using HarmonyPatch = BUTR.CrashReport.Models.HarmonyPatch;
-
 namespace BUTR.CrashReport.Utils;
 
 /// <summary>
@@ -40,20 +38,49 @@ public static class CrashReportUtils
         /// </summary>
         public required List<MethodEntry> Patches { get; set; }
 
-        /// <summary>
-        /// <inheritdoc cref="EnhancedStacktraceFrameModel.MethodFromStackframeIssue"/>
-        /// </summary>
-        public required bool Issues { get; set; }
+        public required int ILOffset { get; set; }
 
+        public required int NativeILOffset { get; set; }
+
+        public required IntPtr NativeCodePtr { get; set; }
+        
         /// <summary>
         /// Deconstructs the object.
         /// </summary>
-        public void Deconstruct(out MethodBase? original, out MethodInfo? replacement, out List<MethodEntry> patches, out bool issues)
+        public void Deconstruct(out MethodBase? original, out MethodInfo? replacement, out List<MethodEntry> patches, out int ilOffset, out int nativeILOffset, out IntPtr nativeCodePtr)
         {
             original = OriginalMethod;
             replacement = ExecutingMethod;
             patches = Patches;
-            issues = Issues;
+            ilOffset = ILOffset;
+            nativeILOffset = NativeILOffset;
+            nativeCodePtr = NativeCodePtr;
+        }
+    }
+
+    /*
+    /// <summary>
+    /// Gets all involved modules in the exception stacktrace.
+    /// </summary>
+    public static IEnumerable<(MonoModPatch, IModuleInfo?, ILoaderPluginInfo?)> GetMonoModPatchMethods(MonoModPatches? patches, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+    {
+        if (patches is null)
+            yield break;
+
+        var patchMethods = patches.Detours.OrderBy(t => t.Priority)
+            .Concat(patches.ILHooks.OrderBy(t => t.Priority));
+
+        foreach (var patch in patchMethods)
+        {
+            var method = patch.Method;
+            if (method.DeclaringType is not { } declaringType)
+                continue;
+
+            var moduleInfo = moduleProvider.GetModuleByType(declaringType);
+            var loaderPluginInfo = loaderPluginProvider.GetLoaderPluginByType(declaringType);
+
+            if (moduleInfo is not null || loaderPluginInfo is not null)
+                yield return (patch, moduleInfo, loaderPluginInfo);
         }
     }
 
@@ -83,6 +110,7 @@ public static class CrashReportUtils
                 yield return (patch, moduleInfo, loaderPluginInfo);
         }
     }
+    */
 
     /// <summary>
     /// Gets the module info if the method is from a mod.
@@ -169,38 +197,40 @@ public static class CrashReportUtils
         return null;
     }
 
+    /*
     /// <summary>
     /// Gets the Harmony data from the stackframe.
     /// </summary>
-    public static StackframePatchData GetHarmonyData(StackFrame frame, IHarmonyProvider harmonyProvider, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+    public static StackframePatchData GetPatchData(StackFrame frame, IPatchProvider patchProvider, IMonoModProvider monoModProvider, IHarmonyProvider harmonyProvider, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
     {
-        MethodBase? executingMethod;
-        var methodFromStackframeIssue = false;
-        try
-        {
-            executingMethod = harmonyProvider.GetMethodFromStackframe(frame);
-        }
-        // NullReferenceException means the method was not found. Harmony doesn't handle this case gracefully
-        catch (NullReferenceException e)
-        {
-            Trace.TraceError(e.ToString());
-            executingMethod = frame.GetMethod()!;
-        }
-        // The given generic instantiation was invalid.
-        // From what I understand, this will occur with generic methods
-        // Also when static constructors throw errors, Harmony resolution will fail
-        catch (Exception e)
-        {
-            Trace.TraceError(e.ToString());
-            methodFromStackframeIssue = true;
-            executingMethod = frame.GetMethod()!;
-        }
-
         var patches = new List<MethodEntry>();
-        var executingIdentifiableMethod = executingMethod is MethodInfo mi ? harmonyProvider.GetIdentifiable(mi) as MethodInfo ?? mi : null;
-        var originalIdentifiableMethod = executingIdentifiableMethod is not null ? harmonyProvider.GetOriginalMethod(executingIdentifiableMethod) : null;
-        var harmonyPatches = originalIdentifiableMethod is not null ? harmonyProvider.GetPatchInfo(originalIdentifiableMethod) : null;
-
+        
+        var executingMethodMonoMod = monoModProvider.GetExecutingMethod(frame);
+        var originalMethodMonoMod = monoModProvider.GetOriginalMethod(frame);
+        var ilOffsetMonoMod = frame.GetILOffset();
+        var nativeILOffsetMonoMod = frame.GetNativeOffset();
+        var nativeCodePtrMonoMod = executingMethodMonoMod is not null ? monoModProvider.GetNativeMethodBody(executingMethodMonoMod) : IntPtr.Zero;
+        var monoModPatches = monoModProvider.GetPatchInfo(frame);
+        foreach (var (patch, moduleInfo, loaderPluginInfo) in GetMonoModPatchMethods(monoModPatches, moduleProvider, loaderPluginProvider))
+        {
+            patches.Add(new MethodEntryMonoMod
+            {
+                Patch = patch,
+                Method = patch.Method,
+                ModuleInfo = moduleInfo,
+                LoaderPluginInfo = loaderPluginInfo,
+                ILInstructions = DecompileILCode(patch.Method),
+                CSharpILMixedInstructions = DecompileILWithCSharpCode(patch.Method),
+                CSharpInstructions = DecompileCSharpCode(patch.Method),
+            });
+        }
+        
+        var executingMethodHarmony = harmonyProvider.GetExecutingMethod(frame);
+        var originalMethodHarmony = harmonyProvider.GetOriginalMethod(frame);
+        var ilOffsetHarmony = frame.GetILOffset();
+        var nativeILOffsetHarmony = frame.GetNativeOffset();
+        var nativeCodePtrHarmony = executingMethodHarmony is not null ? harmonyProvider.GetNativeMethodBody(executingMethodHarmony) : IntPtr.Zero;
+        var harmonyPatches = harmonyProvider.GetPatchInfo(frame);
         foreach (var (patch, moduleInfo, loaderPluginInfo) in GetHarmonyPatchMethods(harmonyPatches, moduleProvider, loaderPluginProvider))
         {
             patches.Add(new MethodEntryHarmony
@@ -217,22 +247,41 @@ public static class CrashReportUtils
 
         return new()
         {
-            OriginalMethod = originalIdentifiableMethod,
-            ExecutingMethod = executingIdentifiableMethod,
+            OriginalMethod = originalMethodMonoMod ?? originalMethodHarmony,
+            ExecutingMethod = executingMethodMonoMod ?? executingMethodHarmony,
             Patches = patches,
-            Issues = methodFromStackframeIssue,
         };
+    }
+    */
+    
+    public static IEnumerable<(RuntimePatch, IModuleInfo?, ILoaderPluginInfo?)> GetPatchMethods(IList<RuntimePatch> patches, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+    {
+        if (patches is null)
+            yield break;
+
+        foreach (var patch in patches)
+        {
+            var method = patch.Patch;
+            if (method.DeclaringType is not { } declaringType)
+                continue;
+
+            var moduleInfo = moduleProvider.GetModuleByType(declaringType);
+            var loaderPluginInfo = loaderPluginProvider.GetLoaderPluginByType(declaringType);
+
+            if (moduleInfo is not null || loaderPluginInfo is not null)
+                yield return (patch, moduleInfo, loaderPluginInfo);
+        }
     }
 
     /// <summary>
     /// Gets all involved modules in the exception stacktrace.
     /// </summary>
-    public static IEnumerable<StacktraceEntry> GetAllInvolvedModules(Exception ex, ICollection<Assembly> assemblies, IAssemblyUtilities assemblyUtilities, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider, IHarmonyProvider harmonyProvider)
+    public static IEnumerable<StacktraceEntry> GetAllInvolvedModules(Exception ex, ICollection<Assembly> assemblies, IAssemblyUtilities assemblyUtilities, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider, IPatchProvider patchProvider/*, IMonoModProvider monoModProvider, IHarmonyProvider harmonyProvider*/)
     {
         var inner = ex.InnerException;
         if (inner is not null)
         {
-            foreach (var modInfo in GetAllInvolvedModules(inner, assemblies, assemblyUtilities, moduleProvider, loaderPluginProvider, harmonyProvider))
+            foreach (var modInfo in GetAllInvolvedModules(inner, assemblies, assemblyUtilities, moduleProvider, loaderPluginProvider, patchProvider/*, monoModProvider, harmonyProvider*/))
                 yield return modInfo;
         }
 
@@ -241,11 +290,11 @@ public static class CrashReportUtils
         {
             if (!frame.HasMethod()) continue;
 
-            var (originalMethod, executingMethod, patches, methodFromStackframeIssue) = GetHarmonyData(frame, harmonyProvider, moduleProvider, loaderPluginProvider);
-
-            var ilOffset = frame.GetILOffset();
-            var nativeILOffset = frame.GetNativeOffset();
-            var nativeCodePtr = executingMethod is not null ? harmonyProvider.GetNativeMethodBody(executingMethod) : IntPtr.Zero;
+            //var (originalMethod, executingMethod, patches, ilOffset, nativeILOffset, nativeCodePtr) = GetPatchData(frame, patchProvider/*, monoModProvider, harmonyProvider*/, moduleProvider, loaderPluginProvider);
+            if (patchProvider.GetPatches(frame) is not { } data) continue;
+            
+            var (originalMethod, executingMethod, patches, ilOffset, nativeILOffset, nativeCodePtr) = data;
+            
             yield return new()
             {
                 Method = executingMethod!,
@@ -258,7 +307,6 @@ public static class CrashReportUtils
                     CSharpILMixedInstructions = DecompileILWithCSharpCode(originalMethod),
                     CSharpInstructions = DecompileCSharpCode(originalMethod),
                 } : null,
-                MethodFromStackframeIssue = methodFromStackframeIssue,
                 ModuleInfo = GetModuleInfoIfMod(executingMethod, assemblies, assemblyUtilities, moduleProvider),
                 LoaderPluginInfo = GetLoaderPluginIfMod(executingMethod, assemblies, assemblyUtilities, loaderPluginProvider),
                 ILOffset = ilOffset != StackFrame.OFFSET_UNKNOWN ? ilOffset : null,
@@ -268,7 +316,20 @@ public static class CrashReportUtils
                 ILInstructions = DecompileILCode(executingMethod),
                 CSharpILMixedInstructions = DecompileILWithCSharpCode(executingMethod),
                 CSharpInstructions = DecompileCSharpCode(executingMethod),
-                PatchMethods = patches.ToArray(),
+                PatchMethods = GetPatchMethods(patches, moduleProvider, loaderPluginProvider).Select(x =>
+                {
+                    var (patch, moduleInfo, loaderPluginInfo) = x;
+                    return new MethodEntryRuntimePatch
+                    {
+                        Patch = patch,
+                        Method = patch.Original,
+                        ModuleInfo = moduleInfo,
+                        LoaderPluginInfo = loaderPluginInfo,
+                        ILInstructions = DecompileILCode(patch.Patch),
+                        CSharpILMixedInstructions = DecompileILWithCSharpCode(patch.Patch),
+                        CSharpInstructions = DecompileCSharpCode(patch.Patch),
+                    };
+                }).ToArray<MethodEntry>(),
             };
         }
     }

@@ -1,7 +1,8 @@
-﻿namespace BUTR.CrashReport.Models;
+﻿/*
+namespace BUTR.CrashReport.Models;
 
 /// <summary>
-/// Represents a harmony patch.
+/// Represents a Harmony patch.
 /// </summary>
 public record MethodEntryHarmony : MethodEntry
 {
@@ -10,3 +11,4 @@ public record MethodEntryHarmony : MethodEntry
     /// </summary>
     public required HarmonyPatch Patch { get; set; }
 }
+*/

@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents the functionality that is used by the module or plugin.
 /// </summary>
-public sealed record CapabilityModuleOrPluginModel
+public sealed record CapabilityModel
 {
     /// <summary>
     /// The name of the capability.
@@ -16,12 +16,12 @@ public sealed record CapabilityModuleOrPluginModel
     public string Description { get; set; } = string.Empty;
 
     /// <summary>
-    /// Creates a new instance of <see cref="CapabilityModuleOrPluginModel"/>.
+    /// Creates a new instance of <see cref="CapabilityModel"/>.
     /// </summary>
-    public CapabilityModuleOrPluginModel(string name) => Name = name;
+    public CapabilityModel(string name) => Name = name;
 
     /// <inheritdoc />
-    public bool Equals(CapabilityModuleOrPluginModel? other)
+    public bool Equals(CapabilityModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

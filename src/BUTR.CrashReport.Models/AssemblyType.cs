@@ -6,7 +6,7 @@ namespace BUTR.CrashReport.Models;
 /// Represents attributes for a .NET assembly.
 /// </summary>
 [Flags]
-public enum AssemblyModelType
+public enum AssemblyType
 {
     /// <summary>
     /// Unknown assembly origin

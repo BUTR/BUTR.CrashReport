@@ -1,9 +1,9 @@
-﻿namespace BUTR.CrashReport.Models;
+namespace BUTR.CrashReport.Models;
 
 /// <summary>
 /// Represents the architecture of a native assembly.
 /// </summary>
-public enum NativeAssemblyArchitectureType
+public enum AssemblyArchitectureType
 {
     /// <summary>
     /// Unknown architecture.
@@ -13,20 +13,25 @@ public enum NativeAssemblyArchitectureType
     /// <summary>
     /// 
     /// </summary>
-    x86 = 1,
+    MSIL = 1,
 
     /// <summary>
     /// 
     /// </summary>
-    x86_64 = 2,
+    X86 = 2,
 
     /// <summary>
     /// 
     /// </summary>
-    Arm = 3,
+    IA64 = 3,
 
     /// <summary>
-    /// AArch64
+    /// 
     /// </summary>
-    Arm64 = 4,
+    Amd64 = 4,
+
+    /// <summary>
+    /// 
+    /// </summary>
+    Arm = 5,
 }

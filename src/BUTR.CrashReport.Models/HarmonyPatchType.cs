@@ -1,4 +1,5 @@
-﻿namespace BUTR.CrashReport.Models;
+﻿/*
+namespace BUTR.CrashReport.Models;
 
 /// <summary>
 /// Represents the type of a Harmony patch.
@@ -25,3 +26,4 @@ public enum HarmonyPatchType
     /// </summary>
     Transpiler = 4,
 }
+*/

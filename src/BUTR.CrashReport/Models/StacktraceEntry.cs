@@ -20,12 +20,6 @@ public record StacktraceEntry
     public required MethodEntrySimple? OriginalMethod { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.MethodFromStackframeIssue"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.EnhancedStacktraceFrameModel.MethodFromStackframeIssue"/></returns>
-    public required bool MethodFromStackframeIssue { get; set; }
-
-    /// <summary>
     /// The module that holds the method. Can be null.
     /// </summary>
     public required IModuleInfo? ModuleInfo { get; set; }
@@ -54,27 +48,27 @@ public record StacktraceEntry
     public required string StackFrameDescription { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodExecuting.NativeInstructions"/>
+    /// <inheritdoc cref="MethodExecutingModel.NativeInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodExecuting.NativeInstructions"/></returns>
+    /// <returns><inheritdoc cref="MethodExecutingModel.NativeInstructions"/></returns>
     public required string[] NativeInstructions { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/>
+    /// <inheritdoc cref="MethodSimpleModel.ILInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.ILInstructions"/></returns>
+    /// <returns><inheritdoc cref="MethodSimpleModel.ILInstructions"/></returns>
     public required string[] ILInstructions { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/>
+    /// <inheritdoc cref="MethodSimpleModel.CSharpILMixedInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpILMixedInstructions"/></returns>
+    /// <returns><inheritdoc cref="MethodSimpleModel.CSharpILMixedInstructions"/></returns>
     public required string[] CSharpILMixedInstructions { get; set; }
 
     /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/>
+    /// <inheritdoc cref="MethodSimpleModel.CSharpInstructions"/>
     /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Models.MethodSimple.CSharpInstructions"/></returns>
+    /// <returns><inheritdoc cref="MethodSimpleModel.CSharpInstructions"/></returns>
     public required string[] CSharpInstructions { get; set; }
 
     /// <summary>

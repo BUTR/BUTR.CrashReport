@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents the type of teh dependency metadata.
 /// </summary>
-public enum DependencyMetadataModelType
+public enum DependencyMetadataType
 {
     /// <summary>
     /// The depencency will load before this module.

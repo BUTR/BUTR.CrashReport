@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿/*
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BUTR.CrashReport.Models;
@@ -53,3 +54,4 @@ public sealed record HarmonyPatchesModel
         }
     }
 }
+*/

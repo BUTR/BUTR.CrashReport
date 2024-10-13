@@ -6,7 +6,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents a method.
 /// </summary>
-public record MethodSimple
+public record MethodSimpleModel
 {
     /// <summary>
     /// The assembly identity of the assembly that contains the method.
@@ -70,7 +70,7 @@ public record MethodSimple
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 
     /// <inheritdoc />
-    public virtual bool Equals(MethodSimple? other)
+    public virtual bool Equals(MethodSimpleModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

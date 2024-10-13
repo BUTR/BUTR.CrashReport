@@ -6,7 +6,7 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents a log source. Could be a file or anything else.
 /// </summary>
-public sealed record LogSource
+public sealed record LogSourceModel
 {
     /// <summary>
     /// The name of the log source.
@@ -16,7 +16,7 @@ public sealed record LogSource
     /// <summary>
     /// The log entries associated with the log source.
     /// </summary>
-    public required IList<LogEntry> Logs { get; set; } = new List<LogEntry>();
+    public required IList<LogEntryModel> Logs { get; set; } = new List<LogEntryModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
@@ -25,7 +25,7 @@ public sealed record LogSource
     public required IList<MetadataModel> AdditionalMetadata { get; set; } = new List<MetadataModel>();
 
     /// <inheritdoc />
-    public bool Equals(LogSource? other)
+    public bool Equals(LogSourceModel? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

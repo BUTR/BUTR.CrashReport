@@ -8,7 +8,7 @@ namespace BUTR.CrashReport.Renderer.Html;
 partial class CrashReportHtml
 {
 #pragma warning disable format // @formatter:off
-    private static string GetBase(CrashReportModel crashReport, IEnumerable<LogSource> files)
+    private static string GetBase(CrashReportModel crashReport, IEnumerable<LogSourceModel> files)
     {
         var sbMetadata = new StringBuilder();
         foreach (var metadata in crashReport.Metadata.AdditionalMetadata)

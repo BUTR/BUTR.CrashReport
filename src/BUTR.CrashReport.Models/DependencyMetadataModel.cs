@@ -16,7 +16,7 @@ public sealed record DependencyMetadataModel
     /// <summary>
     /// The dependency type.
     /// </summary>
-    public required DependencyMetadataModelType Type { get; set; }
+    public required DependencyMetadataType Type { get; set; }
 
     /// <summary>
     /// Whether the dependency is required.

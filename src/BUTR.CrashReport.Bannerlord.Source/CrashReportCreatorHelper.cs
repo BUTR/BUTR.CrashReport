@@ -136,7 +136,7 @@ namespace BUTR.CrashReport.Bannerlord
             };
         }
         
-        private OperatingSystemType GetOperatingSystemType()
+        private static OperatingSystemType GetOperatingSystemType()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -151,7 +151,7 @@ namespace BUTR.CrashReport.Bannerlord
             return OperatingSystemType.Unknown;
         }
         
-        private string? GetOSVersion()
+        private static string? GetOSVersion()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 return OSUtilities.GetOSVersionWindows();
@@ -182,7 +182,7 @@ namespace BUTR.CrashReport.Bannerlord
 
         public virtual ILoaderPluginInfo? GetAssemblyPlugin(CrashReportInfo crashReport, Assembly assembly) => null;
         
-        public virtual AssemblyModelType GetAssemblyType(AssemblyModelType type, CrashReportInfo crashReport, Assembly assembly)
+        public virtual AssemblyType GetAssemblyType(AssemblyType type, CrashReportInfo crashReport, Assembly assembly)
         {
             static bool IsTWCore(Assembly assembly)
             {
@@ -200,11 +200,11 @@ namespace BUTR.CrashReport.Bannerlord
                 return true;
             }
 
-            if (IsTWCore(assembly)) type |= AssemblyModelType.GameCore;
+            if (IsTWCore(assembly)) type |= AssemblyType.GameCore;
 
             var module = !assembly.IsDynamic ? ModuleInfoHelper.GetModuleByType(AccessTools2.GetTypesFromAssembly(assembly).FirstOrDefault()) : null;
-            if (module is not null && !module.IsOfficial) type |= AssemblyModelType.Module;
-            if (module is not null &&  module.IsOfficial) type |= AssemblyModelType.GameModule;
+            if (module is not null && !module.IsOfficial) type |= AssemblyType.Module;
+            if (module is not null &&  module.IsOfficial) type |= AssemblyType.GameModule;
             
             return type;
         }
@@ -253,13 +253,13 @@ namespace BUTR.CrashReport.Bannerlord
             Id = x.Id,
             Name = x.Id,
             Version = x.Version,
-            UpdateInfo = x.UpdateInfo is not null && x.UpdateInfo.Split(':') is { Length: 2 } split ? new UpdateInfoModuleOrLoaderPlugin
+            UpdateInfo = x.UpdateInfo is not null && x.UpdateInfo.Split(':') is { Length: 2 } split ? new UpdateInfo
             {
                 Provider = split[0],
                 Value = split[1],
             } : null,
             Dependencies = Array.Empty<DependencyMetadataModel>(),
-            Capabilities = Array.Empty<CapabilityModuleOrPluginModel>(),
+            Capabilities = Array.Empty<CapabilityModel>(),
             AdditionalMetadata = Array.Empty<MetadataModel>(),
         }).ToList();
 
@@ -285,12 +285,12 @@ namespace BUTR.CrashReport.Bannerlord
 
         protected static ModuleModel Convert(ModuleInfoExtendedHelper module, bool isManagedByVortex, ICollection<AssemblyModel> assemblies)
         {
-            var updateInfos = module.UpdateInfo.Split(';').Select(x => x.Split(':') is { Length: 2 } split ? new UpdateInfoModuleOrLoaderPlugin()
+            var updateInfos = module.UpdateInfo.Split(';').Select(x => x.Split(':') is { Length: 2 } split ? new UpdateInfo()
             {
                 Provider = split[0],
                 Value = split[1],
-            } : null).OfType<UpdateInfoModuleOrLoaderPlugin>().ToArray();
-            var capabilities = new List<CapabilityModuleOrPluginModel>();
+            } : null).OfType<UpdateInfo>().ToArray();
+            var capabilities = new List<CapabilityModel>();
             var moduleModel = new ModuleModel
             {
                 Id = module.Id,
@@ -305,7 +305,7 @@ namespace BUTR.CrashReport.Bannerlord
                 DependencyMetadatas = module.DependenciesAllDistinct().Select(x => new DependencyMetadataModel
                 {
                     ModuleOrPluginId = x.Id,
-                    Type = x.IsIncompatible ? DependencyMetadataModelType.Incompatible : (DependencyMetadataModelType) x.LoadType,
+                    Type = x.IsIncompatible ? DependencyMetadataType.Incompatible : (DependencyMetadataType) x.LoadType,
                     IsOptional = x.IsOptional,
                     Version = !x.Version.Equals(ApplicationVersion.Empty) ? x.Version.ToString() : null,
                     VersionRange = !x.VersionRange.Equals(ApplicationVersionRange.Empty) ? x.VersionRange.ToString() : null,

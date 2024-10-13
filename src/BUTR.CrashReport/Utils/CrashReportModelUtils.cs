@@ -51,12 +51,12 @@ public static class CrashReportModelUtils
         {
             foreach (var entry in stacktrace)
             {
-                var methods = new List<MethodSimple>(entry.PatchMethods.Length);
+                var methods = new List<MethodSimpleModel>(entry.PatchMethods.Length);
                 foreach (var patchMethod in entry.PatchMethods)
                 {
                     var patchAssemblyName = entry.Method.DeclaringType?.Assembly.GetName();
                     var patchAssembly = patchAssemblyName is not null ? assemblies.FirstOrDefault(x => x.Id.Equals(patchAssemblyName)) : null;
-                    var methodSimple = new MethodSimple
+                    var methodSimple = new MethodSimpleModel
                     {
                         AssemblyId = patchAssembly?.Id,
                         ModuleId = patchMethod.ModuleInfo?.Id,
@@ -72,10 +72,12 @@ public static class CrashReportModelUtils
                     };
                     methods.Add(patchMethod switch
                     {
+                        /*
                         MethodEntryHarmony meh => methodSimple with
                         {
                             AdditionalMetadata = methodSimple.AdditionalMetadata.Append(new MetadataModel { Key = "HarmonyPatchType", Value = meh.Patch.Type.ToString() }).ToArray()
                         },
+                        */
                         _ => methodSimple
                     });
                 }
@@ -88,9 +90,9 @@ public static class CrashReportModelUtils
 
                 // Do not reverse engineer copyrighted or flagged original assemblies
                 static bool IsProtected(AssemblyModel? assembly) => assembly is not null &&
-                                                                    ((assembly.Type & AssemblyModelType.GameCore) != 0 ||
-                                                                     (assembly.Type & AssemblyModelType.GameModule) != 0 ||
-                                                                     (assembly.Type & AssemblyModelType.ProtectedFromDisassembly) != 0);
+                                                                    ((assembly.Type & AssemblyType.GameCore) != 0 ||
+                                                                     (assembly.Type & AssemblyType.GameModule) != 0 ||
+                                                                     (assembly.Type & AssemblyType.ProtectedFromDisassembly) != 0);
 
                 var skipDisassemblyForOriginal = IsProtected(originalAssembly);
                 var skipDisassemblyForExecuting = IsProtected(originalAssembly) || IsProtected(executingAssembly);
@@ -130,7 +132,6 @@ public static class CrashReportModelUtils
                     PatchMethods = methods,
                     ILOffset = entry.ILOffset,
                     NativeOffset = entry.NativeOffset,
-                    MethodFromStackframeIssue = entry.MethodFromStackframeIssue,
                     AdditionalMetadata = Array.Empty<MetadataModel>(),
                 });
             }
@@ -243,7 +244,7 @@ public static class CrashReportModelUtils
             var assemblyName = kv.Key;
             var assembly = kv.Value;
 
-            var type = AssemblyModelType.Unclassified;
+            var type = AssemblyType.Unclassified;
 
             // TODO: On unity the system folder is the unity root folder.
             // With unity thre is not system folder, so everything will classified as Game
@@ -253,15 +254,15 @@ public static class CrashReportModelUtils
                 (assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product == "Microsoft® .NET Framework") ||
                 (assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product == "Microsoft® .NET");
 
-            if (isSystem) type |= AssemblyModelType.System;
-            if (assembly.IsDynamic) type |= AssemblyModelType.Dynamic;
-            if (IsGAC(assembly)) type |= AssemblyModelType.GAC;
-            if (IsProtectedFromDisassembly(assembly)) type |= AssemblyModelType.ProtectedFromDisassembly;
+            if (isSystem) type |= AssemblyType.System;
+            if (assembly.IsDynamic) type |= AssemblyType.Dynamic;
+            if (IsGAC(assembly)) type |= AssemblyType.GAC;
+            if (IsProtectedFromDisassembly(assembly)) type |= AssemblyType.ProtectedFromDisassembly;
 
             var module = assemblyUtilities.GetAssemblyModule(crashReport, assembly);
-            if (module is not null) type |= AssemblyModelType.Module;
+            if (module is not null) type |= AssemblyType.Module;
             var loaderPlugin = assemblyUtilities.GetAssemblyPlugin(crashReport, assembly);
-            if (loaderPlugin is not null) type |= AssemblyModelType.LoaderPlugin;
+            if (loaderPlugin is not null) type |= AssemblyType.LoaderPlugin;
 
             type = assemblyUtilities.GetAssemblyType(type, crashReport, assembly);
 
@@ -277,10 +278,10 @@ public static class CrashReportModelUtils
                 LoaderPluginId = loaderPlugin?.Id,
                 CultureName = assemblyName.CultureName,
                 Architecture = (AssemblyArchitectureType) GetProcessorArchitecture(assemblyName),
-                Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? string.Empty : CrashReportUtils.CalculateMD5(assembly.Location),
+                Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? "NONE" : CrashReportUtils.CalculateMD5(assembly.Location),
                 AnonymizedPath = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : anonymizedPath,
                 Type = type,
-                ImportedTypeReferences = (type & AssemblyModelType.System) == 0
+                ImportedTypeReferences = (type & AssemblyType.System) == 0
                     ? crashReport.ImportedTypeReferences.TryGetValue(assemblyName, out var values) ? values.Select(x => new AssemblyImportedTypeReferenceModel
                     {
                         Namespace = x.Namespace,
@@ -288,7 +289,7 @@ public static class CrashReportModelUtils
                         FullName = x.FullName,
                     }).ToArray() : []
                     : [],
-                ImportedAssemblyReferences = (type & AssemblyModelType.System) == 0
+                ImportedAssemblyReferences = (type & AssemblyType.System) == 0
                     ? assembly.GetReferencedAssemblies().Select(AssemblyImportedReferenceModelExtensions.Create).ToArray()
                     : [],
                 AdditionalMetadata = Array.Empty<MetadataModel>(),
@@ -297,7 +298,8 @@ public static class CrashReportModelUtils
 
         return assemblyModels;
     }
-
+    
+    /*
     /// <summary>
     /// Returns the <see cref="List{HarmonyPatchesModel}"/>
     /// </summary>
@@ -349,6 +351,111 @@ public static class CrashReportModelUtils
                     OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
                     OriginalMethodName = originalMethod.Name,
                     Patches = patchBuilder,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                });
+            }
+        }
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Returns the <see cref="List{HarmonyPatchesModel}"/>
+    /// </summary>
+    public static List<MonoModPatchesModel> GetMonoModDetours(CrashReportInfo crashReport, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+    {
+        var builder = new List<MonoModPatchesModel>(crashReport.LoadedMonoModPatches.Count);
+
+        static void AppendPatches(ICollection<MonoModPatchModel> builder, MonoModPatchModelType type, IEnumerable<MonoModPatch> patches, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+        {
+            foreach (var patch in patches)
+            {
+                var assemblyId = patch.Method.DeclaringType?.Assembly.GetName() is { } asmName ? AssemblyIdModel.FromAssembly(asmName) : null;
+                var module = moduleProvider.GetModuleByType(patch.Method.DeclaringType);
+                var loaderPlugin = loaderPluginProvider.GetLoaderPluginByType(patch.Method.DeclaringType);
+
+                builder.Add(new()
+                {
+                    Id = patch.Id,
+                    Namespace = $"{patch.Method.DeclaringType!.FullName}.{patch.Method.Name}",
+                    Type = type,
+                    IsActive = false,
+                    AssemblyId = assemblyId,
+                    ModuleId = module?.Id,
+                    LoaderPluginId = loaderPlugin?.Id,
+                    Index = patch.Index,
+                    MaxIndex = patch.MaxIndex,
+                    GlobalIndex = patch.GlobalIndex,
+                    Priority = patch.Priority,
+                    SubPriority = patch.SubPriority,
+                    Before = patch.Before,
+                    After = patch.After,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                });
+            }
+        }
+
+        foreach (var kv in crashReport.LoadedMonoModPatches)
+        {
+            var originalMethod = kv.Key;
+            var patches = kv.Value;
+
+            var detoursBuilder = new List<MonoModPatchModel>(patches.Detours.Count);
+
+            AppendPatches(detoursBuilder, MonoModPatchModelType.Detour, patches.Detours, assemblies, moduleProvider, loaderPluginProvider);
+            AppendPatches(detoursBuilder, MonoModPatchModelType.ILHook, patches.ILHooks, assemblies, moduleProvider, loaderPluginProvider);
+
+            if (detoursBuilder.Count > 0)
+            {
+                builder.Add(new()
+                {
+                    OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
+                    OriginalMethodName = originalMethod.Name,
+                    Detours = detoursBuilder,
+                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                });
+            }
+        }
+
+        return builder;
+    }
+    */
+    
+    public static List<RuntimePatchesModel> GetRuntimePatches(CrashReportInfo crashReport, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+    {
+        var builder = new List<RuntimePatchesModel>(crashReport.LoadedRuntimePatches.Count);
+
+        foreach (var kv in crashReport.LoadedRuntimePatches)
+        {
+            var originalMethod = kv.Key;
+            var patches = kv.Value;
+
+            var patchesBuilder = new List<RuntimePatchModel>(crashReport.LoadedRuntimePatches.Count);
+            foreach (var patch in patches)
+            {
+                var assemblyId = patch.Patch.DeclaringType?.Assembly.GetName() is { } asmName ? AssemblyIdModel.FromAssembly(asmName) : null;
+                var module = moduleProvider.GetModuleByType(patch.Patch.DeclaringType);
+                var loaderPlugin = loaderPluginProvider.GetLoaderPluginByType(patch.Patch.DeclaringType);
+
+                patchesBuilder.Add(new()
+                {
+                    AssemblyId = assemblyId,
+                    ModuleId = module?.Id,
+                    LoaderPluginId = loaderPlugin?.Id,
+                    Provider = patch.PatchProvider,
+                    Type = patch.PatchType,
+                    FullName = patch.Patch.DeclaringType is not null ? $"{patch.Patch.DeclaringType.FullName}.{patch.Patch.Name}" : patch.Patch.Name,
+                    AdditionalMetadata = patch.AdditionalMetadata,
+                });
+            }
+
+            if (patchesBuilder.Count > 0)
+            {
+                builder.Add(new()
+                {
+                    OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
+                    OriginalMethodName = originalMethod.Name,
+                    Patches = patchesBuilder,
                     AdditionalMetadata = Array.Empty<MetadataModel>(),
                 });
             }
