@@ -1,4 +1,4 @@
-name: Publish WASM
+name: Publish WASM and Upload
 
 on:
   push:
