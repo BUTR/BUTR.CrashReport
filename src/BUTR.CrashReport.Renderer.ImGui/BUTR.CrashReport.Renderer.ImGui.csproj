@@ -1,71 +1,66 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0;net9.0</TargetFrameworks>
     <Nullable>enable</Nullable>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
+    
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <DefineConstants>$(DefineConstants);TEXT_EDITOR</DefineConstants>
 
-  <PropertyGroup>
-    <ILRepackTargetConfigurations>Debug;Release</ILRepackTargetConfigurations>
-    <ILRepackAllowDuplicateResources>true</ILRepackAllowDuplicateResources>
-    <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
-    <ILRepackPerformInternalize>true</ILRepackPerformInternalize>
-    <ILRepackCopyAttributes>false</ILRepackCopyAttributes>
+    <AssemblyName>BUTR.CrashReport.Renderer.ImGui</AssemblyName>
+    <RootNamespace>BUTR.CrashReport.Renderer.ImGui</RootNamespace>
+
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeProjectReferenceDlls</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.34" PrivateAssets="all" />
-    <PackageReference Include="ILRepack.FullAuto" Version="1.6.0" PrivateAssets="all" />
-  </ItemGroup>
 
   <PropertyGroup>
     <PackageId>BUTR.CrashReport.Renderer.ImGui</PackageId>
     <Title>BUTR.CrashReport.Renderer.ImGui</Title>
-    <Description>Contains the renderer for creating the crash report</Description>
+    <Description>Contains the ImGui renderer for showing the crash report. Requires a backend like 'BUTR.CrashReport.Renderer.ImGui.CImGui'</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
-    <PackageTags>butr crash report bannerlord</PackageTags>
+    <PackageTags>butr crash report imgui</PackageTags>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <PackageReference Include="HonkPerf.NET.RefLinq" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="ImGui.NET" Version="1.91.0.1" PrivateAssets="all" GeneratePathProperty="true" />
-    <PackageReference Include="Silk.NET.GLFW" Version="2.21.0" PrivateAssets="all" />
-    <PackageReference Include="Silk.NET.Input.Glfw" Version="2.21.0" PrivateAssets="all" />
-    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="2.21.0" PrivateAssets="all" />
-    <PackageReference Include="Silk.NET.OpenGL" Version="2.21.0" PrivateAssets="all" />
-    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" PrivateAssets="all" />
-    <PackageReference Include="System.Memory" Version="4.5.5" PrivateAssets="all" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" PrivateAssets="all" />
-    <PackageReference Include="SkipLocalsInit" Version="1.1.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="Ultz.Native.GLFW" Version="3.4.0" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Polyfill" Version="7.4.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <!--
+    <PackageReference Include="BUTR.PrismSharp.Core" Version="0.1.4" />
+    -->
   </ItemGroup>
 
   <ItemGroup>
-    <!-- The game did a ninja update from 11 to 13. We use the newer version and will ship it for 1.0.0 and 1.0.1 -->
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="all" IncludeAssets="compile" />
-
-    <PackageReference Include="Nullable" Version="1.3.1" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <PackageReference Include="IsExternalInit" Version="1.0.3" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <ProjectReference Include="..\..\external\prism-sharp\PrismSharp.Core\PrismSharp.Core.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\ImGuiColorTextEditNet\ImGuiColorTextEditNet.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\BUTR.CrashReport.ImGui\BUTR.CrashReport.ImGui.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" Targets="DisableILRepack;Build" />
+    <EmbeddedResource Include="resources/**/*">
+      <LogicalName>resources\%(FileName)%(Extension)</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="$(PkgImGui_NET)\runtimes\**\*" Pack="true" PackagePath="runtimes" Visible="false" />
-    <Content Include="$(PkgUltz_Native_GLFW)\runtimes\**\*" Pack="true" PackagePath="runtimes" Visible="false" />
-  </ItemGroup>
-
-  <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepareBuild">
-    <PropertyGroup>
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.dll;</ILRepackExcludeAssemblies>
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Decompilers.dll;</ILRepackExcludeAssemblies>
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models.dll;</ILRepackExcludeAssemblies>
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)cimgui.dll;</ILRepackExcludeAssemblies>
-    </PropertyGroup>
+  <Target Name="IncludeProjectReferenceDlls" DependsOnTargets="BuildOnlySettings;ResolveReferences">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths->WithMetadataValue('ReferenceSourceTarget', 'ProjectReference')->WithMetadataValue('PrivateAssets', 'All'))"
+                            TargetPath="%(ReferenceCopyLocalPaths.DestinationSubDirectory)" />
+    </ItemGroup>
   </Target>
 
+  <Target Name="_ExcludeTargetFramework" AfterTargets="_GetTargetFrameworksOutput" BeforeTargets="_WalkEachTargetPerFramework">
+    <ItemGroup>
+      <_TargetFrameworks Remove="netstandard2.0" />
+    </ItemGroup>
+  </Target>
+  <Target Name="_ExcludeTargetFrameworkDependency" AfterTargets="_WalkEachTargetPerFramework" BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_FrameworksWithSuppressedDependencies Include="netstandard2.0" />
+    </ItemGroup>
+  </Target>
+  
 </Project>

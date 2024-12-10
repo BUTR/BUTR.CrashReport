@@ -1,18 +1,15 @@
-﻿using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
-
-using ImGuiNET;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.ImGui.Extensions;
+using BUTR.CrashReport.Memory.Utils;
+using BUTR.CrashReport.Models;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
-partial class ImGuiRenderer
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
 {
     private readonly Dictionary<string, byte[]> _loaderPluginIdUpdateInfoUtf8 = new(StringComparer.Ordinal);
     private readonly Dictionary<string, byte[][]> _loaderPluginIdAdditionalUpdateInfos = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, List<Utf8KeyValueList>> _loaderPluginAdditionalDisplayKeyMetadata = new(StringComparer.Ordinal);
 
     private void InitializeInstalledLoaderPlugins()
     {
@@ -21,7 +18,7 @@ partial class ImGuiRenderer
             var loaderPlugin = _crashReport.LoaderPlugins[i];
             if (loaderPlugin.UpdateInfo is not null)
             {
-                _loaderPluginIdUpdateInfoUtf8[loaderPlugin.Id] = UnsafeHelper.ToUtf8Array(loaderPlugin.UpdateInfo.ToString());
+                _loaderPluginIdUpdateInfoUtf8[loaderPlugin.Id] = Utf8Utils.ToUtf8Array(loaderPlugin.UpdateInfo.ToString());
             }
 
             var additionalUpdateInfo = loaderPlugin.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
@@ -31,7 +28,9 @@ partial class ImGuiRenderer
                     Value = split[1],
                 }
                 : null).OfType<UpdateInfo>().ToArray() ?? [];
-            _loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id] = additionalUpdateInfo.Select(x => UnsafeHelper.ToUtf8Array(x.ToString())).ToArray();
+            _loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id] = additionalUpdateInfo.Select(x => Utf8Utils.ToUtf8Array(x.ToString())).ToArray();
+
+            InitializeAdditionalMetadata(_loaderPluginAdditionalDisplayKeyMetadata, loaderPlugin.Id, loaderPlugin.AdditionalMetadata);
         }
     }
 
@@ -43,24 +42,28 @@ partial class ImGuiRenderer
         for (var i = 0; i < _crashReport.LoaderPlugins.Count; i++)
         {
             var loaderPlugin = _crashReport.LoaderPlugins[i];
-            if (_imgui.BeginChild(loaderPlugin.Id, in Zero2, in Plugin, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            var color = _isDarkMode ? DarkPlugin : LightPlugin;
+            if (_imgui.BeginChild(loaderPlugin.Id, in Zero2, in color, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
             {
                 if (_imgui.TreeNode(loaderPlugin.Id))
                 {
                     _imgui.RenderId("Id:\0"u8, loaderPlugin.Id);
 
-                    _imgui.TextSameLine("Name: \0"u8);
+                    _imgui.Text("Name: \0"u8);
+                    _imgui.SameLine();
                     _imgui.Text(loaderPlugin.Name);
 
                     if (!string.IsNullOrEmpty(loaderPlugin.Version))
                     {
-                        _imgui.TextSameLine("Version: \0"u8);
+                        _imgui.Text("Version: \0"u8);
+                        _imgui.SameLine();
                         _imgui.Text(loaderPlugin.Version!);
                     }
 
                     if (loaderPlugin.UpdateInfo is not null)
                     {
-                        _imgui.TextSameLine("Update Info: \0"u8);
+                        _imgui.Text("Update Info: \0"u8);
+                        _imgui.SameLine();
                         _imgui.Text(_loaderPluginIdUpdateInfoUtf8[loaderPlugin.Id]);
                     }
 
@@ -68,10 +71,13 @@ partial class ImGuiRenderer
                     {
                         for (var j = 0; j < _loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id].Length; j++)
                         {
-                            _imgui.TextSameLine("Update Info: \0"u8);
+                            _imgui.Text("Update Info: \0"u8);
+                            _imgui.SameLine();
                             _imgui.Text(_loaderPluginIdAdditionalUpdateInfos[loaderPlugin.Id][j]);
                         }
                     }
+
+                    RenderAdditionalMetadata(_loaderPluginAdditionalDisplayKeyMetadata, loaderPlugin.Id);
 
                     RenderCapabilities(loaderPlugin.Capabilities);
 

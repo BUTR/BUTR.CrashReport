@@ -73,18 +73,11 @@ namespace BUTR.CrashReport.BepInEx5
                         IsOptional = x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency),
                         AdditionalMetadata = new List<MetadataModel>
                         {
-                            new MetadataModel
-                            {
-                                Key = "IsHardDependency",
-                                Value = x.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency)
-                                    .ToString()
-                            },
-                            new MetadataModel
-                            {
-                                Key = "IsSoftDependency",
-                                Value = x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency)
-                                    .ToString()
-                            },
+                            new("IsHardDependency", x.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency).ToString()),
+                            new("IsSoftDependency", x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency).ToString()),
+                            
+                            new("DISPLAY:Is Hard Dependency", x.Flags.HasFlag(BepInDependency.DependencyFlags.HardDependency).ToString()),
+                            new("DISPLAY:Is Soft Dependency", x.Flags.HasFlag(BepInDependency.DependencyFlags.SoftDependency).ToString()),
                         },
                     })
                     .Concat(kv.Value.Incompatibilities.Select(x => new DependencyMetadataModel
@@ -97,21 +90,15 @@ namespace BUTR.CrashReport.BepInEx5
                         AdditionalMetadata = Array.Empty<MetadataModel>(),
                     }))
                     .ToList(),
-                AdditionalMetadata = new[]
+                AdditionalMetadata = new List<MetadataModel>
                 {
-                    //new MetadataModel { Key = "TargettedBepInExVersion", Value = kv.Value.TargettedBepInExVersion.ToString() },
-                    new MetadataModel
-                    {
-                        Key = "Location",
-                        Value = kv.Value.Location
-                    },
-                    //new MetadataModel { Key = "TypeName", Value = kv.Value.TypeName },
-                    new MetadataModel
-                    {
-                        Key = "Processes",
-                        Value = string.Join("; ",
-                            kv.Value.Processes.Select(x => x.ProcessName))
-                    },
+                    //new("TargettedBepInExVersion", kv.Value.TargettedBepInExVersion.ToString()),
+                    //new("TypeName", kv.Value.TypeName),
+                    new("Location", kv.Value.Location),
+                    new("Processes", string.Join("; ", kv.Value.Processes.Select(x => x.ProcessName))),
+                    
+                    new("DISPLAY:Location", kv.Value.Location),
+                    new("DISPLAY:Processes", string.Join("; ", kv.Value.Processes.Select(x => x.ProcessName))),
                 },
                 Capabilities = capabilities,
             };

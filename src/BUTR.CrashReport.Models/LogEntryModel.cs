@@ -13,6 +13,11 @@ public sealed record LogEntryModel
     public required DateTimeOffset Date { get; set; }
 
     /// <summary>
+    /// The application that created this log entry.
+    /// </summary>
+    public required string Application { get; set; }
+
+    /// <summary>
     /// The full name of the type of the log entry.
     /// </summary>
     public required string Type { get; set; }
@@ -33,6 +38,7 @@ public sealed record LogEntryModel
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return Date.Equals(other.Date) &&
+               Application == other.Application &&
                Type == other.Type &&
                Level == other.Level &&
                Message == other.Message;
@@ -44,6 +50,7 @@ public sealed record LogEntryModel
         unchecked
         {
             var hashCode = Date.GetHashCode();
+            hashCode = (hashCode * 397) ^ Application.GetHashCode();
             hashCode = (hashCode * 397) ^ Type.GetHashCode();
             hashCode = (hashCode * 397) ^ (int) Level;
             hashCode = (hashCode * 397) ^ Message.GetHashCode();

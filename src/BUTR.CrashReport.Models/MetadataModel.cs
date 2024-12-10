@@ -17,15 +17,21 @@ public sealed record MetadataModel
     /// </summary>
     public required string Value { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MetadataModel"/> class.
+    /// </summary>
     public MetadataModel() { }
-    
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MetadataModel"/> class.
+    /// </summary>
     [SetsRequiredMembers]
     public MetadataModel(string key, string value)
     {
         Key = key;
         Value = value;
     }
-    
+
     /// <inheritdoc />
     public bool Equals(MetadataModel? other)
     {

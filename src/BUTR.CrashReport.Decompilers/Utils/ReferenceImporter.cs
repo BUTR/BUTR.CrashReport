@@ -1,36 +1,15 @@
 ﻿using AsmResolver.DotNet;
+using AsmResolver.IO;
+
+using BUTR.CrashReport.Decompilers.Models;
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
 namespace BUTR.CrashReport.Decompilers.Utils;
-
-/// <summary>
-/// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal"/>
-/// </summary>
-public record AssemblyTypeReferenceInternal
-{
-    /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Name"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Name"/></returns>
-    public required string Name { get; set; }
-
-    /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Namespace"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.Namespace"/></returns>
-    public required string Namespace { get; set; }
-
-    /// <summary>
-    /// <inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.FullName"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="BUTR.CrashReport.Decompilers.Utils.AssemblyTypeReferenceInternal.FullName"/></returns>
-    public required string FullName { get; set; }
-}
 
 /// <summary>
 /// Helper method to create import models from an assembly
@@ -40,10 +19,10 @@ public static class ReferenceImporter
     /// <summary>
     /// Helper method to create import models from an assembly
     /// </summary>
-    public static Dictionary<AssemblyName, AssemblyTypeReferenceInternal[]> GetImportedTypeReferences(Dictionary<AssemblyName, Assembly> AvailableAssemblies) => AvailableAssemblies.ToDictionary(x => x.Key, x =>
+    public static AssemblyTypeReferenceInternal[] GetImportedTypeReferences(Assembly assembly, Func<Assembly, Stream?> getAssemblyStream)
     {
         // TODO: Can we do that with the built-in Reflection API?
-        foreach (var assemblyModule in x.Value.Modules)
+        foreach (var assemblyModule in assembly.Modules)
         {
             try
             {
@@ -57,30 +36,34 @@ public static class ReferenceImporter
             }
             catch (Exception e)
             {
-                Trace.TraceError(x.Key.ToString());
+                Trace.TraceError(assembly.FullName);
                 Trace.TraceError(e.ToString());
             }
         }
 
         try
         {
-            var assembly = AssemblyDefinition.FromFile(x.Value.Location);
-            foreach (var module in assembly.Modules)
+            if (getAssemblyStream(assembly) is { } stream)
             {
-                return module.GetImportedTypeReferences().Select(y => new AssemblyTypeReferenceInternal
+                var assemblyDefinition = AssemblyDefinition.FromReader(new BinaryStreamReader(new StreamDataSource(stream)));
+                foreach (var module in assemblyDefinition.Modules)
                 {
-                    Name = y.Name ?? string.Empty,
-                    Namespace = y.Namespace ?? string.Empty,
-                    FullName = y.FullName,
-                }).ToArray();
+                    return module.GetImportedTypeReferences().Select(y => new AssemblyTypeReferenceInternal
+                    {
+                        Name = y.Name ?? string.Empty,
+                        Namespace = y.Namespace ?? string.Empty,
+                        FullName = y.FullName,
+                    }).ToArray();
+                }
             }
+
         }
         catch (Exception e)
         {
-            Trace.TraceError(x.Key.ToString());
+            Trace.TraceError(assembly.FullName);
             Trace.TraceError(e.ToString());
         }
 
         return [];
-    });
+    }
 }

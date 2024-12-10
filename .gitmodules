@@ -1,0 +1,12 @@
+[submodule "external/Utf8StringInterpolation"]
+	path = external/Utf8StringInterpolation
+	url = https://github.com/Cysharp/Utf8StringInterpolation
+	branch = main
+[submodule "external/ZString"]
+	path = external/ZString
+	url = https://github.com/Cysharp/ZString
+	branch = master
+[submodule "external/prism-sharp"]
+	path = external/prism-sharp
+	url = https://github.com/BUTR/prism-sharp.git
+	branch = main

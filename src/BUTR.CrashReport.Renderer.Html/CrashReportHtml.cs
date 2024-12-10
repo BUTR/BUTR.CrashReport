@@ -3,7 +3,6 @@ using BUTR.CrashReport.Renderer.Html.Extensions;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -145,14 +144,14 @@ public static partial class CrashReportHtml
                 .Append("Method: ").Append(stacktrace.ExecutingMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
                 .Append("Approximate IL Offset: ").Append(stacktrace.ILOffset is not null ? $"{stacktrace.ILOffset:X4}" : "UNKNOWN").Append("<br/>")
                 .Append("Native Offset: ").Append(stacktrace.NativeOffset is not null ? $"{stacktrace.NativeOffset:X4}" : "UNKNOWN").Append("<br/>")
-                .AppendIf(stacktrace.ExecutingMethod.ILInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id1}", "IL:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.ILInstructions.Select(x => x.EscapeGenerics())), "cil")))
-                .AppendIf(stacktrace.ExecutingMethod.CSharpILMixedInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id2}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())), "cil")))
-                .AppendIf(stacktrace.ExecutingMethod.CSharpInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id3}", "C#:", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.CSharpInstructions.Select(x => x.EscapeGenerics())), "csharp")))
-                .AppendIf(stacktrace.ExecutingMethod.NativeInstructions.Count > 0, sp => sp
-                    .Append(ContainerCode($"{id4}", "Native (NASM):", string.Join(Environment.NewLine, stacktrace.ExecutingMethod.NativeInstructions.Select(x => x.EscapeGenerics())), "nasm")))
+                .AppendIf(stacktrace.ExecutingMethod.ILInstructions?.Instructions.Count > 0, sp => sp
+                    .Append(ContainerCode($"{id1}", "IL:", stacktrace.ExecutingMethod.ILInstructions!, "cil")))
+                .AppendIf(stacktrace.ExecutingMethod.ILMixedInstructions?.Instructions.Count > 0, sp => sp
+                    .Append(ContainerCode($"{id2}", "IL with C#:", stacktrace.ExecutingMethod.ILMixedInstructions!, "cil")))
+                .AppendIf(stacktrace.ExecutingMethod.CSharpInstructions?.Instructions.Count > 0, sp => sp
+                    .Append(ContainerCode($"{id3}", "C#:", stacktrace.ExecutingMethod.CSharpInstructions!, "csharp")))
+                .AppendIf(stacktrace.ExecutingMethod.NativeInstructions?.Instructions.Count > 0, sp => sp
+                    .Append(ContainerCode($"{id4}", "Native (NASM):", stacktrace.ExecutingMethod.NativeInstructions!, "nasm")))
                 .Append("</li>")
                 .Append("</ul>");
 
@@ -174,12 +173,12 @@ public static partial class CrashReportHtml
                         .AppendIf(moduleId != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("<br/>"))
                         .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
                         .Append("Method: ").Append(method.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                        .AppendIf(method.ILInstructions.Count > 0, sp => sp
-                            .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, method.ILInstructions.Select(x => x.EscapeGenerics())), "cil")))
-                        .AppendIf(method.CSharpILMixedInstructions.Count > 0, sp => sp
-                            .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, method.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())), "cil")))
-                        .AppendIf(method.CSharpInstructions.Count > 0, sp => sp
-                            .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, method.CSharpInstructions.Select(x => x.EscapeGenerics())), "csharp")))
+                        .AppendIf(method.ILInstructions?.Instructions.Count > 0, sp => sp
+                            .Append(ContainerCode($"{id01}", "IL:", method.ILInstructions!, "cil")))
+                        .AppendIf(method.ILMixedInstructions?.Instructions.Count > 0, sp => sp
+                            .Append(ContainerCode($"{id02}", "IL with C#:", method.ILMixedInstructions!, "cil")))
+                        .AppendIf(method.CSharpInstructions?.Instructions.Count > 0, sp => sp
+                            .Append(ContainerCode($"{id03}", "C#:", method.CSharpInstructions!, "csharp")))
                         .Append("</li>");
                 }
                 sbMain.Append("</ul>");
@@ -199,12 +198,12 @@ public static partial class CrashReportHtml
                     .AppendIf(moduleId3 != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId3).Append("\")'>").Append(moduleId3).Append("</a></b>").Append("<br/>"))
                     .AppendIf(pluginId3 != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId3).Append("\")'>").Append(pluginId3).Append("</a></b>").Append("<br/>"))
                     .Append("Method: ").Append(stacktrace.OriginalMethod.MethodFullDescription.EscapeGenerics()).Append("<br/>")
-                    .AppendIf(stacktrace.OriginalMethod.ILInstructions.Count > 0, sb => sb
-                        .Append(ContainerCode($"{id01}", "IL:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.ILInstructions.Select(x => x.EscapeGenerics())), "cil")))
-                    .AppendIf(stacktrace.OriginalMethod.CSharpILMixedInstructions.Count > 0, sb => sb
-                        .Append(ContainerCode($"{id02}", "IL with C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpILMixedInstructions.Select(x => x.EscapeGenerics())), "cil")))
-                    .AppendIf(stacktrace.OriginalMethod.CSharpInstructions.Count > 0, sb => sb
-                        .Append(ContainerCode($"{id03}", "C#:", string.Join(Environment.NewLine, stacktrace.OriginalMethod.CSharpInstructions.Select(x => x.EscapeGenerics())), "csharp")))
+                    .AppendIf(stacktrace.OriginalMethod.ILInstructions?.Instructions.Count > 0, sb => sb
+                        .Append(ContainerCode($"{id01}", "IL:", stacktrace.OriginalMethod.ILInstructions!, "cil")))
+                    .AppendIf(stacktrace.OriginalMethod.ILMixedInstructions?.Instructions.Count > 0, sb => sb
+                        .Append(ContainerCode($"{id02}", "IL with C#:", stacktrace.OriginalMethod.ILMixedInstructions!, "cil")))
+                    .AppendIf(stacktrace.OriginalMethod.CSharpInstructions?.Instructions.Count > 0, sb => sb
+                        .Append(ContainerCode($"{id03}", "C#:", stacktrace.OriginalMethod.CSharpInstructions!, "csharp")))
                     .Append("</li>")
                     .Append("</ul>");
             }
@@ -561,32 +560,22 @@ public static partial class CrashReportHtml
 
     private static string GetHarmonyPatchesHtml(CrashReportModel crashReport)
     {
-        var harmonyPatchesListBuilder = new StringBuilder();
+        var runtimePatchesListBuilder = new StringBuilder();
         var patchesBuilder = new StringBuilder();
         var patchBuilder = new StringBuilder();
 
-        /*
-        void AppendPatches(string name, IEnumerable<HarmonyPatchModel> patches)
+        void AppendPatches(string name, IEnumerable<RuntimePatchModel> patches)
         {
             patchBuilder.Clear();
             foreach (var patch in patches)
             {
                 var moduleId = patch.ModuleId ?? "UNKNOWN";
                 var pluginId = patch.LoaderPluginId ?? "UNKNOWN";
-                var hasIndex = patch.Index != 0;
-                var hasPriority = patch.Priority != 400;
-                var hasBefore = patch.Before.Count > 0;
-                var hasAfter = patch.After.Count > 0;
-                patchBuilder.Append("<li>")
-                    .AppendIf(moduleId != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("; "))
-                    .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("; "))
-                    .Append("Owner: ").Append(patch.Owner).Append("; ")
-                    .Append("Namespace: ").Append(patch.Namespace).Append("; ")
-                    .AppendIf(hasIndex, sb => sb.Append("Index: ").Append(patch.Index).Append("; "))
-                    .AppendIf(hasPriority, sb => sb.Append("Priority: ").Append(patch.Priority).Append("; "))
-                    .AppendIf(hasBefore, sb => sb.Append("Before: ").AppendJoin(", ", patch.Before).Append("; "))
-                    .AppendIf(hasAfter, sb => sb.Append("After: ").AppendJoin(", ", patch.After).Append(";"))
-                    .Append("</li>");
+                patchBuilder
+                    .AppendIf(moduleId != "UNKNOWN", sb => sb.Append("Module Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(moduleId).Append("\")'>").Append(moduleId).Append("</a></b>").Append("</br>"))
+                    .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("</br>"))
+                    .Append("Type: ").Append(patch.Provider).Append(" ").Append(patch.Type).Append("</br>")
+                    .RenderAdditionalMetadata(patch.AdditionalMetadata);
             }
 
             if (patchBuilder.Length > 0)
@@ -594,34 +583,41 @@ public static partial class CrashReportHtml
                 patchesBuilder.Append("<li>").Append(name).Append("<ul>").Append(patchBuilder).Append("</ul>").Append("</li>");
             }
         }
-        */
 
-        /* TODO:
-        harmonyPatchesListBuilder.Append("<ul>");
-        foreach (var harmonyPatch in crashReport.HarmonyPatches)
+        runtimePatchesListBuilder.Append("<ul>");
+        foreach (var runtimePatches in crashReport.RuntimePatches)
         {
             patchesBuilder.Clear();
 
-            AppendPatches("Prefixes", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Prefix));
-            AppendPatches("Postfixes", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Postfix));
-            AppendPatches("Finalizers", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Finalizer));
-            AppendPatches("Transpilers", harmonyPatch.Patches.Where(x => x.Type == HarmonyPatchType.Transpiler));
+            var groupedPatches = runtimePatches.Patches.GroupBy(x => x.FullName).ToDictionary(x => x.Key, x => x.ToList());
+            foreach (var kv in groupedPatches)
+                AppendPatches(kv.Key, kv.Value);
 
             if (patchesBuilder.Length > 0)
             {
-                var methodNameFull = !string.IsNullOrEmpty(harmonyPatch.OriginalMethodDeclaredTypeName)
-                    ? $"{harmonyPatch.OriginalMethodDeclaredTypeName}.{harmonyPatch.OriginalMethodName}"
-                    : harmonyPatch.OriginalMethodName;
-                harmonyPatchesListBuilder.Append("<li>")
+                var methodNameFull = !string.IsNullOrEmpty(runtimePatches.OriginalMethodDeclaredTypeName)
+                    ? $"{runtimePatches.OriginalMethodDeclaredTypeName}.{runtimePatches.OriginalMethodName}"
+                    : runtimePatches.OriginalMethodName;
+                runtimePatchesListBuilder.Append("<li>")
                     .Append(methodNameFull).Append("<ul>").Append(patchesBuilder).Append("</ul>")
                     .Append("</li>")
                     .Append("<br/>");
             }
         }
-        harmonyPatchesListBuilder.Append("</ul>");
-        */
+        runtimePatchesListBuilder.Append("</ul>");
 
-        return harmonyPatchesListBuilder.ToString();
+        return runtimePatchesListBuilder.ToString();
+    }
+
+    private static StringBuilder RenderAdditionalMetadata(this StringBuilder sb, IList<MetadataModel> additionalMetadata)
+    {
+        foreach (var metadata in additionalMetadata)
+        {
+            if (!metadata.Key.StartsWith("DISPLAY:")) continue;
+            if (string.IsNullOrWhiteSpace(metadata.Value)) continue;
+            sb.Append(metadata.Key.Remove(0, 8)).Append(": ").Append(metadata.Value).Append("</br>");
+        }
+        return sb;
     }
 
     private static string GetLogFilesHtml(IEnumerable<LogSourceModel> files)

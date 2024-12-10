@@ -1,64 +1,68 @@
-﻿using BUTR.CrashReport.Extensions;
+﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.ImGui.Extensions;
+using BUTR.CrashReport.Memory;
+using BUTR.CrashReport.Memory.Utils;
 using BUTR.CrashReport.Models;
 using BUTR.CrashReport.Renderer.ImGui.Extensions;
-using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
-
-using ImGuiNET;
-
-using System.Collections.Generic;
-using System.Linq;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
-    private class AssemblyModelEqualityComparer : IEqualityComparer<AssemblyModel>
+    protected class AssemblyModelEqualityComparer : IEqualityComparer<AssemblyModel>
     {
         public static AssemblyModelEqualityComparer Instance { get; } = new();
         public bool Equals(AssemblyModel? x, AssemblyModel? y) => ReferenceEquals(x, y); // We can just reference compare here
         public int GetHashCode(AssemblyModel obj) => obj.GetHashCode();
     }
 
-    private static bool _hideSystemAssemblies;
-    private static bool _hideGACAssemblies;
-    private static bool _hideGameAssemblies;
-    private static bool _hideGameModulesAssemblies;
-    private static bool _hideModulesAssemblies;
-    private static bool _hideLoaderAssemblies;
-    private static bool _hideLoaderPluginsAssemblies;
-    private static bool _hideDynamicAssemblies;
-    private static bool _hideUnclassifiedAssemblies;
-
-    private static bool _hasSystemAssemblies;
-    private static bool _hasGACAssemblies;
-    private static bool _hasGameAssemblies;
-    private static bool _hasGameModulesAssemblies;
-    private static bool _hasModulesAssemblies;
-    private static bool _hasLoaderAssemblies;
-    private static bool _hasLoaderPluginsAssemblies;
-    private static bool _hasDynamicAssemblies;
-    private static bool _hasUnclassifiedAssemblies;
-
-    private readonly Dictionary<AssemblyModel, byte[]> _assemblyFullNameUtf8 = new(AssemblyModelEqualityComparer.Instance);
-
-    private static readonly byte[][] _architectureTypeNames =
+    // ReSharper disable once HeapView.ObjectAllocation
+    protected static readonly LiteralSpan<byte>[] _architectureTypeNames =
     [
-        "Unknown"u8.ToArray(),  // Unknown
-        "MSIL"u8.ToArray(),  // MSIL
-        "x86"u8.ToArray(),  // X86
-        "IA64"u8.ToArray(),  // IA64
-        "x64"u8.ToArray(),  // Amd64
-        "Arm"u8.ToArray(),  // Arm
+        "Unknown\0"u8, // Unknown
+        "MSIL\0"u8,    // MSIL
+        "x86\0"u8,     // X86
+        "IA64\0"u8,    // IA64
+        "x64\0"u8,     // Amd64
+        "Arm\0"u8,     // Arm
     ];
+}
+
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
+{
+    private readonly Dictionary<AssemblyModel, byte[]> _assemblyFullNameUtf8 = new(AssemblyModelEqualityComparer.Instance);
+    private readonly Dictionary<AssemblyModel, List<Utf8KeyValueList>> _assemblyAdditionalDisplayKeyMetadata = new(AssemblyModelEqualityComparer.Instance);
+
+    private bool _hideSystemAssemblies;
+    private bool _hideGACAssemblies;
+    private bool _hideGameAssemblies;
+    private bool _hideGameModulesAssemblies;
+    private bool _hideModulesAssemblies;
+    private bool _hideLoaderAssemblies;
+    private bool _hideLoaderPluginsAssemblies;
+    private bool _hideDynamicAssemblies;
+    private bool _hideUnclassifiedAssemblies;
+
+    private bool _hasSystemAssemblies;
+    private bool _hasGACAssemblies;
+    private bool _hasGameAssemblies;
+    private bool _hasGameModulesAssemblies;
+    private bool _hasModulesAssemblies;
+    private bool _hasLoaderAssemblies;
+    private bool _hasLoaderPluginsAssemblies;
+    private bool _hasDynamicAssemblies;
+    private bool _hasUnclassifiedAssemblies;
 
     private void InitializeAssemblies()
     {
         for (var i = 0; i < _crashReport.Assemblies.Count; i++)
         {
             var assembly = _crashReport.Assemblies[i];
-            _assemblyFullNameUtf8[assembly] = UnsafeHelper.ToUtf8Array(assembly.GetFullName());
+            _assemblyFullNameUtf8[assembly] = Utf8Utils.ToUtf8Array(assembly.GetFullName());
+
+            InitializeAdditionalMetadata(_assemblyAdditionalDisplayKeyMetadata, assembly, assembly.AdditionalMetadata);
         }
-        
+
         _hasSystemAssemblies = _crashReport.Assemblies.Any(x => x.Type.IsSet(AssemblyType.System));
         _hasGACAssemblies = _crashReport.Assemblies.Any(x => x.Type.IsSet(AssemblyType.GAC));
         _hasGameAssemblies = _crashReport.Assemblies.Any(x => x.Type.IsSet(AssemblyType.GameCore));
@@ -70,57 +74,119 @@ partial class ImGuiRenderer
         _hasUnclassifiedAssemblies = _crashReport.Assemblies.Any(x => x.Type == AssemblyType.Unclassified);
     }
 
-    private void RenderAssemblies()
+    private void RenderAssembliesStep(AssemblyModel assembly)
     {
-        _imgui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 1);
-        _imgui.TextSameLine("Hide: \0"u8);
-        if (_hasSystemAssemblies) _imgui.CheckboxSameLine(" System | \0"u8, ref _hideSystemAssemblies);
-        if (_hasGACAssemblies) _imgui.CheckboxSameLine(" GAC | \0"u8, ref _hideGACAssemblies);
-        if (_hasGameAssemblies) _imgui.CheckboxSameLine(" Game | \0"u8, ref _hideGameAssemblies);
-        if (_hasGameModulesAssemblies) _imgui.CheckboxSameLine(" Game Modules | \0"u8, ref _hideGameModulesAssemblies);
-        if (_hasModulesAssemblies) _imgui.CheckboxSameLine(" Modules | \0"u8, ref _hideModulesAssemblies);
-        if (_hasLoaderAssemblies) _imgui.CheckboxSameLine(" Loader | \0"u8, ref _hideLoaderAssemblies);
-        if (_hasLoaderPluginsAssemblies) _imgui.CheckboxSameLine(" Loader Plugins | \0"u8, ref _hideLoaderPluginsAssemblies);
-        if (_hasDynamicAssemblies) _imgui.CheckboxSameLine(" Dynamic | \0"u8, ref _hideDynamicAssemblies);
-        if (_hasUnclassifiedAssemblies) _imgui.Checkbox(" Unclassified \0"u8, ref _hideUnclassifiedAssemblies);
-        _imgui.PopStyleVar();
+        if (_hideSystemAssemblies && assembly.Type.IsSet(AssemblyType.System)) return;
+        if (_hideGACAssemblies && assembly.Type.IsSet(AssemblyType.GAC)) return;
+        if (_hideGameAssemblies && assembly.Type.IsSet(AssemblyType.GameCore)) return;
+        if (_hideGameModulesAssemblies && assembly.Type.IsSet(AssemblyType.GameModule)) return;
+        if (_hideModulesAssemblies && assembly.Type.IsSet(AssemblyType.Module)) return;
+        if (_hideLoaderAssemblies && assembly.Type.IsSet(AssemblyType.Loader)) return;
+        if (_hideLoaderPluginsAssemblies && assembly.Type.IsSet(AssemblyType.LoaderPlugin)) return;
+        if (_hideDynamicAssemblies && assembly.Type.IsSet(AssemblyType.Dynamic)) return;
+        if (_hideUnclassifiedAssemblies && assembly.Type == AssemblyType.Unclassified) return;
 
-        for (var i = 0; i < _crashReport.Assemblies.Count; i++)
+        if (_imgui.TreeNode(assembly.Id.Name, ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.DefaultOpen))
         {
-            var assembly = _crashReport.Assemblies[i];
-            if (_hideSystemAssemblies && assembly.Type.IsSet(AssemblyType.System)) continue;
-            if (_hideGACAssemblies && assembly.Type.IsSet(AssemblyType.GAC)) continue;
-            if (_hideGameAssemblies && assembly.Type.IsSet(AssemblyType.GameCore)) continue;
-            if (_hideGameModulesAssemblies && assembly.Type.IsSet(AssemblyType.GameModule)) continue;
-            if (_hideModulesAssemblies && assembly.Type.IsSet(AssemblyType.Module)) continue;
-            if (_hideLoaderAssemblies && assembly.Type.IsSet(AssemblyType.Loader)) continue;
-            if (_hideLoaderPluginsAssemblies && assembly.Type.IsSet(AssemblyType.LoaderPlugin)) continue;
-            if (_hideDynamicAssemblies && assembly.Type.IsSet(AssemblyType.Dynamic)) continue;
-            if (_hideUnclassifiedAssemblies && assembly.Type == AssemblyType.Unclassified) continue;
-
             var isDynamic = assembly.Type.IsSet(AssemblyType.Dynamic);
             var hasPath = assembly.AnonymizedPath != "EMPTY" && assembly.AnonymizedPath != "DYNAMIC" && !string.IsNullOrWhiteSpace(assembly.AnonymizedPath);
 
-            _imgui.Bullet();
-            _imgui.TextSameLine(assembly.Id.Name);
-            _imgui.TextSameLine(", \0"u8);
-            _imgui.TextSameLine(assembly.Id.Version ?? string.Empty);
-            _imgui.TextSameLine(", \0"u8);
-            _imgui.TextSameLine(_architectureTypeNames[(int) assembly.Architecture]);
+            _imgui.SameLine();
+            _imgui.Text(", \0"u8);
+            _imgui.SameLine();
+            _imgui.Text(assembly.Id.Version ?? string.Empty);
+            _imgui.SameLine();
+            _imgui.Text(", \0"u8);
+            _imgui.SameLine();
+            _imgui.Text(_architectureTypeNames[(int) assembly.Architecture]);
+            _imgui.SameLine();
             if (!isDynamic)
             {
-                _imgui.TextSameLine(", \0"u8);
-                _imgui.TextSameLine(assembly.Hash);
+                _imgui.Text(", \0"u8);
+                _imgui.SameLine();
+                _imgui.Text(assembly.Hash);
+                _imgui.SameLine();
             }
             if (hasPath)
             {
-                _imgui.TextSameLine(", \0"u8);
-                _imgui.SmallButton(assembly.AnonymizedPath);
+                _imgui.Text(", \0"u8);
+                _imgui.SameLine();
+                _imgui.SmallButtonRound(assembly.AnonymizedPath);
             }
             else
             {
                 _imgui.Text(isDynamic ? ", DYNAMIC\0"u8 : ", EMPTY\0"u8);
             }
+
+            _imgui.SameLine();
+
+            RenderAdditionalMetadataSameLine(_assemblyAdditionalDisplayKeyMetadata, assembly);
+
+            _imgui.NewLine();
+
+            _imgui.TreePop();
+        }
+    }
+
+    private void RenderAssembliesWithLoop()
+    {
+        for (var i = 0; i < _crashReport.Assemblies.Count; i++)
+        {
+            RenderAssembliesStep(_crashReport.Assemblies[i]);
+        }
+    }
+
+    private void RenderAssembliesWithClipper()
+    {
+        _imGuiWithImGuiListClipper.CreateImGuiListClipper(out var clipper);
+        using var _ = clipper;
+
+        clipper.Begin(_crashReport.Assemblies.Count, _imgui.GetTextLineHeightWithSpacing());
+
+        while (clipper.Step())
+        {
+            for (var i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i)
+            {
+                RenderAssembliesStep(_crashReport.Assemblies[i]);
+            }
+        }
+
+        clipper.End();
+    }
+
+    private void RenderAssemblies()
+    {
+        _imgui.PushStyleVar(ImGuiStyleVar.FrameBorderSize, 1);
+        _imgui.Text("Hide: \0"u8);
+        _imgui.SameLine();
+        if (_hasSystemAssemblies) { _imgui.CheckboxRound(" System | \0"u8, ref _hideSystemAssemblies); _imgui.SameLine(); }
+        if (_hasGACAssemblies) { _imgui.CheckboxRound(" GAC | \0"u8, ref _hideGACAssemblies); _imgui.SameLine(); }
+        if (_hasGameAssemblies) { _imgui.CheckboxRound(" Game | \0"u8, ref _hideGameAssemblies); _imgui.SameLine(); }
+        if (_hasGameModulesAssemblies) { _imgui.CheckboxRound(" Game Modules | \0"u8, ref _hideGameModulesAssemblies); _imgui.SameLine(); }
+        if (_hasModulesAssemblies) { _imgui.CheckboxRound(" Modules | \0"u8, ref _hideModulesAssemblies); _imgui.SameLine(); }
+        if (_hasLoaderAssemblies) { _imgui.CheckboxRound(" Loader | \0"u8, ref _hideLoaderAssemblies); _imgui.SameLine(); }
+        if (_hasLoaderPluginsAssemblies) { _imgui.CheckboxRound(" Loader Plugins | \0"u8, ref _hideLoaderPluginsAssemblies); _imgui.SameLine(); }
+        if (_hasDynamicAssemblies) { _imgui.CheckboxRound(" Dynamic | \0"u8, ref _hideDynamicAssemblies); _imgui.SameLine(); }
+        if (_hasUnclassifiedAssemblies) { _imgui.CheckboxRound(" Unclassified\0"u8, ref _hideUnclassifiedAssemblies); }
+        _imgui.PopStyleVar();
+
+        var hasFilters = _hideSystemAssemblies ||
+                         _hideGACAssemblies ||
+                         _hideGameAssemblies ||
+                         _hideGameModulesAssemblies ||
+                         _hideModulesAssemblies ||
+                         _hideLoaderAssemblies ||
+                         _hideLoaderPluginsAssemblies ||
+                         _hideDynamicAssemblies ||
+                         _hideUnclassifiedAssemblies;
+
+        if (hasFilters)
+        {
+            RenderAssembliesWithLoop();
+        }
+        else
+        {
+            RenderAssembliesWithClipper();
         }
     }
 }

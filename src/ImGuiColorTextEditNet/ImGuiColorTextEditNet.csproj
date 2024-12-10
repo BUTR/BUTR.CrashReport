@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0;net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Authors>Cam Sinclair, BalazsJako</Authors>
+    <Company />
+    <Description>A multi-line ImGui text editor control supporting syntax highlighting</Description>
+    <Copyright>2023 Cam Sinclair</Copyright>
+    <PackageId>ImGuiColorTextEditNet</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/csinkers/ImGuiColorTextEditNet</PackageProjectUrl>
+    <PackageTags>imgui</PackageTags>
+    <RepositoryUrl>https://github.com/csinkers/ImGuiColorTextEditNet</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <Version>0.1.6</Version>
+    
+    <DefineConstants>$(DefineConstants);FeatureMemory;FeatureValueTuple;</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Polyfill" Version="7.4.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.ImGui\BUTR.CrashReport.ImGui.csproj" />
+  </ItemGroup>
+  
+</Project>

@@ -26,22 +26,36 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
-    - name: Setup .NET 8
+    - name: Setup .NET 9
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.x.x
+        dotnet-version: 9.x.x
 
     - name: Run _build
       run: >-
+        dotnet build external/prism-sharp/PrismSharp.SourceGenerator/PrismSharp.SourceGenerator.csproj --configuration Release;
+        dotnet build external/prism-sharp/PrismSharp.RegExCompiler/PrismSharp.RegExCompiler.csproj --configuration Release;
+        dotnet build external/prism-sharp/PrismSharp.Core/PrismSharp.Core.csproj --configuration Release;
+
         dotnet pack src/BUTR.CrashReport.Models/BUTR.CrashReport.Models.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Decompilers/BUTR.CrashReport.Decompilers.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport/BUTR.CrashReport.csproj --configuration Release -o "./packages";
-        dotnet pack src/BUTR.CrashReport.Tool/BUTR.CrashReport.Tool.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.ILMerged/BUTR.CrashReport.ILMerged.csproj --configuration Release -o "./packages";
+
         dotnet pack src/BUTR.CrashReport.Renderer.Html/BUTR.CrashReport.Renderer.Html.csproj --configuration Release -o "./packages";
-        dotnet pack src/BUTR.CrashReport.Renderer.ImGui/BUTR.CrashReport.Renderer.ImGui.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Renderer.WinForms/BUTR.CrashReport.Renderer.WinForms.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Renderer.Zip/BUTR.CrashReport.Renderer.Zip.csproj --configuration Release -o "./packages";
-        dotnet pack src/BUTR.CrashReport.Bannerlord.Source/BUTR.CrashReport.Bannerlord.Source.csproj --configuration Release -o "./packages";
-        dotnet pack src/BUTR.CrashReport.Bannerlord.Parser/BUTR.CrashReport.Bannerlord.Parser.csproj --configuration Release -o "./packages";
+
+        dotnet pack src/BUTR.CrashReport.Memory/BUTR.CrashReport.Memory.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Native/BUTR.CrashReport.Native.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.CImGui/BUTR.CrashReport.CImGui.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.ImGui/BUTR.CrashReport.ImGui.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Renderer.ImGui/BUTR.CrashReport.Renderer.ImGui.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Renderer.ImGui.Silk.NET/BUTR.CrashReport.Renderer.ImGui.Silk.NET.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Renderer.ImGui.Silk.NET.ILMerged/BUTR.CrashReport.Renderer.ImGui.Silk.NET.ILMerged.csproj --configuration Release -o "./packages";
+
+        dotnet pack src/BUTR.CrashReport.Renderer.Html.Tool/BUTR.CrashReport.Renderer.Html.Tool.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Renderer.ImGui.Tool/BUTR.CrashReport.Renderer.ImGui.Tool.csproj --configuration Release -o "./packages";
       shell: pwsh
 
     - name: Push to NuGet

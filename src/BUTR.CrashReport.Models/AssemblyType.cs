@@ -57,4 +57,9 @@ public enum AssemblyType
     /// Assembly is protected from disassembly
     /// </summary>
     ProtectedFromDisassembly = 256,
+
+    /// <summary>
+    /// Assembly is allowed to be disassembled
+    /// </summary>
+    AllowedDisassembly = 512,
 }

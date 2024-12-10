@@ -2,8 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net45;netstandard2.0</TargetFrameworks>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
@@ -14,23 +16,11 @@
     <Description>Contains the models for creating the crash report</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
-    <PackageTags>butr crash report bannerlord</PackageTags>
+    <PackageTags>butr crash report</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- For importing the documentation -->
-    <PackageReference Include="AsmResolver.DotNet" Version="5.5.1" PrivateAssets="all" IncludeAssets="none" GeneratePathProperty="true" />
-    <Reference Include="$(PkgAsmResolver_DotNet)\lib\netstandard2.0\AsmResolver.DotNet.dll" Private="false" />
-    
-    <PackageReference Include="Lib.Harmony.Ref" Version="*" PrivateAssets="all" IncludeAssets="none" GeneratePathProperty="true" />
-    <Reference Include="$(PkgLib_Harmony_Ref)\ref\netstandard2.0\0Harmony.dll" Private="false" />
-   
-    <PackageReference Include="MonoMod.RuntimeDetour" Version="*" PrivateAssets="all" IncludeAssets="none" GeneratePathProperty="true" />
-    <Reference Include="$(PkgMonoMod_RuntimeDetour)\ref\netstandard2.0\MonoMod.RuntimeDetour.dll" Private="false" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="SauceControl.InheritDoc" Version="2.0.1" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="SauceControl.InheritDoc" Version="2.0.2" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
     <PackageReference Include="RequiredMemberAttribute" Version="1.0.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 

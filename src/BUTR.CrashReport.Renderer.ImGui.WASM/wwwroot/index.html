@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BUTR Crash Report</title>
+        <link rel="icon" type="image/svg+xml" href="favicon.svg">
+        
+        <style>
+            /* Flex container for centering */
+            .container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                background: transparent; /* No background change */
+                color: #000; /* Default text color */
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+
+            /* Spinner */
+            .spinner {
+                width: 3rem;
+                height: 3rem;
+                border: 0.4rem solid rgba(0, 0, 0, 0.1);
+                border-top: 0.4rem solid #007bff; /* Blue color for the spinner */
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                display: none; /* Hidden initially */
+                margin-top: 1rem;
+                transition: opacity 0.5s ease; /* Smooth fade-in */
+            }
+
+            /* Progress bar container */
+            .progress-bar-container {
+                width: 80%;
+                max-width: 400px;
+                height: 30px;
+                background-color: rgba(0, 0, 0, 0.1);
+                border-radius: 10px;
+                overflow: hidden;
+                position: relative;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                margin-top: 1rem;
+                display: block;
+                transition: opacity 0.5s ease; /* Smooth fade-out */
+            }
+
+            /* Progress bar */
+            .progress-bar {
+                height: 100%;
+                width: 0%; /* Starts at 0% */
+                background: linear-gradient(to right, #007bff, #00d4ff); /* Gradient for progress */
+                transition: width 0.3s ease-in-out; /* Smooth progress animation */
+                position: relative;
+                display: flex;
+                align-items: center; /* Center text vertically */
+                justify-content: center; /* Center text horizontally */
+                color: #fff;
+                font-weight: bold;
+                font-size: 0.9rem;
+            }
+
+            /* Progress label */
+            .progress-label {
+                position: absolute;
+                width: 100%;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* File name */
+            .file-name {
+                font-size: 0.9rem;
+                font-family: monospace;
+                color: #333;
+                text-align: center;
+                margin-top: 0.5rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* Motivational text */
+            .motivational-text {
+                font-size: 0.9rem;
+                font-style: italic;
+                color: #555;
+                text-align: center;
+                margin-top: 0.5rem;
+            }
+
+            /* Spinner rotation */
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            /* Accessibility focus outlines */
+            .progress-bar-container:focus {
+                outline: 2px solid #007bff; /* Focus outline for accessibility */
+            }
+
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0px;
+                border: 0;
+                overflow: hidden;
+                /*  Disable scrollbars */
+                display: block;
+                /* No floating content on sides */
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="app" >
+            <div id="loader" class="container">
+                <div id="spinner" class="spinner" role="status" aria-label="Loading, please wait"></div>
+                <div id="progress-bar-container" class="progress-bar-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Loading progress">
+                    <div id="progress-bar" class="progress-bar">
+                        <span id="progress-label" class="progress-label">Downloading 0/0</span>
+                    </div>
+                </div>
+                <div id="file-name" class="file-name">File name will appear here...</div>
+                <div id="motivational-text" class="motivational-text">Hang tight, preparing magic...</div>
+            </div>
+            <canvas id="canvas">
+                Your browser does not support the HTML5 canvas element.
+            </canvas>
+        </div>
+        
+        <script type='module' src="./main.js"></script>
+    </body>
+</html>

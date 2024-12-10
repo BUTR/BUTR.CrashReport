@@ -1,0 +1,117 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantTimezone>true</InvariantTimezone>
+    <OptimizationPreference>Size</OptimizationPreference>
+
+    <WasmEnableSIMD>false</WasmEnableSIMD>
+    
+    <DefineConstants>$(DefineConstants);EMSCRIPTEN;OPENGLES3;SDL2</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RunAOTCompilation>true</RunAOTCompilation>
+    <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
+    <WasmBuildNative>true</WasmBuildNative>
+    <WasmNativeStrip>true</WasmNativeStrip>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
+    <EnableAggressiveTrimming>true</EnableAggressiveTrimming>
+
+    <EmccExtraLDFlags>$(EmccExtraLDFlags) -s USE_CLOSURE_COMPILER=1 -sFULL_ES3 -lGL -sUSE_SDL=2</EmccExtraLDFlags>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition=" $(Configuration) == 'Debug' ">
+      <PropertyGroup>
+        <EmccLinkOptimizationFlag>$(EmccLinkOptimizationFlag) -O1</EmccLinkOptimizationFlag>
+        <WasmEmitSymbolMap>true</WasmEmitSymbolMap>
+        <WasmNativeDebugSymbols>true</WasmNativeDebugSymbols>
+        <WasmNativeStrip>false</WasmNativeStrip>
+        <WasmProfilers>browser;</WasmProfilers>
+      </PropertyGroup>
+    </When>
+    <When Condition=" $(Configuration) == 'Release' ">
+      <PropertyGroup>
+        <!--
+        <EmccLinkOptimizationFlag>$(EmccLinkOptimizationFlag) -O3</EmccLinkOptimizationFlag>
+        -->
+        <WasmEmitSymbolMap>false</WasmEmitSymbolMap>
+        <WasmNativeDebugSymbols>false</WasmNativeDebugSymbols>
+        <WasmNativeStrip>true</WasmNativeStrip>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
+  <ItemGroup>
+    <NativeFileReference Include="inc\helper.c" />
+    <EmccExportedRuntimeMethod Include="GL">
+      <Visible>false</Visible>
+    </EmccExportedRuntimeMethod>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Publish Trim has a bad time finding the references otherwise -->
+    <ProjectReference Include="..\..\external\prism-sharp\PrismSharp.Core\PrismSharp.Core.csproj" />
+    <!-- TODO: Move to a separate package -->
+    <Reference Include="PrismSharp.RegEx">
+      <HintPath>C:\Git\Level0\BUTR.CrashReport\external\prism-sharp\PrismSharp.Core\bin\$(Configuration)\net9.0\PrismSharp.RegEx.dll</HintPath>
+    </Reference>
+
+    <!-- Linker otherwise skips them -->
+    <ProjectReference Include="..\BUTR.CrashReport.Native\BUTR.CrashReport.Native.csproj" />
+    <ProjectReference Include="..\ImGuiColorTextEditNet\ImGuiColorTextEditNet.csproj" />
+
+    <!-- -->
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.Html\BUTR.CrashReport.Renderer.Html.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.ImGui\BUTR.CrashReport.Renderer.ImGui.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.Zip\BUTR.CrashReport.Renderer.Zip.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.CImGui\BUTR.CrashReport.CImGui.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Emscripten\BUTR.CrashReport.Emscripten.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.OpenGLES3\BUTR.CrashReport.OpenGLES3.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.SDL2\BUTR.CrashReport.SDL2.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Native.SourceGenerator\BUTR.CrashReport.Native.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ImGui.NET" Version="$(ImGuiVersion)" />
+    <PackageReference Include="ImGui.NET.SourceBuild" Version="$(ImGuiSourceVersion)" />
+  </ItemGroup>
+
+
+  <!-- WORKAROUNDS -->
+  
+  <!--
+    https://github.com/unoplatform/Uno.Wasm.Bootstrap/blob/0c4191f66a7d182f4a46611cd7ebbf487aac1587/src/Uno.Wasm.Bootstrap/build/Uno.Wasm.Bootstrap.targets#L220
+    Override the cache path if it's not yet been set to use project
+    local folder, in order to avoid the frozen cache of the runtime's
+    emsdk.
+  -->
+  <!-- if this is your fist time, uncomment, -->
+  <PropertyGroup Condition=" '$(WasmCachePath)' == '$(EmscriptenCacheSdkCacheDir)' ">
+    <WasmCachePath>$(MSBuildThisFileDirectory)bin\cache\$(Configuration)\$(TargetFramework)\emsdk-cache</WasmCachePath>
+
+    <!-- Adjust the cache on windows if the drive is not the same -->
+    <WasmCachePath Condition="
+				'$(OS)' == 'Windows_NT'
+				AND '$(EmscriptenSdkToolsPath)' != ''
+				AND '$(EmscriptenSdkToolsPath.Substring(1))' != '$(MSBuildProjectDirectory.Substring(1))'
+				">$(TMP)\emsdk-cache</WasmCachePath>
+  </PropertyGroup>
+  
+  <!-- https://github.com/unoplatform/Uno.Wasm.Bootstrap/blob/0c4191f66a7d182f4a46611cd7ebbf487aac1587/src/Uno.Wasm.Bootstrap/build/Uno.Wasm.Bootstrap.targets#L157 -->
+  <Target Name="_AdjustCompatibility" BeforeTargets="ResolveStaticWebAssetsConfiguration">
+    <ItemGroup>
+      <_WasmPInvokeModules Include="glfw3" />
+      <_WasmPInvokeModules Include="SDL" />
+    </ItemGroup>
+  </Target>
+
+</Project>

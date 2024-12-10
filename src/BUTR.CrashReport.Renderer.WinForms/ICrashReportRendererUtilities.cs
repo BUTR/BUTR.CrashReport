@@ -1,6 +1,6 @@
-﻿using System;
-using BUTR.CrashReport.Models;
+﻿using BUTR.CrashReport.Models;
 
+using System;
 using System.Collections.Generic;
 
 namespace BUTR.CrashReport.Renderer.WinForms;
@@ -9,12 +9,10 @@ namespace BUTR.CrashReport.Renderer.WinForms;
 public enum CrashReportRendererCapabilities
 {
     None = 0,
-    SaveAsHtml = 1 << 0,
-    CopyAsHtml = 1 << 1,
-    Upload = 1 << 2,
-    HasSaveFiles = 1 << 3,
-    HasScreenshots = 1 << 4,
-    HasMiniDump = 1 << 5,
+    HasSaveFiles = 1 << 1,
+    HasScreenshots = 1 << 2,
+    HasMiniDump = 1 << 3,
+    Upload = 1 << 4,
 }
 
 public interface ICrashReportRendererUtilities
@@ -25,5 +23,6 @@ public interface ICrashReportRendererUtilities
 
     string CopyAsHtml(CrashReportModel crashReport, ICollection<LogSourceModel> logSources);
 
-    void SaveCrashReportAsHtml(CrashReportModel crashReport, ICollection<LogSourceModel> logSources, bool addMiniDump, bool addLatestSave, bool addScreenshots);
+    void SaveAsHtml(CrashReportModel crashReport, ICollection<LogSourceModel> logSources, bool addMiniDump, bool addLatestSave, bool addScreenshots);
+    void SaveAsZip(CrashReportModel crashReport, ICollection<LogSourceModel> logSources);
 }

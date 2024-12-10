@@ -13,7 +13,7 @@ internal static class StringBuilderExtensions
 
     public static StringBuilder AppendJoin(this StringBuilder builder, string separator, IEnumerable<string> lines) => AppendJoinIf(builder, true, separator, lines.ToArray());
     public static StringBuilder AppendJoin(this StringBuilder builder, char separator, IEnumerable<string> lines) => AppendJoinIf(builder, true, separator, lines.ToArray());
-    public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, string separator, IReadOnlyList<string> lines)
+    public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, string separator, IList<string> lines)
     {
         if (!condition) return builder;
 
@@ -24,7 +24,7 @@ internal static class StringBuilderExtensions
         }
         return builder;
     }
-    public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, char separator, IReadOnlyList<string> lines)
+    public static StringBuilder AppendJoinIf(this StringBuilder builder, bool condition, char separator, IList<string> lines)
     {
         if (!condition) return builder;
 

@@ -1,13 +1,11 @@
-﻿using BUTR.CrashReport.Models;
-
-using ImGuiNET;
-
-using System.Collections.Generic;
-using System.Linq;
+﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.ImGui.Extensions;
+using BUTR.CrashReport.ImGui.Utils;
+using BUTR.CrashReport.Models;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
-partial class ImGuiRenderer
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
 {
     private KeyValuePair<string, InvolvedModuleOrPluginModel[]>[] _enhancedStacktraceGroupedByModuleId = [];
     private KeyValuePair<string, InvolvedModuleOrPluginModel[]>[] _enhancedStacktraceGroupedByLoaderPluginIdId = [];
@@ -27,22 +25,52 @@ partial class ImGuiRenderer
 
     private void RenderInvolvedModules()
     {
-        foreach (var kv in _enhancedStacktraceGroupedByModuleId)
+        var enhancedStacktraceGroupedByModuleIdSpan = CollectionsMarshal<KeyValuePair<string, InvolvedModuleOrPluginModel[]>>.AsSpan(_enhancedStacktraceGroupedByModuleId);
+        for (var i = 0; i < enhancedStacktraceGroupedByModuleIdSpan.Length; i++)
         {
-            if (_imgui.TreeNode(kv.Key, ImGuiTreeNodeFlags.DefaultOpen))
+            var (moduleId, value) = enhancedStacktraceGroupedByModuleIdSpan[i];
+            var involvedModules = CollectionsMarshal<InvolvedModuleOrPluginModel>.AsSpan(value);
+
+            if (_imgui.TreeNode(moduleId, ImGuiTreeNodeFlags.DefaultOpen))
             {
-                _imgui.RenderId("Module Id:\0"u8, kv.Key);
+                _imgui.RenderId("Module Id:\0"u8, moduleId);
 
-                for (var j = 0; j < kv.Value.Length; j++)
+                var didDirect = false;
+                for (var j = 0; j < involvedModules.Length; j++)
                 {
-                    var involved = kv.Value[j];
-                    _imgui.Bullet();
-                    _imgui.Indent();
+                    var involved = involvedModules[j];
+                    if (involved.Type != InvolvedModuleOrPluginType.Direct)
+                        continue;
 
-                    _imgui.TextSameLine("Frame: \0"u8);
-                    _imgui.Text(involved.EnhancedStacktraceFrameName);
+                    if (!didDirect)
+                    {
+                        _imgui.Text("Directly Involved:\0"u8);
+                        didDirect = true;
+                    }
 
-                    _imgui.Unindent();
+                    if (_imgui.TreeNode(involved.EnhancedStacktraceFrameName, ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.DefaultOpen))
+                    {
+                        _imgui.TreePop();
+                    }
+                }
+
+                var didPatch = false;
+                for (var j = 0; j < involvedModules.Length; j++)
+                {
+                    var involved = involvedModules[j];
+                    if (involved.Type != InvolvedModuleOrPluginType.Patch)
+                        continue;
+
+                    if (!didPatch)
+                    {
+                        _imgui.Text("Patches Involved:\0"u8);
+                        didPatch = true;
+                    }
+
+                    if (_imgui.TreeNode(involved.EnhancedStacktraceFrameName, ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.DefaultOpen))
+                    {
+                        _imgui.TreePop();
+                    }
                 }
 
                 _imgui.TreePop();
@@ -52,22 +80,52 @@ partial class ImGuiRenderer
 
     private void RenderInvolvedPlugins()
     {
-        foreach (var kv in _enhancedStacktraceGroupedByLoaderPluginIdId)
+        var enhancedStacktraceGroupedByLoaderPluginIdIdSpan = CollectionsMarshal<KeyValuePair<string, InvolvedModuleOrPluginModel[]>>.AsSpan(_enhancedStacktraceGroupedByLoaderPluginIdId);
+        for (var i = 0; i < enhancedStacktraceGroupedByLoaderPluginIdIdSpan.Length; i++)
         {
-            if (_imgui.TreeNode(kv.Key, ImGuiTreeNodeFlags.DefaultOpen))
+            var (loaderPluginId, value) = enhancedStacktraceGroupedByLoaderPluginIdIdSpan[i];
+            var involvedLoaderPlugins = CollectionsMarshal<InvolvedModuleOrPluginModel>.AsSpan(value);
+
+            if (_imgui.TreeNode(loaderPluginId, ImGuiTreeNodeFlags.DefaultOpen))
             {
-                _imgui.RenderId("Plugin Id:\0"u8, kv.Key);
+                _imgui.RenderId("Plugin Id:\0"u8, loaderPluginId);
 
-                for (var j = 0; j < kv.Value.Length; j++)
+                var didDirect = false;
+                for (var j = 0; j < involvedLoaderPlugins.Length; j++)
                 {
-                    var involved = kv.Value[j];
-                    _imgui.Bullet();
-                    _imgui.Indent();
+                    var involved = involvedLoaderPlugins[j];
+                    if (involved.Type != InvolvedModuleOrPluginType.Direct)
+                        continue;
 
-                    _imgui.TextSameLine("Frame: \0"u8);
-                    _imgui.Text(involved.EnhancedStacktraceFrameName);
+                    if (!didDirect)
+                    {
+                        _imgui.Text("Directly Involved:\0"u8);
+                        didDirect = true;
+                    }
 
-                    _imgui.Unindent();
+                    if (_imgui.TreeNode(involved.EnhancedStacktraceFrameName, ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.DefaultOpen))
+                    {
+                        _imgui.TreePop();
+                    }
+                }
+
+                var didPatch = false;
+                for (var j = 0; j < involvedLoaderPlugins.Length; j++)
+                {
+                    var involved = involvedLoaderPlugins[j];
+                    if (involved.Type != InvolvedModuleOrPluginType.Patch)
+                        continue;
+
+                    if (!didPatch)
+                    {
+                        _imgui.Text("Patches Involved:\0"u8);
+                        didPatch = true;
+                    }
+
+                    if (_imgui.TreeNode(involved.EnhancedStacktraceFrameName, ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.DefaultOpen))
+                    {
+                        _imgui.TreePop();
+                    }
                 }
 
                 _imgui.TreePop();
@@ -77,13 +135,10 @@ partial class ImGuiRenderer
 
     private void RenderInvolvedModulesAndPlugins()
     {
-        if (_enhancedStacktraceGroupedByModuleId.Length > 0 || _enhancedStacktraceGroupedByLoaderPluginIdId.Length > 0)
-        {
-            _imgui.Text("From Highest Probability to Lowest:\0"u8);
-            _imgui.Indent();
-            RenderInvolvedModules();
-            RenderInvolvedPlugins();
-            _imgui.Unindent();
-        }
+        if (_enhancedStacktraceGroupedByModuleId.Length <= 0 && _enhancedStacktraceGroupedByLoaderPluginIdId.Length <= 0) return;
+
+        _imgui.Text("From Highest Probability to Lowest:\0"u8);
+        RenderInvolvedModules();
+        RenderInvolvedPlugins();
     }
 }

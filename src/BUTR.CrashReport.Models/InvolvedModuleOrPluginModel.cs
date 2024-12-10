@@ -21,6 +21,11 @@ public sealed record InvolvedModuleOrPluginModel
     public required string EnhancedStacktraceFrameName { get; set; }
 
     /// <summary>
+    /// <inheritdoc cref="InvolvedModuleOrPluginType"/>
+    /// </summary>
+    public required InvolvedModuleOrPluginType Type { get; set; }
+
+    /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
@@ -33,6 +38,7 @@ public sealed record InvolvedModuleOrPluginModel
         if (ReferenceEquals(this, other)) return true;
         return ModuleOrLoaderPluginId == other.ModuleOrLoaderPluginId &&
                EnhancedStacktraceFrameName == other.EnhancedStacktraceFrameName &&
+               Type == other.Type &&
                AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
@@ -43,6 +49,7 @@ public sealed record InvolvedModuleOrPluginModel
         {
             var hashCode = ModuleOrLoaderPluginId.GetHashCode();
             hashCode = (hashCode * 397) ^ EnhancedStacktraceFrameName.GetHashCode();
+            hashCode = (hashCode * 397) ^ Type.GetHashCode();
             hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
             return hashCode;
         }

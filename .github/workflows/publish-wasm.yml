@@ -1,0 +1,47 @@
+name: Publish
+
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-wasm.yml'
+      - 'src/**'
+      - 'build/**'
+
+env:
+  # Disable the .NET logo in the console output.
+  DOTNET_NOLOGO: true
+  # Disable the .NET first time experience to skip caching NuGet packages and speed up the build.
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # Disable sending .NET CLI telemetry to Microsoft.
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  publish-wasm:
+    name: Publish WASM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup
+        uses: butr/actions-common-setup@v2
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x.x
+
+      - name: Run _build
+        run: >-
+          dotnet build external/prism-sharp/PrismSharp.SourceGenerator/PrismSharp.SourceGenerator.csproj --configuration Release;
+          dotnet build external/prism-sharp/PrismSharp.RegExCompiler/PrismSharp.RegExCompiler.csproj --configuration Release;
+          dotnet build external/prism-sharp/PrismSharp.Core/PrismSharp.Core.csproj --configuration Release;
+          
+          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.WASM/BUTR.CrashReport.Renderer.ImGui.WASM.csproj --configuration Release -o "./site";
+
+      - name: Deploy to GitHub Pages
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: ./site
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

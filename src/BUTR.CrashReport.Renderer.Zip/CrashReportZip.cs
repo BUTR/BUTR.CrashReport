@@ -3,10 +3,18 @@ using System.IO.Compression;
 
 namespace BUTR.CrashReport.Renderer.Zip;
 
+public class CrashReportZipOptions
+{
+    public string SaveExtension { get; set; } = "sav";
+    public string ScreenshotExtension { get; set; } = "jpg";
+}
+
 public static class CrashReportZip
 {
-    public static Stream Build(Stream crashReportJson, Stream logsJson, Stream miniDump, Stream saveFile, Stream screenshot)
+    public static Stream Build(Stream crashReportJson, Stream logsJson, Stream miniDump, Stream saveFile, Stream screenshot, CrashReportZipOptions? options = default)
     {
+        options ??= new CrashReportZipOptions();
+
         var ms = new MemoryStream();
 
         using var archive = new ZipArchive(ms, ZipArchiveMode.Create, true);
@@ -35,7 +43,7 @@ public static class CrashReportZip
 
         if (saveFile != Stream.Null)
         {
-            var saveFileFile = archive.CreateEntry("save.sav");
+            var saveFileFile = archive.CreateEntry($"save.{options.SaveExtension}");
             using var saveFileStream = saveFileFile.Open();
             saveFile.Seek(0, SeekOrigin.Begin);
             saveFile.CopyTo(saveFileStream);
@@ -43,7 +51,7 @@ public static class CrashReportZip
 
         if (screenshot != Stream.Null)
         {
-            var screenshotFile = archive.CreateEntry("screenshot.bmp");
+            var screenshotFile = archive.CreateEntry($"screenshot.{options.ScreenshotExtension}");
             using var screenshotStream = screenshotFile.Open();
             screenshot.Seek(0, SeekOrigin.Begin);
             screenshot.CopyTo(screenshotStream);

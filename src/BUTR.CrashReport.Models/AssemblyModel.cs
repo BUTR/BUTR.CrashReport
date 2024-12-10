@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using BUTR.CrashReport.Models.Utils;
+
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BUTR.CrashReport.Models;
@@ -53,16 +55,6 @@ public sealed record AssemblyModel
     public required AssemblyType Type { get; set; }
 
     /// <summary>
-    /// The list of imported type references from the assembly.
-    /// </summary>
-    public required IList<AssemblyImportedTypeReferenceModel> ImportedTypeReferences { get; set; } = new List<AssemblyImportedTypeReferenceModel>();
-
-    /// <summary>
-    /// The list of imported assembly references from the assembly.
-    /// </summary>
-    public required IList<AssemblyImportedReferenceModel> ImportedAssemblyReferences { get; set; } = new List<AssemblyImportedReferenceModel>();
-
-    /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>
     /// <returns><inheritdoc cref="CrashReportModel.AdditionalMetadata"/></returns>
@@ -81,8 +73,6 @@ public sealed record AssemblyModel
                Hash == other.Hash &&
                AnonymizedPath == other.AnonymizedPath &&
                Type == other.Type &&
-               ImportedTypeReferences.SequenceEqual(other.ImportedTypeReferences) &&
-               ImportedAssemblyReferences.SequenceEqual(other.ImportedAssemblyReferences) &&
                AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
     }
 
@@ -99,10 +89,14 @@ public sealed record AssemblyModel
             hashCode = (hashCode * 397) ^ Hash.GetHashCode();
             hashCode = (hashCode * 397) ^ AnonymizedPath.GetHashCode();
             hashCode = (hashCode * 397) ^ (int) Type;
-            hashCode = (hashCode * 397) ^ ImportedTypeReferences.GetHashCode();
-            hashCode = (hashCode * 397) ^ ImportedAssemblyReferences.GetHashCode();
             hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();
             return hashCode;
         }
     }
+
+    /// <summary>
+    /// <inheritdoc cref="System.Reflection.AssemblyName.FullName"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="System.Reflection.AssemblyName.FullName"/></returns>
+    public string GetFullName() => AssemblyNameFormatter.ComputeDisplayName(Id.Name, Id.Version, CultureName, Id.PublicKeyToken).ToString();
 }

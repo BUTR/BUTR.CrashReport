@@ -21,6 +21,8 @@ public static class Anonymizer
 
     private static string NormalizePath(this string path) => path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
+    private static char[] ColonSeparator = [':'];
+
     // TODO: Use store metadata to get the game install path?
     private static readonly List<string> AnonymizationPathsSimple = new()
     {
@@ -86,22 +88,25 @@ public static class Anonymizer
         var normalizedPath = path.NormalizePath();
         var entries = SplitWithIndex(normalizedPath, Path.DirectorySeparatorChar);
 
-        foreach (var kv in AnonymizationPaths)
+        for (var i = 0; i < AnonymizationPaths.Count; i++)
         {
-            if (string.IsNullOrEmpty(kv.Key)) continue;
-            if (TryAnonymizePath(normalizedPath, kv.Key!, kv.Value, out var anonymizedPath) && !string.IsNullOrEmpty(anonymizedPath))
+            var (key, value) = AnonymizationPaths[i];
+            if (string.IsNullOrEmpty(key)) continue;
+            if (TryAnonymizePath(normalizedPath, key!, value, out var anonymizedPath) && !string.IsNullOrEmpty(anonymizedPath))
                 return anonymizedPath!;
         }
 
-        foreach (var kv in AnonymizationPathsMultiColon)
+        for (var i = 0; i < AnonymizationPathsMultiColon.Count; i++)
         {
-            if (string.IsNullOrEmpty(kv.Key)) continue;
-            if (TryAnonymizePathsColonSeparated(normalizedPath, kv.Key!, kv.Value, out var anonymizedPath) && !string.IsNullOrEmpty(anonymizedPath))
+            var (key, value) = AnonymizationPathsMultiColon[i];
+            if (string.IsNullOrEmpty(key)) continue;
+            if (TryAnonymizePathsColonSeparated(normalizedPath, key!, value, out var anonymizedPath) && !string.IsNullOrEmpty(anonymizedPath))
                 return anonymizedPath!;
         }
 
-        foreach (var simplePath in AnonymizationPathsSimple)
+        for (var i = 0; i < AnonymizationPathsSimple.Count; i++)
         {
+            var simplePath = AnonymizationPathsSimple[i];
             if (entries.FirstOrDefault(x => x.Substring.Equals(simplePath, StringComparison.OrdinalIgnoreCase)) is { } entrySimple)
                 return path.Substring(entrySimple.Index);
         }
@@ -123,7 +128,7 @@ public static class Anonymizer
 
     private static bool TryAnonymizePathsColonSeparated(string normalizedPath, string variablePaths, string replacePath, out string? anonymizedPath)
     {
-        var variablePathsSplit = variablePaths.Split(':');
+        var variablePathsSplit = variablePaths.Split(ColonSeparator);
         if (variablePathsSplit.Length == 0) variablePathsSplit = [variablePaths];
         for (var i = 0; i < variablePathsSplit.Length; i++)
         {

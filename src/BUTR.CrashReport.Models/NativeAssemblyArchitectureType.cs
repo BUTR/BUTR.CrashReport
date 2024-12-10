@@ -11,17 +11,17 @@ public enum NativeAssemblyArchitectureType
     Unknown = 0,
 
     /// <summary>
-    /// 
+    /// x86
     /// </summary>
     x86 = 1,
 
     /// <summary>
-    /// 
+    /// x86_64
     /// </summary>
     x86_64 = 2,
 
     /// <summary>
-    /// 
+    /// ARM
     /// </summary>
     Arm = 3,
 

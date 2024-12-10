@@ -27,11 +27,13 @@ internal static class NativeModuleUtils
         {
             using var fs = File.OpenRead(x.FileName);
 
-            var signature = new byte[4];
-            _ = fs.Read(signature, 0, signature.Length);
-            fs.Seek(0, SeekOrigin.Begin);
+            Span<byte> signature = stackalloc byte[4];
+            signature[0] = (byte) fs.ReadByte();
+            signature[1] = (byte) fs.ReadByte();
+            signature[2] = (byte) fs.ReadByte();
+            signature[3] = (byte) fs.ReadByte();
 
-            if (signature.AsSpan(0, PEHeader.Length).SequenceEqual(PEHeader))
+            if (signature.Slice(0, PEHeader.Length).SequenceEqual(PEHeader))
             {
                 using var reader = new PEReader(fs, PEStreamOptions.LeaveOpen);
                 if (reader.HasMetadata) return null;
@@ -47,8 +49,7 @@ internal static class NativeModuleUtils
             var version = x.FileVersionInfo.FileVersion ?? x.FileVersionInfo.ProductVersion;
 
             var path = x.FileName;
-            var anonymizedPath = string.Empty;
-            if (!pathAnonymizer.TryHandlePath(path, out anonymizedPath))
+            if (!pathAnonymizer.TryHandlePath(path, out var anonymizedPath))
                 anonymizedPath = Anonymizer.AnonymizePath(path);
 
             return new NativeModule(x.ModuleName, anonymizedPath, version, arch, (uint) fs.Length, x.BaseAddress, (uint) x.ModuleMemorySize, hash);
@@ -59,9 +60,9 @@ internal static class NativeModuleUtils
         }
     }).OfType<NativeModule>().ToList();
 
-    private static NativeAssemblyArchitectureType GetArchitecture(byte[] signature, Stream stream)
+    private static NativeAssemblyArchitectureType GetArchitecture(Span<byte> signature, Stream stream)
     {
-        if (signature.AsSpan(0, PEHeader.Length).SequenceEqual(PEHeader))
+        if (signature.Slice(0, PEHeader.Length).SequenceEqual(PEHeader))
         {
             using var reader = new PEReader(stream, PEStreamOptions.LeaveOpen);
             return reader.PEHeaders.CoffHeader.Machine switch
@@ -73,7 +74,8 @@ internal static class NativeModuleUtils
                 _ => NativeAssemblyArchitectureType.Unknown,
             };
         }
-        if (signature.AsSpan(0, ElfMagic.Length).SequenceEqual(ElfMagic))
+
+        if (signature.Slice(0, ElfMagic.Length).SequenceEqual(ElfMagic))
         {
             using var elf = ELFReader.Load(stream, false);
             return elf.Machine switch
@@ -85,7 +87,8 @@ internal static class NativeModuleUtils
                 _ => NativeAssemblyArchitectureType.Unknown,
             };
         }
-        if (signature.AsSpan(0, MachOMagic.Length).SequenceEqual(MachOMagic) || signature.AsSpan(0, MachOMagic64.Length).SequenceEqual(MachOMagic64))
+
+        if (signature.Slice(0, MachOMagic.Length).SequenceEqual(MachOMagic) || signature.Slice(0, MachOMagic64.Length).SequenceEqual(MachOMagic64))
         {
             var reader = MachOReader.Load(stream, false);
             return reader.Machine switch
@@ -97,6 +100,7 @@ internal static class NativeModuleUtils
                 _ => NativeAssemblyArchitectureType.Unknown,
             };
         }
+
         return NativeAssemblyArchitectureType.Unknown;
     }
 }

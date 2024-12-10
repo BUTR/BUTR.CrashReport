@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace BUTR.CrashReport.Models;
+﻿namespace BUTR.CrashReport.Models;
 
 /// <summary>
 /// Represents the actual executing method of a stack trace frame. Can the the original method or a patched method.
 /// </summary>
-public sealed record MethodExecutingModel : MethodSimpleModel
+public sealed record MethodExecutingModel : MethodModel
 {
     /// <summary>
     /// The native code of the method that was compiled by the JIT.
     /// </summary>
-    public required IList<string> NativeInstructions { get; set; } = new List<string>();
+    public required InstructionsModel NativeInstructions { get; set; }
 
     /// <inheritdoc />
     public bool Equals(MethodExecutingModel? other)
@@ -19,7 +16,7 @@ public sealed record MethodExecutingModel : MethodSimpleModel
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return base.Equals(other) &&
-               NativeInstructions.SequenceEqual(other.NativeInstructions);
+               NativeInstructions.Equals(other.NativeInstructions);
     }
 
     /// <inheritdoc />

@@ -1,113 +1,42 @@
 ﻿using BUTR.CrashReport.Decompilers.ILSpy;
+using BUTR.CrashReport.Decompilers.Sources;
 
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.CSharp;
-using ICSharpCode.Decompiler.CSharp.Resolver;
 using ICSharpCode.Decompiler.Metadata;
-using ICSharpCode.Decompiler.TypeSystem;
-using ICSharpCode.Decompiler.TypeSystem.Implementation;
 
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
+using System.IO;
+using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
+using System.Reflection.PortableExecutable;
 using System.Threading;
 
 namespace BUTR.CrashReport.Decompilers.Utils;
 
 partial class MethodDecompiler
 {
-    /// <summary>
-    /// Gets the extended IL representation of the methods
-    /// </summary>
-    public static string[] DecompileILCodeExtended(MethodBase? method)
+    private static MethodDecompilerCode DecompileILWithCSharpCodeInternal(Stream stream, int methodToken, int? ilOffset, SourceLocation? csharpSource)
     {
-        if (method is null) return [];
-
         try
         {
-            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return [];
+            using var peFile = new PEFile("Assembly", stream, PEStreamOptions.LeaveOpen);
 
-            using var _ = stream;
-            using var peFile = new PEFile("Assembly", stream);
+            var output = new PlainTextOutput();
+            var methodBodyDisassembler = CSharpILMixedLanguage.CreateMethodBodyDisassembler(output, ilOffset, csharpSource, CancellationToken.None);
+            var disassembler = CSharpILMixedLanguage.CreateDisassembler(output, methodBodyDisassembler, CancellationToken.None);
+            disassembler.DisassembleMethod(peFile, (MethodDefinitionHandle) MetadataTokens.Handle(methodToken));
 
-            var output = new PlainTextOutput2();
-            var disassembler = ILLanguage.CreateDisassembler(output, CancellationToken.None);
-            disassembler.DisassembleMethod(peFile, methodHandle);
-
-            return output.ToString()!.Split([Environment.NewLine], StringSplitOptions.None);
+            return new MethodDecompilerCode(
+                output.ToString()!.Split([Environment.NewLine], StringSplitOptions.None),
+                methodBodyDisassembler.LineStart is null ? null : new(methodBodyDisassembler.LineStart.Value, -1, methodBodyDisassembler.LineEnd ?? -1, -1)
+            );
         }
         catch (Exception e)
         {
             Trace.TraceError(e.ToString());
         }
 
-        return [];
-    }
-
-    /// <summary>
-    /// Gets the C# + IL representation of the methods
-    /// </summary>
-    public static string[] DecompileILWithCSharpCode(MethodBase? method)
-    {
-        if (method is null) return [];
-
-        try
-        {
-            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return [];
-
-            using var _ = stream;
-            using var peFile = new PEFile("Assembly", stream);
-
-            var output = new PlainTextOutput2();
-            var disassembler = CSharpILMixedLanguage.CreateDisassembler(output, CancellationToken.None);
-            disassembler.DisassembleMethod(peFile, methodHandle);
-
-            return output.ToString()!.Split([Environment.NewLine], StringSplitOptions.None);
-        }
-        catch (Exception e)
-        {
-            Trace.TraceError(e.ToString());
-        }
-
-        return [];
-    }
-
-    /// <summary>
-    /// Gets the C# representation of the methods
-    /// </summary>
-    public static string[] DecompileCSharpCode(MethodBase? method)
-    {
-        if (method is null) return [];
-
-        try
-        {
-            if (!TryCopyMethod(method, out var stream, out var methodHandle)) return [];
-
-            using var _ = stream;
-            using var peFile = new PEFile("Assembly", stream);
-
-            var compilation = new SimpleCompilation(peFile.WithOptions(TypeSystemOptions.Default | TypeSystemOptions.Uncached), MinimalCorlib.Instance);
-            var resolver = new CSharpResolver(compilation);
-
-            IModuleReference moduleReference = peFile;
-            var module = moduleReference.Resolve(resolver)!;
-            var method2 = module.TypeDefinitions.SelectMany(x => x.Methods).First(x => x.MetadataToken == methodHandle);
-
-            var output = new PlainTextOutput2();
-            var language = new CSharpLanguage();
-            language.DecompileMethod(method2, output, new DecompilerSettings(LanguageVersion.Preview)
-            {
-                AggressiveInlining = true,
-            });
-
-            return output.ToString()!.Split([Environment.NewLine], StringSplitOptions.None);
-        }
-        catch (Exception e)
-        {
-            Trace.TraceError(e.ToString());
-        }
-
-        return [];
+        return EmptyCode;
     }
 }

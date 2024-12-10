@@ -5,12 +5,17 @@ namespace BUTR.CrashReport.Models;
 /// <summary>
 /// Represents a method.
 /// </summary>
-public abstract record MethodEntry
+public record MethodEntry
 {
     /// <summary>
-    /// The Harmony patch method.
+    /// The actual method.
     /// </summary>
     public required MethodBase Method { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="AssemblyIdModel"/>
+    /// </summary>
+    public required AssemblyIdModel? AssemblyId { get; set; }
 
     /// <summary>
     /// <inheritdoc cref="StacktraceEntry.ModuleInfo"/>
@@ -23,22 +28,4 @@ public abstract record MethodEntry
     /// </summary>
     /// <returns><inheritdoc cref="StacktraceEntry.LoaderPluginInfo"/></returns>
     public required ILoaderPluginInfo? LoaderPluginInfo { get; set; }
-
-    /// <summary>
-    /// <inheritdoc cref="MethodSimpleModel.ILInstructions"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="MethodSimpleModel.ILInstructions"/></returns>
-    public required string[] ILInstructions { get; set; }
-
-    /// <summary>
-    /// <inheritdoc cref="MethodSimpleModel.CSharpILMixedInstructions"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="MethodSimpleModel.CSharpILMixedInstructions"/></returns>
-    public required string[] CSharpILMixedInstructions { get; set; }
-
-    /// <summary>
-    /// <inheritdoc cref="MethodSimpleModel.CSharpInstructions"/>
-    /// </summary>
-    /// <returns><inheritdoc cref="MethodSimpleModel.CSharpInstructions"/></returns>
-    public required string[] CSharpInstructions { get; set; }
 }

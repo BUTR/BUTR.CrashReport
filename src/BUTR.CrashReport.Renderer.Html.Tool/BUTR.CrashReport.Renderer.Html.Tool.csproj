@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+   
+    <DefineConstants>$(DefineConstants);BUTRCRASHREPORT_DISABLE;BUTRCRASHREPORT_ENABLE_HTML_RENDERER;</DefineConstants>
+
+    <ToolCommandName>butr_crashreport_html</ToolCommandName>
+    <IsTool>true</IsTool>
+    <PackAsTool>true</PackAsTool>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.Renderer.Html.Tool</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Title>BUTR.CrashReport.Tool</Title>
+    <Authors>Aragas</Authors>
+    <Company>BUTR</Company>
+    <Description>Provides various commands</Description>
+    <Copyright>Copyright © 2023-2024 Bannerlord's Unofficial Tools &amp; Resources</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>bannerlord butr html zip</PackageTags>
+    <!--
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    -->
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+    <PackageReference Include="System.Buffers" Version="4.6.0" />
+    <PackageReference Include="System.IO.Pipelines" Version="9.0.0" />
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.Html\BUTR.CrashReport.Renderer.Html.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport\BUTR.CrashReport.csproj" />
+  </ItemGroup>
+
+</Project>

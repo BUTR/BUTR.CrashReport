@@ -34,12 +34,12 @@ public sealed record EnhancedStacktraceFrameModel
     /// <summary>
     /// The original method that is being patched. Is null when no patches exists. Use <see cref="ExecutingMethod"/> instead.
     /// </summary>
-    public required MethodSimpleModel? OriginalMethod { get; set; }
+    public required MethodModel? OriginalMethod { get; set; }
 
     /// <summary>
     /// The list of patch methods that are applied to the method.
     /// </summary>
-    public required IList<MethodSimpleModel> PatchMethods { get; set; } = new List<MethodSimpleModel>();
+    public required IList<MethodRuntimePatchModel> PatchMethods { get; set; } = new List<MethodRuntimePatchModel>();
 
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>

@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <InvariantGlobalization>true</InvariantGlobalization>
+   
+    <!--
+    <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+    -->
+    
+    <!-- 8MB .exe with native .dll -->
+    <!--
+    <PublishAot>true</PublishAot>
+    -->
+    
+    <!-- 14MB .exe -->
+    <!--
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    -->
+
+    <ToolCommandName>butr_crashreport_imgui</ToolCommandName>
+    <IsTool>true</IsTool>
+    <PackAsTool>true</PackAsTool>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.Renderer.ImGui.Tool</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Title>BUTR.CrashReport.Renderer.ImGui.Tool</Title>
+    <Authors>Aragas</Authors>
+    <Company>BUTR</Company>
+    <Description>Provides an ImGUI renderer for crash reports</Description>
+    <Copyright>Copyright © 2023-2024 Bannerlord's Unofficial Tools &amp; Resources</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>butr crash report html zip imgui</PackageTags>
+    <!--
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.CImGui\BUTR.CrashReport.CImGui.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.Html\BUTR.CrashReport.Renderer.Html.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.Zip\BUTR.CrashReport.Renderer.Zip.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\BUTR.CrashReport.Renderer.ImGui.Silk.NET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
+    <PackageReference Include="TextCopy" Version="6.2.1" />
+    
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.0" />
+    <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />
+    <PackageReference Include="System.Buffers" Version="4.6.0" />
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.6.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NativeFileDialogSharp" Version="0.6.0-alpha" />
+  </ItemGroup>
+
+</Project>

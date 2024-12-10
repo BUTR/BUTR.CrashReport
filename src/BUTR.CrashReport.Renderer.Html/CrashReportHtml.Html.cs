@@ -1,6 +1,9 @@
 ﻿using BUTR.CrashReport.Models;
+using BUTR.CrashReport.Renderer.Html.Extensions;
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BUTR.CrashReport.Renderer.Html;
@@ -155,7 +158,7 @@ partial class CrashReportHtml
         {GetNativesHtml(crashReport)}
 """)}}
 {{Container("harmony-patches", "Harmony Patches", GetHarmonyPatchesHtml(crashReport))}}
-{{Container("log-files", "Log Files", GetLogFilesHtml(files))}}
+{{(files.Any() ? Container("log-files", "Log Files", GetLogFilesHtml(files)) : string.Empty)}}
 
 {{Container("mini-dump", "Mini Dump", MiniDumpTag, true)}}
 {{Container("save-file", "Save File", SaveFileTag, true)}}
@@ -269,7 +272,7 @@ partial class CrashReportHtml
    }
    function screenshot(element) {
      var base64 = document.getElementById("screenshot-data").innerText.trim();
-     document.getElementById("screenshot").src = "data:image/jpeg;charset=utf-8;base64," + base64;
+     document.getElementById("screenshot").src = base64;
      document.getElementById("screenshot").parentElement.style.display = "block";
    }
    function jsonmodel(element) {
@@ -297,7 +300,7 @@ partial class CrashReportHtml
     <details {(hide ? "style='display: none;'" : string.Empty)}>
       <summary>{name}</summary>
       <div id='{id}'>
-        {content}
+{content}
       </div>
     </details>
 """;
@@ -307,7 +310,7 @@ partial class CrashReportHtml
       <summary>{name}</summary>
       <div>
         <pre>
-          {content}
+{content}
         </pre>
       </div>
     </details>
@@ -317,16 +320,17 @@ partial class CrashReportHtml
     <div class='root-container' {(hide ? "style='display: none;'" : string.Empty)}>
       <h2><a href='javascript:;' class='headers' onclick='showHideById(this, "{id}")'>+ {name}</a></h2>
       <div id='{id}' class='headers-container'>
-        {content}
+{content}
       </div>
     </div>
 """;
-        
-    private static string ContainerCode(string id, string name, string content, string language, bool hide = false) => $"""
+    
+    // TODO: Highlight line
+    private static string ContainerCode(string id, string name, InstructionsModel instructions, string language, bool hide = false) =>$"""
     <div>
       <a href="javascript:;" class="headers" onclick="showHideById(this, '{id}')">+ {name}</a>
       <div id="{id}" class="headers-container" style="display: none;">
-        <pre><code class="language-{language}">{content}</code></pre>
+        <pre><code class="language-{language}">{string.Join(Environment.NewLine, instructions.Instructions.Select(x => x.EscapeGenerics()))}</code></pre>
       </div>
     </div>
 """;

@@ -1,0 +1,91 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>$(DefineConstants);OPENGL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.Renderer.ImGui.Silk.NET</PackageId>
+    <Title>BUTR.CrashReport.Renderer.ImGui.Silk.NET</Title>
+    <Description></Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
+    <PackageTags></PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="resources\icon.png">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_128.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_128.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_16.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_16.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_18.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_18.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_20.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_20.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_22.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_22.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_24.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_24.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_28.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_28.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_32.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_32.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_48.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_48.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\icon_64.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_64.bin</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ultz.Native.GLFW" Version="$(GlfwVersion)" />
+    <PackageReference Include="Silk.NET.GLFW" Version="$(SilkNETVersion)" />
+    <PackageReference Include="Silk.NET.Input.Glfw" Version="$(SilkNETVersion)" />
+    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="$(SilkNETVersion)" />
+
+    <PackageReference Include="Ultz.Native.SDL" Version="$(SdlVersion)" />
+    <PackageReference Include="Silk.NET.SDL" Version="$(SilkNETVersion)" />
+    <PackageReference Include="Silk.NET.Input.Sdl" Version="$(SilkNETVersion)" />
+    <PackageReference Include="Silk.NET.Windowing.Sdl" Version="$(SilkNETVersion)" />
+
+    <PackageReference Include="Silk.NET.Input.Extensions" Version="$(SilkNETVersion)" />
+
+    <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkNETVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Native\BUTR.CrashReport.Native.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Native.SourceGenerator\BUTR.CrashReport.Native.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+   
+    <ProjectReference Include="..\BUTR.CrashReport.CImGui\BUTR.CrashReport.CImGui.csproj" />
+  </ItemGroup>
+
+</Project>

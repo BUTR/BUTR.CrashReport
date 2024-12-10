@@ -2,19 +2,20 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netcoreapp3.0;net5.0-windows;</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    
     <UseWindowsForms>true</UseWindowsForms>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <LangVersion>preview</LangVersion>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>BUTR.CrashReport.Renderer.WinForms</PackageId>
     <Title>BUTR.CrashReport.Renderer.WinForms</Title>
-    <Description>Contains the renderer for creating the crash report</Description>
+    <Description>Contains the WinForms (HTML) renderer for showing the crash report</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
-    <PackageTags>butr crash report bannerlord</PackageTags>
+    <PackageTags>butr crash report</PackageTags>
   </PropertyGroup>
   
   <ItemGroup>

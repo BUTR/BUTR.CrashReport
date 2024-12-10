@@ -1,4 +1,4 @@
-﻿using BUTR.CrashReport.Extensions;
+﻿using BUTR.CrashReport.Decompilers.Utils;
 using BUTR.CrashReport.Interfaces;
 using BUTR.CrashReport.Models;
 
@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 
 namespace BUTR.CrashReport.Utils;
 
@@ -25,7 +24,7 @@ public static class CrashReportModelUtils
         {
             // TODO: Check if there are collisions
             var assembly = assemblies.FirstOrDefault(y => y.Id.Name == ex.Source);
-            return new ExceptionModel
+            return new()
             {
                 SourceAssemblyId = assembly?.Id,
                 SourceModuleId = assembly?.ModuleId,
@@ -34,7 +33,7 @@ public static class CrashReportModelUtils
                 Message = ex.Message,
                 CallStack = ex.StackTrace ?? string.Empty,
                 InnerException = ex.InnerException is not null ? GetRecursiveExceptionInternal(assemblies, ex.InnerException) : null,
-                AdditionalMetadata = Array.Empty<MetadataModel>(),
+                AdditionalMetadata = [],
             };
         }
 
@@ -44,59 +43,70 @@ public static class CrashReportModelUtils
     /// <summary>
     /// Returns the <see cref="List{EnhancedStacktraceFrameModel}"/>
     /// </summary>
-    public static List<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport, IReadOnlyCollection<AssemblyModel> assemblies)
+    public static List<EnhancedStacktraceFrameModel> GetEnhancedStacktrace(CrashReportInfo crashReport, IReadOnlyCollection<AssemblyModel> assemblies, IAssemblyUtilities assemblyUtilities, IHttpUtilities httpUtilities)
     {
         var enhancedStacktraceFrameModels = new List<EnhancedStacktraceFrameModel>();
         foreach (var stacktrace in crashReport.Stacktrace.GroupBy(x => x.StackFrameDescription))
         {
             foreach (var entry in stacktrace)
             {
-                var methods = new List<MethodSimpleModel>(entry.PatchMethods.Length);
-                foreach (var patchMethod in entry.PatchMethods)
+                var patches = entry.PatchMethods.Select(patchMethod =>
                 {
-                    var patchAssemblyName = entry.Method.DeclaringType?.Assembly.GetName();
-                    var patchAssembly = patchAssemblyName is not null ? assemblies.FirstOrDefault(x => x.Id.Equals(patchAssemblyName)) : null;
-                    var methodSimple = new MethodSimpleModel
+                    var patchDecompiled = MethodDecompiler.DecompileMethod(patchMethod.Patch.Patch, null, false, assemblyUtilities.GetAssemblyStream, assemblyUtilities.GetPdbStream, httpUtilities.GetStringFromUrl);
+                    return new MethodRuntimePatchModel
                     {
-                        AssemblyId = patchAssembly?.Id,
+                        Provider = patchMethod.Patch.PatchProvider,
+                        Type = patchMethod.Patch.PatchType,
+                        AssemblyId = patchMethod.AssemblyId,
                         ModuleId = patchMethod.ModuleInfo?.Id,
                         LoaderPluginId = patchMethod.LoaderPluginInfo?.Id,
                         MethodDeclaredTypeName = patchMethod.Method.DeclaringType?.FullName,
                         MethodName = patchMethod.Method.Name,
-                        MethodFullDescription = patchMethod.Method.FullDescription(),
+                        MethodFullDescription = patchMethod.Method.FullDescription().ToString(),
                         MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
-                        ILInstructions = patchMethod.ILInstructions,
-                        CSharpILMixedInstructions = patchMethod.CSharpILMixedInstructions,
-                        CSharpInstructions = patchMethod.CSharpInstructions,
-                        AdditionalMetadata = Array.Empty<MetadataModel>(),
-                    };
-                    methods.Add(patchMethod switch
-                    {
-                        /*
-                        MethodEntryHarmony meh => methodSimple with
+                        ILInstructions = new()
                         {
-                            AdditionalMetadata = methodSimple.AdditionalMetadata.Append(new MetadataModel { Key = "HarmonyPatchType", Value = meh.Patch.Type.ToString() }).ToArray()
+                            Instructions = patchDecompiled.IL.Code,
+                            Highlight = null,
                         },
-                        */
-                        _ => methodSimple
-                    });
-                }
+                        ILMixedInstructions = new()
+                        {
+                            Instructions = patchDecompiled.ILMixed.Code,
+                            Highlight = null,
+                        },
+                        CSharpInstructions = new()
+                        {
+                            Instructions = patchDecompiled.CSharp.Code,
+                            Highlight = null,
+                        },
+                        AdditionalMetadata = [],
+                    };
+                }).ToList();
 
-                var executingAssemblyName = entry.Method.DeclaringType?.Assembly.GetName();
-                var executingAssembly = executingAssemblyName is not null ? assemblies.FirstOrDefault(x => x.Id.Equals(executingAssemblyName)) : null;
+                var executingAssemblyName = entry.Method.Module.Assembly.GetName();
+                var executingAssembly = assemblies.FirstOrDefault(x => x.Id.Equals(executingAssemblyName));
 
-                var originalAssemblyName = entry.OriginalMethod?.Method.DeclaringType?.Assembly.GetName();
+                var originalAssemblyName = entry.OriginalMethod?.Method.Module.Assembly.GetName();
                 var originalAssembly = originalAssemblyName is not null ? assemblies.FirstOrDefault(x => x.Id.Equals(originalAssemblyName)) : null;
 
                 // Do not reverse engineer copyrighted or flagged original assemblies
-                static bool IsProtected(AssemblyModel? assembly) => assembly is not null &&
-                                                                    ((assembly.Type & AssemblyType.GameCore) != 0 ||
-                                                                     (assembly.Type & AssemblyType.GameModule) != 0 ||
-                                                                     (assembly.Type & AssemblyType.ProtectedFromDisassembly) != 0);
+                static bool IsProtected(AssemblyModel? assembly)
+                {
+                    if (assembly is null) return false;
+
+                    if ((assembly.Type & AssemblyType.ProtectedFromDisassembly) != 0) return true;
+
+                    if ((assembly.Type & AssemblyType.AllowedDisassembly) != 0) return false;
+
+                    return (assembly.Type & AssemblyType.GameCore) != 0 || (assembly.Type & AssemblyType.GameModule) != 0;
+                }
 
                 var skipDisassemblyForOriginal = IsProtected(originalAssembly);
                 var skipDisassemblyForExecuting = IsProtected(originalAssembly) || IsProtected(executingAssembly);
 
+                var nativeInstructions = MethodDecompiler.DecompileNativeCode(entry.NativeCodePtr, entry.NativeOffset);
+                var originalDecompiled = entry.OriginalMethod != null ? MethodDecompiler.DecompileMethod(entry.OriginalMethod.Method, null, skipDisassemblyForOriginal, assemblyUtilities.GetAssemblyStream, assemblyUtilities.GetPdbStream, httpUtilities.GetStringFromUrl) : null;
+                var executingDecompiled = MethodDecompiler.DecompileMethod(entry.Method, entry.ILOffset, skipDisassemblyForExecuting, assemblyUtilities.GetAssemblyStream, assemblyUtilities.GetPdbStream, httpUtilities.GetStringFromUrl);
                 enhancedStacktraceFrameModels.Add(new()
                 {
                     FrameDescription = entry.StackFrameDescription,
@@ -107,13 +117,53 @@ public static class CrashReportModelUtils
                         LoaderPluginId = entry.LoaderPluginInfo?.Id,
                         MethodDeclaredTypeName = entry.Method.DeclaringType?.FullName,
                         MethodName = entry.Method.Name,
-                        MethodFullDescription = entry.Method.FullDescription(),
+                        MethodFullDescription = entry.Method.FullDescription().ToString(),
                         MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
-                        NativeInstructions = entry.NativeInstructions,
-                        ILInstructions = entry.ILInstructions,
-                        CSharpILMixedInstructions = skipDisassemblyForExecuting ? [] : entry.CSharpILMixedInstructions,
-                        CSharpInstructions = skipDisassemblyForExecuting ? [] : entry.CSharpInstructions,
-                        AdditionalMetadata = Array.Empty<MetadataModel>(),
+                        NativeInstructions = new()
+                        {
+                            Instructions = nativeInstructions.Code,
+                            Highlight = nativeInstructions.Highlight is null ? null : new()
+                            {
+                                StartLine = nativeInstructions.Highlight.StartLine,
+                                StartColumn = nativeInstructions.Highlight.StartColumn,
+                                EndLine = nativeInstructions.Highlight.EndLine,
+                                EndColumn = nativeInstructions.Highlight.EndColumn,
+                            }
+                        },
+                        ILInstructions = new()
+                        {
+                            Instructions = executingDecompiled.IL.Code,
+                            Highlight = executingDecompiled.IL.Highlight is null ? null : new()
+                            {
+                                StartLine = executingDecompiled.IL.Highlight.StartLine,
+                                StartColumn = executingDecompiled.IL.Highlight.StartColumn,
+                                EndLine = executingDecompiled.IL.Highlight.EndLine,
+                                EndColumn = executingDecompiled.IL.Highlight.EndColumn,
+                            },
+                        },
+                        ILMixedInstructions = new()
+                        {
+                            Instructions = executingDecompiled.ILMixed.Code,
+                            Highlight = executingDecompiled.ILMixed.Highlight is null ? null : new()
+                            {
+                                StartLine = executingDecompiled.ILMixed.Highlight.StartLine,
+                                StartColumn = executingDecompiled.ILMixed.Highlight.StartColumn,
+                                EndLine = executingDecompiled.ILMixed.Highlight.EndLine,
+                                EndColumn = executingDecompiled.ILMixed.Highlight.EndColumn,
+                            },
+                        },
+                        CSharpInstructions = new()
+                        {
+                            Instructions = executingDecompiled.CSharp.Code,
+                            Highlight = executingDecompiled.CSharp.Highlight is null ? null : new()
+                            {
+                                StartLine = executingDecompiled.CSharp.Highlight.StartLine,
+                                StartColumn = executingDecompiled.CSharp.Highlight.StartColumn,
+                                EndLine = executingDecompiled.CSharp.Highlight.EndLine,
+                                EndColumn = executingDecompiled.CSharp.Highlight.EndColumn,
+                            },
+                        },
+                        AdditionalMetadata = [],
                     },
                     OriginalMethod = entry.OriginalMethod is not null ? new()
                     {
@@ -122,17 +172,29 @@ public static class CrashReportModelUtils
                         LoaderPluginId = entry.OriginalMethod.LoaderPluginInfo?.Id,
                         MethodDeclaredTypeName = entry.OriginalMethod.Method.DeclaringType?.FullName,
                         MethodName = entry.OriginalMethod.Method.Name,
-                        MethodFullDescription = entry.OriginalMethod.Method.FullDescription(),
+                        MethodFullDescription = entry.OriginalMethod.Method.FullDescription().ToString(),
                         MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
-                        ILInstructions = entry.OriginalMethod.ILInstructions,
-                        CSharpILMixedInstructions = skipDisassemblyForOriginal ? [] : entry.OriginalMethod.CSharpILMixedInstructions,
-                        CSharpInstructions = skipDisassemblyForOriginal ? [] : entry.OriginalMethod.CSharpInstructions,
-                        AdditionalMetadata = Array.Empty<MetadataModel>()
+                        ILInstructions = originalDecompiled is null ? null : new()
+                        {
+                            Instructions = originalDecompiled.IL.Code,
+                            Highlight = null,
+                        },
+                        ILMixedInstructions = originalDecompiled is null ? null : new()
+                        {
+                            Instructions = originalDecompiled.ILMixed.Code,
+                            Highlight = null,
+                        },
+                        CSharpInstructions = originalDecompiled is null ? null : new()
+                        {
+                            Instructions = originalDecompiled.CSharp.Code,
+                            Highlight = null,
+                        },
+                        AdditionalMetadata = [],
                     } : null,
-                    PatchMethods = methods,
+                    PatchMethods = patches,
                     ILOffset = entry.ILOffset,
                     NativeOffset = entry.NativeOffset,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    AdditionalMetadata = [],
                 });
             }
         }
@@ -142,32 +204,34 @@ public static class CrashReportModelUtils
     /// <summary>
     /// Returns the <see cref="List{InvolvedModuleOrPluginModel}"/>
     /// </summary>
-    public static List<InvolvedModuleOrPluginModel> GetInvolvedModules(CrashReportInfo crashReport)
+    public static List<InvolvedModuleOrPluginModel> GetInvolvedModules(List<EnhancedStacktraceFrameModel> enhancedStacktrace)
     {
         var involvedModels = new List<InvolvedModuleOrPluginModel>();
-        foreach (var stacktraces in crashReport.FilteredStacktrace.GroupBy(m => m.ModuleInfo))
+        foreach (var stacktraces in enhancedStacktrace.Where(x => !string.IsNullOrEmpty(x.ExecutingMethod.ModuleId)).GroupBy(m => m.ExecutingMethod.ModuleId!))
         {
-            if (stacktraces.Key is { } module)
+            foreach (var stacktrace in stacktraces)
             {
                 involvedModels.Add(new()
                 {
-                    ModuleOrLoaderPluginId = module.Id,
-                    EnhancedStacktraceFrameName = stacktraces.Last().StackFrameDescription,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    ModuleOrLoaderPluginId = stacktraces.Key,
+                    EnhancedStacktraceFrameName = stacktrace.FrameDescription,
+                    Type = InvolvedModuleOrPluginType.Direct,
+                    AdditionalMetadata = [],
                 });
             }
         }
-        foreach (var stacktrace in crashReport.FilteredStacktrace)
+        foreach (var stacktrace in enhancedStacktrace)
         {
-            foreach (var patch in stacktrace.PatchMethods)
+            foreach (var patch in stacktrace.PatchMethods.Where(x => !string.IsNullOrEmpty(x.ModuleId)))
             {
-                if (patch.ModuleInfo is null) continue;
+                if (involvedModels.Any(x => x.EnhancedStacktraceFrameName == stacktrace.FrameDescription)) continue;
 
                 involvedModels.Add(new()
                 {
-                    ModuleOrLoaderPluginId = patch.ModuleInfo.Id,
-                    EnhancedStacktraceFrameName = stacktrace.StackFrameDescription,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    ModuleOrLoaderPluginId = patch.ModuleId!,
+                    EnhancedStacktraceFrameName = stacktrace.FrameDescription,
+                    Type = InvolvedModuleOrPluginType.Patch,
+                    AdditionalMetadata = [],
                 });
             }
         }
@@ -177,32 +241,35 @@ public static class CrashReportModelUtils
     /// <summary>
     /// Returns the <see cref="List{InvolvedModuleOrPluginModel}"/>
     /// </summary>
-    public static List<InvolvedModuleOrPluginModel> GetInvolvedPlugins(CrashReportInfo crashReport)
+    public static List<InvolvedModuleOrPluginModel> GetInvolvedPlugins(List<EnhancedStacktraceFrameModel> enhancedStacktrace)
     {
         var involvedPluginModels = new List<InvolvedModuleOrPluginModel>();
-        foreach (var stacktraces in crashReport.FilteredStacktrace.GroupBy(m => m.LoaderPluginInfo))
+        foreach (var stacktraces in enhancedStacktrace.GroupBy(m => m.ExecutingMethod.LoaderPluginId))
         {
-            if (stacktraces.Key is { } loaderPlugin)
+            if (stacktraces.Key is { } loaderPluginId && !string.IsNullOrEmpty(loaderPluginId))
             {
                 involvedPluginModels.Add(new()
                 {
-                    ModuleOrLoaderPluginId = loaderPlugin.Id,
-                    EnhancedStacktraceFrameName = stacktraces.Last().StackFrameDescription,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    ModuleOrLoaderPluginId = loaderPluginId,
+                    EnhancedStacktraceFrameName = stacktraces.Last().FrameDescription,
+                    Type = InvolvedModuleOrPluginType.Direct,
+                    AdditionalMetadata = [],
                 });
             }
         }
-        foreach (var stacktrace in crashReport.FilteredStacktrace)
+        foreach (var stacktrace in enhancedStacktrace)
         {
             foreach (var patch in stacktrace.PatchMethods)
             {
-                if (patch.LoaderPluginInfo is null) continue;
+                if (string.IsNullOrEmpty(patch.LoaderPluginId)) continue;
+                if (involvedPluginModels.Any(x => x.EnhancedStacktraceFrameName == stacktrace.FrameDescription)) continue;
 
                 involvedPluginModels.Add(new()
                 {
-                    ModuleOrLoaderPluginId = patch.LoaderPluginInfo.Id,
-                    EnhancedStacktraceFrameName = stacktrace.StackFrameDescription,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    ModuleOrLoaderPluginId = patch.LoaderPluginId!,
+                    EnhancedStacktraceFrameName = stacktrace.FrameDescription,
+                    Type = InvolvedModuleOrPluginType.Patch,
+                    AdditionalMetadata = [],
                 });
             }
         }
@@ -239,11 +306,8 @@ public static class CrashReportModelUtils
         var assemblyModels = new List<AssemblyModel>(crashReport.AvailableAssemblies.Count);
 
         var systemAssemblyDirectory = Path.GetDirectoryName(typeof(object).Assembly.Location);
-        foreach (var kv in crashReport.AvailableAssemblies)
+        foreach (var (assemblyName, assembly) in crashReport.AvailableAssemblies)
         {
-            var assemblyName = kv.Key;
-            var assembly = kv.Value;
-
             var type = AssemblyType.Unclassified;
 
             // TODO: On unity the system folder is the unity root folder.
@@ -281,170 +345,42 @@ public static class CrashReportModelUtils
                 Hash = assembly.IsDynamic || string.IsNullOrWhiteSpace(assembly.Location) || !File.Exists(assembly.Location) ? "NONE" : CrashReportUtils.CalculateMD5(assembly.Location),
                 AnonymizedPath = assembly.IsDynamic ? "DYNAMIC" : string.IsNullOrWhiteSpace(assembly.Location) ? "EMPTY" : !File.Exists(assembly.Location) ? "MISSING" : anonymizedPath,
                 Type = type,
-                ImportedTypeReferences = (type & AssemblyType.System) == 0
-                    ? crashReport.ImportedTypeReferences.TryGetValue(assemblyName, out var values) ? values.Select(x => new AssemblyImportedTypeReferenceModel
-                    {
-                        Namespace = x.Namespace,
-                        Name = x.Name,
-                        FullName = x.FullName,
-                    }).ToArray() : []
-                    : [],
-                ImportedAssemblyReferences = (type & AssemblyType.System) == 0
-                    ? assembly.GetReferencedAssemblies().Select(AssemblyImportedReferenceModelExtensions.Create).ToArray()
-                    : [],
-                AdditionalMetadata = Array.Empty<MetadataModel>(),
+                AdditionalMetadata = [],
             });
         }
 
         return assemblyModels;
     }
-    
-    /*
-    /// <summary>
-    /// Returns the <see cref="List{HarmonyPatchesModel}"/>
-    /// </summary>
-    public static List<HarmonyPatchesModel> GetHarmonyPatches(CrashReportInfo crashReport, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
-    {
-        var builder = new List<HarmonyPatchesModel>(crashReport.LoadedHarmonyPatches.Count);
-
-        static void AppendPatches(ICollection<HarmonyPatchModel> builder, HarmonyPatchType type, IEnumerable<HarmonyPatch> patches, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
-        {
-            foreach (var patch in patches)
-            {
-                var assemblyId = patch.PatchMethod.DeclaringType?.Assembly.GetName() is { } asmName ? AssemblyIdModel.FromAssembly(asmName) : null;
-                var module = moduleProvider.GetModuleByType(patch.PatchMethod.DeclaringType);
-                var loaderPlugin = loaderPluginProvider.GetLoaderPluginByType(patch.PatchMethod.DeclaringType);
-
-                builder.Add(new()
-                {
-                    Type = type,
-                    AssemblyId = assemblyId,
-                    ModuleId = module?.Id,
-                    LoaderPluginId = loaderPlugin?.Id,
-                    Owner = patch.Owner,
-                    Namespace = $"{patch.PatchMethod.DeclaringType!.FullName}.{patch.PatchMethod.Name}",
-                    Index = patch.Index,
-                    Priority = patch.Priority,
-                    Before = patch.Before,
-                    After = patch.After,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
-                });
-            }
-        }
-
-        foreach (var kv in crashReport.LoadedHarmonyPatches)
-        {
-            var originalMethod = kv.Key;
-            var patches = kv.Value;
-
-            var patchBuilder = new List<HarmonyPatchModel>(patches.Prefixes.Count + patches.Postfixes.Count + patches.Finalizers.Count + patches.Transpilers.Count);
-
-            AppendPatches(patchBuilder, HarmonyPatchType.Prefix, patches.Prefixes, assemblies, moduleProvider, loaderPluginProvider);
-            AppendPatches(patchBuilder, HarmonyPatchType.Postfix, patches.Postfixes, assemblies, moduleProvider, loaderPluginProvider);
-            AppendPatches(patchBuilder, HarmonyPatchType.Finalizer, patches.Finalizers, assemblies, moduleProvider, loaderPluginProvider);
-            AppendPatches(patchBuilder, HarmonyPatchType.Transpiler, patches.Transpilers, assemblies, moduleProvider, loaderPluginProvider);
-
-            if (patchBuilder.Count > 0)
-            {
-                builder.Add(new()
-                {
-                    OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
-                    OriginalMethodName = originalMethod.Name,
-                    Patches = patchBuilder,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
-                });
-            }
-        }
-
-        return builder;
-    }
 
     /// <summary>
-    /// Returns the <see cref="List{HarmonyPatchesModel}"/>
+    /// Returns the <see cref="List{RuntimePatchesModel}"/>
     /// </summary>
-    public static List<MonoModPatchesModel> GetMonoModDetours(CrashReportInfo crashReport, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+    public static List<RuntimePatchesModel> GetRuntimePatches(CrashReportInfo crashReport, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
     {
-        var builder = new List<MonoModPatchesModel>(crashReport.LoadedMonoModPatches.Count);
+        var builder = new List<RuntimePatchesModel>(crashReport.LoadedManagedRuntimePatches.Count);
 
-        static void AppendPatches(ICollection<MonoModPatchModel> builder, MonoModPatchModelType type, IEnumerable<MonoModPatch> patches, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
+        foreach (var (originalMethod, patches) in crashReport.LoadedManagedRuntimePatches)
         {
+            var patchesBuilder = new List<RuntimePatchModel>(patches.Count);
             foreach (var patch in patches)
             {
-                var assemblyId = patch.Method.DeclaringType?.Assembly.GetName() is { } asmName ? AssemblyIdModel.FromAssembly(asmName) : null;
-                var module = moduleProvider.GetModuleByType(patch.Method.DeclaringType);
-                var loaderPlugin = loaderPluginProvider.GetLoaderPluginByType(patch.Method.DeclaringType);
+                var method = patch.Patch;
+                if (method.DeclaringType is not { } declaringType)
+                    continue;
 
-                builder.Add(new()
-                {
-                    Id = patch.Id,
-                    Namespace = $"{patch.Method.DeclaringType!.FullName}.{patch.Method.Name}",
-                    Type = type,
-                    IsActive = false,
-                    AssemblyId = assemblyId,
-                    ModuleId = module?.Id,
-                    LoaderPluginId = loaderPlugin?.Id,
-                    Index = patch.Index,
-                    MaxIndex = patch.MaxIndex,
-                    GlobalIndex = patch.GlobalIndex,
-                    Priority = patch.Priority,
-                    SubPriority = patch.SubPriority,
-                    Before = patch.Before,
-                    After = patch.After,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
-                });
-            }
-        }
+                var assemblyId = AssemblyIdModel.FromAssembly(patch.Patch.Module.Assembly.GetName());
+                var moduleInfo = moduleProvider.GetModuleByType(declaringType);
+                var loaderPluginInfo = loaderPluginProvider.GetLoaderPluginByType(declaringType);
 
-        foreach (var kv in crashReport.LoadedMonoModPatches)
-        {
-            var originalMethod = kv.Key;
-            var patches = kv.Value;
-
-            var detoursBuilder = new List<MonoModPatchModel>(patches.Detours.Count);
-
-            AppendPatches(detoursBuilder, MonoModPatchModelType.Detour, patches.Detours, assemblies, moduleProvider, loaderPluginProvider);
-            AppendPatches(detoursBuilder, MonoModPatchModelType.ILHook, patches.ILHooks, assemblies, moduleProvider, loaderPluginProvider);
-
-            if (detoursBuilder.Count > 0)
-            {
-                builder.Add(new()
-                {
-                    OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
-                    OriginalMethodName = originalMethod.Name,
-                    Detours = detoursBuilder,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
-                });
-            }
-        }
-
-        return builder;
-    }
-    */
-    
-    public static List<RuntimePatchesModel> GetRuntimePatches(CrashReportInfo crashReport, IReadOnlyCollection<AssemblyModel> assemblies, IModuleProvider moduleProvider, ILoaderPluginProvider loaderPluginProvider)
-    {
-        var builder = new List<RuntimePatchesModel>(crashReport.LoadedRuntimePatches.Count);
-
-        foreach (var kv in crashReport.LoadedRuntimePatches)
-        {
-            var originalMethod = kv.Key;
-            var patches = kv.Value;
-
-            var patchesBuilder = new List<RuntimePatchModel>(crashReport.LoadedRuntimePatches.Count);
-            foreach (var patch in patches)
-            {
-                var assemblyId = patch.Patch.DeclaringType?.Assembly.GetName() is { } asmName ? AssemblyIdModel.FromAssembly(asmName) : null;
-                var module = moduleProvider.GetModuleByType(patch.Patch.DeclaringType);
-                var loaderPlugin = loaderPluginProvider.GetLoaderPluginByType(patch.Patch.DeclaringType);
-
+                //if (moduleInfo is not null || loaderPluginInfo is not null)
                 patchesBuilder.Add(new()
                 {
+                    ModuleId = moduleInfo?.Id,
+                    LoaderPluginId = loaderPluginInfo?.Id,
                     AssemblyId = assemblyId,
-                    ModuleId = module?.Id,
-                    LoaderPluginId = loaderPlugin?.Id,
                     Provider = patch.PatchProvider,
                     Type = patch.PatchType,
-                    FullName = patch.Patch.DeclaringType is not null ? $"{patch.Patch.DeclaringType.FullName}.{patch.Patch.Name}" : patch.Patch.Name,
+                    FullName = $"{method.DeclaringType.FullName}.{method.Name}",
                     AdditionalMetadata = patch.AdditionalMetadata,
                 });
             }
@@ -456,7 +392,45 @@ public static class CrashReportModelUtils
                     OriginalMethodDeclaredTypeName = originalMethod.DeclaringType?.FullName,
                     OriginalMethodName = originalMethod.Name,
                     Patches = patchesBuilder,
-                    AdditionalMetadata = Array.Empty<MetadataModel>(),
+                    AdditionalMetadata = [],
+                });
+            }
+        }
+
+        foreach (var (originalMethodPtr, patches) in crashReport.LoadedNativeRuntimePatches)
+        {
+            var patchesBuilder = new List<RuntimePatchModel>(patches.Count);
+            foreach (var patch in patches)
+            {
+                var method = patch.Patch;
+                if (method.DeclaringType is not { } declaringType)
+                    continue;
+
+                var assemblyId = AssemblyIdModel.FromAssembly(patch.Patch.Module.Assembly.GetName());
+                var moduleInfo = moduleProvider.GetModuleByType(declaringType);
+                var loaderPluginInfo = loaderPluginProvider.GetLoaderPluginByType(declaringType);
+
+                //if (moduleInfo is not null || loaderPluginInfo is not null)
+                patchesBuilder.Add(new()
+                {
+                    ModuleId = moduleInfo?.Id,
+                    LoaderPluginId = loaderPluginInfo?.Id,
+                    AssemblyId = assemblyId,
+                    Provider = patch.PatchProvider,
+                    Type = patch.PatchType,
+                    FullName = $"{method.DeclaringType.FullName}.{method.Name}",
+                    AdditionalMetadata = patch.AdditionalMetadata,
+                });
+            }
+
+            if (patchesBuilder.Count > 0)
+            {
+                builder.Add(new()
+                {
+                    OriginalMethodDeclaredTypeName = null,
+                    OriginalMethodName = originalMethodPtr.ToString(),
+                    Patches = patchesBuilder,
+                    AdditionalMetadata = [],
                 });
             }
         }

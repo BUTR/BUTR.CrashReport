@@ -1,24 +1,47 @@
-﻿namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
+﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.ImGui.Extensions;
+using BUTR.CrashReport.ImGui.Utils;
+using BUTR.CrashReport.Memory;
+using BUTR.CrashReport.Renderer.ImGui.Components;
+using BUTR.CrashReport.Renderer.ImGui.Extensions;
+
+namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
-    private static readonly byte[][] _operatingSystemTypeNames =
+    // ReSharper disable once HeapView.ObjectAllocation
+    protected static readonly LiteralSpan<byte>[] _operatingSystemTypeNames =
     [
-        "Unknown"u8.ToArray(),  // Unknown
-        "Windows"u8.ToArray(),  // Windows
-        "Linux"u8.ToArray(),  // Linux
-        "MacOS"u8.ToArray(),  // MacOS
-        "Windows on Wine"u8.ToArray(),  // WindowsWine
+        "Unknown\0"u8,         // Unknown
+        "Windows\0"u8,         // Windows
+        "Linux\0"u8,           // Linux
+        "MacOS\0"u8,           // MacOS
+        "Windows on Wine\0"u8, // WindowsWine
     ];
+}
+
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
+{
+    private readonly LiteralSpan<byte> _filePickerHtmlId = "###FilePickerHtml\0"u8;
+    private readonly LiteralSpan<byte> _filePickerZiplId = "###FilePickerZip\0"u8;
+
+    private FilePickerOnSelected _onCreateHtmlSelected = default!;
+    private FilePickerOnSelected _onCreateZipSelected = default!;
 
     private bool _addScreenshots;
     private bool _addLatestSave;
     private bool _addMiniDump;
 
+    private void InitializeSummary()
+    {
+        _onCreateHtmlSelected = OnCreateHtmlSelected;
+        _onCreateZipSelected = OnCreateZipSelected;
+    }
+
     private void RenderSummary()
     {
         var capabilities = _crashReportRendererUtilities.Capabilities;
-        
+
         if (_imgui.BeginTable("Buttons\0"u8, 2))
         {
             _imgui.TableNextColumn();
@@ -27,70 +50,108 @@ partial class ImGuiRenderer
             _imgui.SetWindowFontScale(1);
             _imgui.TableNextColumn();
 
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.SaveAsHtml))
-            {
-                if (_imgui.Button("Save Report as HTML\0"u8)) _crashReportRendererUtilities.SaveAsHtml(_crashReport, _logSources, _addMiniDump, _addLatestSave, _addScreenshots);
-                _imgui.SameLine();
-            }
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.SaveAsZip))
-            {
-                if (_imgui.Button("Save Report as ZIP\0"u8)) _crashReportRendererUtilities.SaveAsZip(_crashReport, _logSources);
-                _imgui.SameLine();
-            }
-            if (_imgui.Button("Close Report and Continue\0"u8, in Secondary, in Secondary2, in Secondary3)) _onClose();
+            _imgui.CheckboxRound("Dark Mode\0"u8, ref _isDarkMode);
+
             _imgui.TableNextColumn();
             _imgui.TableNextColumn();
 
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.CopyAsHtml))
+            if (_imgui.Button("Save Report as HTML\0"u8))
+            {
+                if (!capabilities.IsSet(CrashReportRendererCapabilities.Dialogs))
+                {
+                    _imgui.OpenPopup(_filePickerHtmlId, ImGuiPopupFlags.None);
+                }
+                else
+                {
+                    var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "crashreport.html");
+                    using var stream = _crashReportRendererUtilities.SaveFileDialog("HTML files|*.html|All files (*.*)|*.*", filePath);
+                    if (stream != Stream.Null)
+                        _crashReportRendererUtilities.SaveAsHtml(_crashReport, _logSources, _addScreenshots, _addLatestSave, _addMiniDump, stream);
+                }
+
+            }
+            RenderModalPicker(_filePickerHtmlId, FilePickerMode.CreateFile, _onCreateHtmlSelected);
+            _imgui.SameLine(0.0f, -1.0f);
+
+            if (_imgui.Button("Save Report as ZIP\0"u8))
+            {
+                if (!capabilities.IsSet(CrashReportRendererCapabilities.Dialogs))
+                {
+                    _imgui.OpenPopup(_filePickerZiplId, ImGuiPopupFlags.None);
+                }
+                else
+                {
+                    var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "crashreport.zip");
+                    using var stream = _crashReportRendererUtilities.SaveFileDialog("ZIP files|*.zip|All files (*.*)|*.*", filePath);
+                    if (stream != Stream.Null)
+                        _crashReportRendererUtilities.SaveAsZip(_crashReport, _logSources, stream);
+                }
+            }
+            _imgui.SameLine(0.0f, -1.0f);
+            RenderModalPicker(_filePickerZiplId, FilePickerMode.CreateFile, _onCreateZipSelected);
+
+            if (capabilities.IsSet(CrashReportRendererCapabilities.CloseAndContinue))
+            {
+                if (_imgui.Button("Close Report and Continue\0"u8, in Secondary, in Secondary2, in Secondary3)) _onClose();
+            }
+
+            _imgui.TableNextColumn();
+            _imgui.TableNextColumn();
+
+            if (capabilities.IsSet(CrashReportRendererCapabilities.CopyAsHtml))
             {
                 if (_imgui.Button("Copy as HTML\0"u8)) _crashReportRendererUtilities.CopyAsHtml(_crashReport, _logSources);
-                _imgui.SameLine();
+                _imgui.SameLine(0.0f, -1.0f);
             }
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.Upload))
+            if (capabilities.IsSet(CrashReportRendererCapabilities.Upload))
             {
                 if (_imgui.Button("Upload Report as Permalink\0"u8)) _crashReportRendererUtilities.Upload(_crashReport, _logSources);
             }
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.CopyAsHtml | CrashReportRendererCapabilities.Upload))
+            if (capabilities.IsSet(CrashReportRendererCapabilities.CopyAsHtml))
             {
                 _imgui.TableNextColumn();
                 _imgui.TableNextColumn();
             }
 
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasScreenshots | CrashReportRendererCapabilities.HasSaveFiles | CrashReportRendererCapabilities.HasMiniDump))
+            if (capabilities.IsSet(CrashReportRendererCapabilities.HasScreenshots | CrashReportRendererCapabilities.HasSaveFiles | CrashReportRendererCapabilities.HasMiniDump))
             {
                 _imgui.Text("Save Report as HTML Options:\0"u8);
                 _imgui.TableNextColumn();
                 _imgui.TableNextColumn();
             }
 
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasScreenshots))
+            if (capabilities.IsSet(CrashReportRendererCapabilities.HasScreenshots))
             {
-                _imgui.Checkbox("Include Screenshot\0"u8, ref _addScreenshots);
+                _imgui.CheckboxRound("Include Screenshot\0"u8, ref _addScreenshots);
                 _imgui.TableNextColumn();
                 _imgui.TableNextColumn();
             }
 
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasSaveFiles))
+            if (capabilities.IsSet(CrashReportRendererCapabilities.HasSaveFiles))
             {
-                _imgui.Checkbox("Include Latest Save File\0"u8, ref _addLatestSave);
+                _imgui.CheckboxRound("Include Latest Save File\0"u8, ref _addLatestSave);
                 _imgui.TableNextColumn();
                 _imgui.TableNextColumn();
             }
 
-            if (capabilities.HasFlag(CrashReportRendererCapabilities.HasMiniDump))
+            if (capabilities.IsSet(CrashReportRendererCapabilities.HasMiniDump))
             {
-                _imgui.Checkbox("Include Mini Dump\0"u8, ref _addMiniDump);
+                _imgui.CheckboxRound("Include Mini Dump\0"u8, ref _addMiniDump);
             }
             _imgui.EndTable();
         }
 
-        _imgui.Text("Clicking 'Close Report and Continue' will continue with the Game's error reporting mechanism.\0"u8);
+        if (capabilities.IsSet(CrashReportRendererCapabilities.CloseAndContinue))
+        {
+            _imgui.Text("Clicking 'Close Report and Continue' will continue with the Game's error reporting mechanism.\0"u8);
+        }
 
         _imgui.Separator();
         _imgui.NewLine();
 
         _imgui.SetWindowFontScale(2);
-        _imgui.TextSameLine(_crashReport.Metadata.GameName ?? string.Empty);
+        _imgui.Text(_crashReport.Metadata.GameName ?? string.Empty);
+        _imgui.SameLine();
         _imgui.Text(" has encountered a problem!\0"u8);
         _imgui.SetWindowFontScale(1);
 
@@ -106,19 +167,42 @@ partial class ImGuiRenderer
 
         _imgui.NewLine();
 
-        _imgui.TextSameLine("Operating System: \0"u8);
-        _imgui.TextSameLine(_operatingSystemTypeNames[(int) _crashReport.Metadata.OperatingSystemType]);
-        _imgui.TextSameLine(" (\0"u8);
-        _imgui.TextSameLine(_crashReport.Metadata.OperatingSystemVersion ?? string.Empty);
+        _imgui.Text("Operating System: \0"u8);
+        _imgui.SameLine();
+        _imgui.Text(_operatingSystemTypeNames[(int) _crashReport.Metadata.OperatingSystemType]);
+        _imgui.SameLine();
+        _imgui.Text(" (\0"u8);
+        _imgui.SameLine();
+        _imgui.Text(_crashReport.Metadata.OperatingSystemVersion ?? string.Empty);
+        _imgui.SameLine();
         _imgui.Text(")\0"u8);
 
-        _imgui.TextSameLine("Launcher: \0"u8);
-        _imgui.TextSameLine(_crashReport.Metadata.LauncherType ?? string.Empty);
-        _imgui.TextSameLine(" (\0"u8);
-        _imgui.TextSameLine(_crashReport.Metadata.LauncherVersion ?? string.Empty);
+        _imgui.Text("Launcher: \0"u8);
+        _imgui.SameLine();
+        _imgui.Text(_crashReport.Metadata.LauncherType ?? string.Empty);
+        _imgui.SameLine();
+        _imgui.Text(" (\0"u8);
+        _imgui.SameLine();
+        _imgui.Text(_crashReport.Metadata.LauncherVersion ?? string.Empty);
+        _imgui.SameLine();
         _imgui.Text(")\0"u8);
 
-        _imgui.TextSameLine("Runtime: \0"u8);
+        _imgui.Text("Runtime: \0"u8);
+        _imgui.SameLine();
         _imgui.Text(_crashReport.Metadata.Runtime ?? string.Empty);
+    }
+
+    private void OnCreateHtmlSelected(string filePath)
+    {
+        var fs = File.OpenWrite(filePath);
+        fs.SetLength(0);
+        _crashReportRendererUtilities.SaveAsHtml(_crashReport, _logSources, _addScreenshots, _addLatestSave, _addMiniDump, fs);
+    }
+
+    private void OnCreateZipSelected(string filePath)
+    {
+        var fs = File.OpenWrite(filePath);
+        fs.SetLength(0);
+        _crashReportRendererUtilities.SaveAsZip(_crashReport, _logSources, fs);
     }
 }

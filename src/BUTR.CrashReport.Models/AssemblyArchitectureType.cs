@@ -1,4 +1,4 @@
-namespace BUTR.CrashReport.Models;
+﻿namespace BUTR.CrashReport.Models;
 
 /// <summary>
 /// Represents the architecture of a native assembly.

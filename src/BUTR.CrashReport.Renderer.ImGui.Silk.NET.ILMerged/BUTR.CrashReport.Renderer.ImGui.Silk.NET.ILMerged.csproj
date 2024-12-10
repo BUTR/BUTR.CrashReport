@@ -1,0 +1,178 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>$(DefineConstants);OPENGL</DefineConstants>
+    <RootNamespace>BUTR.CrashReport.Renderer.ImGui.Silk.NET</RootNamespace>
+    <AssemblyName>BUTR.CrashReport.Renderer.ImGui.Silk.NET</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.Renderer.ImGui.Silk.NET.ILMerged</PackageId>
+    <Title>BUTR.CrashReport.Renderer.ImGui.Silk.NET.ILMerged</Title>
+    <Description></Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
+    <PackageTags></PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ILRepackTargetConfigurations>Debug;Release</ILRepackTargetConfigurations>
+    <ILRepackAllowDuplicateResources>true</ILRepackAllowDuplicateResources>
+    <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
+    <ILRepackPerformInternalize>true</ILRepackPerformInternalize>
+    <ILRepackCopyAttributes>false</ILRepackCopyAttributes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ILRepack" Version="2.0.35" PrivateAssets="all" />
+    <PackageReference Include="ILRepack.FullAuto" Version="1.6.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon.png">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_128.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_128.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_16.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_16.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_18.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_18.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_20.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_20.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_22.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_22.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_24.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_24.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_28.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_28.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_32.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_32.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_48.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_48.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\resources\icon_64.bin">
+      <LinkBase>resources</LinkBase>
+      <LogicalName>resources\icon_64.bin</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ultz.Native.GLFW" Version="$(GlfwVersion)" />
+    <PackageReference Include="Silk.NET.GLFW" Version="$(SilkNETVersion)" PrivateAssets="all" />
+    <PackageReference Include="Silk.NET.Input.Glfw" Version="$(SilkNETVersion)" PrivateAssets="all" />
+    <PackageReference Include="Silk.NET.Windowing.Glfw" Version="$(SilkNETVersion)" PrivateAssets="all" />
+
+    <PackageReference Include="Ultz.Native.SDL" Version="$(SdlVersion)" />
+    <PackageReference Include="Silk.NET.SDL" Version="$(SilkNETVersion)" PrivateAssets="all" />
+    <PackageReference Include="Silk.NET.Input.Sdl" Version="$(SilkNETVersion)" PrivateAssets="all" />
+    <PackageReference Include="Silk.NET.Windowing.Sdl" Version="$(SilkNETVersion)" PrivateAssets="all" />
+
+    <PackageReference Include="Silk.NET.Input.Extensions" Version="$(SilkNETVersion)" PrivateAssets="all" />
+
+    <PackageReference Include="Silk.NET.OpenGL" Version="$(SilkNETVersion)" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Native\BUTR.CrashReport.Native.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\BUTR.CrashReport.Native.SourceGenerator\BUTR.CrashReport.Native.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+
+    <ProjectReference Include="..\BUTR.CrashReport.CImGui\BUTR.CrashReport.CImGui.csproj" PrivateAssets="all" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.cs">
+      <Link>Controller\ImGuiController.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Draw.cs">
+      <Link>Controller\ImGuiController.Draw.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Input.cs">
+      <Link>Controller\ImGuiController.Input.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.OGL.Draw.cs">
+      <Link>Controller\ImGuiController.OGL.Draw.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.OGL.Setup.cs">
+      <Link>Controller\ImGuiController.OGL.Setup.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Setup.cs">
+      <Link>Controller\ImGuiController.Setup.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Utils.cs">
+      <Link>Controller\ImGuiController.Utils.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\Shader.cs">
+      <Link>Controller\Shader.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\Texture.cs">
+      <Link>Controller\Texture.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\Util.cs">
+      <Link>Controller\Util.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\CrashReportImGui.cs">
+      <Link>CrashReportImGui.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Extensions\AssemblyExtensions.cs">
+      <Link>Extensions\AssemblyExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Options\GlfwWindowOptions.cs">
+      <Link>Options\GlfwWindowOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Options\IWindowOptions.cs">
+      <Link>Options\IWindowOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Options\SdlWindowOptions.cs">
+      <Link>Options\SdlWindowOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\DarkThemeUtils.cs">
+      <Link>Utils\DarkThemeUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\GlfwUtils.cs">
+      <Link>Utils\GlfwUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\SdlUtils.cs">
+      <Link>Utils\SdlUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\Utf8ZPtr.cs">
+      <Link>Utils\Utf8ZPtr.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\WindowProvider.cs">
+      <Link>WindowProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\BUTR.CrashReport.Silk.NET\**\*.cs"
+             Exclude="..\BUTR.CrashReport.Silk.NET\obj\**\*.cs" />
+  </ItemGroup>
+
+  <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepareBuild">
+    <PropertyGroup>
+      <!-- Exclude the Model -->
+      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models.dll;</ILRepackExcludeAssemblies>
+    </PropertyGroup>
+  </Target>
+
+</Project>

@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0;net9.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    
+    <ImplicitUsings>enable</ImplicitUsings>
+    
+    <DefineConstants>$(DefineConstants);OPENGL;IMGUI_DYNAMICLOADER</DefineConstants>
+    <RootNamespace>ImGui</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>BUTR.CrashReport.CImGui</PackageId>
+    <Title>BUTR.CrashReport.Renderer.ImGui.CImGui</Title>
+    <Description>Contains the ImGui renderer backend for showing the crash report.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
+    <PackageTags>butr crash report bannerlord</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ImGui.NET" Version="$(ImGuiVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Renderer.ImGui\BUTR.CrashReport.Renderer.ImGui.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Native\BUTR.CrashReport.Native.csproj" />
+    <ProjectReference Include="..\BUTR.CrashReport.Native.SourceGenerator\BUTR.CrashReport.Native.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="resources/**/*">
+      <LogicalName>resources\%(FileName)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- netstandard2.0 reference assemblies -->
+  <PropertyGroup Condition="$(TargetFramework) == 'netstandard2.0'">
+    <!-- Remove from /lib in NuGet -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+  </PropertyGroup>
+
+</Project>

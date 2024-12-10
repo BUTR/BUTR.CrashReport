@@ -1,7 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BUTR.CrashReport.Models;
 
+/// <summary>
+/// Represents a runtime patch model.
+/// </summary>
 public sealed class RuntimePatchesModel
 {
     /// <summary>
@@ -13,7 +16,7 @@ public sealed class RuntimePatchesModel
     /// The original method name.
     /// </summary>
     public required string? OriginalMethodName { get; set; }
-    
+
     /// <summary>
     /// The list of MonoMod detours.
     /// </summary>

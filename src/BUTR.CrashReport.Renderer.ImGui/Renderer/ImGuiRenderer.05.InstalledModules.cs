@@ -1,31 +1,50 @@
-﻿using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Renderer.ImGui.Extensions;
-using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
+﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.ImGui.Extensions;
+using BUTR.CrashReport.Memory;
+using BUTR.CrashReport.Memory.Utils;
+using BUTR.CrashReport.Models;
 
-using HonkPerf.NET.RefLinq;
+using Cysharp.Text;
 
-using ImGuiNET;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using Utf8StringInterpolation;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
-    private static readonly byte[][] _dependencyTypeNames =
+    protected class DependencyMetadataModelEqualityComparer : IEqualityComparer<DependencyMetadataModel>
+    {
+        public static DependencyMetadataModelEqualityComparer Instance { get; } = new();
+        public bool Equals(DependencyMetadataModel? x, DependencyMetadataModel? y) => ReferenceEquals(x, y); // We can just reference compare here
+        public int GetHashCode(DependencyMetadataModel obj) => obj.GetHashCode();
+    }
+    protected class ModuleSubModuleModelEqualityComparer : IEqualityComparer<ModuleSubModuleModel>
+    {
+        public static ModuleSubModuleModelEqualityComparer Instance { get; } = new();
+        public bool Equals(ModuleSubModuleModel? x, ModuleSubModuleModel? y) => ReferenceEquals(x, y); // We can just reference compare here
+        public int GetHashCode(ModuleSubModuleModel obj) => obj.GetHashCode();
+    }
+
+    // ReSharper disable once HeapView.ObjectAllocation
+    protected static readonly LiteralSpan<byte>[] _dependencyTypeNames =
     [
-        [],
-        "Load Before \0"u8.ToArray(),  // LoadBefore
-        "Load After \0"u8.ToArray(),   // LoadAfter
-        "Incompatible \0"u8.ToArray(), // Incompatible
+        LiteralSpan<byte>.Empty,
+        "Load Before \0"u8,  // LoadBefore
+        "Load After \0"u8,   // LoadAfter
+        "Incompatible \0"u8, // Incompatible
     ];
 
+    protected static readonly char[] _colonChar = [':'];
+}
+
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
+{
     private readonly Dictionary<string, byte[]> _moduleIdUpdateInfoUtf8 = new(StringComparer.Ordinal);
     private readonly Dictionary<string, Dictionary<string, byte[]>> _moduleDependencyTextUtf8 = new(StringComparer.Ordinal);
     private readonly Dictionary<string, byte[][]> _moduleAdditionalUpdateInfos = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, List<Utf8KeyValueList>> _moduleAdditionalDisplayKeyMetadata = new(StringComparer.Ordinal);
+    private readonly Dictionary<DependencyMetadataModel, List<Utf8KeyValueList>> _dependencyAdditionalDisplayKeyMetadata = new(DependencyMetadataModelEqualityComparer.Instance);
+    private readonly Dictionary<ModuleSubModuleModel, List<Utf8KeyValueList>> _subModuleAdditionalDisplayKeyMetadata = new(ModuleSubModuleModelEqualityComparer.Instance);
 
     private void InitializeInstalledModules()
     {
@@ -35,28 +54,38 @@ partial class ImGuiRenderer
 
             if (module.UpdateInfo is not null)
             {
-                _moduleIdUpdateInfoUtf8[module.Id] = UnsafeHelper.ToUtf8Array(module.UpdateInfo.ToString());
+                _moduleIdUpdateInfoUtf8[module.Id] = Utf8Utils.ToUtf8Array(module.UpdateInfo.ToString());
             }
 
-            var additionalUpdateInfo = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(';').Select(x => x.Split(':') is { Length: 2 } split
+            var additionalUpdateInfo = module.AdditionalMetadata.FirstOrDefault(x => x.Key == "AdditionalUpdateInfos")?.Value.Split(_colonChar).Select(x => x.Split(_colonChar) is { Length: 2 } split
                 ? new UpdateInfo
                 {
                     Provider = split[0],
                     Value = split[1],
                 }
                 : null).OfType<UpdateInfo>().ToArray() ?? [];
-            _moduleAdditionalUpdateInfos[module.Id] = additionalUpdateInfo.Select(x => UnsafeHelper.ToUtf8Array(x.ToString())).ToArray();
+            _moduleAdditionalUpdateInfos[module.Id] = additionalUpdateInfo.Select(x => Utf8Utils.ToUtf8Array(x.ToString())).ToArray();
 
             for (var j = 0; j < module.DependencyMetadatas.Count; j++)
             {
                 var dependentModule = module.DependencyMetadatas[j];
-                var optional = dependentModule.IsOptional ? " (optional)" : string.Empty;
-                var version = !string.IsNullOrEmpty(dependentModule.Version) ? $" >= {dependentModule.Version}" : string.Empty;
-                var versionRange = !string.IsNullOrEmpty(dependentModule.VersionRange) ? $" {dependentModule.VersionRange}" : string.Empty;
 
-                var final = $"{optional}{version}{versionRange}";
-                SetNestedDictionary(_moduleDependencyTextUtf8, module.Id, dependentModule.ModuleOrPluginId, UnsafeHelper.ToUtf8Array(final));
+                var finalBuilder = ZString.CreateUtf8StringBuilder();
+                finalBuilder.AppendLiteral(dependentModule.IsOptional ? " (optional)"u8 : []);
+                finalBuilder.AppendLiteral(!string.IsNullOrEmpty(dependentModule.Version) ? Utf8String.Format($" >= {dependentModule.Version!}") : []);
+                finalBuilder.AppendLiteral(!string.IsNullOrEmpty(dependentModule.VersionRange) ? Utf8String.Format($" {dependentModule.VersionRange!}") : []);
+                SetNestedDictionary(_moduleDependencyTextUtf8, module.Id, dependentModule.ModuleOrPluginId, finalBuilder.AsSpan().ToArray());
+
+                InitializeAdditionalMetadata(_dependencyAdditionalDisplayKeyMetadata, dependentModule, dependentModule.AdditionalMetadata);
             }
+
+            for (var j = 0; j < module.SubModules.Count; j++)
+            {
+                var subModule = module.SubModules[j];
+                InitializeAdditionalMetadata(_subModuleAdditionalDisplayKeyMetadata, subModule, subModule.AdditionalMetadata);
+            }
+
+            InitializeAdditionalMetadata(_moduleAdditionalDisplayKeyMetadata, module.Id, module.AdditionalMetadata);
         }
     }
 
@@ -67,12 +96,20 @@ partial class ImGuiRenderer
         _imgui.Text("Dependencies:\0"u8);
         for (var i = 0; i < module.DependencyMetadatas.Count; i++)
         {
+            _imgui.PushId(i);
+
             var dependentModule = module.DependencyMetadatas[i];
             var type = Clamp(dependentModule.Type, DependencyMetadataType.LoadBefore, DependencyMetadataType.Incompatible);
             _imgui.Bullet();
-            _imgui.TextSameLine(_dependencyTypeNames[type]);
-            _imgui.SmallButtonSameLine(dependentModule.ModuleOrPluginId);
+            _imgui.Text(_dependencyTypeNames[type]);
+            _imgui.SameLine();
+            _imgui.SmallButtonRound(dependentModule.ModuleOrPluginId);
+            _imgui.SameLine();
             _imgui.Text(_moduleDependencyTextUtf8[module.Id][dependentModule.ModuleOrPluginId]);
+
+            RenderAdditionalMetadata(_dependencyAdditionalDisplayKeyMetadata, dependentModule);
+
+            _imgui.PopId();
         }
     }
 
@@ -98,42 +135,20 @@ partial class ImGuiRenderer
         {
             var subModule = moduleSubModules[i];
             _imgui.Bullet();
-            if (_imgui.BeginChild(subModule.Name, in Zero2, in SubModule, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
+            var color = _isDarkMode ? DarkSubModule : LightSubModule;
+            if (_imgui.BeginChild(subModule.Name, in Zero2, in color, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
             {
-                _imgui.TextSameLine("Name: \0"u8);
+                _imgui.Text("Name: \0"u8);
+                _imgui.SameLine();
                 _imgui.Text(subModule.Name);
-                _imgui.TextSameLine("DLLName: \0"u8);
+                _imgui.Text("Assembly Entrypoint: \0"u8);
+                _imgui.SameLine();
                 _imgui.Text(subModule.AssemblyId?.Name ?? string.Empty);
-                _imgui.TextSameLine("SubModuleClassType: \0"u8);
+                _imgui.Text("Entrypoint: \0"u8);
+                _imgui.SameLine();
                 _imgui.Text(subModule.Entrypoint);
 
-                var firstTag = true;
-                foreach (var tag in subModule.AdditionalMetadata.ToRefLinq().Where(x => !x.Key.StartsWith("METADATA:")))
-                {
-                    if (firstTag)
-                    {
-                        _imgui.Text("Tags:\0"u8);
-                        firstTag = false;
-                    }
-
-                    _imgui.Bullet();
-                    _imgui.TextSameLine(tag.Key);
-                    _imgui.TextSameLine(": \0"u8);
-                    _imgui.Text(tag.Value);
-                }
-
-                var firstAssembly = true;
-                foreach (var assembly in subModule.AdditionalMetadata.ToRefLinq().Where(x => x.Key.StartsWith("METADATA:Assembly")))
-                {
-                    if (firstAssembly)
-                    {
-                        _imgui.Text("Assemblies:\0"u8);
-                        firstAssembly = false;
-                    }
-
-                    _imgui.Bullet();
-                    _imgui.Text(assembly.Value);
-                }
+                RenderAdditionalMetadata(_subModuleAdditionalDisplayKeyMetadata, subModule);
             }
 
             _imgui.EndChild();
@@ -156,9 +171,12 @@ partial class ImGuiRenderer
             }
 
             _imgui.Bullet();
-            _imgui.TextSameLine(assembly.Id.Name);
-            _imgui.TextSameLine(" (\0"u8);
-            _imgui.TextSameLine(_assemblyFullNameUtf8[assembly]);
+            _imgui.Text(assembly.Id.Name);
+            _imgui.SameLine();
+            _imgui.Text(" (\0"u8);
+            _imgui.SameLine();
+            _imgui.Text(_assemblyFullNameUtf8[assembly]);
+            _imgui.SameLine();
             _imgui.Text(")\0"u8);
         }
     }
@@ -168,13 +186,12 @@ partial class ImGuiRenderer
         for (var i = 0; i < _crashReport.Modules.Count; i++)
         {
             var module = _crashReport.Modules[i];
-            var isVortexManaged = module.AdditionalMetadata.ToRefLinq().Where(x => x.Key == "METADATA:MANAGED_BY_VORTEX").FirstOrDefault()?.Value is { } str && bool.TryParse(str, out var val) && val;
 
             var color = module switch
             {
-                { IsOfficial: true } => OfficialModule,
-                { IsExternal: true } => ExternalModule,
-                _ => UnofficialModule,
+                { IsOfficial: true } => _isDarkMode ? DarkOfficialModule : LightOfficialModule,
+                { IsExternal: true } => _isDarkMode ? DarkExternalModule : LightExternalModule,
+                _ => _isDarkMode ? DarkUnofficialModule : LightUnofficialModule,
             };
 
             if (_imgui.BeginChild(module.Id, in Zero2, in color, ImGuiChildFlags.Border | ImGuiChildFlags.AutoResizeY, ImGuiWindowFlags.None))
@@ -182,35 +199,36 @@ partial class ImGuiRenderer
                 if (_imgui.TreeNode(module.Id))
                 {
                     _imgui.RenderId("Id:\0"u8, module.Id);
-                    _imgui.TextSameLine("Name: \0"u8);
+                    _imgui.Text("Name: \0"u8);
+                    _imgui.SameLine();
                     _imgui.Text(module.Name);
-                    _imgui.TextSameLine("Version: \0"u8);
+                    _imgui.Text("Version: \0"u8);
+                    _imgui.SameLine();
                     _imgui.Text(module.Version);
-                    _imgui.TextSameLine("External: \0"u8);
+                    _imgui.Text("External: \0"u8);
+                    _imgui.SameLine();
                     _imgui.Text(module.IsExternal);
-                    _imgui.TextSameLine("Vortex: \0"u8);
-                    _imgui.Text(isVortexManaged);
-                    _imgui.TextSameLine("Official: \0"u8);
+                    _imgui.Text("Official: \0"u8);
+                    _imgui.SameLine();
                     _imgui.Text(module.IsOfficial);
-                    _imgui.TextSameLine("Singleplayer: \0"u8);
+                    _imgui.Text("Singleplayer: \0"u8);
+                    _imgui.SameLine();
                     _imgui.Text(module.IsSingleplayer);
-                    _imgui.TextSameLine("Multiplayer: \0"u8);
+                    _imgui.Text("Multiplayer: \0"u8);
+                    _imgui.SameLine();
                     _imgui.Text(module.IsMultiplayer);
-
-                    RenderDependencies(module);
-
-                    RenderCapabilities(module.Capabilities);
 
                     if (module.Url is not null)
                     {
-                        _imgui.TextSameLine("Url: \0"u8);
-                        if (_imgui.SmallButton(module.Url))
-                            Process.Start(new ProcessStartInfo(module.Url) { UseShellExecute = true, Verb = "open" });
+                        _imgui.Text("Url: \0"u8);
+                        _imgui.SameLine();
+                        _imgui.TextLinkOpenURL(module.Url, module.Url);
                     }
 
                     if (module.UpdateInfo is not null)
                     {
-                        _imgui.TextSameLine("Update Info: \0"u8);
+                        _imgui.Text("Update Info: \0"u8);
+                        _imgui.SameLine();
                         _imgui.Text(_moduleIdUpdateInfoUtf8[module.Id]);
                     }
 
@@ -218,10 +236,17 @@ partial class ImGuiRenderer
                     {
                         for (var j = 0; j < _moduleAdditionalUpdateInfos[module.Id].Length; j++)
                         {
-                            _imgui.TextSameLine("Update Info: \0"u8);
+                            _imgui.Text("Update Info: \0"u8);
+                            _imgui.SameLine();
                             _imgui.Text(_moduleAdditionalUpdateInfos[module.Id][j]);
                         }
                     }
+
+                    RenderAdditionalMetadata(_moduleAdditionalDisplayKeyMetadata, module.Id);
+
+                    RenderDependencies(module);
+
+                    RenderCapabilities(module.Capabilities);
 
                     RenderSubModules(module.SubModules);
 

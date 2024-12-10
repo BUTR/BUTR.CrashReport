@@ -2,68 +2,33 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+
+    <DefineConstants>$(DefineConstants);FeatureMemory;FeatureValueTuple;FeatureValueTask;</DefineConstants>
+   
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>
-    <ILRepackTargetConfigurations>Debug;Release</ILRepackTargetConfigurations>
-    <ILRepackAllowDuplicateResources>true</ILRepackAllowDuplicateResources>
-    <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
-    <ILRepackPerformInternalize>true</ILRepackPerformInternalize>
-    <ILRepackCopyAttributes>false</ILRepackCopyAttributes>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.34" PrivateAssets="all" />
-    <PackageReference Include="ILRepack.FullAuto" Version="1.6.0" PrivateAssets="all" />
-  </ItemGroup>
-
-  <PropertyGroup>
     <PackageId>BUTR.CrashReport</PackageId>
     <Title>BUTR.CrashReport</Title>
-    <Description>Contains the models for creating the crash report</Description>
+      <Description>Contains the code for creating the crash reports</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIconUrl>https://raw.githubusercontent.com/BUTR/BUTR.CrashReport/master/assets/Icon128x128.png</PackageIconUrl>
-    <PackageTags>butr crash report bannerlord</PackageTags>
+    <PackageTags>butr crash report</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Required" Version="1.0.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    
-    <PackageReference Include="Ben.Demystifier" Version="0.4.1" PrivateAssets="all" />
-    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" PrivateAssets="all" />
-    <PackageReference Include="System.Memory" Version="4.5.5" PrivateAssets="all" />
-    <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" PrivateAssets="all" />
-    <PackageReference Include="ELFSharp" Version="2.17.3" PrivateAssets="all" />
-  </ItemGroup>
-
-  <!-- We need them for documentation -->
-  <ItemGroup>
-    <PackageReference Include="Lib.Harmony.Ref" Version="*" PrivateAssets="all" IncludeAssets="none" GeneratePathProperty="true" />
-    <Reference Include="$(PkgLib_Harmony_Ref)\ref\netstandard2.0\0Harmony.dll" Private="false" />
+    <PackageReference Include="Ben.Demystifier" Version="0.4.1" />
+    <PackageReference Include="ELFSharp" Version="2.17.3" />
+    <PackageReference Include="Polyfill" Version="7.4.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BUTR.CrashReport.Decompilers\BUTR.CrashReport.Decompilers.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\BUTR.CrashReport.Decompilers\BUTR.CrashReport.Decompilers.csproj" />
     <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
   </ItemGroup>
-
-  <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepareBuild">
-    <PropertyGroup>
-      <!-- We merge everything except 0Harmony, since we support 2.2 and 2.3 -->
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)0Harmony.dll;</ILRepackExcludeAssemblies>
-
-      <!-- Exclude the Model -->
-      <ILRepackExcludeAssemblies>$(ILRepackExcludeAssemblies);$(ProjectDir)$(OutputPath)BUTR.CrashReport.Models.dll;</ILRepackExcludeAssemblies>
-    </PropertyGroup>
-  </Target>
-
-  <Target Name="DisableILRepack">
-    <PropertyGroup>
-      <ILRepackBuildEnable>false</ILRepackBuildEnable>
-    </PropertyGroup>
-  </Target>
-  
 </Project>

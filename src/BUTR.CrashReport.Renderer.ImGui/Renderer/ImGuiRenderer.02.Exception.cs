@@ -1,17 +1,30 @@
-﻿using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
+﻿using BUTR.CrashReport.ImGui.Extensions;
+using BUTR.CrashReport.Models;
 
-using System;
-using System.Linq;
-using System.Text;
+using Cysharp.Text;
+
+using Utf8StringInterpolation;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
+    protected class ExceptionModelEqualityComparer : IEqualityComparer<ExceptionModel>
+    {
+        public static ExceptionModelEqualityComparer Instance { get; } = new();
+        public bool Equals(ExceptionModel? x, ExceptionModel? y) => ReferenceEquals(x, y);
+        public int GetHashCode(ExceptionModel obj) => obj.GetHashCode();
+    }
+
+    protected static readonly string[] NewLine = [Environment.NewLine];
+}
+
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
+{
+    private readonly Dictionary<ExceptionModel, List<Utf8KeyValueList>> _exceptionAdditionalDisplayKeyMetadata = new(ExceptionModelEqualityComparer.Instance);
+
     private byte[][] _exceptionsUtf8 = [];
     private EnhancedStacktraceFrameModel?[] _stacktracesUtf8 = [];
-    private byte[][] _levelInputIdUtf8 = [];
     private int[] _callstackLineCount = [];
 
     private void InitializeExceptionRecursively()
@@ -21,33 +34,27 @@ partial class ImGuiRenderer
         while (curr is not null)
         {
             level++;
+            InitializeAdditionalMetadata(_exceptionAdditionalDisplayKeyMetadata, curr, curr.AdditionalMetadata);
             curr = curr.InnerException;
         }
         _exceptionsUtf8 = new byte[level][];
         _stacktracesUtf8 = new EnhancedStacktraceFrameModel?[level];
-        _levelInputIdUtf8 = Enumerable.Range(0, level).Select(x =>
-        {
-            var arr = "##stacktrace_00\0"u8.ToArray();
-            arr[arr.Length - 2] = x < 10 ? (byte) (x + '0') : (byte) (x / 10 + '0');
-            arr[arr.Length - 1] = (byte) (x % 10 + '0');
-            return arr;
-        }).ToArray();
         _callstackLineCount = new int[level];
 
         level = 0;
         curr = _crashReport.Exception;
         while (curr is not null)
         {
-            var callStackLines = curr.CallStack.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries).Select(x => x).ToArray();
+            var callStackLines = curr.CallStack.Split(NewLine, StringSplitOptions.RemoveEmptyEntries).Select(x => x).ToArray().AsSpan();
 
-            var sb = new StringBuilder();
+            var sb = ZString.CreateUtf8StringBuilder();
             for (var i = 0; i < callStackLines.Length; i++)
             {
-                sb.Append($"{" ".PadLeft(i > 98 ? 1 : i > 8 ? 2 : 3)}{i + 1}.{callStackLines[i].Trim()}");
+                sb.AppendLiteral(Utf8String.Format($"{" ".PadLeft(i > 98 ? 1 : i > 8 ? 2 : 3)}{i + 1}.{callStackLines[i].Trim()}"));
                 if (i < callStackLines.Length - 1) sb.AppendLine();
             }
 
-            _exceptionsUtf8[level] = UnsafeHelper.ToUtf8Array(sb.ToString());
+            _exceptionsUtf8[level] = sb.AsSpan().ToArray();
 
             var fistCallstackLine = callStackLines.Length > 0 ? callStackLines[0].Trim() : string.Empty;
             _stacktracesUtf8[level] = _crashReport.EnhancedStacktrace.FirstOrDefault(x => fistCallstackLine == $"at {x.FrameDescription}");
@@ -63,6 +70,8 @@ partial class ImGuiRenderer
     {
         if (ex is null) return;
 
+        _imgui.PushId(level);
+
         var moduleId = _stacktracesUtf8[level]?.ExecutingMethod.ModuleId ?? "UNKNOWN";
         var sourceModuleId = ex.SourceModuleId ?? "UNKNOWN";
 
@@ -76,22 +85,24 @@ partial class ImGuiRenderer
         if (pluginId != "UNKNOWN") _imgui.RenderId("Potential Plugin Id:\0"u8, pluginId);
         if (sourcePluginId != "UNKNOWN") _imgui.RenderId("Potential Source Plugin Id:\0"u8, sourcePluginId);
 
-        _imgui.TextSameLine("Type: \0"u8);
+        _imgui.Text("Type: \0"u8);
+        _imgui.SameLine();
         _imgui.Text(ex.Type);
 
         if (!string.IsNullOrWhiteSpace(ex.Message))
         {
-            _imgui.TextSameLine("Message: \0"u8);
+            _imgui.Text("Message: \0"u8);
+            _imgui.SameLine();
             _imgui.Text(ex.Message);
         }
 
         if (!string.IsNullOrWhiteSpace(ex.CallStack))
         {
             _imgui.Text("Stacktrace:\0"u8);
-            _imgui.Indent();
-            _imgui.InputTextMultiline(_levelInputIdUtf8[level], _exceptionsUtf8[level], _callstackLineCount[level]);
-            _imgui.Unindent();
+            RenderInputTextWithIO("##stacktrace\0"u8, _exceptionsUtf8[level], _callstackLineCount[level]);
         }
+
+        RenderAdditionalMetadata(_exceptionAdditionalDisplayKeyMetadata, ex);
 
         if (ex.InnerException is not null)
         {
@@ -100,5 +111,7 @@ partial class ImGuiRenderer
             RenderExceptionRecursively(ex.InnerException, level + 1);
             _imgui.Unindent();
         }
+
+        _imgui.PopId();
     }
 }

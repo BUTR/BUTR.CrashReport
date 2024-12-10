@@ -1,7 +1,10 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace BUTR.CrashReport.Models;
 
+/// <summary>
+/// Represents a runtime patch.
+/// </summary>
 public sealed class RuntimePatchModel
 {
     /// <summary>
@@ -20,13 +23,22 @@ public sealed class RuntimePatchModel
     /// The <see cref="AssemblyIdModel.Name"/> of the assembly that contains the patch.
     /// </summary>
     public required AssemblyIdModel? AssemblyId { get; set; }
-    
+
+    /// <summary>
+    /// The provider of the patch.
+    /// </summary>
     public required string Provider { get; set; }
-    
+
+    /// <summary>
+    /// The type of the patch.
+    /// </summary>
     public required string Type { get; set; }
 
+    /// <summary>
+    /// The full name of the method patch.
+    /// </summary>
     public required string FullName { get; set; }
-    
+
     /// <summary>
     /// <inheritdoc cref="CrashReportModel.AdditionalMetadata"/>
     /// </summary>

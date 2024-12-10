@@ -1,35 +1,48 @@
-﻿using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Renderer.ImGui.Extensions;
-
-using HonkPerf.NET.RefLinq;
-
-using ImGuiNET;
+﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.ImGui.Extensions;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
-partial class ImGuiRenderer
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
 {
-    private static readonly byte[][] _logLevelNamesUtf8 =
-    [
-        "   \0"u8.ToArray(), // None
-        "VRB\0"u8.ToArray(), // Verbose
-        "DBG\0"u8.ToArray(), // Debug
-        "INF\0"u8.ToArray(), // Information
-        "WRN\0"u8.ToArray(), // Warning
-        "ERR\0"u8.ToArray(), // Error
-        "FTL\0"u8.ToArray(), // Fatal
-    ];
-
+    private int[] _logSourceMaxApplicationLengths = [];
     private int[] _logSourceMaxTypeLengths = [];
+    private bool[] _logSourceHasDates = [];
+    private bool[] _logSourceHasType = [];
 
     private void InitializeLogFiles()
     {
+        _logSourceMaxApplicationLengths = new int[_logSources.Count];
+        for (var i = 0; i < _logSources.Count; i++)
+        {
+            if (_logSources[i].Logs.Count == 0) _logSourceMaxApplicationLengths[i] = 0;
+            else _logSourceMaxApplicationLengths[i] = _logSources[i].Logs.Select(x => x.Application.Length).Max();
+        }
+
         _logSourceMaxTypeLengths = new int[_logSources.Count];
         for (var i = 0; i < _logSources.Count; i++)
         {
             if (_logSources[i].Logs.Count == 0) _logSourceMaxTypeLengths[i] = 0;
-            else _logSourceMaxTypeLengths[i] = _logSources[i].Logs.ToRefLinq().Select(x => x.Type.Length).Max();
+            else _logSourceMaxTypeLengths[i] = _logSources[i].Logs.Select(x => x.Type.Length).Max();
         }
+
+        _logSourceHasDates = new bool[_logSources.Count];
+        for (var i = 0; i < _logSources.Count; i++)
+        {
+            if (_logSources[i].Logs.Count == 0) _logSourceHasDates[i] = false;
+            else _logSourceHasDates[i] = _logSources[i].Logs.All(x => x.Date != DateTimeOffset.MinValue);
+        }
+
+        _logSourceHasType = new bool[_logSources.Count];
+        for (var i = 0; i < _logSources.Count; i++)
+        {
+            if (_logSources[i].Logs.Count == 0) _logSourceHasType[i] = false;
+            else _logSourceHasType[i] = _logSources[i].Logs.All(x => !string.IsNullOrEmpty(x.Type));
+        }
+
+#if TEXT_EDITOR
+        InitializeLogFilesTextEditor();
+#endif
     }
 
     private void RenderLogFiles()
@@ -37,42 +50,31 @@ partial class ImGuiRenderer
         for (var i = 0; i < _logSources.Count; i++)
         {
             var logSource = _logSources[i];
+
+            _imgui.Unindent();
+
             if (_imgui.TreeNode(logSource.Name, ImGuiTreeNodeFlags.DefaultOpen))
             {
                 if (logSource.Logs.Count == 0) continue;
 
-                var longestTypeLength = _logSourceMaxTypeLengths[i];
-                for (var j = 0; j < logSource.Logs.Count; j++)
-                {
-                    var logEntry = logSource.Logs[j];
-                    var toAppend = (longestTypeLength - logEntry.Type.Length) + 2;
+                _imgui.Unindent();
 
-                    var date = logEntry.Date;
-                    var color = logEntry.Level switch
-                    {
-                        LogLevel.Fatal => Fatal,
-                        LogLevel.Error => Error,
-                        LogLevel.Warning => Warn,
-                        LogLevel.Information => Info,
-                        LogLevel.Debug => Debug,
-                        LogLevel.Verbose => Debug,
-                        _ => Black
-                    };
-                    var level = Clamp(logEntry.Level, LogLevel.None, LogLevel.Fatal);
+#if TEXT_EDITOR
+                RenderLogFileTextEditor(i, logSource);
+#else
+                RenderLogFileTextBox(i, logSource);
+#endif
 
-                    _imgui.TextSameLine(ref date);
-                    _imgui.TextSameLine(" [\0"u8);
-                    _imgui.TextSameLine(logEntry.Type);
-                    _imgui.TextSameLine("]\0"u8);
-                    _imgui.PadRight(toAppend);
-                    _imgui.TextSameLine("[\0"u8);
-                    _imgui.TextColoredSameLine(in color, _logLevelNamesUtf8[level]);
-                    _imgui.TextSameLine("]: \0"u8);
-                    _imgui.Text(logEntry.Message);
-                }
+                _imgui.Indent();
 
                 _imgui.TreePop();
             }
+
+#if !TEXT_EDITOR
+            RenderLogsFileTextBoxContextMenu(logSource);
+#endif
+
+            _imgui.Indent();
         }
     }
 }

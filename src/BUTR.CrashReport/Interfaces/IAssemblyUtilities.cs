@@ -1,7 +1,8 @@
-﻿using System;
-using BUTR.CrashReport.Models;
+﻿using BUTR.CrashReport.Models;
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 namespace BUTR.CrashReport.Interfaces;
@@ -35,4 +36,14 @@ public interface IAssemblyUtilities
     /// Gets the type of the assembly
     /// </summary>
     AssemblyType GetAssemblyType(AssemblyType type, CrashReportInfo crashReport, Assembly assembly);
+
+    /// <summary>
+    /// Returns the stream for the assembly if it exists.
+    /// </summary>
+    Stream? GetAssemblyStream(Assembly assembly);
+
+    /// <summary>
+    /// Returns the PDB stream for the assembly if it exists.
+    /// </summary>
+    Stream? GetPdbStream(Assembly assembly);
 }

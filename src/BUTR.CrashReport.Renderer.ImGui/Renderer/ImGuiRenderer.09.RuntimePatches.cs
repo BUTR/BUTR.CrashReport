@@ -1,104 +1,102 @@
-﻿using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Renderer.ImGui.Extensions;
-using BUTR.CrashReport.Renderer.ImGui.UnsafeUtils;
-using BUTR.CrashReport.Renderer.ImGui.Utils;
+﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.ImGui.Extensions;
+using BUTR.CrashReport.ImGui.Utils;
+using BUTR.CrashReport.Models;
 
-using HonkPerf.NET.Core;
-using HonkPerf.NET.RefLinq;
-using HonkPerf.NET.RefLinq.Enumerators;
-
-using ImGuiNET;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Cysharp.Text;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Renderer;
 
 partial class ImGuiRenderer
 {
-    private class RuntimePatchesModelEqualityComparer : IEqualityComparer<RuntimePatchesModel>
-    {
-        public static RuntimePatchesModelEqualityComparer Instance { get; } = new();
-        public bool Equals(RuntimePatchesModel? x, RuntimePatchesModel? y) => ReferenceEquals(x, y); // We can just reference compare here
-        public int GetHashCode(RuntimePatchesModel obj) => obj.GetHashCode();
-    }
-
-    private class RuntimePatchModelEqualityComparer : IEqualityComparer<RuntimePatchModel>
+    protected class RuntimePatchModelEqualityComparer : IEqualityComparer<RuntimePatchModel>
     {
         public static RuntimePatchModelEqualityComparer Instance { get; } = new();
         public bool Equals(RuntimePatchModel? x, RuntimePatchModel? y) => ReferenceEquals(x, y); // We can just reference compare here
         public int GetHashCode(RuntimePatchModel obj) => obj.GetHashCode();
     }
+}
 
-    private readonly List<string> _runtimePatchProviders = new();
+partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImGuiStyleRef, TColorsRangeAccessorRef, TImGuiListClipperRef>
+{
     private readonly List<string> _runtimePatchTypes = new();
-    private readonly Dictionary<RuntimePatchesModel, byte[]> _runtimeMethodNameFullUtf8 = new(RuntimePatchesModelEqualityComparer.Instance);
+    private readonly Dictionary<RuntimePatchModel, List<Utf8KeyValueList>> _runtimePatchAdditionalDisplayKeyMetadata = new(RuntimePatchModelEqualityComparer.Instance);
+
+    private List<KeyValuePair<string, List<RuntimePatchModel>>> _groupedRuntimePatches = new();
+
+    private static string GetFullName(RuntimePatchesModel patches) => !string.IsNullOrEmpty(patches.OriginalMethodDeclaredTypeName)
+        ? ZString.Format("{0}.{1}", patches.OriginalMethodDeclaredTypeName, patches.OriginalMethodName)
+        : patches.OriginalMethodName ?? string.Empty;
 
     private void InitializeRuntimePatches()
     {
         for (var i = 0; i < _crashReport.RuntimePatches.Count; i++)
         {
             var runtimePatch = _crashReport.RuntimePatches[i];
-            var methodNameFull = !string.IsNullOrEmpty(runtimePatch.OriginalMethodDeclaredTypeName)
-                ? $"{runtimePatch.OriginalMethodDeclaredTypeName}.{runtimePatch.OriginalMethodName}"
-                : runtimePatch.OriginalMethodName ?? string.Empty;
-            _runtimeMethodNameFullUtf8[runtimePatch] = UnsafeHelper.ToUtf8Array(methodNameFull);
+
+            for (var j = 0; j < runtimePatch.Patches.Count; j++)
+            {
+                var patch = runtimePatch.Patches[j];
+                InitializeAdditionalMetadata(_runtimePatchAdditionalDisplayKeyMetadata, patch, patch.AdditionalMetadata);
+            }
         }
-        
-        _runtimePatchProviders.AddRange(_crashReport.RuntimePatches.SelectMany(x => x.Patches).Select(x => x.Provider).Distinct());
-        
+
         _runtimePatchTypes.AddRange(_crashReport.RuntimePatches.SelectMany(x => x.Patches).Select(x => x.Type).Distinct());
+
+        _groupedRuntimePatches = _crashReport.RuntimePatches
+            .GroupBy(GetFullName)
+            .Select(x => new KeyValuePair<string, List<RuntimePatchModel>>(x.Key, x.SelectMany(y => y.Patches).ToList()))
+            .ToList();
     }
 
-    private void RenderRuntimePatches(RefLinqEnumerable<RuntimePatchModel, Where<RuntimePatchModel, PureValueDelegate<RuntimePatchModel, bool>, IListEnumerator<RuntimePatchModel>>> patches)
+    private void RenderRuntimePatches(string type, ReadOnlySpan<RuntimePatchModel> patches)
     {
-        foreach (var patch in patches)
+        for (var i = 0; i < patches.Length; i++)
         {
-            var moduleId = patch.ModuleId ?? "UNKNOWN";
-            var pluginId = patch.LoaderPluginId ?? "UNKNOWN";
+            var patch = patches[i];
 
-            _imgui.Bullet();
-            _imgui.TextSameLine(patch.Provider);
-            _imgui.TextSameLine(" \0"u8);
-            _imgui.TextSameLine(patch.Type);
-            _imgui.NewLine();
-            _imgui.Indent();
+            if (patch.Type != type) continue;
 
-            if (moduleId != "UNKNOWN") { _imgui.RenderId("Module Id:\0"u8, moduleId); _imgui.SameLine(0, 0); }
-            if (pluginId != "UNKNOWN") { _imgui.RenderId("Plugin Id:\0"u8, pluginId); _imgui.SameLine(0, 0); }
-            
-            _imgui.TextSameLine(" Full Name: \0"u8);
-            _imgui.TextSameLine(patch.FullName);
-            
-            for (var i = 0; i < patch.AdditionalMetadata.Count; i++)
+            if (_imgui.TreeNode(patch.FullName, ImGuiTreeNodeFlags.Bullet | ImGuiTreeNodeFlags.DefaultOpen))
             {
-                var metadata = patch.AdditionalMetadata[i];
-                if (string.IsNullOrEmpty(metadata.Key) || string.IsNullOrEmpty(metadata.Value)) continue;
-                _imgui.TextSameLine(" \0"u8);
-                _imgui.TextSameLine(metadata.Key);
-                _imgui.TextSameLine(": \0"u8);
-                _imgui.TextSameLine(metadata.Value);
-            }
-            _imgui.NewLine();
+                var moduleId = patch.ModuleId ?? "UNKNOWN";
+                var pluginId = patch.LoaderPluginId ?? "UNKNOWN";
 
-            _imgui.Unindent();
+                if (moduleId != "UNKNOWN") _imgui.RenderId("Module Id:\0"u8, moduleId);
+                if (pluginId != "UNKNOWN") _imgui.RenderId("Plugin Id:\0"u8, pluginId);
+
+                _imgui.Text("Type: \0"u8);
+                _imgui.SameLine();
+                _imgui.Text(patch.Provider);
+                _imgui.SameLine();
+                _imgui.Text(" \0"u8);
+                _imgui.SameLine();
+                _imgui.Text(patch.Type);
+
+                RenderAdditionalMetadata(_runtimePatchAdditionalDisplayKeyMetadata, patch);
+
+                _imgui.TreePop();
+            }
         }
     }
 
     private void RenderRuntimePatches()
     {
-        for (var i = 0; i < _crashReport.RuntimePatches.Count; i++)
+        var groupedRuntimePatches = _groupedRuntimePatches.AsSpan();
+        var runtimePatchTypes = _runtimePatchTypes.AsSpan();
+
+        for (var i = 0; i < groupedRuntimePatches.Length; i++)
         {
-            var runtimePatch = _crashReport.RuntimePatches[i];
-            var methodNameFull = _runtimeMethodNameFullUtf8[runtimePatch];
+            var (methodNameFull, value) = groupedRuntimePatches[i];
+            var patches = value.AsSpan();
 
             if (_imgui.TreeNode(methodNameFull, ImGuiTreeNodeFlags.DefaultOpen))
             {
-                for (var j = 0; j < _runtimePatchTypes.Count; j++)
+                for (var j = 0; j < runtimePatchTypes.Length; j++)
                 {
-                    var type = _runtimePatchTypes[j];
-                    RenderRuntimePatches(runtimePatch.Patches.ToRefLinq().Where(x => x.Type == type));
+                    _imgui.PushId(j);
+                    RenderRuntimePatches(runtimePatchTypes[j], patches);
+                    _imgui.PopId();
                 }
                 _imgui.NewLine();
 
