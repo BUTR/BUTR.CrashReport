@@ -33,7 +33,7 @@ jobs:
 
       - name: Run _build
         run: >-
-          dotnet workloads install wasm-tools;
+          dotnet workload install wasm-tools;
 
           dotnet build external/prism-sharp/PrismSharp.SourceGenerator/PrismSharp.SourceGenerator.csproj --configuration Release;
           dotnet build external/prism-sharp/PrismSharp.RegExCompiler/PrismSharp.RegExCompiler.csproj --configuration Release;
