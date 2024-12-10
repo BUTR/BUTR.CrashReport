@@ -35,9 +35,8 @@ jobs:
         run: >-
           dotnet workload install wasm-tools;
 
-          dotnet build external/prism-sharp/PrismSharp.SourceGenerator/PrismSharp.SourceGenerator.csproj --configuration Release;
           dotnet build external/prism-sharp/PrismSharp.RegExCompiler/PrismSharp.RegExCompiler.csproj --configuration Release;
-          dotnet build external/prism-sharp/PrismSharp.Core/PrismSharp.Core.csproj --configuration Release;
+          dotnet build external/prism-sharp/PrismSharp.SourceGenerator/PrismSharp.SourceGenerator.csproj --configuration Release;
           dotnet build external/prism-sharp/PrismSharp.Core/PrismSharp.Core.csproj --configuration Release;
 
           dotnet build src/BUTR.CrashReport.Renderer.ImGui.WASM/BUTR.CrashReport.Renderer.ImGui.WASM.csproj --configuration Release;
