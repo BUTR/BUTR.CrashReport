@@ -19,8 +19,7 @@ env:
 jobs:
   publish-wasm:
     name: Publish WASM
-    runs-on: ubuntu-latest
-    timeout-minutes: 100
+    runs-on: ubuntu-20.04
     steps:
       - name: Setup
         uses: butr/actions-common-setup@v2
@@ -37,7 +36,6 @@ jobs:
           dotnet workload install wasm-tools;
           
           dotnet publish src/BUTR.CrashReport.Renderer.ImGui.WASM/BUTR.CrashReport.Renderer.ImGui.WASM.csproj --configuration Release -o "./site";
-        timeout-minutes: 100
 
       - name: Deploy to GitHub Pages
         uses: crazy-max/ghaction-github-pages@v4
