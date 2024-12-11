@@ -24,7 +24,7 @@ jobs:
           { rid: 'osx-x64', os: 'macos-13' },
           { rid: 'osx-arm64', os: 'macos-latest' }
         ]
-    name: Publish Standalone ${{ matrix.rid }}
+    name: Publish Standalone ${{ matrix.data.rid }}
     runs-on: ${{ matrix.data.os }}
     steps:
       - name: Setup
