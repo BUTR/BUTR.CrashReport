@@ -15,16 +15,16 @@ env:
 
 jobs:
   publish-standalone:
-    name: Publish Standalone ${{ matrix.rid }}
-    matrix:
-      data:
-        [
+    strategy:
+      matrix:
+        data: [
           { rid: 'win-x64', os: 'windows-latest' },
           { rid: 'win-x86', os: 'windows-latest' },
           { rid: 'linux-x64', os: 'ubuntu-latest' },
           { rid: 'osx-x64', os: 'macos-13' },
           { rid: 'osx-arm64', os: 'macos-latest' }
         ]
+    name: Publish Standalone ${{ matrix.rid }}
     runs-on: ${{ matrix.data.os }}
     steps:
       - name: Setup
