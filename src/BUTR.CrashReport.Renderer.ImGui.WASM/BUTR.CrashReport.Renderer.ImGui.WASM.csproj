@@ -58,13 +58,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Publish Trim has a bad time finding the references otherwise -->
-    <ProjectReference Include="..\..\external\prism-sharp\PrismSharp.Core\PrismSharp.Core.csproj" />
-    <!-- TODO: Move to a separate package -->
-    <Reference Include="PrismSharp.RegEx">
-      <HintPath>C:\Git\Level0\BUTR.CrashReport\external\prism-sharp\PrismSharp.Core\bin\$(Configuration)\net9.0\PrismSharp.RegEx.dll</HintPath>
-    </Reference>
-
     <!-- Linker otherwise skips them -->
     <ProjectReference Include="..\BUTR.CrashReport.Native\BUTR.CrashReport.Native.csproj" />
     <ProjectReference Include="..\ImGuiColorTextEditNet\ImGuiColorTextEditNet.csproj" />

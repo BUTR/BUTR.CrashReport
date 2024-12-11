@@ -6,7 +6,3 @@
 	path = external/ZString
 	url = https://github.com/Cysharp/ZString
 	branch = master
-[submodule "external/prism-sharp"]
-	path = external/prism-sharp
-	url = https://github.com/BUTR/prism-sharp.git
-	branch = main

@@ -26,14 +26,12 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="BUTR.PrismSharp.Core" Version="1.0.0.14" />
+    
     <PackageReference Include="Polyfill" Version="7.4.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-    <!--
-    <PackageReference Include="BUTR.PrismSharp.Core" Version="0.1.4" />
-    -->
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\external\prism-sharp\PrismSharp.Core\PrismSharp.Core.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\ImGuiColorTextEditNet\ImGuiColorTextEditNet.csproj" PrivateAssets="all" />
     <ProjectReference Include="..\BUTR.CrashReport.ImGui\BUTR.CrashReport.ImGui.csproj" />
     <ProjectReference Include="..\BUTR.CrashReport.Models\BUTR.CrashReport.Models.csproj" />
