@@ -1,0 +1,19 @@
+name: Deploy WASM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: 'Deploy to Netlify'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - uses: jsmrcaga/action-netlify-deploy@v2.0.0
+        with:
+          build_directory: './wwwroot'
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_DEPLOY_TO_PROD: true
