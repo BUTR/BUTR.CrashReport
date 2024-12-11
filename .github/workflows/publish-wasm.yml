@@ -19,7 +19,7 @@ env:
 jobs:
   publish-wasm:
     name: Publish WASM
-    runs-on: ubuntu-latest-16core
+    runs-on: warp-ubuntu-latest-x64-16x
     steps:
       - name: Setup
         uses: butr/actions-common-setup@v2
