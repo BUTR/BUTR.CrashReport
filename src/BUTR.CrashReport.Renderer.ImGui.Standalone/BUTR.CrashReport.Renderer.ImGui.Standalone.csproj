@@ -16,6 +16,8 @@
     <EnableAggressiveTrimming>true</EnableAggressiveTrimming>
     
     <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     
     <!--
     -->
