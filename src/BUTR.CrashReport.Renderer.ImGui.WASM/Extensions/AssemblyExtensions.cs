@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace BUTR.CrashReport.Renderer.ImGui.Silk.NET.Extensions;
+namespace BUTR.CrashReport.Renderer.ImGui.WASM.Extensions;
 
 internal static class AssemblyExtensions
 {

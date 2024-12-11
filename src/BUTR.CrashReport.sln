@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\publish.yml = ..\.github\workflows\publish.yml
 		..\.github\workflows\publish-wasm.yml = ..\.github\workflows\publish-wasm.yml
+		..\.github\workflows\publish-wasm-deploy.yml = ..\.github\workflows\publish-wasm-deploy.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8013DEFB-F940-4891-9F74-BFE1A8106506}"
@@ -63,7 +64,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.CImGui", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.ImGui", "BUTR.CrashReport.ImGui\BUTR.CrashReport.ImGui.csproj", "{5B6FC58F-DD17-4E1D-9E54-8D0B3089325D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "etc", "etc", "{F4E2D353-AD2D-455B-81B6-F743E0CAD7DF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{F4E2D353-AD2D-455B-81B6-F743E0CAD7DF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGuiColorTextEditNet", "ImGuiColorTextEditNet\ImGuiColorTextEditNet.csproj", "{CCA2F514-2028-47E4-8BDD-0C46B371836B}"
 EndProject
@@ -90,6 +91,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.ImGui.Silk.NET.ILMerged", "BUTR.CrashReport.Renderer.ImGui.Silk.NET.ILMerged\BUTR.CrashReport.Renderer.ImGui.Silk.NET.ILMerged.csproj", "{BCAF0EFF-2150-4A5F-A97F-B5B7578D9889}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Renderers", "Renderers", "{71872CAF-7D4F-4A1E-A372-5382B4B24DA6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{2E968F29-FADB-49F1-9542-AA1CB5F9288D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -247,5 +250,6 @@ Global
 		{5B6FC58F-DD17-4E1D-9E54-8D0B3089325D} = {71872CAF-7D4F-4A1E-A372-5382B4B24DA6}
 		{559FAD6D-9906-47AE-90A6-78C14FF4629A} = {71872CAF-7D4F-4A1E-A372-5382B4B24DA6}
 		{CCA2F514-2028-47E4-8BDD-0C46B371836B} = {71872CAF-7D4F-4A1E-A372-5382B4B24DA6}
+		{F4E2D353-AD2D-455B-81B6-F743E0CAD7DF} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 	EndGlobalSection
 EndGlobal

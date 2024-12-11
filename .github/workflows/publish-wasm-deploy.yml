@@ -1,4 +1,4 @@
-name: Publish WASM and Upload
+name: Deploy WASM
 
 on:
   workflow_dispatch:

@@ -4,7 +4,6 @@ using ImGui.Structures;
 
 using Silk.NET.OpenGL;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
 namespace BUTR.CrashReport.Renderer.ImGui.Implementation.CImGui.Controller;

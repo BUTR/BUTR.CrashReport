@@ -63,6 +63,10 @@
       <LinkBase>resources</LinkBase>
       <LogicalName>resources\icon_64.bin</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="../../resources/CascadiaCode.ttf.compressed">
+      <LogicalName>CascadiaCode.ttf.compressed</LogicalName>
+      <Visible>false</Visible>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

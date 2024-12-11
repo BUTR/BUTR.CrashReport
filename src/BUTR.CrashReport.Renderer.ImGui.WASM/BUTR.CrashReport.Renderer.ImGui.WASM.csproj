@@ -78,6 +78,13 @@
     <PackageReference Include="ImGui.NET.SourceBuild" Version="$(ImGuiSourceVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="../../resources/CascadiaCode.ttf.compressed">
+      <LogicalName>CascadiaCode.ttf.compressed</LogicalName>
+      <Visible>false</Visible>
+    </EmbeddedResource>
+  </ItemGroup>
+
 
   <!-- WORKAROUNDS -->
   

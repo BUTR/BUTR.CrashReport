@@ -242,6 +242,14 @@ partial class CmGui
     public ImFontAtlas_AddFontDefaultDel ImFontAtlas_AddFontDefault = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate IntPtrImFont ImFontAtlas_AddFontFromMemoryTTFDel(IntPtrImFontAtlas atlas, IntPtrVoid font_data, int font_data_size, float size_pixels, IntPtrImFontConfig font_cfg, IntPtrUInt16 glyph_ranges);
+    public ImFontAtlas_AddFontFromMemoryTTFDel ImFontAtlas_AddFontFromMemoryTTF = null!;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate IntPtrImFont ImFontAtlas_AddFontFromMemoryCompressedTTFDel(IntPtrImFontAtlas atlas, IntPtrVoid compressed_font_data, int compressed_font_data_size, float size_pixels, IntPtrImFontConfig font_cfg, IntPtrUInt16 glyph_ranges);
+    public ImFontAtlas_AddFontFromMemoryCompressedTTFDel ImFontAtlas_AddFontFromMemoryCompressedTTF = null!;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void ImFontAtlas_destroyDel(IntPtrImFontAtlas atlas);
     public ImFontAtlas_destroyDel ImFontAtlas_destroy = null!;
 
@@ -484,6 +492,10 @@ partial class CmGui
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate IntPtrImDrawList igGetWindowDrawListDel();
     public igGetWindowDrawListDel igGetWindowDrawList = null!;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate IntPtrVoid igMemAllocDel(uint size);
+    public igMemAllocDel igMemAlloc = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void ImGuiIO_AddInputCharactersUTF8Del(IntPtrImGuiIO self, IntPtrByte str);

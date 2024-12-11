@@ -55,4 +55,13 @@ internal static class GlfwUtils
             catch { /* ignore */ }
         }
     }
+
+    public static unsafe float GetScale()
+    {
+        var glfw = Glfw.GetApi();
+        var monitor = glfw.GetPrimaryMonitor();
+        glfw.GetMonitorContentScale(monitor, out var scaleX, out var scaleY);
+
+        return Math.Max(scaleX, scaleY);
+    }
 }

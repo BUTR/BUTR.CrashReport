@@ -1,6 +1,7 @@
 ﻿#if NET6_0_OR_GREATER
 global using IntPtrByte = BUTR.CrashReport.Native.Pointer<byte>;
 global using IntPtrInt32 = BUTR.CrashReport.Native.Pointer<int>;
+global using IntPtrUInt16 = BUTR.CrashReport.Native.Pointer<ushort>;
 global using IntPtrIntPtr = BUTR.CrashReport.Native.Pointer<System.IntPtr>;
 global using IntPtrVoid = BUTR.CrashReport.Native.Pointer;
 global using IntPtrVector2 = BUTR.CrashReport.Native.Pointer<System.Numerics.Vector2>;
@@ -27,6 +28,7 @@ global using IntPtrImGuiStyle = BUTR.CrashReport.Native.Pointer;
 global using IntPtrImGuiViewport = BUTR.CrashReport.Native.Pointer;
 global using IntPtrInt32 = BUTR.CrashReport.Native.Pointer;
 global using IntPtrIntPtr = BUTR.CrashReport.Native.Pointer;
+global using IntPtrUInt16 = BUTR.CrashReport.Native.Pointer;
 global using IntPtrVector2 = BUTR.CrashReport.Native.Pointer;
 global using IntPtrVector4 = BUTR.CrashReport.Native.Pointer;
 global using IntPtrVoid = BUTR.CrashReport.Native.Pointer;

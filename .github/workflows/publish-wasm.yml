@@ -1,11 +1,6 @@
 name: Publish WASM and Upload
 
 on:
-  push:
-    paths:
-      - '.github/workflows/publish-wasm.yml'
-      - 'src/**'
-      - 'build/**'
   workflow_dispatch:
 
 env:
@@ -20,6 +15,7 @@ jobs:
   publish-wasm:
     name: Publish WASM
     runs-on: warp-ubuntu-latest-x64-16x
+    # NativeAOT (clang) requires > 16 GB RAM, so GitHub Runners are not enough
     steps:
       - name: Setup
         uses: butr/actions-common-setup@v2

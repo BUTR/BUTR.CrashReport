@@ -1,4 +1,4 @@
-﻿using BUTR.CrashReport.Renderer.ImGui.Implementation.CImGui.Extensions;
+﻿using BUTR.CrashReport.Renderer.ImGui.Silk.NET.Extensions;
 
 using Silk.NET.Input.Sdl;
 using Silk.NET.SDL;
@@ -23,7 +23,7 @@ internal static class SdlUtils
     private static unsafe void SetWindowIcon(IWindow window)
     {
         var sdl = Sdl.GetApi();
-        var sdlWindow = (Silk.NET.SDL.Window*) (window.Native?.Sdl ?? IntPtr.Zero);
+        var sdlWindow = (global::Silk.NET.SDL.Window*) (window.Native?.Sdl ?? IntPtr.Zero);
 
         var iconSpan = typeof(CrashReportImGui).Assembly.GetManifestResourceStreamAsSpan("resources\\icon_128.bin");
         var surface = sdl.CreateRGBSurfaceFrom
@@ -58,5 +58,16 @@ internal static class SdlUtils
             }
             catch { /* ignore */ }
         }
+    }
+
+    public static unsafe float GetScale()
+    {
+        var sdl = Sdl.GetApi();
+        var window = sdl.GLGetCurrentWindow();
+        var displayIndex = sdl.GetWindowDisplayIndex(window);
+
+        float dpi;
+        sdl.GetDisplayDPI(displayIndex, &dpi, null, null);
+        return dpi / 96.0f;
     }
 }

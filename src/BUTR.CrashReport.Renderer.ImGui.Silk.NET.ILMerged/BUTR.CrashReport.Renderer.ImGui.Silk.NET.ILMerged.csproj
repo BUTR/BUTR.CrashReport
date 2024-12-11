@@ -77,6 +77,10 @@
       <LinkBase>resources</LinkBase>
       <LogicalName>resources\icon_64.bin</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="../../resources/CascadiaCode.ttf.compressed">
+      <LogicalName>CascadiaCode.ttf.compressed</LogicalName>
+      <Visible>false</Visible>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
@@ -104,68 +108,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.cs">
-      <Link>Controller\ImGuiController.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Draw.cs">
-      <Link>Controller\ImGuiController.Draw.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Input.cs">
-      <Link>Controller\ImGuiController.Input.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.OGL.Draw.cs">
-      <Link>Controller\ImGuiController.OGL.Draw.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.OGL.Setup.cs">
-      <Link>Controller\ImGuiController.OGL.Setup.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Setup.cs">
-      <Link>Controller\ImGuiController.Setup.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\ImGuiController.Utils.cs">
-      <Link>Controller\ImGuiController.Utils.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\Shader.cs">
-      <Link>Controller\Shader.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\Texture.cs">
-      <Link>Controller\Texture.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Controller\Util.cs">
-      <Link>Controller\Util.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\CrashReportImGui.cs">
-      <Link>CrashReportImGui.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Extensions\AssemblyExtensions.cs">
-      <Link>Extensions\AssemblyExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Options\GlfwWindowOptions.cs">
-      <Link>Options\GlfwWindowOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Options\IWindowOptions.cs">
-      <Link>Options\IWindowOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Options\SdlWindowOptions.cs">
-      <Link>Options\SdlWindowOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\DarkThemeUtils.cs">
-      <Link>Utils\DarkThemeUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\GlfwUtils.cs">
-      <Link>Utils\GlfwUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\SdlUtils.cs">
-      <Link>Utils\SdlUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\Utils\Utf8ZPtr.cs">
-      <Link>Utils\Utf8ZPtr.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\WindowProvider.cs">
-      <Link>WindowProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\BUTR.CrashReport.Silk.NET\**\*.cs"
-             Exclude="..\BUTR.CrashReport.Silk.NET\obj\**\*.cs" />
+    <Compile Include="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\**\*.cs"
+             Exclude="..\BUTR.CrashReport.Renderer.ImGui.Silk.NET\obj\**\*.cs" />
   </ItemGroup>
 
   <Target Name="ExcludeAssembliesFromILRepack" BeforeTargets="ILRepackPrepareBuild">

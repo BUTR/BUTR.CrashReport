@@ -1,6 +1,7 @@
 ﻿#if OPENGL
-using BUTR.CrashReport.ImGui.Utils;
 using BUTR.CrashReport.Memory;
+using BUTR.CrashReport.Renderer.ImGui.Implementation.CImGui.Utils;
+using BUTR.CrashReport.Renderer.ImGui.Silk.NET.Extensions;
 
 using ImGui;
 
@@ -92,12 +93,25 @@ internal partial class ImGuiController
 
     private void CreateFontsTexture()
     {
+        var scale = 1f;
+        if (_view.Native?.Sdl != null)
+            scale = SdlUtils.GetScale();
+        if (_view.Native?.Glfw != null)
+            scale = GlfwUtils.GetScale();
+
         _imgui.GetIO(out var io);
         _imgui.ImFontConfig(out var config);
         io.GetFonts(out var fonts);
 
         config.RasterizerDensity = 2f; // Set your max scale
-        fonts.AddFontDefault(config, out _);
+
+        var fontSize = Math.Round(13f * scale);
+
+        var fontData = typeof(ImGuiController).Assembly.GetManifestResourceStreamAsSpan("CascadiaCode.ttf.compressed");
+        var fontDataCopy = _imgui.MemAlloc<byte>((uint) fontData.Length);
+        fontData.CopyTo(fontDataCopy);
+
+        fonts.AddFontFromMemoryCompressedTTF(fontDataCopy, (float) fontSize, config, out _);
 
         // Build texture atlas
         // Load as RGBA 32-bit (75% of the memory is wasted, but default font is so small) because it is more likely to be compatible with user's existing shaders.
@@ -119,6 +133,9 @@ internal partial class ImGuiController
 
         _gl.BindTexture(GLEnum.Texture2D, (uint) lastTexture);
         _gl.CheckGlError();
+
+        _imgui.GetStyle(out var style);
+        style.ScaleAllSizes(scale);
     }
 
     private void DestroyDeviceObjects()

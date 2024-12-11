@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ImGui.Structures;
 
@@ -21,6 +22,24 @@ public readonly unsafe ref struct ImFontAtlasWrapper
     {
         ImGuiNET.ImFontConfig* font_cfg = null;
         imFontPtr = new ImGuiNET.ImFontPtr((ImGuiNET.ImFont*) ImGui.ImFontAtlas_AddFontDefault(NativePtr, font_cfg));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddFontFromMemoryTTF<T>(Span<T> fontData, float size_pixels, ImFontConfigWrapper config, out ImGuiNET.ImFontPtr imFontPtr)
+    {
+        var font_data = Unsafe.AsPointer(ref MemoryMarshal.GetReference(fontData));
+        var font_data_size = fontData.Length;
+        ushort* glyph_ranges = null;
+        imFontPtr = new ImGuiNET.ImFontPtr((ImGuiNET.ImFont*) ImGui.ImFontAtlas_AddFontFromMemoryTTF(NativePtr, font_data, font_data_size, size_pixels, config.NativePtr, glyph_ranges));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AddFontFromMemoryCompressedTTF<T>(Span<T> fontData, float size_pixels, ImFontConfigWrapper config, out ImGuiNET.ImFontPtr imFontPtr)
+    {
+        var font_data = Unsafe.AsPointer(ref MemoryMarshal.GetReference(fontData));
+        var font_data_size = fontData.Length;
+        ushort* glyph_ranges = null;
+        imFontPtr = new ImGuiNET.ImFontPtr((ImGuiNET.ImFont*) ImGui.ImFontAtlas_AddFontFromMemoryCompressedTTF(NativePtr, font_data, font_data_size, size_pixels, config.NativePtr, glyph_ranges));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

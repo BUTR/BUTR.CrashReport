@@ -488,6 +488,10 @@ unsafe partial class CmGui
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
+    public Span<T> MemAlloc<T>(uint length) => new(igMemAlloc((uint) (length * Unsafe.SizeOf<T>())), (int) length);
+
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void GetDrawData(out ImDrawDataWrapper drawDataWrapper) => drawDataWrapper = new(this, (ImGuiNET.ImDrawData*) igGetDrawData());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]

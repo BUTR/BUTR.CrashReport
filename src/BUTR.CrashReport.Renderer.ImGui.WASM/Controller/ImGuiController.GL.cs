@@ -1,4 +1,5 @@
 ﻿using BUTR.CrashReport.Memory;
+using BUTR.CrashReport.Renderer.ImGui.WASM.Extensions;
 
 using ImGui.Structures;
 
@@ -73,16 +74,20 @@ internal partial class ImGuiController
     {
         var pixelRatio = GetWindowDevicePixelRatio();
         var maxPixelRatio = MathF.Max(pixelRatio.X, pixelRatio.Y);
-        var normalizedMaxPixelRatio = MathF.Round(maxPixelRatio * 2, MidpointRounding.AwayFromZero) / 2;
 
         _imgui.GetIO(out var io);
         _imgui.ImFontConfig(out var config);
         io.GetFonts(out var fonts);
 
         config.RasterizerDensity = 2f;
-        //config.RasterizerMultiply = 2f;
-        //config.SizePixels = MathF.Floor(config.SizePixels * normalizedMaxPixelRatio);
-        fonts.AddFontDefault(config, out var __);
+
+        var fontSize = Math.Round(13f * maxPixelRatio);
+
+        var fontData = typeof(ImGuiController).Assembly.GetManifestResourceStreamAsSpan("CascadiaCode.ttf.compressed");
+        var fontDataCopy = _imgui.MemAlloc<byte>((uint) fontData.Length);
+        fontData.CopyTo(fontDataCopy);
+
+        fonts.AddFontFromMemoryCompressedTTF(fontDataCopy, (float) fontSize, config, out _);
 
         fonts.GetTexDataAsRGBA32(out var pixelData, out var width, out var height, out _);
 
@@ -92,7 +97,7 @@ internal partial class ImGuiController
         fonts.ClearTexData();
 
         _imgui.GetStyle(out var style);
-        style.ScaleAllSizes(normalizedMaxPixelRatio);
+        style.ScaleAllSizes(maxPixelRatio);
     }
 
     public void Render()
