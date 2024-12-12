@@ -58,7 +58,7 @@ jobs:
       - name: Run _build
         run: >-
           dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -r "${{ matrix.data.rid }}" -o "./pub";
-          Compress-Archive -Path pub/* -Destination "${{ matrix.data.rid }}-native.zip"
+          Compress-Archive -Path pub/* -Destination "native-${{ matrix.data.rid }}.zip"
         shell: pwsh
           
       - name: Upload Release Assets
@@ -68,7 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "${{ matrix.data.rid }}-native.zip"
+          assets_path: "native-${{ matrix.data.rid }}.zip"
       
   publish-standard:
     name: Publish Standard
@@ -88,10 +88,10 @@ jobs:
       - name: Run _build
         run: >-
           dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -p:Runtime=true -o "./pub";
-          Compress-Archive -Path pub/* -Destination "${{ matrix.data.rid }}-net9.zip"
+          Compress-Archive -Path pub/* -Destination "universal-net9.zip"
           
           dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -p:RuntimeSingleFile=true -o "./pub2";
-          Compress-Archive -Path pub2/* -Destination "${{ matrix.data.rid }}-net9-single-file.zip"
+          Compress-Archive -Path pub2/* -Destination "universal-net9-single-file.zip"
         shell: pwsh
           
       - name: Upload Release Assets
@@ -101,4 +101,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "${{ matrix.data.rid }}-net9-single-file.zip"
+          assets_path: "universal-net9.zip"
+          
+      - name: Upload Release Assets
+        id: upload-release-assets
+        uses: dwenegar/upload-release-assets@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          assets_path: "universal-net9-single-file.zip"
