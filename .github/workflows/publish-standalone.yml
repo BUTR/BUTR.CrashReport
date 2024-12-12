@@ -2,8 +2,8 @@ name: Publish Standalone
 
 on:
   push:
-    branches: [ v15 ]
-  workflow_dispatch:
+    tags:
+      - 'v*'
 
 env:
   # Disable the .NET logo in the console output.
@@ -26,7 +26,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          release_name: Prerelease ${{ github.ref }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           draft: false
           prerelease: true
       
