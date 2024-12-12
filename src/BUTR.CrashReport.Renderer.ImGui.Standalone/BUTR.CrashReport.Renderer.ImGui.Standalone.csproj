@@ -9,32 +9,29 @@
 
     <InvariantGlobalization>true</InvariantGlobalization>
     <InvariantTimezone>true</InvariantTimezone>
-    <OptimizationPreference>Size</OptimizationPreference>
 
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>full</TrimMode>
     <EnableAggressiveTrimming>true</EnableAggressiveTrimming>
     
     <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-
-    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
     
-    <!--
-    -->
-
-    <!-- 8MB .exe with native .dll -->
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="$(Runtime) == '' AND $(RuntimeSingleFile) == ''">
     <PublishAot>true</PublishAot>
+    <OptimizationPreference>Size</OptimizationPreference>
+  </PropertyGroup>
 
-    <!-- 14MB .exe -->
-    <!--
-    <SelfContained>true</SelfContained>
+  <PropertyGroup Condition="$(Runtime) == 'true'">
+
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(RuntimeSingleFile) == 'true'">
     <PublishSingleFile>true</PublishSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <PublishTrimmed>true</PublishTrimmed>
-    <TrimMode>full</TrimMode>
-    <PublishReadyToRun>false</PublishReadyToRun>
-    -->
   </PropertyGroup>
 
   <ItemGroup>
