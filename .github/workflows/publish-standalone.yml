@@ -93,11 +93,11 @@ jobs:
 
       - name: Run _build
         run: >-
-          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -p:Runtime=true -o "./pub";
-          Compress-Archive -Path pub/* -Destination "universal-net9.zip"
+          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -f net6.0 -p:Runtime=true -o "./pub";
+          Compress-Archive -Path pub/* -Destination "net6-${{ matrix.data.rid }}.zip"
           
-          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -p:RuntimeSingleFile=true -o "./pub2";
-          Compress-Archive -Path pub2/* -Destination "universal-net9-single-file.zip"
+          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -f net6.0 -p:RuntimeSingleFile=true -o "./pub2";
+          Compress-Archive -Path pub2/* -Destination "net6-${{ matrix.data.rid }}-single-file.zip"
         shell: pwsh
 
       - name: Upload Release Assets
@@ -106,7 +106,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "net9-${{ matrix.data.rid }}.zip"
+          assets_path: "net6-${{ matrix.data.rid }}.zip"
 
       - name: Upload Release Assets
         uses: dwenegar/upload-release-assets@v1
@@ -114,4 +114,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "net9-${{ matrix.data.rid }}-single-file.zip"
+          assets_path: "net6-${{ matrix.data.rid }}-single-file.zip"
