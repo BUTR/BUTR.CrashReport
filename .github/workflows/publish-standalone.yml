@@ -57,7 +57,7 @@ jobs:
 
       - name: Run _build
         run: >-
-          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -r "${{ matrix.data.rid }}" -o "./pub";
+          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release  -f net9.0 -r "${{ matrix.data.rid }}" -o "./pub";
           Compress-Archive -Path pub/* -Destination "native-${{ matrix.data.rid }}.zip"
         shell: pwsh
 
