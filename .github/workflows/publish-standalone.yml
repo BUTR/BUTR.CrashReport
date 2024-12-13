@@ -30,7 +30,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: true
-      
+
   publish-native:
     strategy:
       matrix:
@@ -60,7 +60,7 @@ jobs:
           dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -r "${{ matrix.data.rid }}" -o "./pub";
           Compress-Archive -Path pub/* -Destination "native-${{ matrix.data.rid }}.zip"
         shell: pwsh
-          
+
       - name: Upload Release Assets
         uses: dwenegar/upload-release-assets@v1
         env:
@@ -68,10 +68,17 @@ jobs:
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
           assets_path: "native-${{ matrix.data.rid }}.zip"
-      
-  publish-standard:
-    name: Publish Standard
-    runs-on: ubuntu-latest
+
+  publish-universal:
+    strategy:
+      matrix:
+        data: [
+          { rid: 'win', os: 'windows-latest' },
+          { rid: 'linux', os: 'ubuntu-latest' },
+          { rid: 'osx', os: 'macos-latest' }
+        ]
+    name: Publish Universal ${{ matrix.data.rid }}
+    runs-on: ${{ matrix.data.os }}
     needs: create-release
     steps:
       - name: Setup
@@ -92,19 +99,19 @@ jobs:
           dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -p:RuntimeSingleFile=true -o "./pub2";
           Compress-Archive -Path pub2/* -Destination "universal-net9-single-file.zip"
         shell: pwsh
-          
+
       - name: Upload Release Assets
         uses: dwenegar/upload-release-assets@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "universal-net9.zip"
-          
+          assets_path: "net9-${{ matrix.data.rid }}.zip"
+
       - name: Upload Release Assets
         uses: dwenegar/upload-release-assets@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "universal-net9-single-file.zip"
+          assets_path: "net9-${{ matrix.data.rid }}-single-file.zip"
