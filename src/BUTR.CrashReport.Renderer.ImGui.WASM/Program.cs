@@ -11,6 +11,7 @@ using ImGui.Structures;
 
 using OpenGLES3;
 
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.JavaScript;
@@ -26,8 +27,14 @@ using ImGuiRenderer = ImGuiRenderer<ImGuiIOWrapper, ImGuiViewportWrapper, ImDraw
 
 public static partial class Program
 {
-    [JSImport("finishedLoading", "main.js")]
+    [JSImport("finishedLoading", "interop")]
     private static partial void FinishedLoading();
+
+    [JSExport]
+    private static void SetDarkMode(bool isDarkMode)
+    {
+        _renderer.SetDarkMode(isDarkMode);
+    }
 
     // https://localhost:7211/?arg=http%3A%2F%2Flocalhost%3A65530%2Fcrashreport.json
     internal static async Task Main(string[] args)
@@ -53,7 +60,9 @@ public static partial class Program
     private static async Task<CrashReportModel> FetchAsync(string url)
     {
         using var client = new HttpClient();
+
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         /*
         if (!request.Options.TryGetValue(FetchRequestOptionsKey, out var fetchOptions))
@@ -134,7 +143,8 @@ public static partial class Program
 
     private static ImGuiRenderer CreateImGuiRenderer(CrashReportModel cr, LogSourceModel[] logs, CmGui imgui)
     {
-        return new ImGuiRenderer(imgui, imgui, imgui, imgui, imgui, imgui, cr, logs, new CrashReportRendererUtilities(cr, logs), () => { });
+        var renderer = new ImGuiRenderer(imgui, imgui, imgui, imgui, imgui, imgui, cr, logs, new CrashReportRendererUtilities(cr, logs), () => { });
+        return renderer;
     }
 
     private static IntPtr CreateWindow(ReadOnlySpan<byte> title, int width, int height)

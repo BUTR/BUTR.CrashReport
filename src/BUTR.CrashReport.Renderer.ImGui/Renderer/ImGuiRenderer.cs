@@ -73,6 +73,7 @@ public partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRe
         _onClose = onClose;
 
         _isDarkMode = _crashReportRendererUtilities.IsDefaultDarkMode;
+        _isDarkModeOld = !_isDarkMode;
 
         InitializeInputTextWithIO();
         InitializeRender();
@@ -95,6 +96,11 @@ public partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRe
         _involvedModulesAndPluginsTitleUtf8 = _crashReportRendererUtilities.Capabilities.IsSet(CrashReportRendererCapabilities.PluginLoader)
             ? "Involved Modules and Plugins\0"u8
             : "Involved Modules\0"u8;
+    }
+
+    public void SetDarkMode(bool isDarkMode)
+    {
+        _isDarkMode = isDarkMode;
     }
 
     public void Render()

@@ -7,13 +7,16 @@ namespace BUTR.CrashReport.Renderer.ImGui.WASM;
 
 internal sealed partial class CrashReportRendererUtilities : ICrashReportRendererUtilities
 {
-    [JSImport("saveFile", "main.js")]
+    [JSImport("saveFile", "interop")]
     private static partial void SaveFile(byte[] data, string fileName);
 
-    [JSImport("writeClipboard", "main.js")]
+    [JSImport("writeClipboard", "interop")]
     private static partial void WriteClipboard(string data);
 
-    public bool IsDefaultDarkMode => true;
+    [JSImport("isDarkMode", "interop")]
+    private static partial bool IsDarkMode();
+
+    public bool IsDefaultDarkMode => IsDarkMode();
 
     private readonly CrashReportRendererCapabilities _capabilities =
 #if WINDOWS
