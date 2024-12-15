@@ -13,16 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     environment:
         name: netlify
-        url: ${{ steps.deploy.outputs.NETLIFY_LIVE_URL }}
+        url: ${{ steps.deploy.outputs.deploy-url }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
 
-      - uses: jsmrcaga/action-netlify-deploy@v2.0.0
+      - name: Deploy to Netlify
         id: deploy
+        uses: nwtgck/actions-netlify@v3.0
         with:
-          build_directory: './wwwroot'
+          publish-dir: './wwwroot'
+          production-deploy: true
+        env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_DEPLOY_TO_PROD: true
