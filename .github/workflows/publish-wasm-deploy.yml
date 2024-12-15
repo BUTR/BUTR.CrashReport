@@ -1,6 +1,7 @@
 name: Deploy WASM
 
 on:
+  workflow_dispatch:
   workflow_run: 
     workflows: ["Publish WASM"]
     types:
@@ -10,12 +11,16 @@ jobs:
   deploy:
     name: 'Deploy to Netlify'
     runs-on: ubuntu-latest
+    environment:
+        name: netlify
+        url: ${{ steps.deploy.outputs.NETLIFY_LIVE_URL }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: gh-pages
 
       - uses: jsmrcaga/action-netlify-deploy@v2.0.0
+        id: deploy
         with:
           build_directory: './wwwroot'
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
