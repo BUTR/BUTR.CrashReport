@@ -1,7 +1,9 @@
-name: Publish WASM and Upload
+name: Publish WASM
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 env:
   # Disable the .NET logo in the console output.
