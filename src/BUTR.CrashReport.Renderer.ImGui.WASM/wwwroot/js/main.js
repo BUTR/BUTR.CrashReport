@@ -1,4 +1,5 @@
 import { dotnet } from './../_framework/dotnet.js'
+import { BrotliDecode } from './decode.min.js';
 import { hideLoader, setResourcesToTrack, updateLoader} from './loader.js';
 
 const canvas = document.getElementById("canvas");
