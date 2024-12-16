@@ -103,6 +103,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Standalone", "Standalone", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.ImGui.Standalone", "BUTR.CrashReport.Renderer.ImGui.Standalone\BUTR.CrashReport.Renderer.ImGui.Standalone.csproj", "{304D6A99-EF3B-45A1-AC3A-372C04E5842B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.Html.Standalone", "BUTR.CrashReport.Renderer.Html.Standalone\BUTR.CrashReport.Renderer.Html.Standalone.csproj", "{065FFD4D-BA4A-4F42-9359-43517CE7460E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -225,6 +227,10 @@ Global
 		{304D6A99-EF3B-45A1-AC3A-372C04E5842B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{304D6A99-EF3B-45A1-AC3A-372C04E5842B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{304D6A99-EF3B-45A1-AC3A-372C04E5842B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{065FFD4D-BA4A-4F42-9359-43517CE7460E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065FFD4D-BA4A-4F42-9359-43517CE7460E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065FFD4D-BA4A-4F42-9359-43517CE7460E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065FFD4D-BA4A-4F42-9359-43517CE7460E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -266,5 +272,6 @@ Global
 		{36A642D2-9075-470D-B5B4-40EA20E0C16C} = {F324D64B-B62F-440F-A766-A4EC343A5F17}
 		{B2E732BE-17B2-4014-95A8-C588C6F624D4} = {F324D64B-B62F-440F-A766-A4EC343A5F17}
 		{304D6A99-EF3B-45A1-AC3A-372C04E5842B} = {F324D64B-B62F-440F-A766-A4EC343A5F17}
+		{065FFD4D-BA4A-4F42-9359-43517CE7460E} = {F324D64B-B62F-440F-A766-A4EC343A5F17}
 	EndGlobalSection
 EndGlobal

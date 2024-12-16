@@ -57,17 +57,28 @@ jobs:
 
       - name: Run _build
         run: >-
-          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release  -f net9.0 -r "${{ matrix.data.rid }}" -o "./pub";
-          Compress-Archive -Path pub/* -Destination "native-${{ matrix.data.rid }}.zip"
+          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release  -f net9.0 -r "${{ matrix.data.rid }}" -o "./imgui";
+          Compress-Archive -Path imgui/* -Destination "imgui-native-${{ matrix.data.rid }}.zip"
+
+          dotnet publish src/BUTR.CrashReport.Renderer.Html.Standalone/BUTR.CrashReport.Renderer.Html.Standalone.csproj --configuration Release  -f net9.0 -r "${{ matrix.data.rid }}" -o "./html";
+          Compress-Archive -Path html/* -Destination "html-native-${{ matrix.data.rid }}.zip"
         shell: pwsh
 
-      - name: Upload Release Assets
+      - name: Upload Release Assets (ImGui)
         uses: dwenegar/upload-release-assets@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "native-${{ matrix.data.rid }}.zip"
+          assets_path: "imgui-native-${{ matrix.data.rid }}.zip"
+
+      - name: Upload Release Assets (Html)
+        uses: dwenegar/upload-release-assets@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          assets_path: "html-native-${{ matrix.data.rid }}.zip"
 
   publish-universal:
     strategy:
@@ -93,14 +104,25 @@ jobs:
 
       - name: Run _build
         run: >-
-          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -f net6.0 -p:RuntimeSingleFile=true -o "./pub";
-          Compress-Archive -Path pub/* -Destination "net6-${{ matrix.data.rid }}.zip"
+          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -f net6.0 -p:RuntimeSingleFile=true -o "./imgui";
+          Compress-Archive -Path pub/* -Destination "imgui-net6-${{ matrix.data.rid }}.zip"
+
+          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -f net6.0 -p:RuntimeSingleFile=true -o "./html";
+          Compress-Archive -Path pub/* -Destination "html-net6-${{ matrix.data.rid }}.zip"
         shell: pwsh
 
-      - name: Upload Release Assets
+      - name: Upload Release Assets (ImGui)
         uses: dwenegar/upload-release-assets@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           release_id: ${{ needs.create-release.outputs.release_id }}
-          assets_path: "net6-${{ matrix.data.rid }}.zip"
+          assets_path: "imgui-net6-${{ matrix.data.rid }}.zip"
+
+      - name: Upload Release Assets (Html)
+        uses: dwenegar/upload-release-assets@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ needs.create-release.outputs.release_id }}
+          assets_path: "html-net6-${{ matrix.data.rid }}.zip"
