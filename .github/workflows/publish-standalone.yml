@@ -107,7 +107,7 @@ jobs:
           dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -f net6.0 -p:RuntimeSingleFile=true -o "./imgui";
           Compress-Archive -Path pub/* -Destination "imgui-net6-${{ matrix.data.rid }}.zip"
 
-          dotnet publish src/BUTR.CrashReport.Renderer.ImGui.Standalone/BUTR.CrashReport.Renderer.ImGui.Standalone.csproj --configuration Release -f net6.0 -p:RuntimeSingleFile=true -o "./html";
+          dotnet publish src/BUTR.CrashReport.Renderer.Html.Standalone/BUTR.CrashReport.Renderer.Html.Standalone.csproj --configuration Release -f net6.0 -p:RuntimeSingleFile=true -o "./html";
           Compress-Archive -Path pub/* -Destination "html-net6-${{ matrix.data.rid }}.zip"
         shell: pwsh
 
