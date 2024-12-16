@@ -35,32 +35,42 @@ const getResponsePromise = async (defaultUri, type) => {
     return response;
 };
 
-const moduleImports = {
-    isDarkMode: () => {
-        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    },
-    finishedLoading: () => {
-        hideLoader();
-    },
-    saveFile: (data, filename) => {
-        const blob = new Blob([data], {type: 'application/octet-stream'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        URL.revokeObjectURL(url);
-    },
-    writeClipboard: (data) => {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            return navigator.clipboard.writeText(data);
-        } else {
-            console.warn('Clipboard API not available');
-        }
-    },
-};
-
-export const initializeModule = async () => {
+export const initializeModule = async (type, url, data) => {
+    const moduleImports = {
+        getArgType: () => {
+            return type;
+        },
+        getArgUrl: () => {
+            return url;
+        },
+        getArgData: () => {
+            return data;
+        },
+        isDarkMode: () => {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        },
+        finishedLoading: () => {
+            hideLoader();
+        },
+        saveFile: (data, filename) => {
+            const blob = new Blob([data], {type: 'application/octet-stream'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        },
+        writeClipboard: (data) => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                return navigator.clipboard.writeText(data);
+            } else {
+                console.warn('Clipboard API not available');
+            }
+        },
+    };
+    
+    
     const jsonResponse = await fetch('./../_framework/blazor.boot.json');
     const boot = await jsonResponse.json();
     setResourcesToTrack(Object.keys(boot.resources?.fingerprinting || {}));

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace BUTR.CrashReport.Renderer.ImGui.Tool;
+namespace BUTR.CrashReport.Renderer.ImGui.Tool.Extensions;
 
 internal static class TextExtensions
 {

@@ -3,6 +3,7 @@ using BUTR.CrashReport.Models;
 using BUTR.CrashReport.Native;
 using BUTR.CrashReport.Renderer.ImGui.Renderer;
 using BUTR.CrashReport.Renderer.ImGui.WASM.Controller;
+using BUTR.CrashReport.Renderer.ImGui.WASM.Extensions;
 
 using Emscripten;
 
@@ -11,11 +12,13 @@ using ImGui.Structures;
 
 using OpenGLES3;
 
+using System.IO.Compression;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 [assembly: PInvokeDelegateLoader(typeof(CmGui), "cimgui")]
 
@@ -27,6 +30,22 @@ using ImGuiRenderer = ImGuiRenderer<ImGuiIOWrapper, ImGuiViewportWrapper, ImDraw
 
 public static partial class Program
 {
+    public enum ArgType
+    {
+        JsonLink,
+        JsonFile,
+        ZipFile,
+    }
+
+    [JSImport("getArgType", "interop")]
+    private static partial string GetArgType();
+
+    [JSImport("getArgUrl", "interop")]
+    private static partial string GetArgUrl();
+
+    [JSImport("getArgData", "interop")]
+    private static partial byte[] GetArgData();
+
     [JSImport("finishedLoading", "interop")]
     private static partial void FinishedLoading();
 
@@ -39,13 +58,50 @@ public static partial class Program
     // https://localhost:7211/?arg=http%3A%2F%2Flocalhost%3A65530%2Fcrashreport.json
     internal static async Task Main(string[] args)
     {
-        var url = args.Length > 0 ? args[0] : throw new ArgumentException("URL to Crash Report JSON is required");
-        var cr = await FetchAsync(url);
+        if (!Enum.TryParse<ArgType>(GetArgType(), out var argType))
+        {
+            Console.WriteLine("Invalid argument type.");
+            return;
+        }
 
         _emscripten = CreateEmscripten();
 
         _imgui = CreateCmGui();
-        _renderer = CreateImGuiRenderer(cr, [], _imgui);
+
+        switch (argType)
+        {
+            case ArgType.JsonLink:
+            {
+                var url = GetArgUrl();
+                var cr = await FetchJsonAsync(url);
+                _renderer = CreateImGuiRenderer(cr, [], _imgui);
+                break;
+            }
+            case ArgType.JsonFile:
+            {
+                var jsonBlob = GetArgData();
+                var cr = JsonSerializer.Deserialize<CrashReportModel>(jsonBlob, CustomJsonSerializerContext.Default.CrashReportModel)!;
+                _renderer = CreateImGuiRenderer(cr, [], _imgui);
+                break;
+            }
+            case ArgType.ZipFile:
+            {
+                var zipBlob = new MemoryStream(GetArgData());
+                using var archive = new ZipArchive(zipBlob, ZipArchiveMode.Read, false);
+
+                await using var jsonStream = archive.GetEntry("crashreport.json").TryOpen();
+                await using var logsStream = archive.GetEntry("logs.json").TryOpen();
+                if (jsonStream == Stream.Null) return;
+
+                var crashReport = await TryDeserializeAsync(jsonStream, CustomJsonSerializerContext.Default.CrashReportModel);
+                var logs = await TryDeserializeAsync(logsStream, CustomJsonSerializerContext.Default.LogSourceModelArray) ?? [];
+
+                _renderer = CreateImGuiRenderer(crashReport!, logs, _imgui);
+                break;
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
 
         _window = CreateWindow("BUTR Crash Report Renderer"u8, 800, 600);
         _gl = CreateGL(_window);
@@ -56,23 +112,24 @@ public static partial class Program
         SetMainLoop();
     }
 
-    //private static readonly HttpRequestOptionsKey<IDictionary<string, object>> FetchRequestOptionsKey = new("WebAssemblyFetchOptions");
-    private static async Task<CrashReportModel> FetchAsync(string url)
+    private static async Task<T?> TryDeserializeAsync<T>(Stream stream, JsonTypeInfo<T> typeInfo)
+    {
+        try
+        {
+            return await JsonSerializer.DeserializeAsync(stream, typeInfo);
+        }
+        catch (JsonException)
+        {
+            return default;
+        }
+    }
+
+    private static async Task<CrashReportModel> FetchJsonAsync(string url)
     {
         using var client = new HttpClient();
 
         using var request = new HttpRequestMessage(HttpMethod.Get, url);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        /*
-        if (!request.Options.TryGetValue(FetchRequestOptionsKey, out var fetchOptions))
-        {
-            fetchOptions = new Dictionary<string, object>(StringComparer.Ordinal);
-            request.Options.Set(FetchRequestOptionsKey, fetchOptions);
-        }
-        
-        fetchOptions["mode"] = "no-cors";
-        */
 
         using var response = await client.SendAsync(request);
 
@@ -84,12 +141,12 @@ public static partial class Program
         _emscripten.emscripten_set_main_loop(&MainLoop, 0, 0);
     }
 
-    private static Emscripten.Emscripten _emscripten = default!;
-    private static CmGui _imgui = default!;
-    private static ImGuiController _controller = default!;
-    private static ImGuiRenderer _renderer = default!;
+    private static Emscripten.Emscripten _emscripten = null!;
+    private static CmGui _imgui = null!;
+    private static ImGuiController _controller = null!;
+    private static ImGuiRenderer _renderer = null!;
     private static IntPtr _window = default!;
-    private static GL _gl = default!;
+    private static GL _gl = null!;
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static void MainLoop()

@@ -1,5 +1,6 @@
 ﻿using BUTR.CrashReport.Models;
 using BUTR.CrashReport.Renderer.ImGui.Implementation.CImGui;
+using BUTR.CrashReport.Renderer.ImGui.Tool.Extensions;
 
 using HtmlAgilityPack;
 

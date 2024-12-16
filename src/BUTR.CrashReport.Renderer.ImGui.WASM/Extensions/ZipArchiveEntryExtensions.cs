@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 
-namespace BUTR.CrashReport.Renderer.ImGui.Tool;
+namespace BUTR.CrashReport.Renderer.ImGui.WASM.Extensions;
 
 public static class ZipArchiveEntryExtensions
 {
