@@ -9,11 +9,13 @@ namespace BUTR.CrashReport.Native.SourceGenerator;
 [Generator]
 public class DelegateLoaderGenerator : IIncrementalGenerator
 {
+    private const string AttributeName = "BUTR.CrashReport.Native.DelegateLoaderAttribute";
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var assemblyAttributes = context.CompilationProvider.SelectMany(static (compilation, _) =>
         {
-            var attributeSymbol = compilation.GetTypeByMetadataName("BUTR.CrashReport.Native.DelegateLoaderAttribute");
+            var attributeSymbol = compilation.GetTypeByMetadataName(AttributeName);
             if (attributeSymbol == null) return Enumerable.Empty<(INamedTypeSymbol?, bool)>();
 
             return compilation.Assembly.GetAttributes()
@@ -45,7 +47,7 @@ public class DelegateLoaderGenerator : IIncrementalGenerator
             sourceBuilder.AppendLine($"namespace {namespaceName}");
             sourceBuilder.AppendLine("{");
 
-            sourceBuilder.AppendLine($"    public unsafe static class {className}");
+            sourceBuilder.AppendLine($"    internal unsafe static class {className}");
             sourceBuilder.AppendLine("    {");
 
             // Add Load method

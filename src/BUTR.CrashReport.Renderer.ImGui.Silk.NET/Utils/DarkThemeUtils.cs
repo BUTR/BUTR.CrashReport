@@ -25,14 +25,17 @@ internal static class DarkThemeUtils
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && nativeWindow.Win32 is { Hwnd: var windowHandle })
         {
-            if (IsDarkModeSupported && ShouldAppsUseDarkMode())
+            try
             {
-                var attr = IsWindows10OrGreater(18985) ? DWMWA_USE_IMMERSIVE_DARK_MODE : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
-                var attrValue = 1;
-                if (DwmSetWindowAttribute(windowHandle, attr, ref attrValue, sizeof(int)) is var hResult and not S_OK)
-                    throw new Win32Exception(hResult);
+                if (IsDarkModeSupported && ShouldAppsUseDarkMode())
+                {
+                    var attr = IsWindows10OrGreater(18985) ? DWMWA_USE_IMMERSIVE_DARK_MODE : DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
+                    var attrValue = 1;
+                    if (DwmSetWindowAttribute(windowHandle, attr, ref attrValue, sizeof(int)) is var hResult and not S_OK)
+                        throw new Win32Exception(hResult);
+                }
             }
+            catch /* ignored */ { }
         }
-
     }
 }

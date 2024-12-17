@@ -9,11 +9,13 @@ namespace BUTR.CrashReport.Native.SourceGenerator;
 [Generator]
 public class PInvokeGenerator : IIncrementalGenerator
 {
+    private const string AttributeName = "BUTR.CrashReport.Native.PInvokeDelegateLoaderAttribute";
+    
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var assemblyAttributes = context.CompilationProvider.SelectMany(static (compilation, _) =>
         {
-            var attributeSymbol = compilation.GetTypeByMetadataName("BUTR.CrashReport.Native.PInvokeDelegateLoaderAttribute");
+            var attributeSymbol = compilation.GetTypeByMetadataName(AttributeName);
             if (attributeSymbol == null) return Enumerable.Empty<(INamedTypeSymbol?, string?, bool)>();
 
             return compilation.Assembly.GetAttributes()
@@ -46,7 +48,7 @@ public class PInvokeGenerator : IIncrementalGenerator
             sourceBuilder.AppendLine($"namespace {namespaceName}");
             sourceBuilder.AppendLine("{");
 
-            sourceBuilder.AppendLine($"    public unsafe static class {className}");
+            sourceBuilder.AppendLine($"    internal unsafe static class {className}");
             sourceBuilder.AppendLine("    {");
 
             sourceBuilder.AppendLine($"        private const string NativeLibName = \"{nativeLibName}\";");
