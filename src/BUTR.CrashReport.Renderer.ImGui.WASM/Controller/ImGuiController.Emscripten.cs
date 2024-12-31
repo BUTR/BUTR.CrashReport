@@ -33,7 +33,18 @@ partial class ImGuiController
     private unsafe void SetupEmscripten(IntPtr windowHandle)
     {
         _imgui.GetIO(out var io);
+
         io.BackendFlags |= ImGuiNET.ImGuiBackendFlags.HasMouseCursors;
+        io.BackendFlags |= ImGuiNET.ImGuiBackendFlags.HasSetMousePos;
+        io.BackendFlags |= ImGuiNET.ImGuiBackendFlags.RendererHasVtxOffset;
+        io.BackendFlags |= ImGuiNET.ImGuiBackendFlags.HasGamepad;
+
+        io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.NavEnableGamepad;
+        io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.NavEnableSetMousePos;
+        io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.DpiEnableScaleFonts;
+        io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.DpiEnableScaleViewports;
+        io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.IsTouchScreen;
 
         int windowsWidth, windowsHeight;
         _emscripten.custom_emscripten_get_display_usable_bounds(&windowsWidth, &windowsHeight);

@@ -1,6 +1,8 @@
 ﻿#if SDL2
 using BUTR.CrashReport.ImGui.Enums;
 
+using SDL2;
+
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -96,7 +98,7 @@ partial class ImGuiController
             }
             case SDL_EventType.SDL_MOUSEWHEEL:
             {
-                if (evt.wheel.windowID != SDL_GetWindowID(_window)) return false; ;
+                if (evt.wheel.windowID != SDL_GetWindowID(_window)) return false;
 
                 var wheel_x = -evt.wheel.preciseX;
                 var wheel_y = evt.wheel.preciseY;
@@ -110,7 +112,7 @@ partial class ImGuiController
             case SDL_EventType.SDL_MOUSEBUTTONDOWN:
             case SDL_EventType.SDL_MOUSEBUTTONUP:
             {
-                if (evt.button.windowID != SDL_GetWindowID(_window)) return false; ;
+                if (evt.button.windowID != SDL_GetWindowID(_window)) return false;
 
                 var mouse_button = ImGuiNET.ImGuiMouseButton.COUNT;
                 if (evt.button.button == SDL_BUTTON_LEFT) { mouse_button = ImGuiNET.ImGuiMouseButton.Left; }
@@ -124,9 +126,24 @@ partial class ImGuiController
                 io.AddMouseButtonEvent(mouse_button, evt.type == SDL_EventType.SDL_MOUSEBUTTONDOWN);
                 return true;
             }
+            case SDL_EventType.SDL_FINGERMOTION:
+            {
+                if (evt.tfinger.windowID != SDL_GetWindowID(_window)) return false;
+
+                const float touchScrollMultiplier = 5.0f;
+                
+                var scale = GetWindowDevicePixelRatio();
+
+                var wheel_x = -evt.tfinger.dx * scale.X * touchScrollMultiplier;
+                var wheel_y = evt.tfinger.dy * scale.Y * touchScrollMultiplier;
+
+                io.MouseWheelH += wheel_x;
+                io.MouseWheel += wheel_y;
+                return true;
+            }
             case SDL_EventType.SDL_TEXTINPUT:
             {
-                if (evt.text.windowID != SDL_GetWindowID(_window)) return false; ;
+                if (evt.text.windowID != SDL_GetWindowID(_window)) return false;
 
                 var utf8 = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(evt.text.text);
                 var utf16Length = Encoding.UTF8.GetCharCount(utf8);
@@ -140,7 +157,7 @@ partial class ImGuiController
             case SDL_EventType.SDL_KEYDOWN:
             case SDL_EventType.SDL_KEYUP:
             {
-                if (evt.key.windowID != SDL_GetWindowID(_window)) return false; ;
+                if (evt.key.windowID != SDL_GetWindowID(_window)) return false;
 
                 UpdateKeyModifiers(evt.key.keysym.mod);
 
@@ -152,7 +169,7 @@ partial class ImGuiController
             }
             case SDL_EventType.SDL_WINDOWEVENT:
             {
-                if (evt.window.windowID != SDL_GetWindowID(_window)) return false; ;
+                if (evt.window.windowID != SDL_GetWindowID(_window)) return false;
 
                 /*
                 if (evt.window.windowEvent == SDL_WindowEventID.SDL_WINDOWEVENT_ENTER)
