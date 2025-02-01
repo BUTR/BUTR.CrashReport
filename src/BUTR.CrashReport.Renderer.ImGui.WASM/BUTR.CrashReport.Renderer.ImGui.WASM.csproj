@@ -13,13 +13,15 @@
 
     <WasmEnableSIMD>false</WasmEnableSIMD>
     
+    <!--
     <WasmAllowUndefinedSymbols>true</WasmAllowUndefinedSymbols>
+    -->
     
     <DefineConstants>$(DefineConstants);EMSCRIPTEN;OPENGLES3;SDL2</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup>
-    <RunAOTCompilation>false</RunAOTCompilation>
+    <RunAOTCompilation>true</RunAOTCompilation>
     <WasmStripILAfterAOT>true</WasmStripILAfterAOT>
     <WasmBuildNative>true</WasmBuildNative>
     <WasmNativeStrip>true</WasmNativeStrip>
