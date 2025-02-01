@@ -26,16 +26,19 @@ internal static class SdlUtils
         var sdlWindow = (global::Silk.NET.SDL.Window*) (window.Native?.Sdl ?? IntPtr.Zero);
 
         var iconSpan = typeof(CrashReportImGui).Assembly.GetManifestResourceStreamAsSpan("resources\\icon_128.bin");
-        var surface = sdl.CreateRGBSurfaceFrom
-        (
-            Unsafe.AsPointer(ref MemoryMarshal.GetReference(iconSpan)),
-            128,
-            128,
-            32, 32 / 8 * 128,
-            0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
-        );
-        sdl.SetWindowIcon(sdlWindow, surface);
-        sdl.FreeSurface(surface);
+        fixed (byte* iconPtr = iconSpan)
+        {
+            var surface = sdl.CreateRGBSurfaceFrom
+            (
+                iconPtr,
+                128,
+                128,
+                32, 32 / 8 * 128,
+                0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
+            );
+            sdl.SetWindowIcon(sdlWindow, surface);
+            sdl.FreeSurface(surface);
+        }
     }
 
     internal static void Init(IWindow window, SdlWindowOptions? sdlWindowOptions)

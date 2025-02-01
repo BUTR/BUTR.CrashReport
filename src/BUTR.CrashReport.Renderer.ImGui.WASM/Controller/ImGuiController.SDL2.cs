@@ -131,10 +131,10 @@ partial class ImGuiController
                 if (evt.tfinger.windowID != SDL_GetWindowID(_window)) return false;
 
                 const float touchScrollMultiplier = 5.0f;
-                
+
                 var scale = GetWindowDevicePixelRatio();
 
-                var wheel_x = -evt.tfinger.dx * scale.X * touchScrollMultiplier;
+                var wheel_x = evt.tfinger.dx * scale.X * touchScrollMultiplier;
                 var wheel_y = evt.tfinger.dy * scale.Y * touchScrollMultiplier;
 
                 io.MouseWheelH += wheel_x;

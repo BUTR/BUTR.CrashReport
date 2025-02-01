@@ -1,7 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace BUTR.CrashReport.Native;
 
+[StructLayout(LayoutKind.Sequential)]
 public readonly unsafe record struct Pointer
 {
     public static implicit operator Pointer(void* ptr) => new(ptr);
@@ -14,6 +16,7 @@ public readonly unsafe record struct Pointer
     private Pointer(void* ptr) => _value = (nint) ptr;
 }
 
+[StructLayout(LayoutKind.Sequential)]
 public readonly unsafe record struct Pointer<T> where T : unmanaged
 {
     public static explicit operator IntPtr(Pointer<T> intPtr) => Unsafe.As<Pointer<T>, IntPtr>(ref intPtr);

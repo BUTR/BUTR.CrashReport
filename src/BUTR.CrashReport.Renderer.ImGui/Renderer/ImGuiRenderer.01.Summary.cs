@@ -157,7 +157,7 @@ partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImG
 
         _imgui.NewLine();
 
-        _imgui.Text("This is a community Crash Report. Please save it and use it for reporting the error. Do not provide screenshots, provide the report!\0"u8);
+        _imgui.TextWrapped("This is a community Crash Report. Please save it and use it for reporting the error. Do not provide screenshots, provide the report!\0"u8);
 
         _imgui.Text("Most likely this error was caused by a custom installed module.\0"u8);
 

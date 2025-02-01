@@ -1,7 +1,11 @@
-﻿namespace BUTR.CrashReport.ImGui.Structures;
+﻿using System.Numerics;
+
+namespace BUTR.CrashReport.ImGui.Structures;
 
 public interface IImGuiIO : IDisposable
 {
+    ref Vector2 DisplaySize { get; }
+
     ref bool KeyCtrl { get; }
     ref bool KeyShift { get; }
     ref bool KeyAlt { get; }

@@ -4,6 +4,7 @@ using BUTR.CrashReport.Native;
 
 using ImGui.Structures;
 
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -97,7 +98,11 @@ unsafe partial class CmGui
     public void PushId(int id) => igPushID_Int(id);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void PushId(ReadOnlySpan<byte> utf8Label) => igPushID_Str((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)));
+    public void PushId(ReadOnlySpan<byte> utf8Label)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            igPushID_Str(utf8LabelPtr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void PopId() => igPopID();
@@ -106,27 +111,35 @@ unsafe partial class CmGui
     public bool InputTextMultilineInt64(ReadOnlySpan<byte> utf8Label, Span<byte> input, int lineCount, ImGuiInputTextInt64Callback callback, Int64 data)
     {
         var size = new Vector2(-1, GetTextLineHeight() * (lineCount + 1));
-        var flags = ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.CallbackAlways;
+        var flags = ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.CallbackEdit;
 
-        PushStyleColor(ImGuiCol.FrameBg, in Zero4);
 
         delegate* unmanaged[Cdecl]<ImGuiNET.ImGuiInputTextCallbackData*, int> nativeCallbackPtr = &ImGuiInputTextCallbackInt64;
 
         var userData = new UserDataInt64(callback, data);
 
+        //GetContentRegionAvail(out var contentRegionAvail);
+
         // Lifetime of objects is bound to the function scope
-        var result = igInputTextMultiline(
-            (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)),
-            (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(input)),
-            (uint) input.Length,
-            size,
-            (ImGuiNET.ImGuiInputTextFlags) flags,
-            (IntPtr) nativeCallbackPtr,
-            (IntPtr) Unsafe.AsPointer(ref userData)) > 0;
+        fixed (byte* utf8LabelPtr = utf8Label)
+        fixed (byte* inputPtr = input)
+        {
+            PushStyleColor(ImGuiCol.FrameBg, in Zero4);
+            //igPushTextWrapPos(contentRegionAvail.X);
+            var result = igInputTextMultiline(
+                utf8LabelPtr,
+                inputPtr,
+                (uint) input.Length,
+                size,
+                (ImGuiNET.ImGuiInputTextFlags) flags,
+                (IntPtr) nativeCallbackPtr,
+                (IntPtr) (&userData)) > 0;
 
-        PopStyleColor();
+            PopStyleColor();
+            //igPopTextWrapPos();
 
-        return result;
+            return result;
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
@@ -137,7 +150,7 @@ unsafe partial class CmGui
             _callbacks.Add(typeof(TData), genericTDataCallback = GenericTDataCallback<TData>);
 
         var size = new Vector2(-1, GetTextLineHeight() * (lineCount + 1));
-        var flags = ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.CallbackAlways;
+        var flags = ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.CallbackEdit;
 
         PushStyleColor(ImGuiCol.FrameBg, in Zero4);
 
@@ -146,18 +159,22 @@ unsafe partial class CmGui
         var userData = new UserDataGeneric(genericTDataCallback, callback, Unsafe.AsPointer(ref data));
 
         // Lifetime of objects is bound to the function scope
-        var result = igInputTextMultiline(
-            (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)),
-            (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(input)),
-            (uint) input.Length,
-            size,
-            (ImGuiNET.ImGuiInputTextFlags) flags,
-            (IntPtr) nativeCallbackPtr,
-            (IntPtr) Unsafe.AsPointer(ref userData)) > 0;
+        fixed (byte* utf8LabelPtr = utf8Label)
+        fixed (byte* inputPtr = input)
+        {
+            var result = igInputTextMultiline(
+                utf8LabelPtr,
+                inputPtr,
+                (uint) input.Length,
+                size,
+                (ImGuiNET.ImGuiInputTextFlags) flags,
+                (IntPtr) nativeCallbackPtr,
+                (IntPtr) (&userData)) > 0;
 
-        PopStyleColor();
+            PopStyleColor();
 
-        return result;
+            return result;
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
@@ -168,51 +185,112 @@ unsafe partial class CmGui
 
         PushStyleColor(ImGuiCol.FrameBg, in Zero4);
 
-        var result = igInputText(
-            (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)),
-            (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(input)),
-            (uint) buf_size,
-            (ImGuiNET.ImGuiInputTextFlags) flags,
-            IntPtr.Zero,
-            user_data) > 0;
+        fixed (byte* inputPtr = input)
+        fixed (byte* utf8LabelPtr = utf8Label)
+        {
+            var result = igInputText(
+                utf8LabelPtr,
+                inputPtr,
+                (uint) buf_size,
+                (ImGuiNET.ImGuiInputTextFlags) flags,
+                IntPtr.Zero,
+                user_data) > 0;
 
-        PopStyleColor();
+            PopStyleColor();
 
-        return result;
+            return result;
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void Text(ReadOnlySpan<byte> utf8Label) => igTextV((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), null);
+    public void Text(ReadOnlySpan<byte> utf8Label)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+        {
+            var ptrStart = utf8LabelPtr;
+            var ptrEnd = (byte*) Unsafe.Add<byte>(ptrStart, utf8Label.Length - 1);
+            Debug.Assert(*ptrEnd == 0, "string must be null-terminated");
+            igTextUnformatted(ptrStart, ptrEnd);
+        }
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void TextWrapped(ReadOnlySpan<byte> utf8Label) => igTextWrappedV((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), null);
+    public void TextWrapped(ReadOnlySpan<byte> utf8Label)
+    {
+        GetContentRegionAvail(out var contentRegionAvail);
+
+        igPushTextWrapPos(contentRegionAvail.X);
+        fixed (byte* utf8LabelPtr = utf8Label)
+        {
+            var ptrStart = utf8LabelPtr;
+            var ptrEnd = (byte*) Unsafe.Add<byte>(ptrStart, utf8Label.Length - 1);
+            Debug.Assert(*ptrEnd == 0, "string must be null-terminated");
+            igTextUnformatted(ptrStart, ptrEnd);
+        }
+        igPopTextWrapPos();
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void TextColored(ReadOnlySpan<byte> utf8Label, ref readonly Vector4 color) => igTextColoredV(color, (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), null);
+    public void TextColored(ReadOnlySpan<byte> utf8Label, ref readonly Vector4 color)
+    {
+        PushStyleColor(ImGuiCol.Text, in color);
+        fixed (byte* utf8LabelPtr = utf8Label)
+        {
+            var ptrStart = utf8LabelPtr;
+            var ptrEnd = (byte*) Unsafe.Add<byte>(ptrStart, utf8Label.Length - 1);
+            Debug.Assert(*ptrEnd == 0, "string must be null-terminated");
+            igTextUnformatted(ptrStart, ptrEnd);
+        }
+        PopStyleColor();
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void TextLinkOpenURL(ReadOnlySpan<byte> utf8Label, ReadOnlySpan<byte> utf8Url) => igTextLinkOpenURL((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Url)));
+    public void TextLinkOpenURL(ReadOnlySpan<byte> utf8Label, ReadOnlySpan<byte> utf8Url)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+        fixed (byte* utf8UrlPtr = utf8Url)
+            igTextLinkOpenURL(utf8LabelPtr, utf8UrlPtr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public bool Checkbox(ReadOnlySpan<byte> utf8Label, ref bool isSelected) => igCheckbox((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), (byte*) Unsafe.AsPointer(ref Unsafe.As<bool, byte>(ref isSelected))) > 0;
+    public bool Checkbox(ReadOnlySpan<byte> utf8Label, ref bool isSelected)
+    {
+        ref var isSelectedRef = ref Unsafe.As<bool, byte>(ref isSelected);
+        fixed (byte* utf8LabelPtr = utf8Label)
+        fixed (byte* isSelectedRefPtr = &isSelectedRef)
+            return igCheckbox(utf8LabelPtr, isSelectedRefPtr) > 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void OpenPopup(ReadOnlySpan<byte> utf8Label, ImGuiPopupFlags flags) => igOpenPopup_Str((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), (ImGuiNET.ImGuiPopupFlags) flags);
+    public void OpenPopup(ReadOnlySpan<byte> utf8Label, ImGuiPopupFlags flags)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            igOpenPopup_Str(utf8LabelPtr, (ImGuiNET.ImGuiPopupFlags) flags);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void CloseCurrentPopup() => igCloseCurrentPopup();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public bool BeginPopup(ReadOnlySpan<byte> utf8Label, ImGuiWindowFlags flags) => igBeginPopup((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), (ImGuiNET.ImGuiWindowFlags) flags) > 0;
+    public bool BeginPopup(ReadOnlySpan<byte> utf8Label, ImGuiWindowFlags flags)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igBeginPopup(utf8LabelPtr, (ImGuiNET.ImGuiWindowFlags) flags) > 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public bool BeginPopupModal(ReadOnlySpan<byte> utf8Label, ImGuiWindowFlags flags) => igBeginPopupModal((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), null, (ImGuiNET.ImGuiWindowFlags) flags) > 0;
+    public bool BeginPopupModal(ReadOnlySpan<byte> utf8Label, ImGuiWindowFlags flags)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igBeginPopupModal(utf8LabelPtr, null, (ImGuiNET.ImGuiWindowFlags) flags) > 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool BeginPopupContextWindow(ReadOnlySpan<byte> utf8Label)
     {
-        var popup_flags = ImGuiPopupFlags.MouseButtonRight;
-        return igBeginPopupContextWindow((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), (ImGuiNET.ImGuiPopupFlags) popup_flags) > 0;
+        const ImGuiPopupFlags popup_flags = ImGuiPopupFlags.MouseButtonRight;
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igBeginPopupContextWindow(utf8LabelPtr, (ImGuiNET.ImGuiPopupFlags) popup_flags) > 0;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
@@ -222,42 +300,59 @@ unsafe partial class CmGui
     public bool Selectable(ReadOnlySpan<byte> utf8Label, ref bool isSelected, ImGuiSelectableFlags flags)
     {
         ref var selectedNum = ref Unsafe.As<bool, byte>(ref isSelected);
-        return igSelectable_Bool((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), selectedNum, (ImGuiNET.ImGuiSelectableFlags) flags, Zero2) > 0;
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igSelectable_Bool(utf8LabelPtr, selectedNum, (ImGuiNET.ImGuiSelectableFlags) flags, Zero2) > 0;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool IsMouseDoubleClicked(ImGuiMouseButton mouseButton) => igIsMouseDoubleClicked_Nil((ImGuiNET.ImGuiMouseButton) mouseButton) > 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public bool Button(ReadOnlySpan<byte> utf8Label) => igButton((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), Zero2) > 0;
+    public bool Button(ReadOnlySpan<byte> utf8Label)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igButton(utf8LabelPtr, Zero2) > 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public bool SmallButton(ReadOnlySpan<byte> utf8Label) => igSmallButton((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label))) > 0;
+    public bool SmallButton(ReadOnlySpan<byte> utf8Label)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igSmallButton(utf8LabelPtr) > 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool Begin(ReadOnlySpan<byte> utf8Label, ImGuiWindowFlags flags)
     {
-        var p_open = (byte*) null;
-        return igBegin((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), p_open, (ImGuiNET.ImGuiWindowFlags) flags) > 0;
+        const nint p_open = 0;
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igBegin(utf8LabelPtr, p_open, (ImGuiNET.ImGuiWindowFlags) flags) > 0;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool BeginTable(ReadOnlySpan<byte> utf8Label, int column)
     {
-        var flags = ImGuiNET.ImGuiTableFlags.None;
+        const ImGuiNET.ImGuiTableFlags flags = ImGuiNET.ImGuiTableFlags.None;
         const float inner_width = 0.0f;
-        return igBeginTable((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), column, flags, Zero2, inner_width) > 0;
+        fixed (byte* utf8LabelPtr = utf8Label)
+        {
+            return igBeginTable(utf8LabelPtr, column, flags, Zero2, inner_width) > 0;
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public bool BeginChild(ReadOnlySpan<byte> utf8Label, ref readonly Vector2 size, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags) => igBeginChild_Str((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), size, (ImGuiNET.ImGuiChildFlags) child_flags, (ImGuiNET.ImGuiWindowFlags) window_flags) > 0;
+    public bool BeginChild(ReadOnlySpan<byte> utf8Label, ref readonly Vector2 size, ImGuiChildFlags child_flags, ImGuiWindowFlags window_flags)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igBeginChild_Str(utf8LabelPtr, size, (ImGuiNET.ImGuiChildFlags) child_flags, (ImGuiNET.ImGuiWindowFlags) window_flags) > 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public bool TreeNode(ReadOnlySpan<byte> utf8Label, ImGuiTreeNodeFlags flags) => igTreeNodeExV_Str(
-        (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)),
-        (ImGuiNET.ImGuiTreeNodeFlags) flags,
-        (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)),
-        null) > 0;
+    public bool TreeNode(ReadOnlySpan<byte> utf8Label, ImGuiTreeNodeFlags flags)
+    {
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igTreeNodeEx_Str(utf8LabelPtr, (ImGuiNET.ImGuiTreeNodeFlags) flags) > 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void PushStyleColor(ImGuiCol idx, ref readonly Vector4 color) => igPushStyleColor_Vec4((ImGuiNET.ImGuiCol) idx, color);
@@ -343,10 +438,10 @@ unsafe partial class CmGui
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public IntPtr CreateContext() => (IntPtr) igCreateContext(null);
+    public IntPtr CreateContext() => igCreateContext(null);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public IntPtr GetCurrentContext() => (IntPtr) igGetCurrentContext();
+    public IntPtr GetCurrentContext() => igGetCurrentContext();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void SetCurrentContext(IntPtr ctx) => igSetCurrentContext(ctx);
@@ -368,7 +463,7 @@ unsafe partial class CmGui
     public bool IsWindowAppearing() => igIsWindowAppearing() > 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public IntPtr GetCurrentWindow() => (IntPtr) igGetCurrentWindow();
+    public IntPtr GetCurrentWindow() => igGetCurrentWindow();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void BringWindowToDisplayFront(IntPtr window) => igBringWindowToDisplayFront(window);
@@ -376,10 +471,11 @@ unsafe partial class CmGui
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool MenuItem(ReadOnlySpan<byte> utf8Label)
     {
-        byte* shortcut = null;
-        byte selected = 0;
-        byte enabled = 1;
-        return igMenuItem_Bool((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Label)), shortcut, selected, enabled) > 0;
+        const nint shortcut = 0;
+        const byte selected = 0;
+        const byte enabled = 1;
+        fixed (byte* utf8LabelPtr = utf8Label)
+            return igMenuItem_Bool(utf8LabelPtr, shortcut, selected, enabled) > 0;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
@@ -392,29 +488,38 @@ unsafe partial class CmGui
     public bool IsKeyPressed(ImGuiKey key) => igIsKeyPressed_Bool((ImGuiNET.ImGuiKey) key, 1) > 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void SetClipboardText(ReadOnlySpan<byte> utf8Data) => igSetClipboardText((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Data)));
+    public void SetClipboardText(ReadOnlySpan<byte> utf8Data)
+    {
+        fixed (byte* utf8DataPtr = utf8Data)
+            igSetClipboardText(utf8DataPtr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void CalcTextSize(ReadOnlySpan<byte> utf8Data, out Vector2 size)
     {
-        Unsafe.SkipInit(out size);
-
-        float wrap_width = -1f;
-        byte hide_text_after_double_hash = 0;
-        var ptrStart = (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Data));
-        var ptrEnd = (byte*) Unsafe.Add<byte>(ptrStart, utf8Data.Length - 1);
-        igCalcTextSize((Vector2*) Unsafe.AsPointer(ref size), ptrStart, ptrEnd, hide_text_after_double_hash, wrap_width);
+        const float wrap_width = -1f;
+        const byte hide_text_after_double_hash = 0;
+        fixed (Vector2* sizePtr = &size)
+        fixed (byte* utf8DataPtr = utf8Data)
+        {
+            var ptrStart = utf8DataPtr;
+            var ptrEnd = (byte*) Unsafe.Add<byte>(ptrStart, utf8Data.Length - 1);
+            igCalcTextSize(sizePtr, ptrStart, ptrEnd, hide_text_after_double_hash, wrap_width);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool IsWindowFocused() => igIsWindowFocused(ImGuiNET.ImGuiFocusedFlags.None) > 0;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void SetWindowFocus() => igSetWindowFocus_Nil();
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool IsWindowHovered() => igIsWindowHovered(ImGuiNET.ImGuiHoveredFlags.None) > 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public float GetWindowWidth() => igGetWindowWidth();
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public float GetWindowHeight() => igGetWindowHeight();
 
@@ -422,26 +527,43 @@ unsafe partial class CmGui
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void ColorConvertU32ToFloat4(uint u, out Vector4 color)
     {
-        Unsafe.SkipInit(out color);
-        igColorConvertU32ToFloat4((Vector4*) Unsafe.AsPointer(ref color), u);
+        fixed (Vector4* colorPtr = &color)
+            igColorConvertU32ToFloat4(colorPtr, u);
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public uint ColorConvertFloat4ToU32(ref readonly Vector4 color) => igColorConvertFloat4ToU32(color);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public float GetScrollX() => igGetScrollX();
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public float GetScrollY() => igGetScrollY();
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void SetScrollX(float value) => igSetScrollX_Float(value);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void SetScrollY(float value) => igSetScrollY_Float(value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void GetCursorScreenPos(out Vector2 GetCursorScreenPos)
+    public void GetCursorScreenPos(out Vector2 cursorScreenPos)
     {
-        Unsafe.SkipInit(out GetCursorScreenPos);
-        igGetCursorScreenPos((Vector2*) Unsafe.AsPointer(ref GetCursorScreenPos));
+        fixed (Vector2* cursorScreenPosPtr = &cursorScreenPos)
+            igGetCursorScreenPos(cursorScreenPosPtr);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
+    public void GetContentRegionAvail(out Vector2 contentRegionAvail)
+    {
+        fixed (Vector2* contentRegionAvailPtr = &contentRegionAvail)
+            igGetContentRegionAvail(contentRegionAvailPtr);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
+    public void GetWindowPos(out Vector2 windowPos)
+    {
+        fixed (Vector2* windowPosPtr = &windowPos)
+            igGetContentRegionAvail(windowPosPtr);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
@@ -450,21 +572,21 @@ unsafe partial class CmGui
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool IsMouseClicked(ImGuiMouseButton button)
     {
-        byte repeat = 0;
+        const byte repeat = 0;
         return igIsMouseClicked_Bool((ImGuiNET.ImGuiMouseButton) button, repeat) > 0;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void GetMousePos(out Vector2 mousePos)
     {
-        Unsafe.SkipInit(out mousePos);
-        igGetMousePos((Vector2*) Unsafe.AsPointer(ref mousePos));
+        fixed (Vector2* mousePosPtr = &mousePos)
+            igGetMousePos(mousePosPtr);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool IsMouseDragging(ImGuiMouseButton button)
     {
-        float lock_threshold = -1f;
+        const float lock_threshold = -1f;
         return igIsMouseDragging((ImGuiNET.ImGuiMouseButton) button, lock_threshold) > 0;
     }
 
@@ -477,37 +599,79 @@ unsafe partial class CmGui
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public bool IsMouseHoveringRect(ref readonly Vector2 lineStartScreenPos, ref readonly Vector2 end)
     {
-        byte clip = 1;
+        const byte clip = 1;
         return igIsMouseHoveringRect(lineStartScreenPos, end, clip) > 0;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void BeginTooltip() => igBeginTooltip();
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void EndTooltip() => igEndTooltip();
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public Span<T> MemAlloc<T>(uint length) => new(igMemAlloc((uint) (length * Unsafe.SizeOf<T>())), (int) length);
+    public Span<T> MemAlloc<T>(uint length)
+    {
+        Debug.Assert(length > 0, "Length must be greater than 0");
+        var ptr = igMemAlloc((uint) (length * Unsafe.SizeOf<T>()));
+        return new Span<T>(ptr, (int) length);
+    }
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void GetDrawData(out ImDrawDataWrapper drawDataWrapper) => drawDataWrapper = new(this, (ImGuiNET.ImDrawData*) igGetDrawData());
+    public void GetDrawData(out ImDrawDataWrapper drawDataWrapper)
+    {
+        var ptr = igGetDrawData();
+        Debug.Assert(ptr != null, "DrawData is null");
+        drawDataWrapper = new(this, (ImGuiNET.ImDrawData*) ptr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void GetIO(out ImGuiIOWrapper ioWrapper) => ioWrapper = new(this, (ImGuiNET.ImGuiIO*) igGetIO());
+    public void GetIO(out ImGuiIOWrapper ioWrapper)
+    {
+        var ptr = igGetIO();
+        Debug.Assert(ptr != null, "IO is null");
+        ioWrapper = new(this, (ImGuiNET.ImGuiIO*) ptr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void ImFontConfig(out ImFontConfigWrapper fontConfigWrapper) => fontConfigWrapper = new(this, (ImGuiNET.ImFontConfig*) ImFontConfig_ImFontConfig());
+    public void ImFontConfig(out ImFontConfigWrapper fontConfigWrapper)
+    {
+        var ptr = ImFontConfig_ImFontConfig();
+        Debug.Assert(ptr != null, "FontConfig is null");
+        fontConfigWrapper = new(this, (ImGuiNET.ImFontConfig*) ptr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void GetMainViewport(out ImGuiViewportWrapper viewportWrapper) => viewportWrapper = new(this, (ImGuiNET.ImGuiViewport*) igGetMainViewport());
+    public void GetMainViewport(out ImGuiViewportWrapper viewportWrapper)
+    {
+        var ptr = igGetMainViewport();
+        Debug.Assert(ptr != null, "Viewport is null");
+        viewportWrapper = new(this, (ImGuiNET.ImGuiViewport*) ptr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void GetStyle(out ImGuiStyleWrapper styleWrapper) => styleWrapper = new(this, (ImGuiNET.ImGuiStyle*) igGetStyle());
+    public void GetStyle(out ImGuiStyleWrapper styleWrapper)
+    {
+        var ptr = igGetStyle();
+        Debug.Assert(ptr != null, "Style is null");
+        styleWrapper = new(this, (ImGuiNET.ImGuiStyle*) ptr);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void CreateImGuiListClipper(out ImGuiListClipperWrapper listClipperWrapper) => listClipperWrapper = new(this, (ImGuiNET.ImGuiListClipper*) ImGuiListClipper_ImGuiListClipper());
+    public void CreateImGuiListClipper(out ImGuiListClipperWrapper listClipperWrapper)
+    {
+        var ptr = ImGuiListClipper_ImGuiListClipper();
+        Debug.Assert(ptr != null, "ListClipper is null");
+        listClipperWrapper = new(this, (ImGuiNET.ImGuiListClipper*) ptr);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
-    public void GetWindowDrawList(out ImDrawListWrapper drawListWrapper) => drawListWrapper = new(this, (ImGuiNET.ImDrawList*) igGetWindowDrawList());
+    public void GetWindowDrawList(out ImDrawListWrapper drawListWrapper)
+    {
+        var ptr = igGetWindowDrawList();
+        Debug.Assert(ptr != null, "DrawList is null");
+        drawListWrapper = new(this, (ImGuiNET.ImDrawList*) ptr);
+    }
 }

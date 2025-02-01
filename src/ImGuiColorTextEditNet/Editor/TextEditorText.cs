@@ -88,10 +88,7 @@ internal class TextEditorText
 
         for (; i < line.Length && c < position.Column;)
         {
-            if (line[i].Char == '\t')
-                c = c / _tabSize * _tabSize + _tabSize;
-            else
-                c++;
+            c = line[i].Char == '\t' ? c / TabSize * TabSize + TabSize : c + 1;
             i++;
         }
 
@@ -111,10 +108,7 @@ internal class TextEditorText
         {
             var c = line[i].Char;
             i++;
-            if (c == '\t')
-                col = col / _tabSize * _tabSize + _tabSize;
-            else
-                col++;
+            col = c == '\t' ? col / TabSize * TabSize + TabSize : col + 1;
         }
 
         return col;
@@ -131,10 +125,7 @@ internal class TextEditorText
         for (var i = 0; i < line.Length;)
         {
             var c = line[i].Char;
-            if (c == '\t')
-                col = col / _tabSize * _tabSize + _tabSize;
-            else
-                col++;
+            col = c == '\t' ? col / TabSize * TabSize + TabSize : col + 1;
             i++;
         }
 

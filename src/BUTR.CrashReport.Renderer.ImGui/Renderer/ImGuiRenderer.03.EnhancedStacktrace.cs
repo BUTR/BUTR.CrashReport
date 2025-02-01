@@ -74,10 +74,10 @@ partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImG
         {
             var stacktrace = _crashReport.EnhancedStacktrace[i];
             if (stacktrace.ILOffset is not null)
-                _offsetsUtf8[stacktrace.ILOffset.Value] = Utf8String.Format($"{stacktrace.ILOffset:X4}");
+                _offsetsUtf8[stacktrace.ILOffset.Value] = Utf8String.Format($"{stacktrace.ILOffset:X4}\0");
 
             if (stacktrace.NativeOffset is not null)
-                _offsetsUtf8[stacktrace.NativeOffset.Value] = Utf8String.Format($"{stacktrace.NativeOffset:X4}");
+                _offsetsUtf8[stacktrace.NativeOffset.Value] = Utf8String.Format($"{stacktrace.NativeOffset:X4}\0");
 
             SetupCodeExecuting(stacktrace.ExecutingMethod);
             SetupCode(stacktrace.OriginalMethod);

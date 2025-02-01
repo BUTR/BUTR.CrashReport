@@ -1,9 +1,11 @@
 ﻿using BUTR.CrashReport.ImGui.Structures;
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ImGui.Structures;
 
+[StructLayout(LayoutKind.Sequential)]
 public readonly unsafe struct RangeAccessorRef<T, TEnum> : IRangeAccessor<T, TEnum> where T : struct where TEnum : Enum
 {
     public readonly void* Data;
@@ -28,6 +30,7 @@ public readonly unsafe struct RangeAccessorRef<T, TEnum> : IRangeAccessor<T, TEn
     }
 }
 
+[StructLayout(LayoutKind.Sequential)]
 public readonly struct RangeAccessorRef<T> : IRangeAccessor<T> where T : struct
 {
     public readonly unsafe void* Data;

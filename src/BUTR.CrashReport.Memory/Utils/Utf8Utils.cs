@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using System.Text;
 
 namespace BUTR.CrashReport.Memory.Utils;
 
@@ -17,7 +15,8 @@ public static unsafe class Utf8Utils
 #if NET6_0_OR_GREATER
         return Encoding.UTF8.GetString(utf8);
 #else
-        return Encoding.UTF8.GetString((byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8)), utf8.Length);
+        fixed (byte* utf8Ptr = utf8)
+            return Encoding.UTF8.GetString(utf8Ptr, utf8.Length);
 #endif
     }
 
@@ -30,13 +29,8 @@ public static unsafe class Utf8Utils
         return Encoding.UTF8.GetBytes(utf16, utf8);
 #else
         fixed (char* utf16Ptr = utf16)
-        {
-            return Encoding.UTF8.GetBytes(
-                utf16Ptr,
-                utf16.Length,
-                (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8)),
-                utf8.Length);
-        }
+        fixed (byte* utf8Ptr = utf8)
+            return Encoding.UTF8.GetBytes(utf16Ptr, utf16.Length, utf8Ptr, utf8.Length);
 #endif
     }
 
@@ -49,13 +43,8 @@ public static unsafe class Utf8Utils
         return Encoding.UTF8.GetBytes(utf16, utf8);
 #else
         fixed (char* utf16Ptr = utf16)
-        {
-            return Encoding.UTF8.GetBytes(
-                utf16Ptr,
-                utf16.Length,
-                (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8)),
-                utf8.Length);
-        }
+        fixed (byte* utf8Ptr = utf8)
+            return Encoding.UTF8.GetBytes(utf16Ptr, utf16.Length, utf8Ptr, utf8.Length);
 #endif
     }
 
@@ -79,24 +68,29 @@ public static unsafe class Utf8Utils
         return array;
     }
 
-    public static byte[] ToUtf8Array(ReadOnlySpan<char> value)
+    public static byte[] ToUtf8Array(ReadOnlySpan<char> utf16)
     {
-        if (value.IsEmpty)
+        if (utf16.IsEmpty)
             return EmptyUtf8;
 
-        var length = Encoding.UTF8.GetMaxByteCount(value.Length) + 1;
+        fixed (char* utf16Ptr = utf16)
+        {
+            var length = Encoding.UTF8.GetByteCount(utf16Ptr, utf16.Length) + 1;
+
 #if NET6_0_OR_GREATER
         var array = GC.AllocateUninitializedArray<byte>(length);
 #else
-        var array = new byte[length];
+            var array = new byte[length];
 #endif
 
-        var charSpan = value;
-        var arraySpan = array.AsSpan();
+            var charSpan = utf16;
+            var arraySpan = array.AsSpan();
 
-        var lengthWritten = Utf16ToUtf8(charSpan, arraySpan);
-        array[lengthWritten] = 0;
-        return array;
+            var lengthWritten = Utf16ToUtf8(charSpan, arraySpan);
+            array[lengthWritten] = 0;
+
+            return array;
+        }
     }
 
     public static string Utf8ToUtf16(Span<byte> utf8)
@@ -108,9 +102,7 @@ public static unsafe class Utf8Utils
         return Encoding.UTF8.GetString(utf8);
 #else
         fixed (byte* utf8Ptr = utf8)
-        {
             return Encoding.UTF8.GetString(utf8Ptr, utf8.Length);
-        }
 #endif
     }
 }

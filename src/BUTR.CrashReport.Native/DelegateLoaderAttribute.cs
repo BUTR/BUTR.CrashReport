@@ -1,6 +1,6 @@
 ﻿namespace BUTR.CrashReport.Native;
 
-[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class, AllowMultiple = true)]
 public class DelegateLoaderAttribute : Attribute
 {
     public Type TypeToWrap { get; }

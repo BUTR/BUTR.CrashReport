@@ -1,12 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ImGui.Structures;
 
-public readonly unsafe ref struct ImVectorRefUInt16
+[StructLayout(LayoutKind.Sequential)]
+public readonly unsafe struct ImVectorRefUInt16
 {
     public readonly int Size;
     public readonly int Capacity;
     public readonly UInt16* Data;
+    public UIntPtr SizeInBytes => (UIntPtr) (Size * sizeof(UInt16));
 
     public ImVectorRefUInt16(ImGuiNET.ImVector vector)
     {

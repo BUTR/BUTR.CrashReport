@@ -1,8 +1,32 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ImGui.Structures;
 
-public readonly unsafe ref struct ImVectorRef<T> where T : unmanaged
+[StructLayout(LayoutKind.Sequential)]
+public readonly unsafe ref struct ImVectorRef
+{
+    public readonly int Size;
+    public readonly int Capacity;
+    public readonly void* Data;
+
+    public ImVectorRef(ImGuiNET.ImVector vector)
+    {
+        Size = vector.Size;
+        Capacity = vector.Capacity;
+        Data = (void*) vector.Data;
+    }
+
+    public ImVectorRef(int size, int capacity, IntPtr data)
+    {
+        Size = size;
+        Capacity = capacity;
+        Data = (void*) data;
+    }
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public readonly unsafe struct ImVectorRef<T> where T : unmanaged
 {
     public readonly int Size;
     public readonly int Capacity;

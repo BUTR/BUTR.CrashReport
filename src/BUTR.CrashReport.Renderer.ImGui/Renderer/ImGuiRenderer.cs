@@ -2,7 +2,6 @@
 using BUTR.CrashReport.ImGui.Enums;
 using BUTR.CrashReport.ImGui.Extensions;
 using BUTR.CrashReport.ImGui.Structures;
-using BUTR.CrashReport.ImGui.Utils;
 using BUTR.CrashReport.Memory;
 using BUTR.CrashReport.Models;
 using BUTR.CrashReport.Renderer.ImGui.Extensions;
@@ -150,8 +149,7 @@ public partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRe
             _onDarkModeChanged?.Invoke(_isDarkMode);
         }
 
-
-        if (_imgui.Begin("Crash Report\0"u8, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse))
+        if (_imgui.Begin("Crash Report\0"u8, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.UnsavedDocument))
         {
             RenderSummary();
 

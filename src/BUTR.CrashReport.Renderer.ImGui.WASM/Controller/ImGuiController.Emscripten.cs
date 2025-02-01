@@ -41,7 +41,6 @@ partial class ImGuiController
 
         io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.NavEnableKeyboard;
         io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.NavEnableGamepad;
-        io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.NavEnableSetMousePos;
         io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.DpiEnableScaleFonts;
         io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.DpiEnableScaleViewports;
         io.ConfigFlags |= ImGuiNET.ImGuiConfigFlags.IsTouchScreen;

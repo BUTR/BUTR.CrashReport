@@ -1,5 +1,6 @@
 ﻿using BUTR.CrashReport.ImGui.Structures;
 
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -21,9 +22,13 @@ public readonly unsafe struct ImDrawListWrapper : IImDrawList
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddText(ref readonly Vector2 pos, uint col, ReadOnlySpan<byte> utf8Data)
     {
-        var ptrStart = (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8Data));
-        var endPtr = (byte*) Unsafe.Add<byte>(ptrStart, utf8Data.Length - 1);
-        ImGui.ImDrawList_AddText_Vec2(NativePtr, pos, col, ptrStart, endPtr);
+        fixed (byte* utf8DataPtr = utf8Data)
+        {
+            var ptrStart = utf8DataPtr;
+            var ptrEnd = (byte*) Unsafe.Add<byte>(ptrStart, utf8Data.Length - 1);
+            Debug.Assert(*ptrEnd == 0, "string must be null-terminated");
+            ImGui.ImDrawList_AddText_Vec2(NativePtr, pos, col, ptrStart, ptrEnd);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

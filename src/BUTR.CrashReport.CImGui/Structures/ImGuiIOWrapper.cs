@@ -32,9 +32,6 @@ public readonly unsafe struct ImGuiIOWrapper : IImGuiIO
     public ref float DeltaTime => ref Unsafe.AsRef<float>(&NativePtr->DeltaTime);
     public ref Vector2 DisplayFramebufferScale => ref Unsafe.AsRef<Vector2>(&NativePtr->DisplayFramebufferScale);
     public ref bool MouseDrawCursor => ref Unsafe.AsRef<bool>(&NativePtr->MouseDrawCursor);
-    public ref IntPtr GetClipboardTextFn => ref Unsafe.AsRef<IntPtr>(&NativePtr->GetClipboardTextFn);
-    public ref IntPtr SetClipboardTextFn => ref Unsafe.AsRef<IntPtr>(&NativePtr->SetClipboardTextFn);
-    public IntPtr ClipboardUserData { get => (IntPtr) NativePtr->ClipboardUserData; set => NativePtr->ClipboardUserData = (void*) value; }
     public ref bool WantSetMousePos => ref Unsafe.AsRef<bool>(&NativePtr->WantSetMousePos);
     public ref Vector2 MousePos => ref Unsafe.AsRef<Vector2>(&NativePtr->MousePos);
     public ref float MouseWheel => ref Unsafe.AsRef<float>(&NativePtr->MouseWheel);

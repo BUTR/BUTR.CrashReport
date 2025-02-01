@@ -26,7 +26,7 @@ public sealed class Allocator : IDisposable
         var ptr = (T*) NativeMemory.Alloc((UIntPtr) Unsafe.SizeOf<T>());
 #endif
         _allocated.Add(new IntPtr(ptr));
-        Unsafe.Write(ptr, value);
+        Unsafe.WriteUnaligned(ptr, value);
         return ptr;
     }
 

@@ -166,24 +166,32 @@ partial class CmGui
     public igTableNextColumnDel igTableNextColumn = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void igTextVDel(IntPtrByte text, IntPtrVoid args);
-    public igTextVDel igTextV = null!;
+    public delegate void igTextUnformattedDel(IntPtrByte text, IntPtrByte text_end);
+    public igTextUnformattedDel igTextUnformatted = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void igTextColoredVDel(Vector4 col, IntPtrByte text, IntPtrVoid args);
-    public igTextColoredVDel igTextColoredV = null!;
+    public delegate void igPushTextWrapPosDel(float wrap_local_pos_x);
+    public igPushTextWrapPosDel igPushTextWrapPos = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate void igTextWrappedVDel(IntPtrByte text, IntPtrVoid args);
-    public igTextWrappedVDel igTextWrappedV = null!;
+    public delegate void igGetContentRegionAvailDel(IntPtrVector2 pOut);
+    public igGetContentRegionAvailDel igGetContentRegionAvail = null!;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void igGetWindowPosDel(IntPtrVector2 pOut);
+    public igGetWindowPosDel igGetWindowPos = null!;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void igPopTextWrapPosDel();
+    public igPopTextWrapPosDel igPopTextWrapPos = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void igTextLinkOpenURLDel(IntPtrByte text, IntPtrByte url);
     public igTextLinkOpenURLDel igTextLinkOpenURL = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    public delegate byte igTreeNodeExV_StrDel(IntPtrByte label, ImGuiNET.ImGuiTreeNodeFlags flags, IntPtrByte text, IntPtrVoid args);
-    public igTreeNodeExV_StrDel igTreeNodeExV_Str = null!;
+    public delegate byte igTreeNodeEx_StrDel(IntPtrByte label, ImGuiNET.ImGuiTreeNodeFlags flags);
+    public igTreeNodeEx_StrDel igTreeNodeEx_Str = null!;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void igTreePopDel();

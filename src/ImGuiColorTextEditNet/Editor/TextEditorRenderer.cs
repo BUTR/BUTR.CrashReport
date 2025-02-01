@@ -293,7 +293,7 @@ internal class TextEditorRenderer<TImDrawListRef, TImGuiStyleRef, TColorsRangeAc
                 {
                     _imGui.BeginTooltip();
                     _imGui.PushStyleColor(ImGuiCol.Text, in ColorVec(ColorPalette.ErrorText));
-                    _imGui.Text("Exception"u8);
+                    _imGui.Text("Exception\0"u8);
                     _imGui.PopStyleColor();
                     _imGui.EndTooltip();
                 }
@@ -359,19 +359,19 @@ internal class TextEditorRenderer<TImDrawListRef, TImGuiStyleRef, TColorsRangeAc
                 }
                 prevColor = color;
 
-                if (glyph.Char == '\t')
+                switch (glyph.Char)
                 {
-                    bufferOffset.X = (1.0f + (float) Math.Floor((1.0f + bufferOffset.X) / (_text.TabSize * spaceSize))) * (_text.TabSize * spaceSize);
-                    ++i;
-                }
-                else if (glyph.Char == ' ')
-                {
-                    bufferOffset.X += spaceSize;
-                    i++;
-                }
-                else
-                {
-                    _lineBuffer.Append(line[i++].Char);
+                    case '\t':
+                        bufferOffset.X = (1.0f + (float) Math.Floor((1.0f + bufferOffset.X) / (_text.TabSize * spaceSize))) * (_text.TabSize * spaceSize);
+                        i++;
+                        break;
+                    case ' ':
+                        bufferOffset.X += spaceSize;
+                        i++;
+                        break;
+                    default:
+                        _lineBuffer.Append(line[i++].Char);
+                        break;
                 }
             }
 
@@ -386,31 +386,21 @@ internal class TextEditorRenderer<TImDrawListRef, TImGuiStyleRef, TColorsRangeAc
 
     private void DrawText(ref readonly TImDrawListRef drawList, ref readonly Vector2 offset, uint color, StringBuilder sb, out Vector2 textSize)
     {
-        IMemoryOwner<char>? tempMemory = null;
-        if (sb.Length > 1024)
-            tempMemory = MemoryPool<char>.Shared.Rent(sb.Length);
+        var length = sb.Length;
+        var tempMemory = length > 1024 ? MemoryPool<char>.Shared.Rent(length) : null;
+        var temp = length <= 1024 ? stackalloc char[length] : tempMemory!.Memory.Span;
 
-        try
+        var i = 0;
+        foreach (var chunk in sb.GetChunks())
         {
-            var temp = sb.Length > 1024
-                ? tempMemory!.Memory.Span.Slice(0, sb.Length)
-                : stackalloc char[sb.Length];
-
-            var i = 0;
-
-            foreach (var chunk in sb.GetChunks())
-            {
-                chunk.Span.CopyTo(temp.Slice(i));
-                i += chunk.Length;
-            }
-
-            drawList.AddText(in offset, color, temp);
-            _imGui.CalcTextSize(temp, out textSize);
+            chunk.Span.CopyTo(temp.Slice(i));
+            i += chunk.Length;
         }
-        finally
-        {
-            tempMemory?.Dispose();
-        }
+
+        _imGui.CalcTextSize(temp, out textSize);
+        drawList.AddText(in offset, color, temp);
+        
+        tempMemory?.Dispose();
     }
 
     private float TextDistanceToLineStart(ref readonly Coordinates position)
@@ -422,11 +412,16 @@ internal class TextEditorRenderer<TImDrawListRef, TImGuiStyleRef, TColorsRangeAc
         for (var i = 0; i < line.Length && i < colIndex;)
         {
             var c = line[i].Char;
-            _imGui.CalcTextSize(c, out var charSizeV2);
-            distance = c == '\t'
-                ? (1.0f + (float) Math.Floor((1.0f + distance) / (_text.TabSize * spaceSize))) * (_text.TabSize * spaceSize)
-                //: distance + _charWidthCache.Get(c);
-                : distance + charSizeV2.X;
+            if (c == '\t')
+            {
+                distance = (1.0f + (float) Math.Floor((1.0f + distance) / (_text.TabSize * spaceSize))) * (_text.TabSize * spaceSize);
+            }
+            else
+            {
+                // distance + _charWidthCache.Get(c);
+                _imGui.CalcTextSize(c, out var charSizeV2);
+                distance = distance + charSizeV2.X;
+            }
 
             i++;
         }

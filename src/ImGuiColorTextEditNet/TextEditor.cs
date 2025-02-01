@@ -52,18 +52,18 @@ public class TextEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTyp
         };
     }
 
-    public void Render(string utf16Title, in Vector2 size = new())
+    public void Render(string utf16Title, in Vector2 size = default)
     {
         var utf8ByteCount = Encoding.UTF8.GetMaxByteCount(utf16Title.Length) + 1;
         var tempMemory = utf8ByteCount > 2048 ? MemoryPool<byte>.Shared.Rent(utf8ByteCount) : null;
         var utf8 = utf8ByteCount <= 2048 ? stackalloc byte[utf8ByteCount] : tempMemory!.Memory.Span;
-        var length = Utf8Utils.Utf16ToUtf8(utf16Title, utf8);
+        var length = Utf8Utils.Utf16ToUtf8(utf16Title, utf8) + 1;
         utf8[length] = 0;
 
         Renderer.Render(utf8, in size);
     }
 
-    public void Render(ReadOnlySpan<byte> utf8Title, in Vector2 size = new()) => Renderer.Render(utf8Title, in size);
+    public void Render(ReadOnlySpan<byte> utf8Title, in Vector2 size = default) => Renderer.Render(utf8Title, in size);
 
     public void AddGlyphs(Span<Glyph> glyphs) => Text.AddGlyphs(glyphs);
 

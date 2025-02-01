@@ -192,16 +192,29 @@ internal partial class ImGuiController
             cmdList.GetIdxBuffer(out var idxBuffer);
             cmdList.GetCmdBuffer(out var cmdBuffer);
 
-            _gl.BufferData(BufferTarget.ArrayBuffer, (UIntPtr) (vtxBuffer.Size * _sizeOfImDrawVert), vtxBuffer.Data, BufferUsageHint.StreamDraw);
+            _gl.BufferData(BufferTarget.ArrayBuffer, vtxBuffer.SizeInBytes, vtxBuffer.Data, BufferUsageHint.StreamDraw);
             _gl.CheckError();
-            _gl.BufferData(BufferTarget.ElementArrayBuffer, (UIntPtr) (idxBuffer.Size * sizeof(ushort)), idxBuffer.Data, BufferUsageHint.StreamDraw);
+            _gl.BufferData(BufferTarget.ElementArrayBuffer, idxBuffer.SizeInBytes, idxBuffer.Data, BufferUsageHint.StreamDraw);
             _gl.CheckError();
 
             for (var cmd_i = 0; cmd_i < cmdBuffer.Size; cmd_i++)
             {
                 ref var pcmd = ref cmdBuffer[cmd_i];
-                //if (pcmd.UserCallback != IntPtr.Zero)
-                //    ThrowNotImplementedException();
+
+                switch (pcmd.UserCallback)
+                {
+                    case 0:
+                        break;
+                    case -1 or -8:
+                        SetupRenderState(in drawData, framebufferWidth, framebufferHeight);
+                        break;
+                    default:
+                        ThrowNotImplementedException();
+                        break;
+                }
+
+                if (pcmd.ElemCount == 0)
+                    continue;
 
                 var clip_min = new Vector2Ref((pcmd.ClipRect.X - clipOffset.X) * clipScale.X, (pcmd.ClipRect.Y - clipOffset.Y) * clipScale.Y);
                 var clip_max = new Vector2Ref((pcmd.ClipRect.Z - clipOffset.X) * clipScale.X, (pcmd.ClipRect.W - clipOffset.Y) * clipScale.Y);

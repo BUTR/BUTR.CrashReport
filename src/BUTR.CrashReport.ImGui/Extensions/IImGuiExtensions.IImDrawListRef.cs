@@ -17,10 +17,10 @@ partial class IImGuiExtensions
         var utf8ByteCount = Encoding.UTF8.GetMaxByteCount(utf16Data.Length) + 1;
         var tempMemory = utf8ByteCount > 2048 ? MemoryPool<byte>.Shared.Rent(utf8ByteCount) : null;
         var utf8 = utf8ByteCount <= 2048 ? stackalloc byte[utf8ByteCount] : tempMemory!.Memory.Span;
-        var length = Utf8Utils.Utf16ToUtf8(utf16Data, utf8);
+        var length = Utf8Utils.Utf16ToUtf8(utf16Data, utf8) + 1;
         utf8[length] = 0;
 
-        imGui.AddText(in pos, col, utf8.Slice(0, length + 1));
+        imGui.AddText(in pos, col, utf8.Slice(0, length));
         tempMemory?.Dispose();
     }
 }

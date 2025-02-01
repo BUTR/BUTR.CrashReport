@@ -38,9 +38,12 @@ unsafe partial class GL
 
     public void ShaderSourceUtf8(uint shader, ReadOnlySpan<byte> source)
     {
-        var sources = stackalloc byte*[1] { (byte*) Unsafe.AsPointer(ref MemoryMarshal.GetReference(source)) };
-        var length = stackalloc int[1] { source.Length };
-        ShaderSource(shader, 1, (IntPtr) sources, length);
+        fixed (byte* sourcePtr = source)
+        {
+            var sources = stackalloc byte*[1] { sourcePtr };
+            var length = stackalloc int[1] { source.Length };
+            ShaderSource(shader, 1, (IntPtr) sources, length);
+        }
     }
 
     public bool GetShaderCompileStatus(uint shader)

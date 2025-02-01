@@ -30,7 +30,22 @@ public class DelegateLoaderGenerator : IIncrementalGenerator
                 .Where(tuple => tuple.typeToWrap != null);
         });
 
-        context.RegisterSourceOutput(assemblyAttributes, (spc, attr) =>
+        var classAttributes = context.SyntaxProvider.ForAttributeWithMetadataName(
+                AttributeName,
+                static (node, _) => node is Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax,
+                static (context, _) =>
+                {
+                    var attribute = context.Attributes.FirstOrDefault();
+                    if (attribute == null) return default;
+
+                    var typeToWrap = attribute.ConstructorArguments[0].Value as INamedTypeSymbol;
+                    var useDelegateTypeName = (bool) (attribute.ConstructorArguments[1].Value ?? false);
+
+                    return (typeToWrap, useDelegateTypeName);
+                })
+            .Where(tuple => tuple.typeToWrap != null);
+
+        void Action(SourceProductionContext spc, (INamedTypeSymbol?, bool) attr)
         {
             var (typeToWrap, useDelegateTypeName) = attr;
 
@@ -73,7 +88,10 @@ public class DelegateLoaderGenerator : IIncrementalGenerator
             sourceBuilder.AppendLine("}");
 
             spc.AddSource($"{className}_Generated.g.cs", sourceBuilder.ToString());
-        });
+        }
+
+        context.RegisterSourceOutput(assemblyAttributes, Action);
+        context.RegisterSourceOutput(classAttributes, Action);
     }
 
     private static IEnumerable<IFieldSymbol> GetFieldsFromClass(INamedTypeSymbol classSymbol)

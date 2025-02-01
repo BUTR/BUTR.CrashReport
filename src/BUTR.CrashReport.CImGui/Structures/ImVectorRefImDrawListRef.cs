@@ -1,7 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ImGui.Structures;
 
+[StructLayout(LayoutKind.Sequential)]
 public readonly unsafe ref struct ImVectorRefImDrawListRef
 {
     public readonly int Size;

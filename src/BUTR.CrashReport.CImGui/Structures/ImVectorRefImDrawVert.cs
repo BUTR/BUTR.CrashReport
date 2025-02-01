@@ -1,12 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ImGui.Structures;
 
-public readonly unsafe ref struct ImVectorRefImDrawVert
+[StructLayout(LayoutKind.Sequential)]
+public readonly unsafe struct ImVectorRefImDrawVert
 {
     public readonly int Size;
     public readonly int Capacity;
     public readonly ImGuiNET.ImDrawVert* Data;
+    public UIntPtr SizeInBytes => (UIntPtr) (Size * sizeof(ImGuiNET.ImDrawVert));
 
     public ImVectorRefImDrawVert(ImGuiNET.ImVector vector)
     {

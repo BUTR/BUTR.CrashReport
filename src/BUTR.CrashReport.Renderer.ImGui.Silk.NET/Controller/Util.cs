@@ -45,8 +45,11 @@ internal static class Util
         gl.VertexAttribPointer(index, size, type, normalized, stride, pointer.ToPointer());
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void BufferData<T>(this GL gl, GLEnum target, Span<T> span, GLEnum usage) =>
-        gl.BufferData(target, (nuint) (span.Length * Unsafe.SizeOf<T>()), Unsafe.AsPointer(ref MemoryMarshal.GetReference(span)), usage);
+    public static unsafe void BufferData<T>(this GL gl, GLEnum target, Span<T> span, GLEnum usage) where T : unmanaged
+    {
+        fixed (T* ptr = span)
+            gl.BufferData(target, (nuint) (span.Length * Unsafe.SizeOf<T>()), ptr, usage);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe void DrawElementsBaseVertex2(this GL gl, GLEnum mode, uint count, GLEnum type, IntPtr indices, int basevertex) =>

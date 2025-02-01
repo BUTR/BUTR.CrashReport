@@ -10,7 +10,7 @@ namespace BUTR.CrashReport.Native.SourceGenerator;
 public class PInvokeGenerator : IIncrementalGenerator
 {
     private const string AttributeName = "BUTR.CrashReport.Native.PInvokeDelegateLoaderAttribute";
-    
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var assemblyAttributes = context.CompilationProvider.SelectMany(static (compilation, _) =>
@@ -31,7 +31,24 @@ public class PInvokeGenerator : IIncrementalGenerator
                 .Where(tuple => tuple.typeToWrap != null && !string.IsNullOrEmpty(tuple.nativeLibName));
         });
 
-        context.RegisterSourceOutput(assemblyAttributes, (spc, attr) =>
+        var classAttributes = context.SyntaxProvider.ForAttributeWithMetadataName(
+                AttributeName,
+                static (node, _) => node is Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax,
+                static (context, _) =>
+                {
+                    var attribute = context.Attributes.FirstOrDefault();
+                    if (attribute == null) return default;
+
+                    var classSymbol = (INamedTypeSymbol) context.TargetSymbol;
+                    var typeToWrap = classSymbol;
+                    var nativeLibName = attribute.ConstructorArguments[0].Value as string;
+                    var useDelegateTypeName = (bool) (attribute.ConstructorArguments[1].Value ?? false);
+
+                    return (typeToWrap, nativeLibName, useDelegateTypeName);
+                })
+            .Where(tuple => tuple.typeToWrap != null && !string.IsNullOrEmpty(tuple.nativeLibName));
+
+        void Action(SourceProductionContext spc, (INamedTypeSymbol?, string?, bool) attr)
         {
             var (typeToWrap, nativeLibName, useDelegateTypeName) = attr;
 
@@ -81,13 +98,17 @@ public class PInvokeGenerator : IIncrementalGenerator
 
                 sourceBuilder.AppendLine($"            origial.{fieldName} = {fieldName};");
             }
+
             sourceBuilder.AppendLine($"        }}");
 
             sourceBuilder.AppendLine("    }");
             sourceBuilder.AppendLine("}");
 
             spc.AddSource($"{className}_Generated.g.cs", sourceBuilder.ToString());
-        });
+        }
+
+        context.RegisterSourceOutput(assemblyAttributes, Action);
+        context.RegisterSourceOutput(classAttributes, Action);
     }
 
     private static IEnumerable<IFieldSymbol> GetFieldsFromClass(INamedTypeSymbol classSymbol)

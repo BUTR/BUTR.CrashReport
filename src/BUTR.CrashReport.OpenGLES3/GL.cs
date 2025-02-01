@@ -243,12 +243,16 @@ public partial class GL
         var length = Utf8Utils.Utf16ToUtf8(utf16FunctionName, utf8);
         utf8[length] = 0;
 
-        var ptr = (IntPtr) _getFunctionPointer((IntPtr) Unsafe.AsPointer(ref MemoryMarshal.GetReference(utf8)));
-        tempMemory?.Dispose();
+        fixed (byte* utf8Ptr = utf8)
+        {
+            var ptr = (IntPtr) _getFunctionPointer((IntPtr) utf8Ptr);
 
-        if (ptr == IntPtr.Zero)
-            throw new InvalidOperationException($"Failed to load function pointer for {utf16FunctionName}");
+            tempMemory?.Dispose();
 
-        return ptr;
+            if (ptr == IntPtr.Zero)
+                throw new InvalidOperationException($"Failed to load function pointer for {utf16FunctionName}");
+
+            return ptr;
+        }
     }
 }

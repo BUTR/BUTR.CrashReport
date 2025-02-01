@@ -25,21 +25,25 @@ public readonly unsafe ref struct ImFontAtlasWrapper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddFontFromMemoryTTF<T>(Span<T> fontData, float size_pixels, ImFontConfigWrapper config, out ImGuiNET.ImFontPtr imFontPtr)
+    public void AddFontFromMemoryTTF<T>(Span<T> fontData, float size_pixels, ImFontConfigWrapper config, out ImGuiNET.ImFontPtr imFontPtr) where T : unmanaged
     {
-        var font_data = Unsafe.AsPointer(ref MemoryMarshal.GetReference(fontData));
         var font_data_size = fontData.Length;
         ushort* glyph_ranges = null;
-        imFontPtr = new ImGuiNET.ImFontPtr((ImGuiNET.ImFont*) ImGui.ImFontAtlas_AddFontFromMemoryTTF(NativePtr, font_data, font_data_size, size_pixels, config.NativePtr, glyph_ranges));
+        fixed (T* font_data = fontData)
+        {
+            imFontPtr = new ImGuiNET.ImFontPtr((ImGuiNET.ImFont*) ImGui.ImFontAtlas_AddFontFromMemoryTTF(NativePtr, font_data, font_data_size, size_pixels, config.NativePtr, glyph_ranges));
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void AddFontFromMemoryCompressedTTF<T>(Span<T> fontData, float size_pixels, ImFontConfigWrapper config, out ImGuiNET.ImFontPtr imFontPtr)
+    public void AddFontFromMemoryCompressedTTF<T>(Span<T> fontData, float size_pixels, ImFontConfigWrapper config, out ImGuiNET.ImFontPtr imFontPtr) where T : unmanaged
     {
-        var font_data = Unsafe.AsPointer(ref MemoryMarshal.GetReference(fontData));
         var font_data_size = fontData.Length;
         ushort* glyph_ranges = null;
-        imFontPtr = new ImGuiNET.ImFontPtr((ImGuiNET.ImFont*) ImGui.ImFontAtlas_AddFontFromMemoryCompressedTTF(NativePtr, font_data, font_data_size, size_pixels, config.NativePtr, glyph_ranges));
+        fixed (T* font_data = fontData)
+        {
+            imFontPtr = new ImGuiNET.ImFontPtr((ImGuiNET.ImFont*) ImGui.ImFontAtlas_AddFontFromMemoryCompressedTTF(NativePtr, font_data, font_data_size, size_pixels, config.NativePtr, glyph_ranges));
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,16 +52,13 @@ public readonly unsafe ref struct ImFontAtlasWrapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void GetTexDataAsRGBA32(out IntPtr out_pixels, out int out_width, out int out_height, out int out_bytes_per_pixel)
     {
-        Unsafe.SkipInit(out out_pixels);
-        Unsafe.SkipInit(out out_width);
-        Unsafe.SkipInit(out out_height);
-        Unsafe.SkipInit(out out_bytes_per_pixel);
-        ImGui.ImFontAtlas_GetTexDataAsRGBA32(
-            NativePtr,
-            (IntPtr*) Unsafe.AsPointer(ref out_pixels),
-            (int*) Unsafe.AsPointer(ref out_width),
-            (int*) Unsafe.AsPointer(ref out_height),
-            (int*) Unsafe.AsPointer(ref out_bytes_per_pixel));
+        fixed (IntPtr* out_pixelsPtr = &out_pixels)
+        fixed (int* out_widthPtr = &out_width)
+        fixed (int* out_heightPtr = &out_height)
+        fixed (int* out_bytes_per_pixelPtr = &out_bytes_per_pixel)
+        {
+            ImGui.ImFontAtlas_GetTexDataAsRGBA32(NativePtr, out_pixelsPtr, out_widthPtr, out_heightPtr, out_bytes_per_pixelPtr);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
