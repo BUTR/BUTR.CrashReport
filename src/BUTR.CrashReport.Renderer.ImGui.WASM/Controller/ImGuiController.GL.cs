@@ -201,6 +201,7 @@ internal partial class ImGuiController
             {
                 ref var pcmd = ref cmdBuffer[cmd_i];
 
+                /*
                 switch (pcmd.UserCallback)
                 {
                     case 0:
@@ -212,6 +213,7 @@ internal partial class ImGuiController
                         ThrowNotImplementedException();
                         break;
                 }
+                */
 
                 if (pcmd.ElemCount == 0)
                     continue;
