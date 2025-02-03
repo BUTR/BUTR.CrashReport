@@ -2,6 +2,7 @@ name: Publish WASM
 
 on:
   push:
+    branches: [ master ]
     tags:
       - 'v*'
 

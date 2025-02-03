@@ -2,6 +2,7 @@ name: Publish Standalone
 
 on:
   push:
+    branches: [ master ]
     tags:
       - 'v*'
 
