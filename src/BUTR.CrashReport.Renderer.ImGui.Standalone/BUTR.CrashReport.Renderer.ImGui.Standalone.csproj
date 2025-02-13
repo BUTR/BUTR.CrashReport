@@ -19,6 +19,11 @@
     <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
   </PropertyGroup>
   
+  <!-- cimgui seems to be broken on arm64 -->
+  <PropertyGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == Arm64">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="$(TargetFramework) == 'net9.0' AND $(Runtime) == '' AND $(RuntimeSingleFile) == ''">
     <PublishAot>true</PublishAot>
     <OptimizationPreference>Size</OptimizationPreference>
