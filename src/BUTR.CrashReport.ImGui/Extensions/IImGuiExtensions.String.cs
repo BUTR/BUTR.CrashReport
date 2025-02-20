@@ -177,7 +177,7 @@ partial class IImGuiExtensions
         Span<byte> utf8 = stackalloc byte[5];
         var length = Utf8Utils.Utf16ToUtf8(utf16Data, utf8) + 1;
         utf8[length] = 0;
-        
+
         imGui.CalcTextSize(utf8.Slice(0, length), out size);
     }
 

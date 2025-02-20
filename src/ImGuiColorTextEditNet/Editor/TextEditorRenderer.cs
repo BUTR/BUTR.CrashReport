@@ -399,7 +399,7 @@ internal class TextEditorRenderer<TImDrawListRef, TImGuiStyleRef, TColorsRangeAc
 
         _imGui.CalcTextSize(temp, out textSize);
         drawList.AddText(in offset, color, temp);
-        
+
         tempMemory?.Dispose();
     }
 

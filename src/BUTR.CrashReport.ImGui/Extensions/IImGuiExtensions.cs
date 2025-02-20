@@ -50,7 +50,7 @@ public static partial class IImGuiExtensions
         valueUtf8[valueUtf8.Length - 1] = 0;
         imGui.Text(valueUtf8);
     }
-    
+
     private static readonly LiteralSpan<byte> _hexChars = "0123456789ABCDEF"u8;
     private static void IntToHexUtf8(int value, Span<byte> buffer)
     {
