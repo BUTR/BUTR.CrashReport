@@ -37,6 +37,18 @@ public sealed record ExceptionModel
     public required string Message { get; set; }
 
     /// <summary>
+    /// <inheritdoc cref="System.Exception.Source"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="System.Exception.Source"/></returns>
+    public required string Source { get; set; }
+
+    /// <summary>
+    /// <inheritdoc cref="System.Exception.HResult"/>
+    /// </summary>
+    /// <returns><inheritdoc cref="System.Exception.HResult"/></returns>
+    public required int HResult { get; set; }
+
+    /// <summary>
     /// <inheritdoc cref="System.Exception.StackTrace"/>
     /// </summary>
     /// <returns><inheritdoc cref="System.Exception.StackTrace"/></returns>
@@ -64,6 +76,8 @@ public sealed record ExceptionModel
                SourceLoaderPluginId == other.SourceLoaderPluginId &&
                Type == other.Type &&
                Message == other.Message &&
+               Source == other.Source &&
+               HResult == other.HResult &&
                CallStack == other.CallStack &&
                Equals(InnerException, other.InnerException) &&
                AdditionalMetadata.SequenceEqual(other.AdditionalMetadata);
@@ -79,6 +93,8 @@ public sealed record ExceptionModel
             hashCode = (hashCode * 397) ^ (SourceLoaderPluginId != null ? SourceLoaderPluginId.GetHashCode() : 0);
             hashCode = (hashCode * 397) ^ Type.GetHashCode();
             hashCode = (hashCode * 397) ^ Message.GetHashCode();
+            hashCode = (hashCode * 397) ^ Source.GetHashCode();
+            hashCode = (hashCode * 397) ^ HResult.GetHashCode();
             hashCode = (hashCode * 397) ^ CallStack.GetHashCode();
             hashCode = (hashCode * 397) ^ (InnerException != null ? InnerException.GetHashCode() : 0);
             hashCode = (hashCode * 397) ^ AdditionalMetadata.GetHashCode();

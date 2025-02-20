@@ -97,6 +97,8 @@ public static partial class CrashReportHtml
         var pluginId = stacktrace?.ExecutingMethod.LoaderPluginId ?? "UNKNOWN";
         var sourcePluginId = ex.SourceLoaderPluginId ?? "UNKNOWN";
 
+        var hasHResult = ex.HResult != 0;
+        var hasSource = !string.IsNullOrWhiteSpace(ex.Source);
         var hasMessage = !string.IsNullOrWhiteSpace(ex.Message);
         var hasCallStack = !string.IsNullOrWhiteSpace(ex.CallStack);
         var hasInner = ex.InnerException is not null;
@@ -107,6 +109,8 @@ public static partial class CrashReportHtml
             .AppendIf(pluginId != "UNKNOWN", sb => sb.Append("Potential Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(pluginId).Append("\")'>").Append(pluginId).Append("</a></b>").Append("<br/>"))
             .AppendIf(sourcePluginId != "UNKNOWN", sb => sb.Append("Potential Source Plugin Id: ").Append("<b><a href='javascript:;' onclick='scrollToElement(\"").Append(sourcePluginId).Append("\")'>").Append(sourcePluginId).Append("</a></b>").Append("<br/>"))
             .Append("Type: ").Append(ex.Type.EscapeGenerics()).Append("<br/>")
+            .AppendIf(hasHResult, sb => sb.Append("Source: ").Append(ex.Source).Append("<br/>"))
+            .AppendIf(hasSource, sb => sb.Append("HResult: 0x").Append(ex.HResult.ToString("x8")).Append("<br/>"))
             .AppendIf(hasMessage, sb => sb.Append("Message: ").Append(ex.Message.EscapeGenerics()).Append("<br/>"))
             .AppendIf(hasCallStack, sb => sb.Append("Stacktrace:").Append("<br/>"))
             .AppendIf(hasCallStack, "<ol>")

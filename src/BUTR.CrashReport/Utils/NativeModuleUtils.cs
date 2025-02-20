@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 
 namespace BUTR.CrashReport.Utils;
@@ -32,6 +33,7 @@ internal static class NativeModuleUtils
             signature[1] = (byte) fs.ReadByte();
             signature[2] = (byte) fs.ReadByte();
             signature[3] = (byte) fs.ReadByte();
+            fs.Seek(0, SeekOrigin.Begin);
 
             if (signature.Slice(0, PEHeader.Length).SequenceEqual(PEHeader))
             {

@@ -89,6 +89,20 @@ partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImG
         _imgui.SameLine();
         _imgui.Text(ex.Type);
 
+        if (!string.IsNullOrWhiteSpace(ex.Source))
+        {
+            _imgui.Text("Source: \0"u8);
+            _imgui.SameLine();
+            _imgui.Text(ex.Source);
+        }
+
+        if (ex.HResult != 0)
+        {
+            _imgui.Text("HResult: \0"u8);
+            _imgui.SameLine();
+            _imgui.Hex(ex.HResult);
+        }
+
         if (!string.IsNullOrWhiteSpace(ex.Message))
         {
             _imgui.Text("Message: \0"u8);

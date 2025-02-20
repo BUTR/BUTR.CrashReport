@@ -1,4 +1,5 @@
 ﻿using BUTR.CrashReport.ImGui.Enums;
+using BUTR.CrashReport.Memory;
 
 using System.Buffers;
 using System.Buffers.Text;
@@ -34,6 +35,32 @@ public static partial class IImGuiExtensions
         Utf8Formatter.TryFormat(value, valueUtf8, out _);
         valueUtf8[valueUtf8.Length - 1] = 0;
         imGui.Text(valueUtf8);
+    }
+
+    private static readonly LiteralSpan<byte> _hexPrefix = "0x"u8;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
+    public static unsafe void Hex(this IImGui imGui, int value)
+    {
+        const int hexLength = sizeof(int) * sizeof(char);
+        var hexPrefix = new ReadOnlySpan<byte>(_hexPrefix.Ptr, _hexPrefix.Length);
+        Span<byte> valueUtf8 = stackalloc byte[hexPrefix.Length + (hexLength + 1)];
+        hexPrefix.CopyTo(valueUtf8);
+        IntToHexUtf8(value, valueUtf8.Slice(hexPrefix.Length, hexLength));
+        valueUtf8[valueUtf8.Length - 1] = 0;
+        imGui.Text(valueUtf8);
+    }
+    
+    private static readonly LiteralSpan<byte> _hexChars = "0123456789ABCDEF"u8;
+    private static void IntToHexUtf8(int value, Span<byte> buffer)
+    {
+        var i = buffer.Length; // Start from the end (right to left)
+
+        for (var j = 0; j < 8; j++)
+        {
+            buffer[--i] = _hexChars[value & 0xF]; // Get last hex digit as byte
+            value >>= 4; // Shift right by 4 bits
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]

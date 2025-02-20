@@ -31,6 +31,8 @@ public static class CrashReportModelUtils
                 SourceLoaderPluginId = assembly?.LoaderPluginId,
                 Type = ex.GetType().FullName ?? string.Empty,
                 Message = ex.Message,
+                Source = ex.Source,
+                HResult = ex.HResult,
                 CallStack = ex.StackTrace ?? string.Empty,
                 InnerException = ex.InnerException is not null ? GetRecursiveExceptionInternal(assemblies, ex.InnerException) : null,
                 AdditionalMetadata = [],
@@ -63,7 +65,14 @@ public static class CrashReportModelUtils
                         MethodDeclaredTypeName = patchMethod.Method.DeclaringType?.FullName,
                         MethodName = patchMethod.Method.Name,
                         MethodFullDescription = patchMethod.Method.FullDescription().ToString(),
-                        MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
+                        MethodTypeParameters = patchMethod.Method is MethodInfo { IsGenericMethodDefinition: true } mi
+                            ? mi.GetGenericMethodDefinition().GetGenericArguments().Select(x => x.FullName ?? x.Name).ToArray()
+                            : [],
+                        MethodTypeArguments = patchMethod.Method is MethodInfo { IsGenericMethodDefinition: false }
+                            ? patchMethod.Method.GetGenericArguments().Select(x => x.FullDescription().ToString()).ToArray()
+                            : [],
+                        MethodParameters = patchMethod.Method.GetParameters().Select(x => x.ParameterType.FullDescription().ToString()).ToArray(),
+                        MethodParameterNames = patchMethod.Method.GetParameters().Select(x => x.Name).ToArray(),
                         ILInstructions = new()
                         {
                             Instructions = patchDecompiled.IL.Code,
@@ -118,7 +127,14 @@ public static class CrashReportModelUtils
                         MethodDeclaredTypeName = entry.Method.DeclaringType?.FullName,
                         MethodName = entry.Method.Name,
                         MethodFullDescription = entry.Method.FullDescription().ToString(),
-                        MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
+                        MethodTypeParameters = entry.Method is MethodInfo { IsGenericMethodDefinition: true } mi1
+                            ? mi1.GetGenericMethodDefinition().GetGenericArguments().Select(x => x.FullName ?? x.Name).ToArray()
+                            : [],
+                        MethodTypeArguments = entry.Method is MethodInfo { IsGenericMethodDefinition: false }
+                            ? entry.Method.GetGenericArguments().Select(x => x.FullDescription().ToString()).ToArray()
+                            : [],
+                        MethodParameters = entry.Method.GetParameters().Select(x => x.ParameterType.FullDescription().ToString()).ToArray(),
+                        MethodParameterNames = entry.Method.GetParameters().Select(x => x.Name).ToArray(),
                         NativeInstructions = new()
                         {
                             Instructions = nativeInstructions.Code,
@@ -173,7 +189,14 @@ public static class CrashReportModelUtils
                         MethodDeclaredTypeName = entry.OriginalMethod.Method.DeclaringType?.FullName,
                         MethodName = entry.OriginalMethod.Method.Name,
                         MethodFullDescription = entry.OriginalMethod.Method.FullDescription().ToString(),
-                        MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullName ?? string.Empty).ToArray(),
+                        MethodTypeParameters = entry.OriginalMethod.Method is MethodInfo { IsGenericMethodDefinition: true } mi2
+                            ? mi2.GetGenericMethodDefinition().GetGenericArguments().Select(x => x.FullName ?? x.Name).ToArray()
+                            : [],
+                        MethodTypeArguments = entry.OriginalMethod.Method is MethodInfo { IsGenericMethodDefinition: false }
+                            ? entry.OriginalMethod.Method.GetGenericArguments().Select(x => x.FullDescription().ToString()).ToArray()
+                            : [],
+                        MethodParameters = entry.OriginalMethod.Method.GetParameters().Select(x => x.ParameterType.FullDescription().ToString()).ToArray(),
+                        MethodParameterNames = entry.OriginalMethod.Method.GetParameters().Select(x => x.Name).ToArray(),
                         ILInstructions = originalDecompiled is null ? null : new()
                         {
                             Instructions = originalDecompiled.IL.Code,

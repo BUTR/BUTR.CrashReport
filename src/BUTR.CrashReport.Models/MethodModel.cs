@@ -44,9 +44,24 @@ public record MethodModel
     public required string MethodFullDescription { get; set; }
 
     /// <summary>
+    /// The list of generic type parameters that are part of the method signature.
+    /// </summary>
+    public required IList<string> MethodTypeParameters { get; set; } = new List<string>();
+
+    /// <summary>
+    /// The list of generic type arguments that are part of the method signature.
+    /// </summary>
+    public required IList<string> MethodTypeArguments { get; set; } = new List<string>();
+
+    /// <summary>
     /// The list of types that are part of the method signature.
     /// </summary>
     public required IList<string> MethodParameters { get; set; } = new List<string>();
+
+    /// <summary>
+    /// The list of types that are part of the method signature.
+    /// </summary>
+    public required IList<string> MethodParameterNames { get; set; } = new List<string>();
 
     /// <summary>
     /// The Common Intermediate Language (CIL/IL) representation of the method.
@@ -80,6 +95,8 @@ public record MethodModel
                MethodDeclaredTypeName == other.MethodDeclaredTypeName &&
                MethodName == other.MethodName &&
                MethodFullDescription == other.MethodFullDescription &&
+               MethodTypeParameters.SequenceEqual(other.MethodTypeParameters) &&
+               MethodTypeArguments.SequenceEqual(other.MethodTypeArguments) &&
                MethodParameters.SequenceEqual(other.MethodParameters) &&
                ILInstructions == other.ILInstructions &&
                ILMixedInstructions == other.ILMixedInstructions &&
@@ -98,6 +115,8 @@ public record MethodModel
             hashCode = (hashCode * 397) ^ MethodDeclaredTypeName?.GetHashCode() ?? 0;
             hashCode = (hashCode * 397) ^ MethodName.GetHashCode();
             hashCode = (hashCode * 397) ^ MethodFullDescription.GetHashCode();
+            hashCode = (hashCode * 397) ^ MethodTypeParameters.GetHashCode();
+            hashCode = (hashCode * 397) ^ MethodTypeArguments.GetHashCode();
             hashCode = (hashCode * 397) ^ MethodParameters.GetHashCode();
             hashCode = (hashCode * 397) ^ ILInstructions?.GetHashCode() ?? 0;
             hashCode = (hashCode * 397) ^ ILMixedInstructions?.GetHashCode() ?? 0;

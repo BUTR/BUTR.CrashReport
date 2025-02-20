@@ -74,6 +74,7 @@ partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImG
                 finalBuilder.AppendLiteral(dependentModule.IsOptional ? " (optional)"u8 : []);
                 finalBuilder.AppendLiteral(!string.IsNullOrEmpty(dependentModule.Version) ? Utf8String.Format($" >= {dependentModule.Version!}") : []);
                 finalBuilder.AppendLiteral(!string.IsNullOrEmpty(dependentModule.VersionRange) ? Utf8String.Format($" {dependentModule.VersionRange!}") : []);
+                finalBuilder.AppendLiteral("\0"u8);
                 SetNestedDictionary(_moduleDependencyTextUtf8, module.Id, dependentModule.ModuleOrPluginId, finalBuilder.AsSpan().ToArray());
 
                 InitializeAdditionalMetadata(_dependencyAdditionalDisplayKeyMetadata, dependentModule, dependentModule.AdditionalMetadata);
