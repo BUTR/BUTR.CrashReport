@@ -34,6 +34,8 @@ jobs:
     - name: Run _build
       run: >-
         dotnet pack src/BUTR.CrashReport.Models/BUTR.CrashReport.Models.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.AutomatedRemediation/BUTR.CrashReport.AutomatedRemediation.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.ContextualAnalysis/BUTR.CrashReport.ContextualAnalysis.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Decompilers/BUTR.CrashReport.Decompilers.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport/BUTR.CrashReport.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.ILMerged/BUTR.CrashReport.ILMerged.csproj --configuration Release -o "./packages";
@@ -44,6 +46,7 @@ jobs:
 
         dotnet pack src/BUTR.CrashReport.Memory/BUTR.CrashReport.Memory.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Native/BUTR.CrashReport.Native.csproj --configuration Release -o "./packages";
+        dotnet pack src/BUTR.CrashReport.Native.SourceGenerator/BUTR.CrashReport.Native.SourceGenerator.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.CImGui/BUTR.CrashReport.CImGui.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.ImGui/BUTR.CrashReport.ImGui.csproj --configuration Release -o "./packages";
         dotnet pack src/BUTR.CrashReport.Renderer.ImGui/BUTR.CrashReport.Renderer.ImGui.csproj --configuration Release -o "./packages";

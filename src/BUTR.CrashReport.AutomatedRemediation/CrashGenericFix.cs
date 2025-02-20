@@ -1,17 +1,17 @@
-﻿namespace BUTR.CrashReport.Models.Analyzer;
+﻿namespace BUTR.CrashReport.AutomatedRemediation;
 
 /// <summary>
 /// Represents a generic crash report fix.
 /// </summary>
-public sealed record GenericSuggestedFix
+public sealed record CrashGenericFix
 {
     /// <summary>
     /// The type of suggested fix.
     /// </summary>
-    public required GenericSuggestedFixType Type { get; set; }
+    public required CrashGenericFixType Type { get; set; }
 
     /// <inheritdoc />
-    public bool Equals(GenericSuggestedFix? other)
+    public bool Equals(CrashGenericFix? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

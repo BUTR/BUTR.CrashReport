@@ -1,12 +1,11 @@
 ﻿using BUTR.CrashReport.Models;
-using BUTR.CrashReport.Models.Diagnostics;
 
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BUTR.CrashReport.Utils;
+namespace BUTR.CrashReport.ContextualAnalysis.Utils;
 
-public static class CrashDiagnosticsUtils
+public static class ContextualAnalysisUtils
 {
     public static IEnumerable<CrashDiagnosis> AnalyzeCrashReport(CrashReportModel crashReport, IEnumerable<CrashDiagnosis> availableDiagnoses)
     {

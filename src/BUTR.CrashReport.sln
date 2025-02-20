@@ -105,6 +105,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.Renderer.Html.Standalone", "BUTR.CrashReport.Renderer.Html.Standalone\BUTR.CrashReport.Renderer.Html.Standalone.csproj", "{065FFD4D-BA4A-4F42-9359-43517CE7460E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.ContextualAnalysis", "BUTR.CrashReport.ContextualAnalysis\BUTR.CrashReport.ContextualAnalysis.csproj", "{ADE75925-D480-4B71-90FA-E05D7A8E3752}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUTR.CrashReport.AutomatedRemediation", "BUTR.CrashReport.AutomatedRemediation\BUTR.CrashReport.AutomatedRemediation.csproj", "{EB60DC93-3984-4C05-A010-7F92A38BC82D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +235,14 @@ Global
 		{065FFD4D-BA4A-4F42-9359-43517CE7460E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{065FFD4D-BA4A-4F42-9359-43517CE7460E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{065FFD4D-BA4A-4F42-9359-43517CE7460E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADE75925-D480-4B71-90FA-E05D7A8E3752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADE75925-D480-4B71-90FA-E05D7A8E3752}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADE75925-D480-4B71-90FA-E05D7A8E3752}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADE75925-D480-4B71-90FA-E05D7A8E3752}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB60DC93-3984-4C05-A010-7F92A38BC82D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB60DC93-3984-4C05-A010-7F92A38BC82D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB60DC93-3984-4C05-A010-7F92A38BC82D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB60DC93-3984-4C05-A010-7F92A38BC82D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -273,5 +285,7 @@ Global
 		{B2E732BE-17B2-4014-95A8-C588C6F624D4} = {F324D64B-B62F-440F-A766-A4EC343A5F17}
 		{304D6A99-EF3B-45A1-AC3A-372C04E5842B} = {F324D64B-B62F-440F-A766-A4EC343A5F17}
 		{065FFD4D-BA4A-4F42-9359-43517CE7460E} = {F324D64B-B62F-440F-A766-A4EC343A5F17}
+		{ADE75925-D480-4B71-90FA-E05D7A8E3752} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
+		{EB60DC93-3984-4C05-A010-7F92A38BC82D} = {8013DEFB-F940-4891-9F74-BFE1A8106506}
 	EndGlobalSection
 EndGlobal

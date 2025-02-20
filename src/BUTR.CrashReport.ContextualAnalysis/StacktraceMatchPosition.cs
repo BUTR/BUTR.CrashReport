@@ -1,4 +1,4 @@
-﻿namespace BUTR.CrashReport.Models.Diagnostics;
+﻿namespace BUTR.CrashReport.ContextualAnalysis;
 
 /// <summary>
 /// Defines the position in the stack trace where a pattern should be matched.

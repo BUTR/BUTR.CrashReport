@@ -1,9 +1,9 @@
-﻿namespace BUTR.CrashReport.Models.Analyzer;
+﻿namespace BUTR.CrashReport.AutomatedRemediation;
 
 /// <summary>
 /// Represents a module specific crash report fix.
 /// </summary>
-public sealed record ModuleSuggestedFix
+public sealed record CrashModuleFix
 {
     /// <summary>
     /// <inheritdoc cref="ModuleModel.Id"/>
@@ -14,10 +14,10 @@ public sealed record ModuleSuggestedFix
     /// <summary>
     /// The type of suggested fix.
     /// </summary>
-    public required ModuleSuggestedFixType Type { get; set; }
+    public required CrashModuleFixType Type { get; set; }
 
     /// <inheritdoc />
-    public bool Equals(ModuleSuggestedFix? other)
+    public bool Equals(CrashModuleFix? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

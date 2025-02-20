@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace BUTR.CrashReport.Models.Analyzer;
+namespace BUTR.CrashReport.AutomatedRemediation;
 
 /// <summary>
-/// Represents the type of a module fix.
+/// Represents the type of module fix.
 /// </summary>
 [Flags]
-public enum ModuleSuggestedFixType
+public enum CrashModuleFixType
 {
     /// <summary>
     /// No fix.

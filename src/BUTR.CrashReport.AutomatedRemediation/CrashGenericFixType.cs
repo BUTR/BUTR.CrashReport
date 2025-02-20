@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace BUTR.CrashReport.Models.Analyzer;
+namespace BUTR.CrashReport.AutomatedRemediation;
 
 /// <summary>
-/// Represents the type of a generic fix.
+/// Represents the type of generic fix.
 /// </summary>
 [Flags]
-public enum GenericSuggestedFixType
+public enum CrashGenericFixType
 {
     /// <summary>
     /// No fix.

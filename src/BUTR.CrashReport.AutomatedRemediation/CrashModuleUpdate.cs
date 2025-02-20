@@ -1,9 +1,9 @@
-﻿namespace BUTR.CrashReport.Models.Analyzer;
+﻿namespace BUTR.CrashReport.AutomatedRemediation;
 
 /// <summary>
 /// Represents an available module update.
 /// </summary>
-public sealed record ModuleUpdate
+public sealed record CrashModuleUpdate
 {
     /// <summary>
     /// <inheritdoc cref="ModuleModel.Id"/>
@@ -17,16 +17,18 @@ public sealed record ModuleUpdate
     public required string ModuleVersion { get; set; }
 
     /// <summary>
-    /// Whether the module was involced in the crash.
+    /// Whether the module was involved in the crash.
     /// </summary>
     public required bool IsModuleInvolved { get; set; }
 
     /// <inheritdoc />
-    public bool Equals(ModuleUpdate? other)
+    public bool Equals(CrashModuleUpdate? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return ModuleId == other.ModuleId && ModuleVersion == other.ModuleVersion && IsModuleInvolved == other.IsModuleInvolved;
+        return ModuleId == other.ModuleId &&
+               ModuleVersion == other.ModuleVersion &&
+               IsModuleInvolved == other.IsModuleInvolved;
     }
 
     /// <inheritdoc />
