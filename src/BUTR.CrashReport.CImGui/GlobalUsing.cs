@@ -15,6 +15,7 @@ global using IntPtrImFontAtlas = BUTR.CrashReport.Native.Pointer<ImGuiNET.ImFont
 global using IntPtrImFontConfig = BUTR.CrashReport.Native.Pointer<ImGuiNET.ImFontConfig>;
 global using IntPtrImDrawList = BUTR.CrashReport.Native.Pointer<ImGuiNET.ImDrawList>;
 global using IntPtrImGuiListClipper = BUTR.CrashReport.Native.Pointer<ImGuiNET.ImGuiListClipper>;
+global using IntPtrMarkdownConfig = BUTR.CrashReport.Native.Pointer<ImGui.Structures.MarkdownConfig>;
 #else
 global using IntPtrByte = BUTR.CrashReport.Native.Pointer;
 global using IntPtrImDrawData = BUTR.CrashReport.Native.Pointer;
@@ -32,4 +33,5 @@ global using IntPtrUInt16 = BUTR.CrashReport.Native.Pointer;
 global using IntPtrVector2 = BUTR.CrashReport.Native.Pointer;
 global using IntPtrVector4 = BUTR.CrashReport.Native.Pointer;
 global using IntPtrVoid = BUTR.CrashReport.Native.Pointer;
+global using IntPtrMarkdownConfig = BUTR.CrashReport.Native.Pointer;
 #endif

@@ -1,0 +1,6 @@
+{
+    "name": "CMake",
+    "build": {
+        "dockerfile": "Dockerfile"
+    }
+}

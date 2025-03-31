@@ -23,7 +23,7 @@ public readonly unsafe struct ImGuiListClipperWrapper : IImGuiListClipper
     public ref float ItemsHeight => ref Unsafe.AsRef<float>(&NativePtr->ItemsHeight);
     public ref float StartPosY => ref Unsafe.AsRef<float>(&NativePtr->StartPosY);
     public ref double StartSeekOffsetY => ref Unsafe.AsRef<double>(&NativePtr->StartSeekOffsetY);
-    public IntPtr TempData { get => (IntPtr) NativePtr->TempData; set => NativePtr->TempData = (void*) value; }
+    public ref IntPtr TempData => ref Unsafe.AsRef<IntPtr>(&NativePtr->TempData);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Begin(int items_count)

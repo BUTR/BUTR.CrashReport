@@ -74,8 +74,7 @@ public class DelegateLoaderGenerator : IIncrementalGenerator
                 var fieldName = fieldSymbol.Name;
                 var delegateType = fieldSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
-                var delegateSymbol = fieldSymbol.Type as INamedTypeSymbol;
-                if (delegateSymbol == null) continue;
+                if (fieldSymbol.Type is not INamedTypeSymbol delegateSymbol) continue;
 
                 var entryPoint = useDelegateTypeName ? delegateSymbol.Name : fieldName;
 
@@ -107,8 +106,7 @@ public class DelegateLoaderGenerator : IIncrementalGenerator
 
     private static bool IsDelegateWithUnmanagedFunctionPointer(INamedTypeSymbol typeSymbol)
     {
-        return typeSymbol.TypeKind == TypeKind.Delegate &&
-               typeSymbol.DelegateInvokeMethod != null &&
+        return typeSymbol is { TypeKind: TypeKind.Delegate, DelegateInvokeMethod: not null } &&
                typeSymbol.GetAttributes().Any(attr => attr.AttributeClass?.Name == "UnmanagedFunctionPointerAttribute");
     }
 }

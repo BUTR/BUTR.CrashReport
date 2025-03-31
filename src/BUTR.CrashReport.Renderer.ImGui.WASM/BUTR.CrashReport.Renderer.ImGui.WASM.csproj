@@ -78,6 +78,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BUTR.ImGui.NET.SourceBuild" Version="1.91.6-ga74d09c284" />
     <PackageReference Include="ImGui.NET" Version="$(ImGuiVersion)" />
     <PackageReference Include="ImGui.NET.SourceBuild" Version="$(ImGuiSourceVersion)" />
     

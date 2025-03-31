@@ -1,5 +1,6 @@
 ﻿using BUTR.CrashReport.ImGui.Enums;
 using BUTR.CrashReport.ImGui.Structures;
+using BUTR.CrashReport.Memory;
 using BUTR.CrashReport.Native;
 
 using ImGui.Structures;
@@ -93,7 +94,34 @@ unsafe partial class CmGui
         });
     }
 
+    
+    private static readonly LiteralSpan<byte> LinkIcon = ""u8;
 
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static void MDLinkCallback2(MarkdownLinkCallbackData data)
+    {
+        if (data.UserData is null || data.LinkLength == 0)
+            return;
+
+        var handle = GCHandle.FromIntPtr((IntPtr) data.UserData);
+        var cmgui = (CmGui) handle.Target!;
+        cmgui.GetIO(out var io);
+        
+        if (io.PlatformOpenInShell is not { } platformOpenInShell)
+            return;
+        
+        Span<byte> utf8Link = new Span<byte>(data.Link, data.LinkLength);
+        Span<byte> buffer = stackalloc byte[data.LinkLength + 1];
+        utf8Link.CopyTo(buffer);
+        buffer[data.LinkLength] = 0;
+        
+        var ctx = cmgui.GetCurrentContext();
+
+        fixed (byte* bufferPtr = buffer)
+            platformOpenInShell(ctx, bufferPtr);
+    }
+
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void PushId(int id) => igPushID_Int(id);
 
@@ -608,6 +636,26 @@ unsafe partial class CmGui
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void EndTooltip() => igEndTooltip();
+    
+    public void Markdown(ReadOnlySpan<byte> utf8Markdown)
+    {
+        var cmGui = this;
+        var config = default(MarkdownConfig);
+        var configRef = new MarkdownConfigRef(&config)
+        {
+            LinkCallback = mdDefaultMarkdownLinkCallback,
+            TooltipCallback = mdDefaultMarkdownTooltipCallback,
+            ImageCallback = null,
+            LinkIcon = LinkIcon,
+            Heading1 = new() { Font = null, IsSeparator = 1 },
+            Heading2 = new() { Font = null, IsSeparator = 1 },
+            Heading3 = new() { Font = null, IsSeparator = 1 },
+            FormatCallback = mdDefaultMarkdownFormatCallback,
+        };
+         
+        fixed (byte* utf8MarkdownPtr = utf8Markdown)
+            mdMarkdown(utf8MarkdownPtr, (IntPtr) utf8Markdown.Length, configRef.NativePtr);
+    }
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]

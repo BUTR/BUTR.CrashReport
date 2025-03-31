@@ -6,3 +6,7 @@
 	path = external/ZString
 	url = https://github.com/Cysharp/ZString
 	branch = master
+[submodule "external/cimgui"]
+	path = external/cimgui
+	url = https://github.com/BUTR/cimgui-custom
+	branch = docking_inter_custom

@@ -69,4 +69,11 @@
              Exclude="..\BUTR.CrashReport.Renderer.ImGui.Tool\obj\**\*.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\runtimes\**\*">
+      <LinkBase>runtimes\</LinkBase>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

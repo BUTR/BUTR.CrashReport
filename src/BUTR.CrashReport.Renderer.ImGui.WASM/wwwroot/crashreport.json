@@ -1,0 +1,7064 @@
+{
+	"Id": "6cbe33aa-0bd4-4dbc-bada-07530bbcd19a",
+	"Version": 15,
+	"Exception": {
+		"SourceAssemblyId": {
+			"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+			"Version": "2.9.18.0",
+			"PublicKeyToken": ""
+		},
+		"SourceModuleId": "Bannerlord.ButterLib",
+		"SourceLoaderPluginId": null,
+		"Type": "System.ArgumentNullException",
+		"Message": "Der Wert darf nicht NULL sein.\r\nParametername: testParam",
+		"Source": "Bannerlord.ButterLib.Implementation.1.2.11",
+		"HResult": -2147467261,
+		"CallStack": "   at void Bannerlord.ButterLib.Implementation.SubModule.OnBeforeInitialModuleScreenSetAsRoot() in D:/Git/Level0/Bannerlord.ButterLib/src/Bannerlord.ButterLib.Implementation/SubModule.cs:line 110",
+		"InnerException": null,
+		"AdditionalMetadata": []
+	},
+	"Metadata": {
+		"GameName": "Bannerlord",
+		"GameVersion": "v1.2.12",
+		"LoaderPluginProviderName": null,
+		"LoaderPluginProviderVersion": null,
+		"LauncherType": "unknown launcher - JetBrains.Debugger.Worker",
+		"LauncherVersion": "2024.3.6.0",
+		"Runtime": ".NET Framework 4.8.9290.0",
+		"OperatingSystemType": "Windows",
+		"OperatingSystemVersion": "Windows 10.0.26100",
+		"AdditionalMetadata": []
+	},
+	"Modules": [
+		{
+			"Id": "Bannerlord.Harmony",
+			"Name": "Harmony",
+			"Version": "v2.3.5",
+			"IsExternal": false,
+			"IsOfficial": false,
+			"IsSingleplayer": true,
+			"IsMultiplayer": false,
+			"Url": "https://www.nexusmods.com/mountandblade2bannerlord/mods/2006",
+			"UpdateInfo": {
+				"Provider": "NexusMods",
+				"Value": "2006"
+			},
+			"DependencyMetadatas": [
+				{
+					"ModuleOrPluginId": "Native",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.0.0",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "SandBoxCore",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.0.0",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "Sandbox",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.0.0",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "StoryMode",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.0.0",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "CustomBattle",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.0.0",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				}
+			],
+			"SubModules": [
+				{
+					"Name": "Harmony",
+					"AssemblyId": {
+						"Name": "Bannerlord.Harmony.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "Bannerlord.Harmony.SubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Assemblies:",
+							"Value": "0Harmony.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "Mono.Cecil.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "Mono.Cecil.Mdb.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "Mono.Cecil.Pdb.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "Mono.Cecil.Rocks.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "MonoMod.Core.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "MonoMod.Backports.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "MonoMod.Iced.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "MonoMod.ILHelpers.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "MonoMod.Utils.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "0Harmony.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Mono.Cecil.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Mono.Cecil.Mdb.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Mono.Cecil.Pdb.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Mono.Cecil.Rocks.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "MonoMod.Core.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "MonoMod.Backports.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "MonoMod.Iced.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "MonoMod.ILHelpers.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "MonoMod.Utils.dll"
+						}
+					]
+				}
+			],
+			"Capabilities": [
+				{
+					"Name": "OS File System",
+					"Description": ""
+				},
+				{
+					"Name": "Shell",
+					"Description": ""
+				}
+			],
+			"AdditionalMetadata": [
+				{
+					"Key": "AdditionalUpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Additional UpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Is Installed By Vortex",
+					"Value": ""
+				}
+			]
+		},
+		{
+			"Id": "Bannerlord.ButterLib",
+			"Name": "ButterLib",
+			"Version": "v2.9.18",
+			"IsExternal": false,
+			"IsOfficial": false,
+			"IsSingleplayer": true,
+			"IsMultiplayer": false,
+			"Url": "https://www.nexusmods.com/mountandblade2bannerlord/mods/2018",
+			"UpdateInfo": {
+				"Provider": "NexusMods",
+				"Value": "2018"
+			},
+			"DependencyMetadatas": [
+				{
+					"ModuleOrPluginId": "Bannerlord.Harmony",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v2.3.3",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "BetterExceptionWindow",
+					"Type": "LoadAfter",
+					"IsOptional": true,
+					"Version": null,
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "Native",
+					"Type": "LoadBefore",
+					"IsOptional": false,
+					"Version": "v1.2.11",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "SandBoxCore",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.2.11",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "Sandbox",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.2.11",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "StoryMode",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.2.11",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "CustomBattle",
+					"Type": "LoadBefore",
+					"IsOptional": true,
+					"Version": "v1.2.11",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				}
+			],
+			"SubModules": [
+				{
+					"Name": "ButterLib",
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "Bannerlord.ButterLib.ButterLibSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Assemblies:",
+							"Value": "Microsoft.Bcl.HashCode.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "Serilog.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "Serilog.Extensions.Logging.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "Serilog.Sinks.File.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Microsoft.Bcl.HashCode.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Serilog.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Serilog.Extensions.Logging.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "Serilog.Sinks.File.dll"
+						}
+					]
+				},
+				{
+					"Name": "ButterLib Implementation Loader",
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "Bannerlord.ButterLib.ImplementationLoaderSubModule",
+					"AdditionalMetadata": []
+				}
+			],
+			"Capabilities": [
+				{
+					"Name": "OS File System",
+					"Description": ""
+				}
+			],
+			"AdditionalMetadata": [
+				{
+					"Key": "AdditionalUpdateInfos",
+					"Value": "GitHub:BUTR/Bannerlord.ButterLib"
+				},
+				{
+					"Key": "DISPLAY:Additional UpdateInfos",
+					"Value": "GitHub:BUTR/Bannerlord.ButterLib"
+				},
+				{
+					"Key": "DISPLAY:Is Installed By Vortex",
+					"Value": ""
+				}
+			]
+		},
+		{
+			"Id": "Native",
+			"Name": "Native",
+			"Version": "v1.2.12",
+			"IsExternal": false,
+			"IsOfficial": true,
+			"IsSingleplayer": false,
+			"IsMultiplayer": false,
+			"Url": null,
+			"UpdateInfo": null,
+			"DependencyMetadatas": [],
+			"SubModules": [
+				{
+					"Name": "ViewSubModule",
+					"AssemblyId": {
+						"Name": "TaleWorlds.MountAndBlade.View.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "TaleWorlds.MountAndBlade.View.ViewSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				},
+				{
+					"Name": "GauntletUISubModule",
+					"AssemblyId": {
+						"Name": "TaleWorlds.MountAndBlade.GauntletUI.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "TaleWorlds.MountAndBlade.GauntletUI.GauntletUISubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Assemblies:",
+							"Value": "TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.0.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.1.dll"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.0.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.1.dll"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				},
+				{
+					"Name": "PlatformPCSubModule",
+					"AssemblyId": {
+						"Name": "TaleWorlds.MountAndBlade.Platform.PC.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "TaleWorlds.MountAndBlade.Platform.PC.PlatformPCSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "RejectedPlatform - Orbis"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "RejectedPlatform - Durango"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "RejectedPlatform - GDKDesktop"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "RejectedPlatform - Orbis"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "RejectedPlatform - Durango"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "RejectedPlatform - GDKDesktop"
+						}
+					]
+				}
+			],
+			"Capabilities": [
+				{
+					"Name": "User Interface",
+					"Description": ""
+				}
+			],
+			"AdditionalMetadata": [
+				{
+					"Key": "AdditionalUpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Additional UpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Is Installed By Vortex",
+					"Value": ""
+				}
+			]
+		},
+		{
+			"Id": "SandBoxCore",
+			"Name": "SandBox Core",
+			"Version": "v1.2.12",
+			"IsExternal": false,
+			"IsOfficial": true,
+			"IsSingleplayer": true,
+			"IsMultiplayer": false,
+			"Url": null,
+			"UpdateInfo": null,
+			"DependencyMetadatas": [
+				{
+					"ModuleOrPluginId": "Native",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				}
+			],
+			"SubModules": [],
+			"Capabilities": [],
+			"AdditionalMetadata": [
+				{
+					"Key": "AdditionalUpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Additional UpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Is Installed By Vortex",
+					"Value": ""
+				}
+			]
+		},
+		{
+			"Id": "Sandbox",
+			"Name": "Sandbox",
+			"Version": "v1.2.12",
+			"IsExternal": false,
+			"IsOfficial": true,
+			"IsSingleplayer": true,
+			"IsMultiplayer": false,
+			"Url": null,
+			"UpdateInfo": null,
+			"DependencyMetadatas": [
+				{
+					"ModuleOrPluginId": "Native",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "SandBoxCore",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				}
+			],
+			"SubModules": [
+				{
+					"Name": "SandBox",
+					"AssemblyId": {
+						"Name": "SandBox.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "SandBox.SandBoxSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				},
+				{
+					"Name": "SandBox.View",
+					"AssemblyId": {
+						"Name": "SandBox.View.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "SandBox.View.SandBoxViewSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Assemblies:",
+							"Value": "SandBox.ViewModelCollection.dll"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "SandBox.ViewModelCollection.dll"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				},
+				{
+					"Name": "SandBox.GauntletUI",
+					"AssemblyId": {
+						"Name": "SandBox.GauntletUI.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "SandBox.GauntletUI.SandBoxGauntletUISubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Assemblies:",
+							"Value": "SandBox.GauntletUI.AutoGenerated.0.dll"
+						},
+						{
+							"Key": "Assemblies:",
+							"Value": "SandBox.GauntletUI.AutoGenerated.1.dll"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "SandBox.GauntletUI.AutoGenerated.0.dll"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "SandBox.GauntletUI.AutoGenerated.1.dll"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				}
+			],
+			"Capabilities": [
+				{
+					"Name": "Game File System",
+					"Description": ""
+				},
+				{
+					"Name": "Save System",
+					"Description": ""
+				},
+				{
+					"Name": "Game Entities",
+					"Description": ""
+				},
+				{
+					"Name": "Input System",
+					"Description": ""
+				},
+				{
+					"Name": "Localization",
+					"Description": ""
+				},
+				{
+					"Name": "User Interface",
+					"Description": ""
+				},
+				{
+					"Name": "Campaign",
+					"Description": ""
+				},
+				{
+					"Name": "Skills",
+					"Description": ""
+				},
+				{
+					"Name": "Items",
+					"Description": ""
+				},
+				{
+					"Name": "Cultures",
+					"Description": ""
+				}
+			],
+			"AdditionalMetadata": [
+				{
+					"Key": "AdditionalUpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Additional UpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Is Installed By Vortex",
+					"Value": ""
+				}
+			]
+		},
+		{
+			"Id": "StoryMode",
+			"Name": "StoryMode",
+			"Version": "v1.2.12",
+			"IsExternal": false,
+			"IsOfficial": true,
+			"IsSingleplayer": true,
+			"IsMultiplayer": false,
+			"Url": null,
+			"UpdateInfo": null,
+			"DependencyMetadatas": [
+				{
+					"ModuleOrPluginId": "Native",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "SandBoxCore",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "Sandbox",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				}
+			],
+			"SubModules": [
+				{
+					"Name": "StoryMode",
+					"AssemblyId": {
+						"Name": "StoryMode.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "StoryMode.StoryModeSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				},
+				{
+					"Name": "StoryMode.View",
+					"AssemblyId": {
+						"Name": "StoryMode.View.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "StoryMode.View.StoryModeViewSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Assemblies:",
+							"Value": "StoryMode.ViewModelCollection.dll"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "StoryMode.ViewModelCollection.dll"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				},
+				{
+					"Name": "StoryMode.GauntletUI",
+					"AssemblyId": {
+						"Name": "StoryMode.GauntletUI.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "StoryMode.GauntletUI.StoryModeGauntletUISubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Assemblies:",
+							"Value": "StoryMode.GauntletUI.AutoGenerated.dll"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						},
+						{
+							"Key": "DISPLAY:Assemblies:",
+							"Value": "StoryMode.GauntletUI.AutoGenerated.dll"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "IsNoRenderModeElement - false"
+						}
+					]
+				}
+			],
+			"Capabilities": [
+				{
+					"Name": "Input System",
+					"Description": ""
+				},
+				{
+					"Name": "Localization",
+					"Description": ""
+				},
+				{
+					"Name": "User Interface",
+					"Description": ""
+				},
+				{
+					"Name": "Campaign",
+					"Description": ""
+				}
+			],
+			"AdditionalMetadata": [
+				{
+					"Key": "AdditionalUpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Additional UpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Is Installed By Vortex",
+					"Value": ""
+				}
+			]
+		},
+		{
+			"Id": "CustomBattle",
+			"Name": "CustomBattle",
+			"Version": "v1.2.12",
+			"IsExternal": false,
+			"IsOfficial": true,
+			"IsSingleplayer": true,
+			"IsMultiplayer": false,
+			"Url": null,
+			"UpdateInfo": null,
+			"DependencyMetadatas": [
+				{
+					"ModuleOrPluginId": "Native",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				},
+				{
+					"ModuleOrPluginId": "SandBoxCore",
+					"Type": "LoadAfter",
+					"IsOptional": false,
+					"Version": "v1.2.12",
+					"VersionRange": null,
+					"AdditionalMetadata": []
+				}
+			],
+			"SubModules": [
+				{
+					"Name": "CustomBattleSubModule",
+					"AssemblyId": {
+						"Name": "TaleWorlds.MountAndBlade.CustomBattle.dll",
+						"Version": null,
+						"PublicKeyToken": null
+					},
+					"Entrypoint": "TaleWorlds.MountAndBlade.CustomBattle.CustomBattleSubModule",
+					"AdditionalMetadata": [
+						{
+							"Key": "Tags:",
+							"Value": "DedicatedServerType - none"
+						},
+						{
+							"Key": "DISPLAY:Tags:",
+							"Value": "DedicatedServerType - none"
+						}
+					]
+				}
+			],
+			"Capabilities": [],
+			"AdditionalMetadata": [
+				{
+					"Key": "AdditionalUpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Additional UpdateInfos",
+					"Value": ""
+				},
+				{
+					"Key": "DISPLAY:Is Installed By Vortex",
+					"Value": ""
+				}
+			]
+		}
+	],
+	"InvolvedModules": [
+		{
+			"ModuleOrLoaderPluginId": "Bannerlord.ButterLib",
+			"EnhancedStacktraceFrameName": "void Bannerlord.ButterLib.Implementation.SubModule.OnBeforeInitialModuleScreenSetAsRoot()",
+			"Type": "Direct",
+			"AdditionalMetadata": []
+		}
+	],
+	"EnhancedStacktrace": [
+		{
+			"FrameDescription": "void Bannerlord.ButterLib.Implementation.SubModule.OnBeforeInitialModuleScreenSetAsRoot()",
+			"ILOffset": 205,
+			"NativeOffset": 749,
+			"ExecutingMethod": {
+				"NativeInstructions": {
+					"Instructions": [],
+					"Highlight": null
+				},
+				"AssemblyId": {
+					"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+					"Version": "2.9.18.0",
+					"PublicKeyToken": ""
+				},
+				"ModuleId": "Bannerlord.ButterLib",
+				"LoaderPluginId": null,
+				"MethodDeclaredTypeName": "Bannerlord.ButterLib.Implementation.SubModule",
+				"MethodName": "OnBeforeInitialModuleScreenSetAsRoot",
+				"MethodFullDescription": "virtual System.Void Bannerlord.ButterLib.Implementation.SubModule::OnBeforeInitialModuleScreenSetAsRoot()",
+				"MethodTypeParameters": [],
+				"MethodTypeArguments": [],
+				"MethodParameters": [],
+				"MethodParameterNames": [],
+				"ILInstructions": {
+					"Instructions": [
+						"IL_0000: nop",
+						"IL_0001: ldarg.0",
+						"IL_0002: call System.Void TaleWorlds.MountAndBlade.MBSubModuleBase::OnBeforeInitialModuleScreenSetAsRoot()",
+						"IL_0007: nop",
+						"IL_0008: call Microsoft.Extensions.Logging.ILogger Bannerlord.ButterLib.Implementation.SubModule::get_Logger()",
+						"IL_000D: ldstr \"ButterLib.Implementation: OnBeforeInitialModuleScreenSetAsRoot\"",
+						"IL_0012: call !!0[] System.Array::Empty<System.Object>()",
+						"IL_0017: call System.Void Microsoft.Extensions.Logging.LoggerExtensions::LogTrace(Microsoft.Extensions.Logging.ILogger, System.String, System.Object[])",
+						"IL_001C: nop",
+						"IL_001D: ldarg.0",
+						"IL_001E: call System.Boolean Bannerlord.ButterLib.Implementation.SubModule::get_OnBeforeInitialModuleScreenSetAsRootWasCalled()",
+						"IL_0023: ldc.i4.0",
+						"IL_0024: ceq",
+						"IL_0026: stloc.0",
+						"IL_0027: ldloc.0",
+						"IL_0028: brfalse IL_00AD",
+						"IL_002D: nop",
+						"IL_002E: ldarg.0",
+						"IL_002F: ldc.i4.1",
+						"IL_0030: call System.Void Bannerlord.ButterLib.Implementation.SubModule::set_OnBeforeInitialModuleScreenSetAsRootWasCalled(System.Boolean)",
+						"IL_0035: nop",
+						"IL_0036: ldarg.0",
+						"IL_0037: call System.IServiceProvider Bannerlord.ButterLib.Common.Extensions.DependencyInjectionExtensions::GetServiceProvider(TaleWorlds.MountAndBlade.MBSubModuleBase)",
+						"IL_003C: call !!0 Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions::GetRequiredService<Microsoft.Extensions.Logging.ILogger`1<Bannerlord.ButterLib.Implementation.SubModule>>(System.IServiceProvider)",
+						"IL_0041: call System.Void Bannerlord.ButterLib.Implementation.SubModule::set_Logger(Microsoft.Extensions.Logging.ILogger)",
+						"IL_0046: nop",
+						"IL_0047: call TaleWorlds.Library.IDebugManager TaleWorlds.Library.Debug::get_DebugManager()",
+						"IL_004C: isinst Bannerlord.ButterLib.Implementation.Logging.DebugManagerWrapper",
+						"IL_0051: ldnull",
+						"IL_0052: cgt.un",
+						"IL_0054: ldc.i4.0",
+						"IL_0055: ceq",
+						"IL_0057: stloc.1",
+						"IL_0058: ldloc.1",
+						"IL_0059: brfalse.s IL_009B",
+						"IL_005B: nop",
+						"IL_005C: call Microsoft.Extensions.Logging.ILogger Bannerlord.ButterLib.Implementation.SubModule::get_Logger()",
+						"IL_0061: ldstr \"DebugManagerWrapper was replaced with {Type}! Wrapping it with DebugManagerWrapper\"",
+						"IL_0066: ldc.i4.1",
+						"IL_0067: newarr System.Object",
+						"IL_006C: dup",
+						"IL_006D: ldc.i4.0",
+						"IL_006E: call TaleWorlds.Library.IDebugManager TaleWorlds.Library.Debug::get_DebugManager()",
+						"IL_0073: callvirt System.Type System.Object::GetType()",
+						"IL_0078: stelem.ref",
+						"IL_0079: call System.Void Microsoft.Extensions.Logging.LoggerExtensions::LogWarning(Microsoft.Extensions.Logging.ILogger, System.String, System.Object[])",
+						"IL_007E: nop",
+						"IL_007F: call TaleWorlds.Library.IDebugManager TaleWorlds.Library.Debug::get_DebugManager()",
+						"IL_0084: ldarg.0",
+						"IL_0085: call System.IServiceProvider Bannerlord.ButterLib.Common.Extensions.DependencyInjectionExtensions::GetServiceProvider(TaleWorlds.MountAndBlade.MBSubModuleBase)",
+						"IL_008A: call !!0 Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions::GetRequiredService<Microsoft.Extensions.Logging.ILoggerFactory>(System.IServiceProvider)",
+						"IL_008F: newobj System.Void Bannerlord.ButterLib.Implementation.Logging.DebugManagerWrapper::.ctor(TaleWorlds.Library.IDebugManager, Microsoft.Extensions.Logging.ILoggerFactory)",
+						"IL_0094: call System.Void TaleWorlds.Library.Debug::set_DebugManager(TaleWorlds.Library.IDebugManager)",
+						"IL_0099: nop",
+						"IL_009A: nop",
+						"IL_009B: call Bannerlord.ButterLib.Implementation.ObjectSystem.ObjectSystemSubSystem Bannerlord.ButterLib.Implementation.ObjectSystem.ObjectSystemSubSystem::get_Instance()",
+						"IL_00A0: dup",
+						"IL_00A1: brtrue.s IL_00A6",
+						"IL_00A3: pop",
+						"IL_00A4: br.s IL_00AC",
+						"IL_00A6: call System.Void Bannerlord.ButterLib.Implementation.ObjectSystem.ObjectSystemSubSystem::Enable()",
+						"IL_00AB: nop",
+						"IL_00AC: nop",
+						"IL_00AD: call System.Threading.Thread System.Threading.Thread::get_CurrentThread()",
+						"IL_00B2: ldstr \"de-DE\"",
+						"IL_00B7: call System.Globalization.CultureInfo System.Globalization.CultureInfo::GetCultureInfo(System.String)",
+						"IL_00BC: callvirt System.Void System.Threading.Thread::set_CurrentUICulture(System.Globalization.CultureInfo)",
+						"IL_00C1: nop",
+						"IL_00C2: nop",
+						"IL_00C3: ldstr \"testParam\"",
+						"IL_00C8: newobj System.Void System.ArgumentNullException::.ctor(System.String)",
+						"IL_00CD: throw",
+						"IL_00CE: stloc.2",
+						"IL_00CF: nop",
+						"IL_00D0: ldloc.2",
+						"IL_00D1: call System.Void Bannerlord.ButterLib.ExceptionHandler.ExceptionReporter::Show(System.Exception)",
+						"IL_00D6: nop",
+						"IL_00D7: nop",
+						"IL_00D8: leave.s IL_00DA",
+						"IL_00DA: call Microsoft.Extensions.Logging.ILogger Bannerlord.ButterLib.Implementation.SubModule::get_Logger()",
+						"IL_00DF: ldstr \"ButterLib.Implementation: OnBeforeInitialModuleScreenSetAsRoot: Done\"",
+						"IL_00E4: call !!0[] System.Array::Empty<System.Object>()",
+						"IL_00E9: call System.Void Microsoft.Extensions.Logging.LoggerExtensions::LogTrace(Microsoft.Extensions.Logging.ILogger, System.String, System.Object[])",
+						"IL_00EE: nop",
+						"IL_00EF: ret"
+					],
+					"Highlight": {
+						"StartLine": 72,
+						"StartColumn": -1,
+						"EndLine": 72,
+						"EndColumn": -1
+					}
+				},
+				"ILMixedInstructions": {
+					"Instructions": [],
+					"Highlight": null
+				},
+				"CSharpInstructions": {
+					"Instructions": [
+						"using Bannerlord.ButterLib.Common.Extensions;\nusing Bannerlord.ButterLib.DistanceMatrix;\nusing Bannerlord.ButterLib.Extensions;\nusing Bannerlord.ButterLib.HotKeys;\nusing Bannerlord.ButterLib.Implementation.Common.Extensions;\nusing Bannerlord.ButterLib.Implementation.DistanceMatrix;\nusing Bannerlord.ButterLib.Implementation.HotKeys;\nusing Bannerlord.ButterLib.Implementation.Logging;\nusing Bannerlord.ButterLib.Implementation.MBSubModuleBaseExtended;\nusing Bannerlord.ButterLib.Implementation.ObjectSystem;\nusing Bannerlord.ButterLib.Implementation.SaveSystem;\nusing Bannerlord.ButterLib.ObjectSystem;\n\nusing Microsoft.Extensions.DependencyInjection;\nusing Microsoft.Extensions.Logging;\n\nusing TaleWorlds.CampaignSystem;\nusing TaleWorlds.Core;\nusing TaleWorlds.Library;\nusing TaleWorlds.MountAndBlade;\n\nnamespace Bannerlord.ButterLib.Implementation;\n\npublic sealed class SubModule : MBSubModuleBase\n{\n    internal static ILogger? Logger { get; private set; }\n    internal static SubModule? Instance { get; private set; }\n\n    private bool ServiceRegistrationWasCalled { get; set; }\n    private bool OnBeforeInitialModuleScreenSetAsRootWasCalled { get; set; }\n\n    public void OnServiceRegistration()\n    {\n        ServiceRegistrationWasCalled = true;\n\n        if (this.GetServices() is { } services)\n        {\n            services.AddScoped(typeof(DistanceMatrix<>), typeof(DistanceMatrixImplementation<>));\n            services.AddSingleton<IDistanceMatrixStatic, DistanceMatrixStaticImplementation>();\n            services.AddSingleton<ICampaignExtensions, CampaignExtensionsImplementation>();\n\n            services.AddScoped<IMBObjectExtensionDataStore, MBObjectExtensionDataStore>();\n            services.AddScoped<IMBObjectFinder, MBObjectFinder>();\n            services.AddScoped<IMBObjectKeeper, MBObjectKeeper>();\n\n            services.AddScoped<HotKeyManager, HotKeyManagerImplementation>();\n            services.AddSingleton<IHotKeyManagerStatic, HotKeyManagerStaticImplementation>();\n\n            services.AddSubSystem<DistanceMatrixSubSystem>();\n            services.AddSubSystem<HotKeySubSystem>();\n            services.AddSubSystem<MBSubModuleBaseExSubSystem>();\n            services.AddSubSystem<ObjectSystemSubSystem>();\n            services.AddSubSystem<SaveSystemSubSystem>();\n        }\n    }\n\n    protected override void OnSubModuleLoad()\n    {\n        base.OnSubModuleLoad();\n\n        Instance = this;\n        var serviceProvider = ServiceRegistrationWasCalled ? this.GetServiceProvider() : this.GetTempServiceProvider();\n\n        if (!ServiceRegistrationWasCalled)\n            OnServiceRegistration();\n\n        Logger = serviceProvider.GetRequiredService<ILogger<SubModule>>();\n        Logger.LogTrace(\"ButterLib.Implementation: OnSubModuleLoad\");\n\n        Logger.LogInformation(\"Wrapping DebugManager of type {Type} with DebugManagerWrapper\", Debug.DebugManager.GetType());\n        Debug.DebugManager = new DebugManagerWrapper(Debug.DebugManager, serviceProvider.GetRequiredService<ILoggerFactory>());\n\n        DistanceMatrixSubSystem.Instance?.Enable();\n        HotKeySubSystem.Instance?.Enable();\n        MBSubModuleBaseExSubSystem.Instance?.Enable();\n        SaveSystemSubSystem.Instance?.Enable();\n\n        Logger.LogTrace(\"ButterLib.Implementation: OnSubModuleLoad: Done\");\n    }\n\n    protected override void OnBeforeInitialModuleScreenSetAsRoot()\n    {\n        base.OnBeforeInitialModuleScreenSetAsRoot();\n        Logger.LogTrace(\"ButterLib.Implementation: OnBeforeInitialModuleScreenSetAsRoot\");\n\n        if (!OnBeforeInitialModuleScreenSetAsRootWasCalled)\n        {\n            OnBeforeInitialModuleScreenSetAsRootWasCalled = true;\n\n            Logger = this.GetServiceProvider().GetRequiredService<ILogger<SubModule>>();\n\n            if (Debug.DebugManager is not DebugManagerWrapper)\n            {\n                Logger.LogWarning(\"DebugManagerWrapper was replaced with {Type}! Wrapping it with DebugManagerWrapper\", Debug.DebugManager.GetType());\n                Debug.DebugManager = new DebugManagerWrapper(Debug.DebugManager, this.GetServiceProvider().GetRequiredService<ILoggerFactory>());\n            }\n\n            ObjectSystemSubSystem.Instance?.Enable();\n        }\n\n        Logger.LogTrace(\"ButterLib.Implementation: OnBeforeInitialModuleScreenSetAsRoot: Done\");\n    }\n\n    protected override void OnGameStart(Game game, IGameStarter gameStarterObject)\n    {\n        base.OnGameStart(game, gameStarterObject);\n        Logger.LogTrace(\"ButterLib.Implementation: OnGameStart\");\n\n        if (game.GameType is Campaign)\n        {\n            var gameStarter = (CampaignGameStarter) gameStarterObject;\n\n            if (DistanceMatrixSubSystem.Instance is { } subSystem)\n            {\n                if (subSystem.IsEnabled)\n                {\n                    gameStarter.AddBehavior(new GeopoliticsBehavior());\n                }\n                subSystem.GameInitialized = true;\n            }\n        }\n\n        Logger.LogTrace(\"ButterLib.Implementation: OnGameStart: Done\");\n    }\n\n    public override void OnGameEnd(Game game)\n    {\n        base.OnGameEnd(game);\n        Logger.LogTrace(\"ButterLib.Implementation: OnGameEnd\");\n\n        if (game.GameType is Campaign)\n        {\n            if (DistanceMatrixSubSystem.Instance is { } subSystem)\n            {\n                subSystem.GameInitialized = false;\n            }\n        }\n\n        Logger.LogTrace(\"ButterLib.Implementation: OnGameEnd: Done\");\n    }\n}"
+					],
+					"Highlight": {
+						"StartLine": 110,
+						"StartColumn": 13,
+						"EndLine": 110,
+						"EndColumn": 58
+					}
+				},
+				"AdditionalMetadata": []
+			},
+			"OriginalMethod": null,
+			"PatchMethods": [],
+			"AdditionalMetadata": []
+		}
+	],
+	"Assemblies": [
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "mscorlib",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "ef1e88b1ab03dac07f59732b7684a0df",
+			"AnonymizedPath": "SystemRoot\\Microsoft.NET\\Framework64\\v4.0.30319\\mscorlib.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Bannerlord.BLSE.Standalone",
+				"Version": "1.5.7.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "535d568482dad2fe876823fe3a401cb0",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\Bannerlord.BLSE.Standalone.exe",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Core",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "726d91cf776d254468daef31c5b60ffb",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Core\\v4.0_4.0.0.0__b77a5c561934e089\\System.Core.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "e9fde30b84becd21f1e590fe185fc2ef",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System\\v4.0_4.0.0.0__b77a5c561934e089\\System.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Bannerlord.BLSE.Shared",
+				"Version": "1.5.7.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "b565da03b92df2442db74a973d543d55",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\Bannerlord.BLSE.Shared.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "netstandard",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "cc7b13ffcd2ddd51"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "2e736dd74911da5c19216eceb5c55226",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\netstandard\\v4.0_2.0.0.0__cc7b13ffcd2ddd51\\netstandard.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Runtime.InteropServices.RuntimeInformation",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "c6ef1f8e8acc5725ec2eaac373206ad3",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Runtime.InteropServices.RuntimeInformation\\v4.0_4.0.0.0__b03f5f7f11d50a3a\\System.Runtime.InteropServices.RuntimeInformation.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Xml",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "67e214b9cc313f24220ace0beeb849a6",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Xml\\v4.0_4.0.0.0__b77a5c561934e089\\System.Xml.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Mono.Cecil",
+				"Version": "0.11.5.0",
+				"PublicKeyToken": "50cebf1cceb9d05e"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "037dbbacc199b24bc0ee91f60a561f06",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\Mono.Cecil.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "0Harmony",
+				"Version": "2.3.5.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "b0405917ea5d8198b84df21e52de1765",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\0Harmony.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "MonoMod.Backports",
+				"Version": "1.1.2.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "aabb27245e0b8ed24e0dddf60e25e986",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\MonoMod.Backports.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Starter.Library",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "826f1cfc6ed7bdc90665e973c1b3554e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Starter.Library.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Bannerlord.BLSE",
+				"Version": "1.5.7.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "0f8a7c75469e941c653cd87d522fc982",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\Bannerlord.BLSE.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "MonoMod.Utils",
+				"Version": "25.0.8.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "00738d8d8456776f96b8a033c2e4e238",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\MonoMod.Utils.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "MonoMod.ILHelpers",
+				"Version": "1.1.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "67d262c0d19bd20bb2440a789d130d85",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\MonoMod.ILHelpers.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "HarmonySharedState",
+				"Version": "0.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "NONE",
+			"AnonymizedPath": "EMPTY",
+			"Type": "Unclassified",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.ValueTuple",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "cc7b13ffcd2ddd51"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "f9a0b1ba84e43f2c5a0b95e70089a591",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.ValueTuple\\v4.0_4.0.0.0__cc7b13ffcd2ddd51\\System.ValueTuple.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "MonoMod.Utils.Cil.ILGeneratorProxy",
+				"Version": "0.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "NONE",
+			"AnonymizedPath": "EMPTY",
+			"Type": "Unclassified",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "MonoMod.Core",
+				"Version": "1.2.3.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "511ae23f663303fa5ee73cd6fb4bdbd4",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\MonoMod.Core.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.SaveSystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "454831d28509a9c0dd22406f26ad65ec",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.SaveSystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.Launcher.Library",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "4ec2ad3aeb6837cb75b2bc882b08fc12",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.Launcher.Library.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Library",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "427f5a61f563aa4176ba552bddc78eea",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Library.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Core",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "19ec3d406cd061b5f6206cad6ba1743d",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Core.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "1e31c33e8ca115987c8f3e9f3a9f594d",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.DotNet",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "67537dabf905052c69a839320b16fd2d",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.DotNet.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.ModuleManager",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "b42a7118cd5dc517cbfc082d6e40d08e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.ModuleManager.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Engine",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "6550365ebb123e889a30a60d5b7cb89f",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Engine.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.ObjectSystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "a20d59760f22256e786250d2b0b0785e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.ObjectSystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Anonymously Hosted DynamicMethods Assembly",
+				"Version": "0.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Unknown",
+			"Hash": "NONE",
+			"AnonymizedPath": "DYNAMIC",
+			"Type": "Dynamic",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Diamond",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "6f1663c324b1efcb64221c3b3696ae37",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Diamond.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.DotNet.AutoGenerated",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "838aa3112e4088eb24b6c2376bf01dd4",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.DotNet.AutoGenerated.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Engine.AutoGenerated",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "831c88175b849aa85e135afbed406173",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Engine.AutoGenerated.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.InputSystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "e43346301edcace9069d4399f68c48ea",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.InputSystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.ScreenSystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "1b152f7f5ba11d4acc70bbd6e7b81c42",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.ScreenSystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Numerics.Vectors",
+				"Version": "4.1.3.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "e9abb00cd885368e7943974f8c11e61e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\System.Numerics.Vectors.dll",
+			"Type": "System, GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.Diamond",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "6c983b2fd4714b8720bb76d6a470522e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.Diamond.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.PlayerServices",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "92bb2ca68cab3f0eee5225aac23f9579",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.PlayerServices.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Localization",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "023d2d42cc64050c2d880368006542cd",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Localization.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.PlatformService",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "f5e6efacc0b9d2cc4d93197067e1fb31",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.PlatformService.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Security",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "fb7ca661b1b9938aba4f06e9a596403a",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Security\\v4.0_4.0.0.0__b03f5f7f11d50a3a\\System.Security.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Configuration",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "9795d685289babccdb4a4562f1508b04",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Configuration\\v4.0_4.0.0.0__b03f5f7f11d50a3a\\System.Configuration.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.TwoDimension.Standalone",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "2db017dbd8b6e27b6b6763dd7714965d",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.TwoDimension.Standalone.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Data.SqlXml",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "c8aec2e03c8dabfcb7bbbe41e508127c",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Data.SqlXml\\v4.0_4.0.0.0__b77a5c561934e089\\System.Data.SqlXml.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "MonoMod.Iced",
+				"Version": "1.21.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "6b039a127497619227e3087591d86591",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\MonoMod.Iced.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.GauntletUI",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "aac66ba5de826107c40f571ae807e235",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.GauntletUI.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.TwoDimension",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "f086bb66b048f1bf69041a56e8bc68ee",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.TwoDimension.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Newtonsoft.Json",
+				"Version": "13.0.0.0",
+				"PublicKeyToken": "30ad4fe6b2a6aeed"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "916d32b899f1bc23b209648d007b99fd",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\Newtonsoft.Json.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Net.Http",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "6c068c1d54707e817779a31c555c5383",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Net.Http\\v4.0_4.0.0.0__b03f5f7f11d50a3a\\System.Net.Http.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Network",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "92e8b0101fe084ba77f99b1307c0f934",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Network.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.AutoGenerated",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "8dea58b2f8442d7b58372ad475d3e12b",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.AutoGenerated.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.AchievementSystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "07e297127d845c1769344829e595a7b4",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.AchievementSystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.ActivitySystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "33643510066c6c14534531e1c4dbe328",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.ActivitySystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.PlatformService.Steam",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "6e26525bbb8a64cdbecfe9191153ce37",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.PlatformService.Steam.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Steamworks.NET",
+				"Version": "20.1.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "d886287c0a95df6fdc8588c595fdb1a3",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\Steamworks.NET.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Diamond.AccessProvider.Test",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "e34efb2fee21c145d9413cad32b947da",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Diamond.AccessProvider.Test.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Mono.Cecil.Mdb",
+				"Version": "0.11.5.0",
+				"PublicKeyToken": "50cebf1cceb9d05e"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "a97d8b05414aaaa056d6aec577ab15a8",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\Mono.Cecil.Mdb.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Mono.Cecil.Pdb",
+				"Version": "0.11.5.0",
+				"PublicKeyToken": "50cebf1cceb9d05e"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "358ee793e3f5139ec1f835f0cf306baf",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\Mono.Cecil.Pdb.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Mono.Cecil.Rocks",
+				"Version": "0.11.5.0",
+				"PublicKeyToken": "50cebf1cceb9d05e"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "6fcdf77e1f173f269ff56752f273f094",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\Mono.Cecil.Rocks.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.Harmony",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Bannerlord.Harmony",
+				"Version": "2.3.5.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "c1b5fdc950bf3a10268d567fef77fe9a",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.Harmony\\bin\\Win64_Shipping_Client\\Bannerlord.Harmony.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.Bcl.HashCode",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": "cc7b13ffcd2ddd51"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "9ccecdcfe5f0302d19ccadee94b93b75",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Microsoft.Bcl.HashCode.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Serilog",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "24c2f752a8e58a10"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "b5a1a1534277ca7c55f8378e9f0b0c6b",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Serilog.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Serilog.Extensions.Logging",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "24c2f752a8e58a10"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "680cea3f3f888a046d8ad7a524259ef1",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Serilog.Extensions.Logging.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Serilog.Sinks.File",
+				"Version": "5.0.0.0",
+				"PublicKeyToken": "24c2f752a8e58a10"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "c25357a7950dcfc7f85ee9d593cb1a24",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Serilog.Sinks.File.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Bannerlord.ButterLib",
+				"Version": "2.9.18.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "65daa433b8c27825f951622b1f592961",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Bannerlord.ButterLib.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "BUTR.CrashReport",
+				"Version": "15.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "5a39fd621febef831957858463448474",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\BUTR.CrashReport.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "BUTR.CrashReport.Models",
+				"Version": "15.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "ab7d105d9e9c3e65ce221b96ad759518",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\BUTR.CrashReport.Models.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "BUTR.CrashReport.Renderer.ImGui.Silk.NET",
+				"Version": "15.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "2e68175ece3aa43266384d8718bdce67",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\BUTR.CrashReport.Renderer.ImGui.Silk.NET.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "BUTR.CrashReport.Renderer.WinForms",
+				"Version": "15.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "58f5a304db73c99d1c7dd8ab6e839849",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\BUTR.CrashReport.Renderer.WinForms.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Reflection.Metadata",
+				"Version": "1.4.5.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "bc807d23a61da410046111c34008ad67",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\System.Reflection.Metadata.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Native",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.View",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "306e50bb5669891ee07fec6490edb153",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Native\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.View.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Core.ViewModelCollection",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "81a42cc5c5efc18a4c738f3cde3691e5",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Core.ViewModelCollection.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.ViewModelCollection",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "5e06a566cee8cdceb4ccdf553c733be9",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.ViewModelCollection.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Native",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.0",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "8549662ba43762b993162f73c572e075",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Native\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.0.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Native",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.1",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "15c356846305bb9ffd9f1d9448bdaf84",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Native\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.GauntletUI.AutoGenerated.1.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Native",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.GauntletUI",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "e2f0d8f73ed635b32bb60d986fb520cd",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Native\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.GauntletUI.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Native",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.Platform.PC",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "e8505aa38dae8e9f96afc453cd16c2fd",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Native\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.Platform.PC.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Sandbox",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "SandBox",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "49f588c1672b05934c8a73cffdb7d584",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\SandBox\\bin\\Win64_Shipping_Client\\SandBox.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Drawing",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "e5fdce79ab8b79b2a44dd2ceb6d117ba",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Drawing\\v4.0_4.0.0.0__b03f5f7f11d50a3a\\System.Drawing.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Numerics",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "b5538c96a2e81aeddc7974d3bb89a36b",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Numerics\\v4.0_4.0.0.0__b77a5c561934e089\\System.Numerics.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.Extensions.Logging.Abstractions",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "adb9793829ddae60"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "f6bfb173119f48eed8b3616a3fd5464f",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Microsoft.Extensions.Logging.Abstractions.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Windows.Forms",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "50249f7baed662dc55cce96b511671fe",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Windows.Forms\\v4.0_4.0.0.0__b77a5c561934e089\\System.Windows.Forms.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Collections.Immutable",
+				"Version": "1.2.5.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "8f55c22412f7d448d6e7b83102665368",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\System.Collections.Immutable.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.GauntletUI.Data",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "3e531f8f60f60f90ac01cc92d37632fc",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.GauntletUI.Data.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.GauntletUI.Widgets",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "d759cfa90d153df6135bd5d0466b465a",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.GauntletUI.Widgets.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.GauntletUI.PrefabSystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "7af589ef074064dcc32180b730bcbbc4",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.GauntletUI.PrefabSystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.CampaignSystem",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "7e58f923ac0de12271b935af69f91608",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.CampaignSystem.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Sandbox",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "SandBox.ViewModelCollection",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "d232e1508aa85826545f756e3d50a3be",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\SandBox\\bin\\Win64_Shipping_Client\\SandBox.ViewModelCollection.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Sandbox",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "SandBox.View",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "6dddbeb6c8fa5a99f8ed81507cdd4d6b",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\SandBox\\bin\\Win64_Shipping_Client\\SandBox.View.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Sandbox",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "SandBox.GauntletUI.AutoGenerated.0",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "c8a80f77342d15e01941728f395f1ea9",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\SandBox\\bin\\Win64_Shipping_Client\\SandBox.GauntletUI.AutoGenerated.0.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Sandbox",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "SandBox.GauntletUI.AutoGenerated.1",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "e79b339d28db3009ff266f6488419396",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\SandBox\\bin\\Win64_Shipping_Client\\SandBox.GauntletUI.AutoGenerated.1.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Sandbox",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "SandBox.GauntletUI",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "42ba62202d79d949c2547cda31ab8d2a",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\SandBox\\bin\\Win64_Shipping_Client\\SandBox.GauntletUI.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "StoryMode",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "StoryMode",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "ef03867817961104cde0aa326f8c627b",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\StoryMode\\bin\\Win64_Shipping_Client\\StoryMode.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "StoryMode",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "StoryMode.ViewModelCollection",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "58eef562fc28e1bf84327d58ee4569b5",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\StoryMode\\bin\\Win64_Shipping_Client\\StoryMode.ViewModelCollection.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "StoryMode",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "StoryMode.View",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "120169fceaabcdfda8668fa4f1d56f3f",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\StoryMode\\bin\\Win64_Shipping_Client\\StoryMode.View.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "StoryMode",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "StoryMode.GauntletUI.AutoGenerated",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "636d14d60de61074d548b43b174d0713",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\StoryMode\\bin\\Win64_Shipping_Client\\StoryMode.GauntletUI.AutoGenerated.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "StoryMode",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "StoryMode.GauntletUI",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "4c980230a5a2391ea093271252601792",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\StoryMode\\bin\\Win64_Shipping_Client\\StoryMode.GauntletUI.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.CampaignSystem.ViewModelCollection",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "c093f71f1e022d7e463cc17928266f4e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.CampaignSystem.ViewModelCollection.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "CustomBattle",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.MountAndBlade.CustomBattle",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "12f43f8f849f690095d88d9546ba1e17",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\CustomBattle\\bin\\Win64_Shipping_Client\\TaleWorlds.MountAndBlade.CustomBattle.dll",
+			"Type": "GameModule",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.Extensions.DependencyInjection.Abstractions",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "adb9793829ddae60"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "6f3cca084046a16c91f64953bd6ae66c",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.Extensions.DependencyInjection",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "adb9793829ddae60"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "432c3bdf19dfa3d6440e8f1454e68e2e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Microsoft.Extensions.DependencyInjection.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.Extensions.Options",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "adb9793829ddae60"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "0cd6938593b1785b4ac087f7fe5c47e9",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Microsoft.Extensions.Options.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.Extensions.Logging",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "adb9793829ddae60"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "ddebddf19ecf76882309e8f8f1a1c75b",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Microsoft.Extensions.Logging.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Runtime.Serialization",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "8f16c44259859a0f3401760346386384",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Runtime.Serialization\\v4.0_4.0.0.0__b77a5c561934e089\\System.Runtime.Serialization.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Data",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "6c1d873a5116240d8ee4846ad3ea676e",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_64\\System.Data\\v4.0_4.0.0.0__b77a5c561934e089\\System.Data.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.Extensions.Primitives",
+				"Version": "2.0.0.0",
+				"PublicKeyToken": "adb9793829ddae60"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "b5c71bed0a0cc2db2aa02445a4afa774",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Microsoft.Extensions.Primitives.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+				"Version": "2.9.18.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "8147b4ca83cdfb4a31d9f969f0240a3c",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\Bannerlord.ButterLib.Implementation.1.2.11.dll",
+			"Type": "Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.PSAI",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "189740b4233576449491207ed558306e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.PSAI.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.GauntletUI.ExtraWidgets",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "7ffec329b0221f87a11790ad08e47840",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.GauntletUI.ExtraWidgets.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "TaleWorlds.Engine.GauntletUI",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Amd64",
+			"Hash": "c5803ea7a6a26c11d72a63c2e833d60b",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Engine.GauntletUI.dll",
+			"Type": "GameCore",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Microsoft.GeneratedCode",
+				"Version": "1.0.0.0",
+				"PublicKeyToken": ""
+			},
+			"CultureName": "",
+			"Architecture": "Unknown",
+			"Hash": "NONE",
+			"AnonymizedPath": "DYNAMIC",
+			"Type": "Dynamic",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Xml.Linq",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "77b5b3c58c7392c8bf16ab65829ca146",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\System.Xml.Linq\\v4.0_4.0.0.0__b77a5c561934e089\\System.Xml.Linq.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "Accessibility",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "cd67df24d44e55f8a39a8ab8c6af5bf8",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\Accessibility\\v4.0_4.0.0.0__b03f5f7f11d50a3a\\Accessibility.dll",
+			"Type": "GAC, System",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Memory",
+				"Version": "4.0.1.1",
+				"PublicKeyToken": "cc7b13ffcd2ddd51"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "6fb95a357a3f7e88ade5c1629e2801f8",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\System.Memory.dll",
+			"Type": "System, Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Runtime.CompilerServices.Unsafe",
+				"Version": "4.0.4.1",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "da04a75ddc22118ed24e0b53e474805a",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\System.Runtime.CompilerServices.Unsafe.dll",
+			"Type": "System, Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": "Bannerlord.ButterLib",
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "System.Numerics.Vectors",
+				"Version": "4.1.4.0",
+				"PublicKeyToken": "b03f5f7f11d50a3a"
+			},
+			"CultureName": "",
+			"Architecture": "MSIL",
+			"Hash": "aaa2cbf14e06e9d3586d8a4ed455db33",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\System.Numerics.Vectors.dll",
+			"Type": "System, Module",
+			"AdditionalMetadata": []
+		},
+		{
+			"ModuleId": null,
+			"LoaderPluginId": null,
+			"Id": {
+				"Name": "mscorlib.resources",
+				"Version": "4.0.0.0",
+				"PublicKeyToken": "b77a5c561934e089"
+			},
+			"CultureName": "de",
+			"Architecture": "MSIL",
+			"Hash": "44561e6bc3511df8d86f16a82d22e8d2",
+			"AnonymizedPath": "SystemRoot\\Microsoft.Net\\assembly\\GAC_MSIL\\mscorlib.resources\\v4.0_4.0.0.0_de_b77a5c561934e089\\mscorlib.resources.dll",
+			"Type": "GAC",
+			"AdditionalMetadata": []
+		}
+	],
+	"NativeModules": [
+		{
+			"Id": {
+				"Name": "ntdll.dll",
+				"Version": "10.0.26100.2454 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "d32590939343ff973dc1c7e9e4cc3a97",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\ntdll.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "xtajit64.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "9dbcd358f958c5aa686dc3ec38142639",
+			"AnonymizedPath": "SystemRoot\\System32\\xtajit64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "MSCOREE.DLL",
+				"Version": "10.0.26100.1150 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "ae8ea2d766e6086eaa56d79737a75083",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\MSCOREE.DLL",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "KERNEL32.dll",
+				"Version": "10.0.26100.3037 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "acca9daaddca6380750943525ecafaab",
+			"AnonymizedPath": "SystemRoot\\System32\\KERNEL32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "KERNELBASE.dll",
+				"Version": "10.0.26100.3037 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "f20bf4109716072e1b07336f3ed664fb",
+			"AnonymizedPath": "SystemRoot\\System32\\KERNELBASE.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "apphelp.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "1615318da07944e7324d357ce95ebf75",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\apphelp.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "ADVAPI32.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "10e212a866b5c25350fce25480304306",
+			"AnonymizedPath": "SystemRoot\\System32\\ADVAPI32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "msvcrt.dll",
+				"Version": "7.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "f757e2b8c8b8a179bb2acd665b07625b",
+			"AnonymizedPath": "SystemRoot\\System32\\msvcrt.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "sechost.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "51d819e2c1000b23273667e98be2af4b",
+			"AnonymizedPath": "SystemRoot\\System32\\sechost.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "RPCRT4.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "29e0af5dd2b15a9cc1663f22fdcbf0aa",
+			"AnonymizedPath": "SystemRoot\\System32\\RPCRT4.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "mscoreei.dll",
+				"Version": "4.8.9065.0 built by: NET481REL1LAST_C",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "21f240c8019e5125044508acf5fc9c09",
+			"AnonymizedPath": "SystemRoot\\Microsoft.NET\\Framework64\\v4.0.30319\\mscoreei.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "SHLWAPI.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "88d8c705edbc98c9e4c74ac1d7c96cf3",
+			"AnonymizedPath": "SystemRoot\\System32\\SHLWAPI.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "kernel.appcore.dll",
+				"Version": "10.0.26100.2033 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "5e70144ba9dbdeac41b1ae1074b1116e",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\kernel.appcore.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "VERSION.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "5a9113ecce54e50584feef959a3a2240",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\VERSION.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "clr.dll",
+				"Version": "4.8.9290.0 built by: NET481REL1LAST_C",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "50a0de010e52c43234f191d5d35a19f9",
+			"AnonymizedPath": "SystemRoot\\Microsoft.NET\\Framework64\\v4.0.30319\\clr.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "USER32.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "40defa50ddfcf876df45ef654f358e9b",
+			"AnonymizedPath": "SystemRoot\\System32\\USER32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "win32u.dll",
+				"Version": "10.0.26100.3470 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "05cb498981698dda6a06a8930d47a427",
+			"AnonymizedPath": "SystemRoot\\System32\\win32u.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "VCRUNTIME140_1_CLR0400.dll",
+				"Version": "14.32.31326.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "d700512821d0095da8a9e7b6da106bd9",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\VCRUNTIME140_1_CLR0400.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "GDI32.dll",
+				"Version": "10.0.26100.2033 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "1a4b3d40c5fe585b5c92173950c1775a",
+			"AnonymizedPath": "SystemRoot\\System32\\GDI32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "VCRUNTIME140_CLR0400.dll",
+				"Version": "14.32.31326.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "85fc1bbaf2e22dcfa04c5487efc2e9b4",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\VCRUNTIME140_CLR0400.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "ucrtbase_clr0400.dll",
+				"Version": "14.32.31326.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "ba16a41d8d24d3ce930147d5d3ab237c",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\ucrtbase_clr0400.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "gdi32full.dll",
+				"Version": "10.0.26100.3470 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "70a9342b7821d77bb4ba14f87d871f56",
+			"AnonymizedPath": "SystemRoot\\System32\\gdi32full.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "msvcp_win.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "ff883d618ba60f80c05d87c306f05f59",
+			"AnonymizedPath": "SystemRoot\\System32\\msvcp_win.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "ucrtbase.dll",
+				"Version": "10.0.26100.3037 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "e9d2fe7691f584796abd4eb3ec892df5",
+			"AnonymizedPath": "SystemRoot\\System32\\ucrtbase.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "IMM32.DLL",
+				"Version": "10.0.26100.2033 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "854011128a5306d8804cfb2cf00b1298",
+			"AnonymizedPath": "SystemRoot\\System32\\IMM32.DLL",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "ole32.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "06ea87f63dedd14b1125e3a64ac059dd",
+			"AnonymizedPath": "SystemRoot\\System32\\ole32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "combase.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "d078e18dec9df5bcf0d1bcf47319a712",
+			"AnonymizedPath": "SystemRoot\\System32\\combase.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "bcryptPrimitives.dll",
+				"Version": "10.0.26100.3470 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "2ffaf6a5ef09526f1c9eaf44284f611f",
+			"AnonymizedPath": "SystemRoot\\System32\\bcryptPrimitives.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "uxtheme.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "0e9487905f56550fcdcf9a75a08977c4",
+			"AnonymizedPath": "SystemRoot\\system32\\uxtheme.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "clrjit.dll",
+				"Version": "4.8.9290.0 built by: NET481REL1LAST_C",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "41b16486824879246b8c67fed452327e",
+			"AnonymizedPath": "SystemRoot\\Microsoft.NET\\Framework64\\v4.0.30319\\clrjit.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "bcrypt.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "e55b60d2413c595266e98ad0e2b8c3b9",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\bcrypt.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "urlmon.dll",
+				"Version": "11.00.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "23c7a6c572e24db1ae28e15c27e813f6",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\urlmon.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "iertutil.dll",
+				"Version": "11.00.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "c7c2a0b9108e4e826144772796b2871e",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\iertutil.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "windows.storage.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "c07f383495860f3d480f68911dd041a5",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\windows.storage.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "netutils.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "fb822d8a61473cdc380211c615565ad5",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\netutils.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "srvcli.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "f7edbc57795836713a1624c4854d4d4b",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\srvcli.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "SspiCli.dll",
+				"Version": "10.0.26100.3037 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "87b87f5cbee0f2434f0444f0de65b82e",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\SspiCli.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "SHCORE.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "efcc4a4d4dec70e59956b7227b5e5024",
+			"AnonymizedPath": "SystemRoot\\System32\\SHCORE.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "PROPSYS.dll",
+				"Version": "7.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "eb56a3050c63200b4fcd024ea7fc24f5",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\PROPSYS.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "virtdisk.dll",
+				"Version": "10.0.26100.2033 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "470c723573b68489484ca8233464f745",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\virtdisk.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "OLEAUT32.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "ec9be557ee4465a1bbec2790a2341805",
+			"AnonymizedPath": "SystemRoot\\System32\\OLEAUT32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "CRYPTSP.dll",
+				"Version": "10.0.26100.2454 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "362115536ea6ca815f2a7a482bd197c7",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\CRYPTSP.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "rsaenh.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "cd20ef722af2762d44a72b914e21f410",
+			"AnonymizedPath": "SystemRoot\\system32\\rsaenh.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "CRYPTBASE.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "df9ef8ef6177b136b483a988b922a508",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\CRYPTBASE.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "shell32.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "bebfc4f480a29f596ad2929a351c9ce9",
+			"AnonymizedPath": "SystemRoot\\System32\\shell32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "wintypes.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "a273f17bc793f74b84ca1e0f4c7c1681",
+			"AnonymizedPath": "SystemRoot\\System32\\wintypes.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "profapi.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "5527bc5f2a1af7f84162a6abb070cbb4",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\profapi.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "wldp.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "c271eda5a3b6b3e2d881f90757535ae9",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\wldp.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "amsi.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "0732a776ea1fc7ab3bdc64d8b4135f3a",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\amsi.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "USERENV.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "a5fc72db01f031d70aefe01e9f72966c",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\USERENV.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "TaleWorlds.Native.dll",
+				"Version": null,
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "69e4ec25a68db9c31e5f25a91a139d2c",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\TaleWorlds.Native.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "WS2_32.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "50ee44b41ae8b015e27eb7cd6457633e",
+			"AnonymizedPath": "SystemRoot\\System32\\WS2_32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "SETUPAPI.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "af3846d9cd6f90db4a3bf4b8cd963405",
+			"AnonymizedPath": "SystemRoot\\System32\\SETUPAPI.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "WINMM.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "0721fe88bc3c2e27cc700fd8741c0f26",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\WINMM.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "dbghelp.dll",
+				"Version": "10.0.18362.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "3fbb5bbc320109a3adf8866289a81211",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\dbghelp.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "dxgi.dll",
+				"Version": "10.0.26100.3470 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "1de11fa5a2cdbb6c3669833aad377129",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\dxgi.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "d3d11.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "561c073ff39b09aac75ac53a8377b161",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\d3d11.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "D3DCOMPILER_47.dll",
+				"Version": "10.0.18362.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "fea40e5b591127ae3b065389d058a445",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\D3DCOMPILER_47.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "PhysX_64.dll",
+				"Version": "4.1.1.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "a598fb0f0680eb5c83a1053a2f1a31a4",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\PhysX_64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "XINPUT9_1_0.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "385220d39eeb8953869e7ea06ac3cf79",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\XINPUT9_1_0.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "PhysXCommon_64.dll",
+				"Version": "4.1.1.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "ddf631a07c178452edadb288dab858a9",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\PhysXCommon_64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "PhysXCooking_64.dll",
+				"Version": "4.1.1.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "5a3f8c86fb255bae5caa254faa02b905",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\PhysXCooking_64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "PhysXFoundation_64.dll",
+				"Version": "4.1.1.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "36d8636137be0028d9700e817e4cd543",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\PhysXFoundation_64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "steam_api64.dll",
+				"Version": "06.91.21.57",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "500475b20083ccdc64f12d238cab687a",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\steam_api64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "mono-2.0-sgen.dll",
+				"Version": null,
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "1a34ec5bab27262f6449740d94378ad6",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\mono-2.0-sgen.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "grCore.dll",
+				"Version": "5.2.0.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "7d6e3f5b4276833b0673eb30bfae12a7",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\grCore.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "grGranite.dll",
+				"Version": "5.2.0.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "25e934fbcf33bd8f7d4e8c00575cf5ef",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\grGranite.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "grGraniteDX11.dll",
+				"Version": "5.2.0.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "837f24847d0da1878125376155b2a46d",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\grGraniteDX11.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "GfeSDK.dll",
+				"Version": "\u0001\u0001É",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "e5af053a166fad506a4498e1d785d89e",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\GfeSDK.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "MSVCP140.dll",
+				"Version": "14.42.34438.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "1e3c75de96d972d95952eca5d4a85418",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\MSVCP140.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "VCRUNTIME140.dll",
+				"Version": "14.42.34438.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "71e4d86f40b3e7b283921c7c4455f6cb",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\VCRUNTIME140.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "HID.DLL",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "b9c7643567e0b1bdba4a721f460d963c",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\HID.DLL",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "MSACM32.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "ea2f294368762b878f075584cabfe148",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\MSACM32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "amd_ags_x64.dll",
+				"Version": "5.0.6.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "f3ffb781de5f6e20e70453ea1324c127",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\amd_ags_x64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "dbgcore.DLL",
+				"Version": "10.0.18362.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "8bb7fa4422c9ddc162051d8b7e5522d7",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\dbgcore.DLL",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "directxdatabasehelper.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "5f430ca80b0f213bd7dc0c1f5ba18e4c",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\directxdatabasehelper.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "msdia140.dll",
+				"Version": "14.16.27027.1 built by: vcwrkspc",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "d092b44735a6ee5787bea73ce92e82f4",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\msdia140.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "steamclient64.dll",
+				"Version": "09.59.77.46",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "1173c18195230b9ea6c13ad5953a5cdb",
+			"AnonymizedPath": "ProgramFiles\\(x86)\\Steam\\steamclient64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "imagehlp.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "e31b973dd7b94c5370d8e51dd42209c4",
+			"AnonymizedPath": "SystemRoot\\System32\\imagehlp.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "IPHLPAPI.DLL",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "b43473842eb4bce2fe19a0772bd51505",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\IPHLPAPI.DLL",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "CRYPT32.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "c9e2a344437436ac43057927a4560786",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\CRYPT32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "PSAPI.DLL",
+				"Version": "10.0.26100.1150 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "79a57285f42923e2168d20e45944ad97",
+			"AnonymizedPath": "SystemRoot\\System32\\PSAPI.DLL",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "tier0_s64.dll",
+				"Version": "09.59.77.46",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "4e34373b76d0fc716bddae4f69644567",
+			"AnonymizedPath": "ProgramFiles\\(x86)\\Steam\\tier0_s64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "vstdlib_s64.dll",
+				"Version": "09.59.77.46",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "1279f39bcf89cd20a74bbafad01bd24b",
+			"AnonymizedPath": "ProgramFiles\\(x86)\\Steam\\vstdlib_s64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "MSWSOCK.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "c668d11ba267f3079b46f149ff85df63",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\MSWSOCK.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "Secur32.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "6a7e28b98dcf11cd2c5fe535ba1f0aac",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\Secur32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "gameoverlayrenderer64.dll",
+				"Version": "09.59.77.46",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "743531727bbbb4b2f33a34e050499a0e",
+			"AnonymizedPath": "ProgramFiles\\(x86)\\Steam\\gameoverlayrenderer64.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "CFGMGR32.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "aebcb6bfe4eb9b78fd14511870cccbd2",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\CFGMGR32.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "clbcatq.dll",
+				"Version": "2001.12.10941.16384 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "a2097f9b4adf5fb6d31b591171c476a5",
+			"AnonymizedPath": "SystemRoot\\System32\\clbcatq.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "TextShaping.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "c53cd370f5b0f83457bcb1bc731b52f7",
+			"AnonymizedPath": "SystemRoot\\System32\\TextShaping.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "MSCTF.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "debbe4dab40315d6b7274a4bf839ba2c",
+			"AnonymizedPath": "SystemRoot\\System32\\MSCTF.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "textinputframework.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "40b15700928cb2cbc8047099b9c02112",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\textinputframework.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "CoreMessaging.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "1f7318ab1cb9561a6071473d98ba80e4",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\CoreMessaging.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "CoreUIComponents.dll",
+				"Version": "10.0.26100.3470",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "48ee26f7bbf726de61d8a6c7e4c5cd23",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\CoreUIComponents.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "XInput1_4.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "640c05b1629aaa5ab32e46b01c888a57",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\XInput1_4.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "DEVOBJ.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "e2aba86d5177e5d7967dc52800d0d122",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\DEVOBJ.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "inputhost.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "386348cd25c8240be13c21cb81a5e54d",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\inputhost.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "WINTRUST.dll",
+				"Version": "10.0.26100.3470 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "26d89808f49125908d00970ccead6636",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\WINTRUST.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "MSASN1.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "17f8d58311f632aee6aa383a4fba1813",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\MSASN1.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "MMDevApi.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "1cb704c71221a412bfa3b3adbe4b5b50",
+			"AnonymizedPath": "SystemRoot\\System32\\MMDevApi.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "AUDIOSES.DLL",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "9eec588112a59bcce4e170a5b0440a92",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\AUDIOSES.DLL",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "resourcepolicyclient.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "5f0408b9e672a5089f2e3034f27e91dc",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\resourcepolicyclient.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "powrprof.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "7e7568c7ce5d186015fa3c35fdd5429e",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\powrprof.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "UMPDC.dll",
+				"Version": "10.0.26100.3037 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "14bdea0959707a31fee0c9c770043457",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\UMPDC.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "dxcore.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "49ae831908bff24c88d079d9df3b1c0d",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\dxcore.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "windows.staterepositorycore.dll",
+				"Version": "10.0.26100.1882 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "48dd02a28433b223cd4962a8cb14b388",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\windows.staterepositorycore.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "qcdx11arm64xum.dll",
+				"Version": "31.0.84.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "172c091eba02160b0cc15e010ab20c4c",
+			"AnonymizedPath": "SystemRoot\\System32\\DriverStore\\FileRepository\\qcdx8380.inf_arm64_168ae1093dcfdf6c\\qcdx11arm64xum.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "qcgpuarm64xcompilercore.dll",
+				"Version": "DX.17.93.01",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "22ffb974b36fe6c3baddcdffb95d1891",
+			"AnonymizedPath": "SystemRoot\\System32\\DriverStore\\FileRepository\\qcdx8380.inf_arm64_168ae1093dcfdf6c\\qcgpuarm64xcompilercore.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "D3DSCache.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "9f87935447e77a46cfeafad6679b98b8",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\D3DSCache.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "twinapi.appcore.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "ccf2d156fc4a7f76448994fb2c497192",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\twinapi.appcore.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "dcomp.dll",
+				"Version": "10.0.26100.3323 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "b542efdb3f7683f333f20b15a63a0f83",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\dcomp.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "Microsoft.Internal.WarpPal.dll",
+				"Version": null,
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "95bf562b81803bf2d08491db5f573d9e",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\Microsoft.Internal.WarpPal.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "dwmapi.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "7b373e6f4212f0a0a09cca4a6ed30768",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\dwmapi.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "grGraniteQuartzFast.dll",
+				"Version": "5.2.0.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "7a5bec06d8ed9fabdbed3d9cbfbbc328",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\bin\\Win64_Shipping_Client\\grGraniteQuartzFast.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "Windows.UI.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "45ce9189354d4ea3eb3f4e533f940b10",
+			"AnonymizedPath": "SystemRoot\\System32\\Windows.UI.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "gpapi.dll",
+				"Version": "10.0.26100.2308 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "7acc9ceb08ffc328e39e624b5c2d3bc7",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\gpapi.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "diasymreader.dll",
+				"Version": "14.8.9294.0 built by: NET481REL1LAST_B",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "488a5485e79109989ca35194d18ea360",
+			"AnonymizedPath": "SystemRoot\\Microsoft.NET\\Framework64\\v4.0.30319\\diasymreader.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "cimgui.dll",
+				"Version": null,
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "2f85a06194b6592c59ad6bacee9349fd",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\cimgui.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "glfw3.dll",
+				"Version": "3.4.0",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "2f3610e9a5a8236c779de5a8fdb960f1",
+			"AnonymizedPath": "Mount & Blade II Bannerlord\\Modules\\Bannerlord.ButterLib\\bin\\Win64_Shipping_Client\\glfw3.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "dinput8.dll",
+				"Version": "10.0.26100.1 (WinBuild.160101.0800)",
+				"PublicKeyToken": null
+			},
+			"Architecture": "Arm64",
+			"Hash": "a5be152fcd7383fe242b1e1395582f0d",
+			"AnonymizedPath": "SystemRoot\\SYSTEM32\\dinput8.dll",
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": {
+				"Name": "clrcompression.dll",
+				"Version": "4.8.9266.0 built by: NET481REL1LAST_B",
+				"PublicKeyToken": null
+			},
+			"Architecture": "x86_64",
+			"Hash": "37c8d181fd245dab71f1edb248d676ab",
+			"AnonymizedPath": "SystemRoot\\Microsoft.NET\\Framework64\\v4.0.30319\\clrcompression.dll",
+			"AdditionalMetadata": []
+		}
+	],
+	"RuntimePatches": [
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.Starter.Library.Program",
+			"OriginalMethodName": "Main",
+			"Patches": [
+				{
+					"ModuleId": null,
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.BLSE.Shared",
+						"Version": "1.5.7.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.BLSE.Shared.Utils.LauncherExceptionHandler.MainPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.BLSE.Shared.Patches.LauncherExceptionHandler"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.BLSE.Shared.Patches.LauncherExceptionHandler"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				},
+				{
+					"ModuleId": null,
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.BLSE.Shared",
+						"Version": "1.5.7.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Transpiler",
+					"FullName": "Bannerlord.BLSE.Shared.Standalone.MainTranspiler",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "bannerlord.blse.features"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "bannerlord.blse.features"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "SandBox.SandBoxSubModule",
+			"OriginalMethodName": "OnInitialState",
+			"Patches": [
+				{
+					"ModuleId": null,
+					"LoaderPluginId": "BLSE.ContinueSaveFile",
+					"AssemblyId": {
+						"Name": "Bannerlord.BLSE",
+						"Version": "1.5.7.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.BLSE.Features.ContinueSaveFile.Patches.SandBoxSubModulePatch.OnInitialStatePrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "bannerlord.blse.features"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "bannerlord.blse.features"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.Library.InformationManager",
+			"OriginalMethodName": "ShowInquiry",
+			"Patches": [
+				{
+					"ModuleId": null,
+					"LoaderPluginId": "BLSE.ContinueSaveFile",
+					"AssemblyId": {
+						"Name": "Bannerlord.BLSE",
+						"Version": "1.5.7.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.BLSE.Features.ContinueSaveFile.Patches.InformationManagerPatch.Prefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "bannerlord.blse.features"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "bannerlord.blse.features"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "HarmonyLib.Harmony",
+			"OriginalMethodName": "UnpatchAll",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.Harmony",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.Harmony",
+						"Version": "2.3.5.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.Harmony.SubModule.UnpatchAllPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.Harmony.UnpatchAll"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.Harmony.UnpatchAll"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnSubModuleLoad",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnSubModuleLoadPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnSubModuleUnloaded",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnSubModuleUnloadedPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnApplicationTick",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnApplicationTickPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnBeforeInitialModuleScreenSetAsRoot",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnBeforeInitialModuleScreenSetAsRootPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				},
+				{
+					"ModuleId": "Bannerlord.Harmony",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.Harmony",
+						"Version": "2.3.5.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.Harmony.SubModule.OnBeforeInitialModuleScreenSetAsRootPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.Harmony.GauntletUISubModule"
+						},
+						{
+							"Key": "Index",
+							"Value": "1"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.Harmony.GauntletUISubModule"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "1"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnGameStart",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnGameStartPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "InitializeGameStarter",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.InitializeGameStarterPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "DoLoading",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.DoLoadingPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnGameLoaded",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnGameLoadedPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnCampaignStart",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnCampaignStartPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "BeginGameStart",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.BeginGameStartPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnGameEnd",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnGameEndPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnGameInitializationFinished",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnGameInitializationFinishedPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnBeforeMissionBehaviorInitialize",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnBeforeMissionBehaviourInitializePostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnMissionBehaviorInitialize",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnMissionBehaviourInitializePostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnMultiplayerGameStart",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnMultiplayerGameStartPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnNewGameCreated",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnNewGameCreatedPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "RegisterSubModuleObjects",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.RegisterSubModuleObjectsPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "AfterRegisterSubModuleObjects",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.AfterRegisterSubModuleObjectsPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnAfterGameInitializationFinished",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnAfterGameInitializationFinishedPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnConfigChanged",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnConfigChangedPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "OnInitialState",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.OnInitialStatePostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBSubModuleBase",
+			"OriginalMethodName": "AfterAsyncTickTick",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.SubModuleWrappers2.Patches.MBSubModuleBasePatch.AfterAsyncTickTickPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SubModuleWrappers2"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.Options.OptionsProvider",
+			"OriginalMethodName": "GetGameKeyCategoriesList",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.Implementation.HotKeys.Patches.OptionsProviderPatches.GetGameKeyCategoriesListPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.HotKeySystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.HotKeySystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.Module",
+			"OriginalMethodName": "FinalizeSubModules",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.Implementation.MBSubModuleBaseExtended.Patches.ModulePatch.FinalizeSubModulesPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.Module",
+			"OriginalMethodName": "SetInitialModuleScreenAsRootScreen",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Transpiler",
+					"FullName": "Bannerlord.ButterLib.Implementation.MBSubModuleBaseExtended.Patches.ModulePatch.Transpiler",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBGameManager",
+			"OriginalMethodName": "OnGameStart",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Transpiler",
+					"FullName": "Bannerlord.ButterLib.Implementation.MBSubModuleBaseExtended.Patches.MBGameManagerPatch.Transpiler",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.MountAndBlade.MBGameManager",
+			"OriginalMethodName": "OnGameEnd",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Transpiler",
+					"FullName": "Bannerlord.ButterLib.Implementation.MBSubModuleBaseExtended.Patches.MBGameManagerPatch.Transpiler",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.MBSubModuleBaseEx"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.CampaignSystem.CampaignBehaviorBase",
+			"OriginalMethodName": ".ctor",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.BehaviourNamePatch.CampaignBehaviorBaseCtorPostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.TypeExtensions",
+			"OriginalMethodName": "IsContainer",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.TypeExtensionsPatch.IsContainerPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddBasicTypeDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddBasicTypeDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddClassDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddClassDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddContainerDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddContainerDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddEnumDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddEnumDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddGenericClassDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddGenericClassDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddGenericStructDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddGenericStructDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddInterfaceDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddInterfaceDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddRootClassDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddRootClassDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "AddStructDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.AddStructDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.SaveSystem.Definition.DefinitionContext",
+			"OriginalMethodName": "ConstructContainerDefinition",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.SaveSystem.Patches.DefinitionContextPatch.ConstructContainerDefinitionPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.SaveSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.CampaignSystem.CampaignBehaviors.CampaignBehaviorManager",
+			"OriginalMethodName": "LoadBehaviorData",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Prefix",
+					"FullName": "Bannerlord.ButterLib.Implementation.ObjectSystem.Patches.CampaignBehaviorManagerPatch.OnGameLoadedPrefix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.ObjectSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.ObjectSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		},
+		{
+			"OriginalMethodDeclaredTypeName": "TaleWorlds.CampaignSystem.CampaignBehaviors.CampaignBehaviorManager",
+			"OriginalMethodName": "OnBeforeSave",
+			"Patches": [
+				{
+					"ModuleId": "Bannerlord.ButterLib",
+					"LoaderPluginId": null,
+					"AssemblyId": {
+						"Name": "Bannerlord.ButterLib.Implementation.1.2.11",
+						"Version": "2.9.18.0",
+						"PublicKeyToken": ""
+					},
+					"Provider": "Harmony",
+					"Type": "Postfix",
+					"FullName": "Bannerlord.ButterLib.Implementation.ObjectSystem.Patches.CampaignBehaviorManagerPatch.OnBeforeSavePostfix",
+					"AdditionalMetadata": [
+						{
+							"Key": "Owner",
+							"Value": "Bannerlord.ButterLib.ObjectSystem"
+						},
+						{
+							"Key": "Index",
+							"Value": "0"
+						},
+						{
+							"Key": "Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "Before",
+							"Value": ""
+						},
+						{
+							"Key": "After",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:Owner",
+							"Value": "Bannerlord.ButterLib.ObjectSystem"
+						},
+						{
+							"Key": "DISPLAY:Index",
+							"Value": "0"
+						},
+						{
+							"Key": "DISPLAY:Priority",
+							"Value": "400"
+						},
+						{
+							"Key": "DISPLAY:Before",
+							"Value": ""
+						},
+						{
+							"Key": "DISPLAY:After",
+							"Value": ""
+						}
+					]
+				}
+			],
+			"AdditionalMetadata": []
+		}
+	],
+	"LoaderPlugins": [
+		{
+			"Id": "BLSE.ContinueSaveFile",
+			"Name": "BLSE.ContinueSaveFile",
+			"Version": null,
+			"UpdateInfo": null,
+			"Dependencies": [],
+			"Capabilities": [],
+			"AdditionalMetadata": []
+		},
+		{
+			"Id": "BLSE.AssemblyResolver",
+			"Name": "BLSE.AssemblyResolver",
+			"Version": null,
+			"UpdateInfo": null,
+			"Dependencies": [],
+			"Capabilities": [],
+			"AdditionalMetadata": []
+		}
+	],
+	"InvolvedLoaderPlugins": [],
+	"AdditionalMetadata": []
+}

@@ -1,10 +1,22 @@
-﻿using System.Numerics;
+﻿using ImGui.Structures;
+
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace ImGui;
 
 partial class CmGui
 {
+    public MarkdownTooltipCallback mdDefaultMarkdownTooltipCallback = null!;
+    
+    public MarkdownLinkCallback mdDefaultMarkdownLinkCallback = null!;
+    
+    public MarkdownFormatCallback mdDefaultMarkdownFormatCallback = null!;
+    
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void mdMarkdownDel(IntPtrByte p_markdown, IntPtr length, IntPtrMarkdownConfig config);
+    public mdMarkdownDel mdMarkdown = null!;
+    
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate byte igBeginDel(IntPtrByte name, IntPtrByte p_open, ImGuiNET.ImGuiWindowFlags flags);
     public igBeginDel igBegin = null!;
