@@ -78,9 +78,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImGui.NET" Version="$(ImGuiVersion)" />
-    <PackageReference Include="ImGui.NET.SourceBuild" Version="$(ImGuiSourceVersion)" />
-    
+    <PackageReference Include="BUTR.ImGui.NET.SourceBuild" Version="$(ImGuiMiscVersion)" />
     
     <PackageReference Include="System.Buffers" Version="4.6.0" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.6.0" />

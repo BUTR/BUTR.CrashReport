@@ -20,4 +20,6 @@ public readonly unsafe struct ImGuiViewportWrapper : IImGuiViewport
     public ref uint ID => ref Unsafe.AsRef<uint>(&NativePtr->ID);
     public ref Vector2 WorkPos => ref Unsafe.AsRef<Vector2>(&NativePtr->WorkPos);
     public ref Vector2 WorkSize => ref Unsafe.AsRef<Vector2>(&NativePtr->WorkSize);
+    public ref IntPtr PlatformHandle => ref Unsafe.AsRef<IntPtr>(&NativePtr->PlatformHandle);
+    public ref IntPtr PlatformHandleRaw => ref Unsafe.AsRef<IntPtr>(&NativePtr->PlatformHandleRaw);
 }

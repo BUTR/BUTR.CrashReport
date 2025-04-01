@@ -4,11 +4,15 @@ using ImGui;
 
 using OpenGLES3;
 
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
 namespace BUTR.CrashReport.Renderer.ImGui.WASM.Controller;
 
 internal partial class ImGuiController : IDisposable
 {
     private static readonly Dictionary<IntPtr, WeakReference<ImGuiController>> _instances = new();
+    private static readonly Dictionary<IntPtr, WeakReference<ImGuiController>> _contexts = new();
 
     private readonly Allocator _allocator = new();
     private readonly IntPtr _window;
@@ -20,10 +24,8 @@ internal partial class ImGuiController : IDisposable
     private readonly uint _elementsHandle;
     private uint _vertexArrayObject, _fontTextureId;
 
-    public ImGuiController(IntPtr window, GL gl, Emscripten.Emscripten emscripten, CmGui imgui)
+    public unsafe ImGuiController(IntPtr window, GL gl, Emscripten.Emscripten emscripten, CmGui imgui)
     {
-        _instances[window] = new WeakReference<ImGuiController>(this);
-
         _window = window;
         _gl = gl;
         _emscripten = emscripten;
@@ -38,9 +40,25 @@ internal partial class ImGuiController : IDisposable
         var context = _imgui.CreateContext();
         _imgui.SetCurrentContext(context);
 
+        _instances[window] = new WeakReference<ImGuiController>(this);
+        _contexts[context] = new WeakReference<ImGuiController>(this);
+
         RebuildFontAtlas();
 
         SetupEmscripten(_window);
+
+        _imgui.GetIO(out var io);
+        io.PlatformOpenInShellRaw = &PlatformOpenInShell;
+    }
+
+    [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
+    private static byte PlatformOpenInShell(IntPtr context, Pointer<byte> path)
+    {
+        if (!_contexts.TryGetValue(context, out var instanceRef) || !instanceRef.TryGetTarget(out var instance))
+            return 0;
+
+        instance._emscripten.custom_emscripten_open_link(path);
+        return 1;
     }
 
     public void Dispose()

@@ -1,6 +1,14 @@
 #include <emscripten.h>
 
 EMSCRIPTEN_KEEPALIVE
+void custom_emscripten_open_link(const char* url) {
+    EM_ASM({
+        const url = UTF8ToString($0);
+        window.open(url, '_blank');
+    }, url);
+}
+
+EMSCRIPTEN_KEEPALIVE
 void custom_emscripten_set_element_style_size(const char* element_id, int width, int height) {
     EM_ASM({
         const elementId = UTF8ToString($0);

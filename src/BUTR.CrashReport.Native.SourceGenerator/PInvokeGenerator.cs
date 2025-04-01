@@ -124,8 +124,7 @@ public class PInvokeGenerator : IIncrementalGenerator
 
     private static bool IsDelegateWithUnmanagedFunctionPointer(INamedTypeSymbol typeSymbol)
     {
-        return typeSymbol.TypeKind == TypeKind.Delegate &&
-               typeSymbol.DelegateInvokeMethod is not null &&
+        return typeSymbol is { TypeKind: TypeKind.Delegate, DelegateInvokeMethod: not null } &&
                typeSymbol.GetAttributes().Any(attr => attr.AttributeClass?.Name == "UnmanagedFunctionPointerAttribute");
     }
 

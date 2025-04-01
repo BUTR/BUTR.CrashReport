@@ -19,7 +19,7 @@
     <DebugType>embedded</DebugType>
     
     <ImGuiVersion>1.91.0.1</ImGuiVersion>
-    <ImGuiSourceVersion>1.91.0</ImGuiSourceVersion>
+    <ImGuiMiscVersion>1.91.0.42</ImGuiMiscVersion>
     <GlfwVersion>3.4.0</GlfwVersion>
     <SdlVersion>2.30.8</SdlVersion>
     <SilkNETVersion>2.22.0</SilkNETVersion>

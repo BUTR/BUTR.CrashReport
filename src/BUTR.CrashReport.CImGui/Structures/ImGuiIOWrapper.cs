@@ -2,6 +2,7 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace ImGui.Structures;
 
@@ -36,6 +37,16 @@ public readonly unsafe struct ImGuiIOWrapper : IImGuiIO
     public ref Vector2 MousePos => ref Unsafe.AsRef<Vector2>(&NativePtr->MousePos);
     public ref float MouseWheel => ref Unsafe.AsRef<float>(&NativePtr->MouseWheel);
     public ref float MouseWheelH => ref Unsafe.AsRef<float>(&NativePtr->MouseWheelH);
+    public PlatformOpenInShellDelegate? PlatformOpenInShell
+    {
+        get => NativePtr->PlatformOpenInShellFn == IntPtr.Zero ? null : Marshal.GetDelegateForFunctionPointer<PlatformOpenInShellDelegate>(NativePtr->PlatformOpenInShellFn);
+        set => NativePtr->PlatformOpenInShellFn = value is null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(value);
+    }
+    public delegate* unmanaged[Cdecl]<IntPtr, IntPtrByte, byte> PlatformOpenInShellRaw
+    {
+        get => (delegate* unmanaged[Cdecl]<IntPtr, IntPtrByte, byte>) NativePtr->PlatformOpenInShellFn;
+        set => NativePtr->PlatformOpenInShellFn = (IntPtr) value;
+    }
 
     public void GetFonts(out ImFontAtlasWrapper fonts) => fonts = new(ImGui, NativePtr->Fonts);
     public void GetMouseDown(out RangeAccessorRef<bool, ImGuiNET.ImGuiMouseButton> mouseDown) => mouseDown = new(NativePtr->MouseDown, ImGuiNET.ImGuiMouseButton.COUNT);

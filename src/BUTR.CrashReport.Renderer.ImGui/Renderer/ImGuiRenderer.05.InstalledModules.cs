@@ -29,8 +29,8 @@ partial class ImGuiRenderer
     protected static readonly LiteralSpan<byte>[] _dependencyTypeNames =
     [
         LiteralSpan<byte>.Empty,
-        "Load Before \0"u8,  // LoadBefore
-        "Load After \0"u8,   // LoadAfter
+        "Load Before  \0"u8, // LoadBefore
+        "Load After   \0"u8, // LoadAfter
         "Incompatible \0"u8, // Incompatible
     ];
 

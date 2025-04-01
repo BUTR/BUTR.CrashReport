@@ -1,5 +1,6 @@
 ﻿using BUTR.CrashReport.ImGui.Enums;
 using BUTR.CrashReport.ImGui.Structures;
+using BUTR.CrashReport.Memory;
 using BUTR.CrashReport.Native;
 
 using ImGui.Structures;
@@ -15,11 +16,11 @@ unsafe partial class CmGui
 {
     private readonly struct UserDataGeneric
     {
-        public readonly Func<Pointer<ImGuiNET.ImGuiInputTextCallbackData>, int> GenericTDataConverter;
+        public readonly Func<IntPtrImGuiInputTextCallbackData, int> GenericTDataConverter;
         public readonly Delegate Callback;
         public readonly void* DataPtr;
 
-        public UserDataGeneric(Func<Pointer<ImGuiNET.ImGuiInputTextCallbackData>, int> genericTDataConverter, Delegate callback, void* dataPtr)
+        public UserDataGeneric(Func<IntPtrImGuiInputTextCallbackData, int> genericTDataConverter, Delegate callback, void* dataPtr)
         {
             GenericTDataConverter = genericTDataConverter;
             Callback = callback;
@@ -38,7 +39,7 @@ unsafe partial class CmGui
         }
     }
 
-    private readonly Dictionary<Type, Func<Pointer<ImGuiNET.ImGuiInputTextCallbackData>, int>> _callbacks = new();
+    private readonly Dictionary<Type, Func<IntPtrImGuiInputTextCallbackData, int>> _callbacks = new();
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static int ImGuiInputTextCallbackGeneric(ImGuiNET.ImGuiInputTextCallbackData* callbackData)
@@ -74,7 +75,7 @@ unsafe partial class CmGui
         });
     }
 
-    private static int GenericTDataCallback<TData>(Pointer<ImGuiNET.ImGuiInputTextCallbackData> callbackDataPtr) where TData : struct
+    private static int GenericTDataCallback<TData>(IntPtrImGuiInputTextCallbackData callbackDataPtr) where TData : struct
     {
         var callbackData = (ImGuiNET.ImGuiInputTextCallbackData*) callbackDataPtr;
         ref var userData = ref Unsafe.AsRef<UserDataGeneric>(callbackData->UserData);
@@ -92,6 +93,10 @@ unsafe partial class CmGui
             Data = managedData,
         });
     }
+
+
+    private static readonly LiteralSpan<byte> LinkIcon = ""u8;
+
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
@@ -608,6 +613,25 @@ unsafe partial class CmGui
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]
     public void EndTooltip() => igEndTooltip();
+
+    public void Markdown(ReadOnlySpan<byte> utf8Markdown)
+    {
+        var config = default(MarkdownConfig);
+        var configRef = new MarkdownConfigRef(&config)
+        {
+            LinkCallback = mdDefaultMarkdownLinkCallback,
+            TooltipCallback = mdDefaultMarkdownTooltipCallback,
+            ImageCallback = null,
+            LinkIcon = LinkIcon,
+            Heading1 = new() { Font = null, IsSeparator = 1 },
+            Heading2 = new() { Font = null, IsSeparator = 1 },
+            Heading3 = new() { Font = null, IsSeparator = 1 },
+            FormatCallback = mdDefaultMarkdownFormatCallback,
+        };
+
+        fixed (byte* utf8MarkdownPtr = utf8Markdown)
+            mdMarkdown(utf8MarkdownPtr, (IntPtr) utf8Markdown.Length, configRef.NativePtr);
+    }
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | AggressiveOptimization)]

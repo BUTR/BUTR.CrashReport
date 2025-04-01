@@ -51,4 +51,8 @@ public class Emscripten
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     public delegate void custom_emscripten_set_element_style_sizeDel(IntPtrByte element_id, int width, int height);
     public custom_emscripten_set_element_style_sizeDel custom_emscripten_set_element_style_size = null!;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate void custom_emscripten_open_linkDel(IntPtrByte url);
+    public custom_emscripten_open_linkDel custom_emscripten_open_link = null!;
 }

@@ -132,4 +132,6 @@ public interface IImGui : IDisposable
 
     void BeginTooltip();
     void EndTooltip();
+
+    void Markdown(ReadOnlySpan<byte> utf8Markdown);
 }

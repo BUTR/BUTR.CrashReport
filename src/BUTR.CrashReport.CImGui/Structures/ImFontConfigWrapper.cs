@@ -25,7 +25,7 @@ public readonly unsafe ref struct ImFontConfigWrapper
     public ref bool PixelSnapH => ref Unsafe.AsRef<bool>(&NativePtr->PixelSnapH);
     public ref Vector2 GlyphExtraSpacing => ref Unsafe.AsRef<Vector2>(&NativePtr->GlyphExtraSpacing);
     public ref Vector2 GlyphOffset => ref Unsafe.AsRef<Vector2>(&NativePtr->GlyphOffset);
-    public IntPtr GlyphRanges { get => (IntPtr) NativePtr->GlyphRanges; set => NativePtr->GlyphRanges = (ushort*) value; }
+    public ref IntPtr GlyphRanges => ref Unsafe.AsRef<IntPtr>(&NativePtr->GlyphRanges);
     public ref float GlyphMinAdvanceX => ref Unsafe.AsRef<float>(&NativePtr->GlyphMinAdvanceX);
     public ref float GlyphMaxAdvanceX => ref Unsafe.AsRef<float>(&NativePtr->GlyphMaxAdvanceX);
     public ref bool MergeMode => ref Unsafe.AsRef<bool>(&NativePtr->MergeMode);
