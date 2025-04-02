@@ -9,6 +9,10 @@
     <DefineConstants>$(DefineConstants);OPENGL</DefineConstants>
     <RootNamespace>BUTR.CrashReport.Renderer.ImGui.Silk.NET</RootNamespace>
     <AssemblyName>BUTR.CrashReport.Renderer.ImGui.Silk.NET</AssemblyName>
+
+    <RestoreAdditionalProjectSources>
+      https://gitlab.com/api/v4/projects/51457475/packages/nuget/index.json;
+    </RestoreAdditionalProjectSources>
   </PropertyGroup>
 
   <PropertyGroup>

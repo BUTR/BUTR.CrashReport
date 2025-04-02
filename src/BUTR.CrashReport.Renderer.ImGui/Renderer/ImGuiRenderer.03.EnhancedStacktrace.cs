@@ -124,9 +124,8 @@ partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImG
             {
                 _imgui.PopStyleVar();
 #if TEXT_EDITOR
-                var sizeDefault = _imgui.GetTextLineHeight();
                 var editor = _methodCodeLinesEditor[method][(int) codeType];
-                editor.Render(codeTypeUtf8, new Vector2(-1f, (lineCount + 2) * sizeDefault));
+                editor.Render(codeTypeUtf8);
 #else
                 var codeLinesUtf8 = _methodCodeLinesUtf8[method][(int) codeType];
                 RenderInputTextWithIO(codeTypeUtf8, codeLinesUtf8, lineCount);
