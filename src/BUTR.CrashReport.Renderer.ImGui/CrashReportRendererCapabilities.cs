@@ -13,4 +13,5 @@ public enum CrashReportRendererCapabilities
     Logs = 1 << 7,
     Dialogs = 1 << 8,
     CloseAndContinue = 1 << 9,
+    IsPreviousSession = 1 << 10,
 }

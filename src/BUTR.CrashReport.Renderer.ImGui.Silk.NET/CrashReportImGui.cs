@@ -1,7 +1,6 @@
 ﻿using BUTR.CrashReport.ImGui.Enums;
 using BUTR.CrashReport.Models;
 using BUTR.CrashReport.Native;
-using BUTR.CrashReport.Renderer.ImGui.Implementation.CImGui;
 using BUTR.CrashReport.Renderer.ImGui.Implementation.CImGui.Controller;
 using BUTR.CrashReport.Renderer.ImGui.Implementation.CImGui.Utils;
 using BUTR.CrashReport.Renderer.ImGui.Renderer;

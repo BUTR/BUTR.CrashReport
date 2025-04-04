@@ -1,6 +1,5 @@
 ﻿using BUTR.CrashReport.ImGui.Enums;
 using BUTR.CrashReport.ImGui.Extensions;
-using BUTR.CrashReport.ImGui.Utils;
 using BUTR.CrashReport.Memory;
 using BUTR.CrashReport.Renderer.ImGui.Components;
 using BUTR.CrashReport.Renderer.ImGui.Extensions;
@@ -46,7 +45,9 @@ partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImG
         {
             _imgui.TableNextColumn();
             _imgui.SetWindowFontScale(2);
-            _imgui.TextWrapped("Intercepted an exception!\0"u8);
+            _imgui.TextWrapped(!capabilities.IsSet(CrashReportRendererCapabilities.IsPreviousSession)
+                ? "Intercepted an exception!\0"u8
+                : "Exception from previous session!\0"u8);
             _imgui.SetWindowFontScale(1);
             _imgui.TableNextColumn();
 
@@ -143,7 +144,9 @@ partial class ImGuiRenderer<TImGuiIORef, TImGuiViewportRef, TImDrawListRef, TImG
 
         if (capabilities.IsSet(CrashReportRendererCapabilities.CloseAndContinue))
         {
-            _imgui.Text("Clicking 'Close Report and Continue' will continue with the Game's error reporting mechanism.\0"u8);
+            _imgui.Text(!capabilities.IsSet(CrashReportRendererCapabilities.IsPreviousSession)
+                ? "Clicking 'Close Report and Continue' will continue with the Game's error reporting mechanism.\0"u8
+                : "Clicking 'Close Report and Continue' will continue the Game.\0"u8);
         }
 
         _imgui.Separator();
