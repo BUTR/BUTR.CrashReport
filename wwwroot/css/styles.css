@@ -1,0 +1,104 @@
+:root {
+    --bg-color: #f5f5f5;
+    --text-color: #000;
+    --progress-bg: rgba(0, 0, 0, 0.1);
+    --progress-gradient: linear-gradient(to right, #007bff, #00d4ff);
+    --progress-text: #fff;
+    --file-name-color: #333;
+    --motivational-text: #555;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #1e1e1e;
+        --text-color: #fff;
+        --progress-bg: rgba(255, 255, 255, 0.1);
+        --progress-gradient: linear-gradient(to right, #66b3ff, #33c1ff);
+        --progress-text: #000;
+        --file-name-color: #ccc;
+        --motivational-text: #aaa;
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.progress-bar-container {
+    position: relative;
+    width: 80%;
+    max-width: 400px;
+    height: 30px;
+    background-color: var(--progress-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 1rem;
+    display: block;
+    transition: opacity 0.5s ease;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--progress-gradient);
+    transition: width 0.3s ease-in-out;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--progress-text);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.progress-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+.file-name {
+    font-size: 0.9rem;
+    font-family: monospace;
+    color: var(--file-name-color);
+    text-align: center;
+    margin-top: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.motivational-text {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--motivational-text);
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 0;
+    overflow: hidden;
+    display: block;
+}
