@@ -20,7 +20,7 @@
   </PropertyGroup>
   
   <!-- cimgui seems to be broken on arm64 -->
-  <PropertyGroup Condition="$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == Arm64">
+  <PropertyGroup Condition="$(CI) != 'true' AND $([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture) == Arm64">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   

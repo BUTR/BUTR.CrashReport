@@ -38,7 +38,8 @@ jobs:
         data: [
           { rid: 'win-x64', os: 'windows-latest' },
           { rid: 'win-x86', os: 'windows-latest' },
-          { rid: 'linux-x64', os: 'ubuntu-latest' },
+          { rid: 'linux-x64', os: 'ubuntu-22.04' },
+          { rid: 'linux-arm64', os: 'ubuntu-22.04-arm' },
           { rid: 'osx-x64', os: 'macos-13' },
           { rid: 'osx-arm64', os: 'macos-latest' }
         ]
@@ -86,7 +87,7 @@ jobs:
       matrix:
         data: [
           { rid: 'win', os: 'windows-latest' },
-          { rid: 'linux', os: 'ubuntu-latest' },
+          { rid: 'linux', os: 'ubuntu-22.04' },
           { rid: 'osx', os: 'macos-latest' }
         ]
     name: Publish Universal ${{ matrix.data.rid }}
