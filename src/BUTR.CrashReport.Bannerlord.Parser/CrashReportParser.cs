@@ -275,11 +275,11 @@ public static class CrashReportParser
         foreach (var exception in node.InnerHtml.Split("Inner Exception information"))
         {
             var exceptionLines = exception.Split(["<br>", "</br>"], StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim().Trim('\n')).Where(x => x.Length != 0).ToList();
-            var type = exceptionLines.First(x => x.StartsWith("Type: ")).Substring(6);
-            var message = exceptionLines.First(x => x.StartsWith("Message: ")).Substring(9);
-            var source = exceptionLines.First(x => x.StartsWith("Source: ")).Substring(8);
+            var type = exceptionLines.FirstOrDefault(x => x.StartsWith("Type: "))?.Substring(6) ?? string.Empty;
+            var message = exceptionLines.FirstOrDefault(x => x.StartsWith("Message: "))?.Substring(9) ?? string.Empty;
+            var source = exceptionLines.FirstOrDefault(x => x.StartsWith("Source: "))?.Substring(8) ?? string.Empty;
             var callstackIdx = exceptionLines.FindIndex(x => x.StartsWith("CallStack:"));
-            var callstack = string.Join(Environment.NewLine, exceptionLines.Skip(callstackIdx + 1)).Replace("<ol>\n", "").Replace("<li>", "").Replace("</li>\n", Environment.NewLine).Replace("</ol>", "");
+            var callstack = callstackIdx == -1 ? string.Empty : string.Join(Environment.NewLine, exceptionLines.Skip(callstackIdx + 1)).Replace("<ol>\n", "").Replace("<li>", "").Replace("</li>\n", Environment.NewLine).Replace("</ol>", "");
             exceptions.Add(new ExceptionModel
             {
                 SourceAssemblyId = null,
